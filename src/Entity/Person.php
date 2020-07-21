@@ -29,6 +29,18 @@ class Person extends AbstractEntity {
 
     /**
      * @var string
+     * @ORM\Column(type="string")
+     */
+    private $affiliation;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    private $location;
+
+    /**
+     * @var string
      * @ORM\Column(type="text")
      */
     private $bio;
