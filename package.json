@@ -1,0 +1,15 @@
+{
+  "name": "amp",
+  "version": "1.0.0",
+  "author": "Michael Joyce <ubermichael@gmail.com>",
+  "license": "GPL-v2-or-later",
+  "dependencies": {
+    "bootstrap3": "^3.3.5",
+    "jquery": "^3.4.1",
+    "jquery-ui": "^1.12.1",
+    "select2": "^4.0.12",
+    "select2-bootstrap-css": "^1.4.6",
+    "symfony-collection": "^2.1.30",
+    "tinymce": "^5.1.5"
+  }
+}
