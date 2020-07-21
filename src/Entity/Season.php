@@ -15,6 +15,30 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 class Season extends AbstractEntity {
 
     /**
+     * @var int
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $number;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    private $title;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $alternativeTitle;
+
+    /**
+     * @var string
+     * @ORM\Column(type="text")
+     */
+    private $description;
+
+    /**
      * @var Podcast
      * @ORM\ManyToOne(targetEntity="Podcast", inversedBy="seasons")
      * @ORM\JoinColumn(nullable=false)

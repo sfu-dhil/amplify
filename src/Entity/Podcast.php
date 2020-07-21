@@ -15,6 +15,60 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 class Podcast extends AbstractEntity {
 
     /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    private $title;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $alternativeTitle;
+
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", nullable=false)
+     */
+    private $explicit;
+
+    /**
+     * @var string
+     * @ORM\Column(type="text")
+     */
+    private $description;
+
+    /**
+     * @var string
+     * @ORM\Column(type="text")
+     */
+    private $copyright;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    private $category;
+
+    /**
+     * @var string
+     * @ORM\Column(type="text")
+     */
+    private $website;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    private $rss;
+
+    /**
+     * @var array|string[]
+     * @ORM\Column(type="array")
+     */
+    private $tags;
+
+    /**
      * @var Publisher
      * @ORM\ManyToOne(targetEntity="Publisher", inversedBy="podcasts")
      */
@@ -47,6 +101,7 @@ class Podcast extends AbstractEntity {
 
     public function __construct() {
         parent::__construct();
+        $this->tags = [];
     }
 
 }

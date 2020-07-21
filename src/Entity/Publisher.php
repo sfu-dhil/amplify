@@ -15,6 +15,36 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 class Publisher extends AbstractEntity {
 
     /**
+     * @var string
+     * @ORM\Column(type="string", nullable=false)
+     */
+    private $name;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $location;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $website;
+
+    /**
+     * @var string
+     * @ORM\Column(type="text")
+     */
+    private $description;
+
+    /**
+     * @var string
+     * @ORM\Column(type="text")
+     */
+    private $contact;
+
+    /**
      * @var Collection|Podcast[]
      * @ORM\OneToMany(targetEntity="Podcast", mappedBy="publisher")
      */

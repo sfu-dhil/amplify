@@ -16,6 +16,30 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 class Person extends AbstractEntity {
 
     /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    private $fullname;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    private $sortableName;
+
+    /**
+     * @var string
+     * @ORM\Column(type="text")
+     */
+    private $bio;
+
+    /**
+     * @var string
+     * @ORM\Column(type="array")
+     */
+    private $links;
+
+    /**
      * @var Collection|Contribution[]
      * @ORM\OneToMany(targetEntity="Contribution", mappedBy="person")
      */
