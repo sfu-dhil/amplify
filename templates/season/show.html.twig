@@ -27,6 +27,28 @@
     <table class="table table-bordered table-condensed table-hover table-striped">
         <tbody>
             <tr>
+                <th>Podcast</th>
+                <td>
+                    <a href='{{ path('podcast_show', {'id': season.podcast.id}) }}'>
+                        {{ season.podcast }}
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th>Publisher</th>
+                <td>
+                    {% if season.publisher %}
+                        <a href='{{ path('publisher_show', {'id': season.publisher}) }}'>
+                            {{ season.publisher }}
+                        </a>
+                    {% else %}
+                    <a href='{{ path('publisher_show', {'id': season.podcast.publisher}) }}'>
+                        {{ season.podcast.publisher }}
+                    </a>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
                 <th>Number</th>
                 <td>{{ season.number }}</td>
             </tr>
@@ -53,4 +75,30 @@
         </tbody>
     </table>
 
+    {% if season.episodes|length > 0 %}
+    <h2>Episodes</h2>
+    <ol>
+        {% for episode in season.episodes %}
+        <li>
+            <a href='{{ path('episode_show', {'id': episode.id}) }}'>
+                {{ episode }}
+            </a>
+        </li>
+        {% endfor %}
+    </ol>
+    {% endif %}
+
+    {% if season.contributions|length > 0 %}
+        <h2>Contributors</h2>
+        <ul>
+            {% for contribution in season.contributions %}
+                <li>
+                    <a href='{{ path('person_show', {'id': contribution.person.id}) }}'>
+                        {{ contribution.person -}}
+                    </a>
+                    {{ contribution.contributorRole }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 {% endblock %}

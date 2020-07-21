@@ -24,29 +24,17 @@
         </div>
     {% endif %}
 
-    <table class="table table-bordered table-condensed table-hover table-striped">
-        <tbody>
-            <tr>
-                <th>Name</th>
-                <td>{{ contributor_role.name }}</td>
-            </tr>
-            <tr>
-                <th>Label</th>
-                <td>{{ contributor_role.label }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ contributor_role.description }}</td>
-            </tr>
-            <tr>
-                <th>Created</th>
-                <td>{{ contributor_role.created|date }}</td>
-            </tr>
-            <tr>
-                <th>Updated</th>
-                <td>{{ contributor_role.updated|date }}</td>
-            </tr>
-        </tbody>
-    </table>
+    {% embed '@NinesUtil/term/partial/show.html.twig' with {
+        'term': contributor_role} %}
+    {% endembed %}
+
+    {% if contributor_role.contributions|length > 0 %}
+    <h2>Contributions</h2>
+    <ul>
+        {% for contribution in contributor_role.contributions %}
+        <li>{{ contribution.person }} - {{ contribution.podcast }} - {{ contribution.season }} - {{ contribution.episode }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
 
 {% endblock %}

@@ -24,29 +24,18 @@
         </div>
     {% endif %}
 
-    <table class="table table-bordered table-condensed table-hover table-striped">
-        <tbody>
-            <tr>
-                <th>Name</th>
-                <td>{{ subject.name }}</td>
-            </tr>
-            <tr>
-                <th>Label</th>
-                <td>{{ subject.label }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ subject.description }}</td>
-            </tr>
-            <tr>
-                <th>Created</th>
-                <td>{{ subject.created|date }}</td>
-            </tr>
-            <tr>
-                <th>Updated</th>
-                <td>{{ subject.updated|date }}</td>
-            </tr>
-        </tbody>
-    </table>
+    {% embed '@NinesUtil/term/partial/show.html.twig' with {
+        'term': subject} %}
+    {% endembed %}
+
+    {% if subject.episodes |length > 0 %}
+        <h2>Episodes</h2>
+        <ul>
+            {% for episode in subject.episodes %}
+                <li>{{ episode }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
 
 {% endblock %}

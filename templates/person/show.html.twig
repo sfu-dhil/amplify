@@ -27,7 +27,7 @@
     <table class="table table-bordered table-condensed table-hover table-striped">
         <tbody>
             <tr>
-                <th>Fullname</th>
+                <th>Full name</th>
                 <td>{{ person.fullname }}</td>
             </tr>
             <tr>
@@ -48,7 +48,11 @@
             </tr>
             <tr>
                 <th>Links</th>
-                <td>{% if person.links %}{{ person.links|join(', ') }}{% endif %}</td>
+                <td>
+                    {% for link in person.links %}
+                        <a href='{{ link }}'>{{ link }}</a><br/>
+                    {% endfor %}
+                </td>
             </tr>
             <tr>
                 <th>Created</th>
@@ -60,5 +64,30 @@
             </tr>
         </tbody>
     </table>
+
+    {% if person.contributions %}
+        <h2>Contributions</h2>
+        <dl>
+            {% for contribution in person.contributions %}
+                <dt>
+                    {{ contribution.contributorRole }}
+                </dt>
+                <dd>
+                    {% if contribution.podcast %}
+                        Podcast <a href='{{ path('podcast_show', {'id': contribution.podcast.id}) }}'>
+                        {{ contribution.podcast }}</a>
+                    {% endif %}
+                    {% if contribution.season %}
+                        Season <a href='{{ path('season_show', {'id': contribution.season.id}) }}'>
+                        {{ contribution.season }}</a>
+                    {% endif %}
+                    {% if contribution.episode %}
+                        Episode <a href='{{ path('episode_show', {'id': contribution.episode.id}) }}'>
+                        {{ contribution.episode }}</a>
+                    {% endif %}
+                </dd>
+            {% endfor %}
+        </dl>
+    {% endif %}
 
 {% endblock %}

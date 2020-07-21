@@ -71,7 +71,7 @@ class Person extends AbstractEntity {
      * {@inheritdoc}
      */
     public function __toString() : string {
-        // TODO: Implement __toString() method.
+        return $this->fullname;
     }
 
     public function getFullname() : ?string {

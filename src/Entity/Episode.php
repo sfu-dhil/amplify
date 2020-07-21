@@ -126,7 +126,7 @@ class Episode extends AbstractEntity {
      * {@inheritdoc}
      */
     public function __toString() : string {
-        // TODO: Implement __toString() method.
+        return $this->title;
     }
 
     public function getNumber() : ?int {

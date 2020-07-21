@@ -58,7 +58,7 @@ class Contribution extends AbstractEntity {
      * {@inheritdoc}
      */
     public function __toString() : string {
-        // TODO: Implement __toString() method.
+        return implode(',', [$this->person, $this->contributorRole, $this->podcast, $this->season, $this->episode]);
     }
 
     public function getPerson() : ?Person {

@@ -26,32 +26,22 @@
     <table class="table table-bordered table-condensed table-hover table-striped">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Number</th>
                 <th>Date</th>
                 <th>Run Time</th>
                 <th>Title</th>
-                <th>Alternative Title</th>
-                <th>Language</th>
-                <th>Tags</th>
-                <th>References</th>
-                <th>Copyright</th>
-                <th>Transcript</th>
-                <th>Abstract</th>
-
             </tr>
         </thead>
         <tbody>
             {% for episode in episodes %}
                 <tr>
-
                     <td>
-                        <a href="{{ path('episode_show', { 'id': episode.id }) }}">
-                            {{ episode.id }}
+                        <a href='{{ path('episode_show', {'id': episode.id}) }}'>
+                            {% if episode.season %}
+                                S{{ episode.season.number|format_number({min_integer_digit: 2}) }}
+                            {%- endif -%}
+                            E{{ episode.number|format_number({min_integer_digit: 2}) }} - {{ episode }}
                         </a>
-                    </td>
-                    <td>
-                        {{ episode.number }}
                     </td>
 
                     <td>{% if episode.date %}{{ episode.date|date('Y-m-d') }}{% endif %}</td>
@@ -63,33 +53,6 @@
                     <td>
                         {{ episode.title }}
                     </td>
-
-                    <td>
-                        {{ episode.alternativeTitle }}
-                    </td>
-
-                    <td>
-                        {{ episode.language }}
-                    </td>
-
-                    <td>{% if episode.tags %}{{ episode.tags|join(', ') }}{% endif %}</td>
-
-                    <td>
-                        {{ episode.references }}
-                    </td>
-
-                    <td>
-                        {{ episode.copyright }}
-                    </td>
-
-                    <td>
-                        {{ episode.transcript }}
-                    </td>
-
-                    <td>
-                        {{ episode.abstract }}
-                    </td>
-
                 </tr>
             {% endfor %}
         </tbody>

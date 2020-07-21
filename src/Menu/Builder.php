@@ -76,22 +76,22 @@ class Builder implements ContainerAwareInterface {
             'route' => 'contributor_role_index',
         ]);
         $browse->addChild('Episodes', [
-            'route' => 'podcast_index',
+            'route' => 'episode_index',
         ]);
         $browse->addChild('People', [
-            'route' => 'podcast_index',
+            'route' => 'person_index',
         ]);
         $browse->addChild('Podcasts', [
             'route' => 'podcast_index',
         ]);
         $browse->addChild('Publishers', [
-            'route' => 'podcast_index',
+            'route' => 'publisher_index',
         ]);
         $browse->addChild('Seasons', [
-            'route' => 'podcast_index',
+            'route' => 'season_index',
         ]);
         $browse->addChild('Subjects', [
-            'route' => 'podcast_index',
+            'route' => 'subject_index',
         ]);
 
         if ($this->hasRole('ROLE_CONTENT_ADMIN')) {

@@ -27,6 +27,7 @@ class ContributionFixtures extends Fixture implements DependentFixtureInterface 
             $fixture->setContributorRole($this->getReference('contributorrole.' . $i));
             $fixture->setPodcast($this->getReference('podcast.' . $i));
             $fixture->setSeason($this->getReference('season.' . $i));
+            $fixture->setEpisode($this->getReference('episode.'.$i));
 
             $em->persist($fixture);
             $this->setReference('contribution.' . $i, $fixture);

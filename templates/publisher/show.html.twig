@@ -57,4 +57,31 @@
         </tbody>
     </table>
 
+    {% if publisher.podcasts|length %}
+    <h2>Podcasts</h2>
+    <ul>
+        {% for podcast in publisher.podcasts %}
+            <li>
+                <a href='{{ path('podcast_show', {'id': podcast.id}) }}'>
+                    {{ podcast }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if publisher.seasons|length %}
+        <h2>Seasons</h2>
+        <ul>
+            {% for season in publisher.seasons %}
+                <li>
+                    <a href='{{ path('season_show', {'id': season.id}) }}'>
+                        {{ season }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+
 {% endblock %}

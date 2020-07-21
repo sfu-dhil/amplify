@@ -47,6 +47,24 @@
                 <td>{{ episode.alternativeTitle }}</td>
             </tr>
             <tr>
+                <th>Podcast</th>
+                <td>
+                    <a href='{{ path('podcast_show', {'id': episode.podcast.id}) }}'>
+                        {{ episode.podcast }}
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th>Season</th>
+                <td>
+                    {% if episode.season %}
+                        <a href='{{ path('season_show', {'id': episode.season.id}) }}'>
+                            {{ episode.season }}
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
                 <th>Language</th>
                 <td>{{ episode.language }}</td>
             </tr>
@@ -80,5 +98,19 @@
             </tr>
         </tbody>
     </table>
+
+    {% if episode.contributions|length > 0 %}
+        <h2>Contributors</h2>
+        <ul>
+            {% for contribution in episode.contributions %}
+                <li>
+                    <a href='{{ path('person_show', {'id': contribution.person.id}) }}'>
+                        {{ contribution.person -}}
+                    </a>
+                    {{ contribution.contributorRole }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
 {% endblock %}

@@ -23,41 +23,10 @@
         </div>
     </div>
 
-    <table class="table table-bordered table-condensed table-hover table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Label</th>
-                <th>Description</th>
-
-            </tr>
-        </thead>
-        <tbody>
-            {% for contributor_role in contributor_roles %}
-                <tr>
-
-                    <td>
-                        <a href="{{ path('contributor_role_show', { 'id': contributor_role.id }) }}">
-                            {{ contributor_role.id }}
-                        </a>
-                    </td>
-                    <td>
-                        {{ contributor_role.name }}
-                    </td>
-
-                    <td>
-                        {{ contributor_role.label }}
-                    </td>
-
-                    <td>
-                        {{ contributor_role.description }}
-                    </td>
-
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% embed '@NinesUtil/term/partial/index.html.twig' with {
+        'terms': contributor_roles,
+        'path': 'contributor_role_show'} %}
+    {% endembed %}
 
     <div class="navigation">
         {{ knp_pagination_render(contributor_roles) }}

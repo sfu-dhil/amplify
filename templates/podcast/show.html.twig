@@ -43,6 +43,14 @@
                 <td>{{ podcast.description }}</td>
             </tr>
             <tr>
+                <th>Publisher</th>
+                <td>
+                    <a href='{{ path('publisher_show', {'id': podcast.publisher.id}) }}'>
+                        {{ podcast.publisher }}
+                    </a>
+                </td>
+            </tr>
+            <tr>
                 <th>Copyright</th>
                 <td>{{ podcast.copyright }}</td>
             </tr>
@@ -52,7 +60,13 @@
             </tr>
             <tr>
                 <th>Website</th>
-                <td>{{ podcast.website }}</td>
+                <td>
+                    {% if podcast.website %}
+                        <a href='{{ podcast.website }}'>
+                            {{ podcast.website }}
+                        </a>
+                    {% endif %}
+                </td>
             </tr>
             <tr>
                 <th>Rss</th>
@@ -72,5 +86,49 @@
             </tr>
         </tbody>
     </table>
+
+    {% if podcast.seasons|length > 0 %}
+        <h2>Seasons</h2>
+        <ol>
+            {% for season in podcast.seasons %}
+                <li>
+                    <a href='{{ path('season_show', {'id': season.id}) }}'>
+                        S{{ season.number|format_number({min_integer_digit: 2}) }} - {{ season }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ol>
+    {% endif %}
+
+    {% if podcast.episodes|length > 0 %}
+        <h2>Episodes</h2>
+        <ol>
+            {% for episode in podcast.episodes %}
+                <li>
+                    <a href='{{ path('episode_show', {'id': episode.id}) }}'>
+                        {% if episode.season %}
+                            S{{ episode.season.number|format_number({min_integer_digit: 2}) }}
+                        {%- endif -%}
+                        E{{ episode.number|format_number({min_integer_digit: 2}) }} - {{ episode }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ol>
+    {% endif %}
+
+    {% if podcast.contributions|length > 0 %}
+        <h2>Contributors</h2>
+        <ul>
+            {% for contribution in podcast.contributions %}
+                <li>
+                    <a href='{{ path('person_show', {'id': contribution.person.id}) }}'>
+                        {{ contribution.person -}}
+                    </a>
+                    {{ contribution.contributorRole }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
 
 {% endblock %}
