@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace App\Entity;
 
 use App\Repository\PublisherRepository;
@@ -13,7 +19,6 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Entity(repositoryClass=PublisherRepository::class)
  */
 class Publisher extends AbstractEntity {
-
     /**
      * @var string
      * @ORM\Column(type="string", nullable=false)
@@ -56,15 +61,14 @@ class Publisher extends AbstractEntity {
      */
     private $seasons;
 
-    /**
-     * @inheritDoc
-     */
-    public function __toString() : string {
-        // TODO: Implement __toString() method.
-    }
-
     public function __construct() {
         parent::__construct();
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString() : string {
+        // TODO: Implement __toString() method.
+    }
 }

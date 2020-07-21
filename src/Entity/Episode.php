@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace App\Entity;
 
 use App\Repository\EpisodeRepository;
@@ -14,7 +20,6 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Entity(repositoryClass=EpisodeRepository::class)
  */
 class Episode extends AbstractEntity {
-
     /**
      * @var int
      * @ORM\Column(type="integer")
@@ -30,7 +35,7 @@ class Episode extends AbstractEntity {
     /**
      * Run time in seconds.
      *
-     * @var integer
+     * @var int
      * @ORM\Column(type="integer")
      */
     private $runTime;
@@ -84,7 +89,7 @@ class Episode extends AbstractEntity {
     private $abstract;
 
     /**
-     * @var Season|null
+     * @var null|Season
      * @ORM\ManyToOne(targetEntity="Season", inversedBy="episodes")
      * @ORM\JoinColumn(nullable=true)
      */
@@ -109,16 +114,15 @@ class Episode extends AbstractEntity {
      */
     private $contributions;
 
-    /**
-     * @inheritDoc
-     */
-    public function __toString() : string {
-        // TODO: Implement __toString() method.
-    }
-
     public function __construct() {
         parent::__construct();
         $this->tags = [];
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString() : string {
+        // TODO: Implement __toString() method.
+    }
 }

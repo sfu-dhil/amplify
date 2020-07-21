@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace App\Repository;
 
 use App\Entity\Publisher;
@@ -10,15 +16,13 @@ use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Publisher|null find($id, $lockMode = null, $lockVersion = null)
- * @method Publisher|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Publisher find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Publisher findOneBy(array $criteria, array $orderBy = null)
  * @method Publisher[]    findAll()
  * @method Publisher[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PublisherRepository extends ServiceEntityRepository
-{
-    public function __construct(ManagerRegistry $registry)
-    {
+class PublisherRepository extends ServiceEntityRepository {
+    public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Publisher::class);
     }
 
@@ -28,7 +32,8 @@ class PublisherRepository extends ServiceEntityRepository
     public function indexQuery() {
         return $this->createQueryBuilder('publisher')
             ->orderBy('publisher.id')
-            ->getQuery();
+            ->getQuery()
+        ;
     }
 
     /**
@@ -37,7 +42,7 @@ class PublisherRepository extends ServiceEntityRepository
      * @return Collection|Publisher[]
      */
     public function typeaheadSearch($q) {
-        throw new \RuntimeException("Not implemented yet.");
+        throw new \RuntimeException('Not implemented yet.');
         $qb = $this->createQueryBuilder('publisher');
         $qb->andWhere('publisher.column LIKE :q');
         $qb->orderBy('publisher.column', 'ASC');
@@ -45,6 +50,4 @@ class PublisherRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->execute();
     }
-
-    
 }
