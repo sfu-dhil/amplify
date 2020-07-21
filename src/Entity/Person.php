@@ -74,73 +74,61 @@ class Person extends AbstractEntity {
         // TODO: Implement __toString() method.
     }
 
-    public function getFullname(): ?string
-    {
+    public function getFullname() : ?string {
         return $this->fullname;
     }
 
-    public function setFullname(string $fullname): self
-    {
+    public function setFullname(string $fullname) : self {
         $this->fullname = $fullname;
 
         return $this;
     }
 
-    public function getSortableName(): ?string
-    {
+    public function getSortableName() : ?string {
         return $this->sortableName;
     }
 
-    public function setSortableName(string $sortableName): self
-    {
+    public function setSortableName(string $sortableName) : self {
         $this->sortableName = $sortableName;
 
         return $this;
     }
 
-    public function getAffiliation(): ?string
-    {
+    public function getAffiliation() : ?string {
         return $this->affiliation;
     }
 
-    public function setAffiliation(string $affiliation): self
-    {
+    public function setAffiliation(string $affiliation) : self {
         $this->affiliation = $affiliation;
 
         return $this;
     }
 
-    public function getLocation(): ?string
-    {
+    public function getLocation() : ?string {
         return $this->location;
     }
 
-    public function setLocation(string $location): self
-    {
+    public function setLocation(string $location) : self {
         $this->location = $location;
 
         return $this;
     }
 
-    public function getBio(): ?string
-    {
+    public function getBio() : ?string {
         return $this->bio;
     }
 
-    public function setBio(string $bio): self
-    {
+    public function setBio(string $bio) : self {
         $this->bio = $bio;
 
         return $this;
     }
 
-    public function getLinks(): ?array
-    {
+    public function getLinks() : ?array {
         return $this->links;
     }
 
-    public function setLinks(array $links): self
-    {
+    public function setLinks(array $links) : self {
         $this->links = $links;
 
         return $this;
@@ -149,14 +137,12 @@ class Person extends AbstractEntity {
     /**
      * @return Collection|Contribution[]
      */
-    public function getContributions(): Collection
-    {
+    public function getContributions() : Collection {
         return $this->contributions;
     }
 
-    public function addContribution(Contribution $contribution): self
-    {
-        if (!$this->contributions->contains($contribution)) {
+    public function addContribution(Contribution $contribution) : self {
+        if ( ! $this->contributions->contains($contribution)) {
             $this->contributions[] = $contribution;
             $contribution->setPerson($this);
         }
@@ -164,8 +150,7 @@ class Person extends AbstractEntity {
         return $this;
     }
 
-    public function removeContribution(Contribution $contribution): self
-    {
+    public function removeContribution(Contribution $contribution) : self {
         if ($this->contributions->contains($contribution)) {
             $this->contributions->removeElement($contribution);
             // set the owning side to null (unless already changed)

@@ -2,14 +2,14 @@
 
 {% block title %}Episode Search{% endblock %}
 
- {% block pageheader %} 
-    <h1>Episode Search</h1>
-    {% if episodes|length %}
-    <p class="count">
-        Displaying {{ episodes|length }} episodes of {{ episodes.getTotalItemCount }} total.
-    </p>
-	{% endif %}
- {% endblock %} 
+ {% block pageheader %}
+     <h1>Episode Search</h1>
+     {% if episodes|length %}
+         <p class="count">
+             Displaying {{ episodes|length }} episodes of {{ episodes.getTotalItemCount }} total.
+         </p>
+     {% endif %}
+ {% endblock %}
 
 {% block body %}
 
@@ -30,7 +30,7 @@
                     </div>
                 </div>
             </div>
-            <p>	Full text searching options, if available:</p>
+            <p> Full text searching options, if available:</p>
             <ul>
                 <li><code>shakespeare</code> - shakespeare should be present, but might not be</li>
                 <li><code>shakes*</code> - words starting with shakes should be present</li>
@@ -42,83 +42,83 @@
         </fieldset>
     </form>
 
-	{% if episodes|length %}
-<table class="table table-bordered table-condensed table-hover table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-                <th>Number</th>
-                <th>Date</th>
-                <th>Run Time</th>
-                <th>Title</th>
-                <th>Alternative Title</th>
-                <th>Language</th>
-                <th>Tags</th>
-                <th>References</th>
-                <th>Copyright</th>
-                <th>Transcript</th>
-                <th>Abstract</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for episode in episodes %}
-        <tr>
+    {% if episodes|length %}
+        <table class="table table-bordered table-condensed table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Number</th>
+                    <th>Date</th>
+                    <th>Run Time</th>
+                    <th>Title</th>
+                    <th>Alternative Title</th>
+                    <th>Language</th>
+                    <th>Tags</th>
+                    <th>References</th>
+                    <th>Copyright</th>
+                    <th>Transcript</th>
+                    <th>Abstract</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for episode in episodes %}
+                    <tr>
 
-            <td>
-                <a href="{{ path('episode_show', { 'id': episode.id }) }}">
-                    {{ episode.id }}
-                </a>
-            </td>
+                        <td>
+                            <a href="{{ path('episode_show', { 'id': episode.id }) }}">
+                                {{ episode.id }}
+                            </a>
+                        </td>
                         <td>
                             {{ episode.number }}
                         </td>
-                
+
                         <td>{% if episode.date %}{{ episode.date|date('Y-m-d') }}{% endif %}</td>
-                
+
                         <td>
                             {{ episode.runTime }}
                         </td>
-                
+
                         <td>
                             {{ episode.title }}
                         </td>
-                
+
                         <td>
                             {{ episode.alternativeTitle }}
                         </td>
-                
+
                         <td>
                             {{ episode.language }}
                         </td>
-                
+
                         <td>{% if episode.tags %}{{ episode.tags|join(', ') }}{% endif %}</td>
-                
+
                         <td>
                             {{ episode.references }}
                         </td>
-                
+
                         <td>
                             {{ episode.copyright }}
                         </td>
-                
+
                         <td>
                             {{ episode.transcript }}
                         </td>
-                
+
                         <td>
                             {{ episode.abstract }}
                         </td>
-                
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
 
-    <div class="navigation">
-        {{ knp_pagination_render(episodes) }}
-    </div>
-	{% endif %}
+        <div class="navigation">
+            {{ knp_pagination_render(episodes) }}
+        </div>
+    {% endif %}
 
 {% endblock %}
 

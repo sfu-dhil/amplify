@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace App\DataFixtures;
 
 use App\Entity\Podcast;
@@ -8,16 +16,14 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
 class PodcastFixtures extends Fixture implements DependentFixtureInterface {
-
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function load(ObjectManager $em)
-    {
-        for($i = 0; $i < 4; $i++) {
+    public function load(ObjectManager $em) : void {
+        for ($i = 0; $i < 4; $i++) {
             $fixture = new Podcast();
 
-        $fixture->setTitle('New Title ' . $i);
+            $fixture->setTitle('New Title ' . $i);
             $fixture->setAlternativeTitle('New AlternativeTitle ' . $i);
             $fixture->setExplicit('New Explicit ' . $i);
             $fixture->setDescription('New Description ' . $i);
@@ -25,8 +31,9 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface {
             $fixture->setCategory('New Category ' . $i);
             $fixture->setWebsite('New Website ' . $i);
             $fixture->setRss('New Rss ' . $i);
-            $fixture->setTags('New Tags ' . $i);
-            
+            $fixture->setTags(['New Tags ' . $i]);
+            $fixture->setPublisher($this->getReference('publisher.' . $i));
+
             $em->persist($fixture);
             $this->setReference('podcast.' . $i, $fixture);
         }
@@ -41,7 +48,7 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface {
         // add dependencies here, or remove this
         // function and "implements DependentFixtureInterface" above
         return [
-                                                                                                                                ];
+            PublisherFixtures::class,
+        ];
     }
-
 }

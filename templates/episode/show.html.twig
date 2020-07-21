@@ -2,27 +2,26 @@
 
 {% block title %}Episode Details {% endblock %}
 
- {% block pageheader %} 
-    <h1>Episode Details</h1>
- {% endblock %} 
+ {% block pageheader %}
+     <h1>Episode Details</h1>
+ {% endblock %}
 
 {% block body %}
 
     {% if is_granted('ROLE_ADMIN') %}
-    <div class='btn-toolbar pull-right'>
-        <div class='btn-group'>
-            <a href="{{ path('episode_edit', {'id': episode.id }) }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-edit"></span> Edit
-            </a>
+        <div class='btn-toolbar pull-right'>
+            <div class='btn-group'>
+                <a href="{{ path('episode_edit', {'id': episode.id }) }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-edit"></span> Edit </a>
+            </div>
+            <div class='btn-group'>
+                <form class='delete-form' method="post" action="{{ path('episode_delete', {'id': episode.id }) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="_token" value="{{ csrf_token("delete" ~ episode.id) }}">
+                    <button class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+                </form>
+            </div>
         </div>
-        <div class='btn-group'>
-            <form class='delete-form' method="post" action="{{ path('episode_delete', {'id': episode.id }) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
-                <input type="hidden" name="_method" value="DELETE">
-                <input type="hidden" name="_token" value="{{ csrf_token("delete" ~ episode.id) }}">
-                <button class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> Delete</button>
-            </form>
-        </div>
-    </div>
     {% endif %}
 
     <table class="table table-bordered table-condensed table-hover table-striped">
@@ -31,54 +30,54 @@
                 <th>Number</th>
                 <td>{{ episode.number }}</td>
             </tr>
-        <tr>
+            <tr>
                 <th>Date</th>
                 <td>{% if episode.date %}{{ episode.date|date('Y-m-d') }}{% endif %}</td>
             </tr>
-        <tr>
+            <tr>
                 <th>Run Time</th>
                 <td>{{ episode.runTime }}</td>
             </tr>
-        <tr>
+            <tr>
                 <th>Title</th>
                 <td>{{ episode.title }}</td>
             </tr>
-        <tr>
+            <tr>
                 <th>Alternative Title</th>
                 <td>{{ episode.alternativeTitle }}</td>
             </tr>
-        <tr>
+            <tr>
                 <th>Language</th>
                 <td>{{ episode.language }}</td>
             </tr>
-        <tr>
+            <tr>
                 <th>Tags</th>
                 <td>{% if episode.tags %}{{ episode.tags|join(', ') }}{% endif %}</td>
             </tr>
-        <tr>
+            <tr>
                 <th>References</th>
                 <td>{{ episode.references }}</td>
             </tr>
-        <tr>
+            <tr>
                 <th>Copyright</th>
                 <td>{{ episode.copyright }}</td>
             </tr>
-        <tr>
+            <tr>
                 <th>Transcript</th>
                 <td>{{ episode.transcript }}</td>
             </tr>
-        <tr>
+            <tr>
                 <th>Abstract</th>
                 <td>{{ episode.abstract }}</td>
             </tr>
-                <tr>
-            <th>Created</th>
-            <td>{{ episode.created|date }}</td>
-        </tr>
-        <tr>
-            <th>Updated</th>
-            <td>{{ episode.updated|date }}</td>
-        </tr>
+            <tr>
+                <th>Created</th>
+                <td>{{ episode.created|date }}</td>
+            </tr>
+            <tr>
+                <th>Updated</th>
+                <td>{{ episode.updated|date }}</td>
+            </tr>
         </tbody>
     </table>
 

@@ -18,6 +18,8 @@ parameters:
 
     nines.editor.upload_dir: '%kernel.project_dir%/public/images/blog'
 
+    page_size: 25
+
 services:
     # default configuration for services in *this* file
     _defaults:

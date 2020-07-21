@@ -1,42 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace App\Controller;
 
 use App\Entity\Podcast;
 use App\Form\PodcastType;
 use App\Repository\PodcastRepository;
-
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/podcast")
- * @IsGranted("ROLE_USER")
  */
-class PodcastController extends AbstractController implements PaginatorAwareInterface
-{
+class PodcastController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**
      * @Route("/", name="podcast_index", methods={"GET"})
-     * @param Request $request
-     * @param PodcastRepository $podcastRepository
      *
      * @Template()
-     *
-     * @return array
      */
-    public function index(Request $request, PodcastRepository $podcastRepository) : array
-    {
+    public function index(Request $request, PodcastRepository $podcastRepository) : array {
         $query = $podcastRepository->indexQuery();
         $pageSize = $this->getParameter('page_size');
         $page = $request->query->getint('page', 1);
@@ -57,7 +55,7 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
         $q = $request->query->get('q');
         if ($q) {
             $query = $podcastRepository->searchQuery($q);
-            $podcasts = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), array('wrap-queries'=>true));
+            $podcasts = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), ['wrap-queries' => true]);
         } else {
             $podcasts = [];
         }
@@ -82,7 +80,7 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
         foreach ($podcastRepository->typeaheadSearch($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
-                'text' => (string)$result,
+                'text' => (string) $result,
             ];
         }
 
@@ -93,7 +91,6 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
      * @Route("/new", name="podcast_new", methods={"GET","POST"})
      * @Template()
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @param Request $request
      *
      * @return array|RedirectResponse
      */
@@ -121,7 +118,6 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
      * @Route("/new_popup", name="podcast_new_popup", methods={"GET","POST"})
      * @Template()
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @param Request $request
      *
      * @return array|RedirectResponse
      */
@@ -132,7 +128,6 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
     /**
      * @Route("/{id}", name="podcast_show", methods={"GET"})
      * @Template()
-     * @param Podcast $podcast
      *
      * @return array
      */
@@ -145,8 +140,6 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/{id}/edit", name="podcast_edit", methods={"GET","POST"})
-     * @param Request $request
-     * @param Podcast $podcast
      *
      * @Template()
      *
@@ -165,15 +158,13 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
 
         return [
             'podcast' => $podcast,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ];
     }
 
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/{id}", name="podcast_delete", methods={"DELETE"})
-     * @param Request $request
-     * @param Podcast $podcast
      *
      * @return RedirectResponse
      */

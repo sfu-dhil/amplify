@@ -34,14 +34,12 @@ class Subject extends AbstractTerm {
     /**
      * @return Collection|Episode[]
      */
-    public function getEpisodes(): Collection
-    {
+    public function getEpisodes() : Collection {
         return $this->episodes;
     }
 
-    public function addEpisode(Episode $episode): self
-    {
-        if (!$this->episodes->contains($episode)) {
+    public function addEpisode(Episode $episode) : self {
+        if ( ! $this->episodes->contains($episode)) {
             $this->episodes[] = $episode;
             $episode->addSubject($this);
         }
@@ -49,8 +47,7 @@ class Subject extends AbstractTerm {
         return $this;
     }
 
-    public function removeEpisode(Episode $episode): self
-    {
+    public function removeEpisode(Episode $episode) : self {
         if ($this->episodes->contains($episode)) {
             $this->episodes->removeElement($episode);
             $episode->removeSubject($this);

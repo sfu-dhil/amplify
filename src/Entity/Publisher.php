@@ -75,61 +75,51 @@ class Publisher extends AbstractEntity {
         // TODO: Implement __toString() method.
     }
 
-    public function getName(): ?string
-    {
+    public function getName() : ?string {
         return $this->name;
     }
 
-    public function setName(string $name): self
-    {
+    public function setName(string $name) : self {
         $this->name = $name;
 
         return $this;
     }
 
-    public function getLocation(): ?string
-    {
+    public function getLocation() : ?string {
         return $this->location;
     }
 
-    public function setLocation(?string $location): self
-    {
+    public function setLocation(?string $location) : self {
         $this->location = $location;
 
         return $this;
     }
 
-    public function getWebsite(): ?string
-    {
+    public function getWebsite() : ?string {
         return $this->website;
     }
 
-    public function setWebsite(?string $website): self
-    {
+    public function setWebsite(?string $website) : self {
         $this->website = $website;
 
         return $this;
     }
 
-    public function getDescription(): ?string
-    {
+    public function getDescription() : ?string {
         return $this->description;
     }
 
-    public function setDescription(string $description): self
-    {
+    public function setDescription(string $description) : self {
         $this->description = $description;
 
         return $this;
     }
 
-    public function getContact(): ?string
-    {
+    public function getContact() : ?string {
         return $this->contact;
     }
 
-    public function setContact(string $contact): self
-    {
+    public function setContact(string $contact) : self {
         $this->contact = $contact;
 
         return $this;
@@ -138,14 +128,12 @@ class Publisher extends AbstractEntity {
     /**
      * @return Collection|Podcast[]
      */
-    public function getPodcasts(): Collection
-    {
+    public function getPodcasts() : Collection {
         return $this->podcasts;
     }
 
-    public function addPodcast(Podcast $podcast): self
-    {
-        if (!$this->podcasts->contains($podcast)) {
+    public function addPodcast(Podcast $podcast) : self {
+        if ( ! $this->podcasts->contains($podcast)) {
             $this->podcasts[] = $podcast;
             $podcast->setPublisher($this);
         }
@@ -153,8 +141,7 @@ class Publisher extends AbstractEntity {
         return $this;
     }
 
-    public function removePodcast(Podcast $podcast): self
-    {
+    public function removePodcast(Podcast $podcast) : self {
         if ($this->podcasts->contains($podcast)) {
             $this->podcasts->removeElement($podcast);
             // set the owning side to null (unless already changed)
@@ -169,14 +156,12 @@ class Publisher extends AbstractEntity {
     /**
      * @return Collection|Season[]
      */
-    public function getSeasons(): Collection
-    {
+    public function getSeasons() : Collection {
         return $this->seasons;
     }
 
-    public function addSeason(Season $season): self
-    {
-        if (!$this->seasons->contains($season)) {
+    public function addSeason(Season $season) : self {
+        if ( ! $this->seasons->contains($season)) {
             $this->seasons[] = $season;
             $season->setPublisher($this);
         }
@@ -184,8 +169,7 @@ class Publisher extends AbstractEntity {
         return $this;
     }
 
-    public function removeSeason(Season $season): self
-    {
+    public function removeSeason(Season $season) : self {
         if ($this->seasons->contains($season)) {
             $this->seasons->removeElement($season);
             // set the owning side to null (unless already changed)

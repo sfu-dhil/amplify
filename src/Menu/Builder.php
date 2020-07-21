@@ -72,9 +72,26 @@ class Builder implements ContainerAwareInterface {
         $browse->setLinkAttribute('data-toggle', 'dropdown');
         $browse->setChildrenAttribute('class', 'dropdown-menu');
 
-        $browse->addChild('User', [
-            'uri' => '#',
-            'label' => 'User',
+        $browse->addChild('Contributor Roles', [
+            'route' => 'contributor_role_index',
+        ]);
+        $browse->addChild('Episodes', [
+            'route' => 'podcast_index',
+        ]);
+        $browse->addChild('People', [
+            'route' => 'podcast_index',
+        ]);
+        $browse->addChild('Podcasts', [
+            'route' => 'podcast_index',
+        ]);
+        $browse->addChild('Publishers', [
+            'route' => 'podcast_index',
+        ]);
+        $browse->addChild('Seasons', [
+            'route' => 'podcast_index',
+        ]);
+        $browse->addChild('Subjects', [
+            'route' => 'podcast_index',
         ]);
 
         if ($this->hasRole('ROLE_CONTENT_ADMIN')) {
@@ -85,9 +102,8 @@ class Builder implements ContainerAwareInterface {
                 'role' => 'separator',
                 'class' => 'divider',
             ]);
-            $browse->addChild('Admin', [
-                'uri' => '#',
-                'label' => 'Browse',
+            $browse->addChild('Contributions', [
+                'route' => 'contribution_index',
             ]);
         }
 

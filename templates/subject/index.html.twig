@@ -7,56 +7,55 @@
     <p class="count">
         Displaying {{ subjects|length }} subjects of {{ subjects.getTotalItemCount }} total.
     </p>
- {% endblock %} 
+{% endblock %}
 
 {% block body %}
 
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
             {% if is_granted('ROLE_ADMIN') %}
-            <a href="{{ path('subject_new') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-plus"></span> New
-            </a>
+                <a href="{{ path('subject_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New </a>
             {% endif %}
 
             <a href="{{ path('subject_search') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-search"></span> Search
-            </a>
+                <span class="glyphicon glyphicon-search"></span> Search </a>
         </div>
     </div>
 
     <table class="table table-bordered table-condensed table-hover table-striped">
         <thead>
             <tr>
-                <th>ID</th>                                           <th>Name</th>
-                                                               <th>Label</th>
-                                                               <th>Description</th>
-                    
+                <th>ID</th>
+                <th>Name</th>
+                <th>Label</th>
+                <th>Description</th>
+
             </tr>
         </thead>
         <tbody>
-        {% for subject in subjects %}
-            <tr>
+            {% for subject in subjects %}
+                <tr>
 
-                <td>
-                    <a href="{{ path('subject_show', { 'id': subject.id }) }}">
-                        {{ subject.id }}
-                    </a>
-                </td>
-                <td>
-                    {{ subject.name }}
-                </td>
-            
-                <td>
-                    {{ subject.label }}
-                </td>
-            
-                <td>
-                    {{ subject.description }}
-                </td>
-            
-            </tr>
-        {% endfor %}
+                    <td>
+                        <a href="{{ path('subject_show', { 'id': subject.id }) }}">
+                            {{ subject.id }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ subject.name }}
+                    </td>
+
+                    <td>
+                        {{ subject.label }}
+                    </td>
+
+                    <td>
+                        {{ subject.description }}
+                    </td>
+
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 

@@ -7,61 +7,60 @@
     <p class="count">
         Displaying {{ seasons|length }} seasons of {{ seasons.getTotalItemCount }} total.
     </p>
- {% endblock %} 
+{% endblock %}
 
 {% block body %}
 
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
             {% if is_granted('ROLE_ADMIN') %}
-            <a href="{{ path('season_new') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-plus"></span> New
-            </a>
+                <a href="{{ path('season_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New </a>
             {% endif %}
 
             <a href="{{ path('season_search') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-search"></span> Search
-            </a>
+                <span class="glyphicon glyphicon-search"></span> Search </a>
         </div>
     </div>
 
     <table class="table table-bordered table-condensed table-hover table-striped">
         <thead>
             <tr>
-                <th>ID</th>                                           <th>Number</th>
-                                                               <th>Title</th>
-                                                               <th>Alternative Title</th>
-                                                               <th>Description</th>
-                    
+                <th>ID</th>
+                <th>Number</th>
+                <th>Title</th>
+                <th>Alternative Title</th>
+                <th>Description</th>
+
             </tr>
         </thead>
         <tbody>
-        {% for season in seasons %}
-            <tr>
+            {% for season in seasons %}
+                <tr>
 
-                <td>
-                    <a href="{{ path('season_show', { 'id': season.id }) }}">
-                        {{ season.id }}
-                    </a>
-                </td>
-                <td>
-                    {{ season.number }}
-                </td>
-            
-                <td>
-                    {{ season.title }}
-                </td>
-            
-                <td>
-                    {{ season.alternativeTitle }}
-                </td>
-            
-                <td>
-                    {{ season.description }}
-                </td>
-            
-            </tr>
-        {% endfor %}
+                    <td>
+                        <a href="{{ path('season_show', { 'id': season.id }) }}">
+                            {{ season.id }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ season.number }}
+                    </td>
+
+                    <td>
+                        {{ season.title }}
+                    </td>
+
+                    <td>
+                        {{ season.alternativeTitle }}
+                    </td>
+
+                    <td>
+                        {{ season.description }}
+                    </td>
+
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 

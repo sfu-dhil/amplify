@@ -1,42 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace App\Controller;
 
 use App\Entity\ContributorRole;
 use App\Form\ContributorRoleType;
 use App\Repository\ContributorRoleRepository;
-
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/contributor_role")
- * @IsGranted("ROLE_USER")
  */
-class ContributorRoleController extends AbstractController implements PaginatorAwareInterface
-{
+class ContributorRoleController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**
      * @Route("/", name="contributor_role_index", methods={"GET"})
-     * @param Request $request
-     * @param ContributorRoleRepository $contributorRoleRepository
      *
      * @Template()
-     *
-     * @return array
      */
-    public function index(Request $request, ContributorRoleRepository $contributorRoleRepository) : array
-    {
+    public function index(Request $request, ContributorRoleRepository $contributorRoleRepository) : array {
         $query = $contributorRoleRepository->indexQuery();
         $pageSize = $this->getParameter('page_size');
         $page = $request->query->getint('page', 1);
@@ -57,7 +55,7 @@ class ContributorRoleController extends AbstractController implements PaginatorA
         $q = $request->query->get('q');
         if ($q) {
             $query = $contributorRoleRepository->searchQuery($q);
-            $contributorRoles = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), array('wrap-queries'=>true));
+            $contributorRoles = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), ['wrap-queries' => true]);
         } else {
             $contributorRoles = [];
         }
@@ -82,7 +80,7 @@ class ContributorRoleController extends AbstractController implements PaginatorA
         foreach ($contributorRoleRepository->typeaheadSearch($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
-                'text' => (string)$result,
+                'text' => (string) $result,
             ];
         }
 
@@ -93,7 +91,6 @@ class ContributorRoleController extends AbstractController implements PaginatorA
      * @Route("/new", name="contributor_role_new", methods={"GET","POST"})
      * @Template()
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @param Request $request
      *
      * @return array|RedirectResponse
      */
@@ -121,7 +118,6 @@ class ContributorRoleController extends AbstractController implements PaginatorA
      * @Route("/new_popup", name="contributor_role_new_popup", methods={"GET","POST"})
      * @Template()
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @param Request $request
      *
      * @return array|RedirectResponse
      */
@@ -132,7 +128,6 @@ class ContributorRoleController extends AbstractController implements PaginatorA
     /**
      * @Route("/{id}", name="contributor_role_show", methods={"GET"})
      * @Template()
-     * @param ContributorRole $contributorRole
      *
      * @return array
      */
@@ -145,8 +140,6 @@ class ContributorRoleController extends AbstractController implements PaginatorA
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/{id}/edit", name="contributor_role_edit", methods={"GET","POST"})
-     * @param Request $request
-     * @param ContributorRole $contributorRole
      *
      * @Template()
      *
@@ -165,15 +158,13 @@ class ContributorRoleController extends AbstractController implements PaginatorA
 
         return [
             'contributor_role' => $contributorRole,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ];
     }
 
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/{id}", name="contributor_role_delete", methods={"DELETE"})
-     * @param Request $request
-     * @param ContributorRole $contributorRole
      *
      * @return RedirectResponse
      */

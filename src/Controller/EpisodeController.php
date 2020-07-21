@@ -1,42 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace App\Controller;
 
 use App\Entity\Episode;
 use App\Form\EpisodeType;
 use App\Repository\EpisodeRepository;
-
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/episode")
- * @IsGranted("ROLE_USER")
  */
-class EpisodeController extends AbstractController implements PaginatorAwareInterface
-{
+class EpisodeController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**
      * @Route("/", name="episode_index", methods={"GET"})
-     * @param Request $request
-     * @param EpisodeRepository $episodeRepository
      *
      * @Template()
-     *
-     * @return array
      */
-    public function index(Request $request, EpisodeRepository $episodeRepository) : array
-    {
+    public function index(Request $request, EpisodeRepository $episodeRepository) : array {
         $query = $episodeRepository->indexQuery();
         $pageSize = $this->getParameter('page_size');
         $page = $request->query->getint('page', 1);
@@ -57,7 +55,7 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
         $q = $request->query->get('q');
         if ($q) {
             $query = $episodeRepository->searchQuery($q);
-            $episodes = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), array('wrap-queries'=>true));
+            $episodes = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), ['wrap-queries' => true]);
         } else {
             $episodes = [];
         }
@@ -82,7 +80,7 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
         foreach ($episodeRepository->typeaheadSearch($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
-                'text' => (string)$result,
+                'text' => (string) $result,
             ];
         }
 
@@ -93,7 +91,6 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @Route("/new", name="episode_new", methods={"GET","POST"})
      * @Template()
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @param Request $request
      *
      * @return array|RedirectResponse
      */
@@ -121,7 +118,6 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @Route("/new_popup", name="episode_new_popup", methods={"GET","POST"})
      * @Template()
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @param Request $request
      *
      * @return array|RedirectResponse
      */
@@ -132,7 +128,6 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
     /**
      * @Route("/{id}", name="episode_show", methods={"GET"})
      * @Template()
-     * @param Episode $episode
      *
      * @return array
      */
@@ -145,8 +140,6 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/{id}/edit", name="episode_edit", methods={"GET","POST"})
-     * @param Request $request
-     * @param Episode $episode
      *
      * @Template()
      *
@@ -165,15 +158,13 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
 
         return [
             'episode' => $episode,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ];
     }
 
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/{id}", name="episode_delete", methods={"DELETE"})
-     * @param Request $request
-     * @param Episode $episode
      *
      * @return RedirectResponse
      */

@@ -83,73 +83,61 @@ class Season extends AbstractEntity {
         // TODO: Implement __toString() method.
     }
 
-    public function getNumber(): ?int
-    {
+    public function getNumber() : ?int {
         return $this->number;
     }
 
-    public function setNumber(?int $number): self
-    {
+    public function setNumber(?int $number) : self {
         $this->number = $number;
 
         return $this;
     }
 
-    public function getTitle(): ?string
-    {
+    public function getTitle() : ?string {
         return $this->title;
     }
 
-    public function setTitle(string $title): self
-    {
+    public function setTitle(string $title) : self {
         $this->title = $title;
 
         return $this;
     }
 
-    public function getAlternativeTitle(): ?string
-    {
+    public function getAlternativeTitle() : ?string {
         return $this->alternativeTitle;
     }
 
-    public function setAlternativeTitle(?string $alternativeTitle): self
-    {
+    public function setAlternativeTitle(?string $alternativeTitle) : self {
         $this->alternativeTitle = $alternativeTitle;
 
         return $this;
     }
 
-    public function getDescription(): ?string
-    {
+    public function getDescription() : ?string {
         return $this->description;
     }
 
-    public function setDescription(string $description): self
-    {
+    public function setDescription(string $description) : self {
         $this->description = $description;
 
         return $this;
     }
 
-    public function getPodcast(): ?Podcast
-    {
+    public function getPodcast() : ?Podcast {
         return $this->podcast;
     }
 
-    public function setPodcast(?Podcast $podcast): self
-    {
+    public function setPodcast(?Podcast $podcast) : self {
         $this->podcast = $podcast;
 
         return $this;
     }
 
-    public function getPublisher(): ?Publisher
-    {
+    public function getPublisher() : ?Publisher {
         return $this->publisher;
     }
 
-    public function setPublisher(?Publisher $publisher): self
-    {
+    public function setPublisher(?Publisher $publisher) : self {
         $this->publisher = $publisher;
 
         return $this;
@@ -158,14 +146,12 @@ class Season extends AbstractEntity {
     /**
      * @return Collection|Contribution[]
      */
-    public function getContributions(): Collection
-    {
+    public function getContributions() : Collection {
         return $this->contributions;
     }
 
-    public function addContribution(Contribution $contribution): self
-    {
-        if (!$this->contributions->contains($contribution)) {
+    public function addContribution(Contribution $contribution) : self {
+        if ( ! $this->contributions->contains($contribution)) {
             $this->contributions[] = $contribution;
             $contribution->setSeason($this);
         }
@@ -173,8 +159,7 @@ class Season extends AbstractEntity {
         return $this;
     }
 
-    public function removeContribution(Contribution $contribution): self
-    {
+    public function removeContribution(Contribution $contribution) : self {
         if ($this->contributions->contains($contribution)) {
             $this->contributions->removeElement($contribution);
             // set the owning side to null (unless already changed)
@@ -189,14 +174,12 @@ class Season extends AbstractEntity {
     /**
      * @return Collection|Episode[]
      */
-    public function getEpisodes(): Collection
-    {
+    public function getEpisodes() : Collection {
         return $this->episodes;
     }
 
-    public function addEpisode(Episode $episode): self
-    {
-        if (!$this->episodes->contains($episode)) {
+    public function addEpisode(Episode $episode) : self {
+        if ( ! $this->episodes->contains($episode)) {
             $this->episodes[] = $episode;
             $episode->setSeason($this);
         }
@@ -204,8 +187,7 @@ class Season extends AbstractEntity {
         return $this;
     }
 
-    public function removeEpisode(Episode $episode): self
-    {
+    public function removeEpisode(Episode $episode) : self {
         if ($this->episodes->contains($episode)) {
             $this->episodes->removeElement($episode);
             // set the owning side to null (unless already changed)

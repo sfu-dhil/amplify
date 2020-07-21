@@ -7,21 +7,19 @@
     <p class="count">
         Displaying {{ contributions|length }} contributions of {{ contributions.getTotalItemCount }} total.
     </p>
- {% endblock %} 
+{% endblock %}
 
 {% block body %}
 
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
             {% if is_granted('ROLE_ADMIN') %}
-            <a href="{{ path('contribution_new') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-plus"></span> New
-            </a>
+                <a href="{{ path('contribution_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New </a>
             {% endif %}
 
             <a href="{{ path('contribution_search') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-search"></span> Search
-            </a>
+                <span class="glyphicon glyphicon-search"></span> Search </a>
         </div>
     </div>
 
@@ -32,16 +30,16 @@
             </tr>
         </thead>
         <tbody>
-        {% for contribution in contributions %}
-            <tr>
+            {% for contribution in contributions %}
+                <tr>
 
-                <td>
-                    <a href="{{ path('contribution_show', { 'id': contribution.id }) }}">
-                        {{ contribution.id }}
-                    </a>
-                </td>
-            </tr>
-        {% endfor %}
+                    <td>
+                        <a href="{{ path('contribution_show', { 'id': contribution.id }) }}">
+                            {{ contribution.id }}
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 

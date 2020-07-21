@@ -1,42 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace App\Controller;
 
 use App\Entity\Publisher;
 use App\Form\PublisherType;
 use App\Repository\PublisherRepository;
-
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/publisher")
- * @IsGranted("ROLE_USER")
  */
-class PublisherController extends AbstractController implements PaginatorAwareInterface
-{
+class PublisherController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**
      * @Route("/", name="publisher_index", methods={"GET"})
-     * @param Request $request
-     * @param PublisherRepository $publisherRepository
      *
      * @Template()
-     *
-     * @return array
      */
-    public function index(Request $request, PublisherRepository $publisherRepository) : array
-    {
+    public function index(Request $request, PublisherRepository $publisherRepository) : array {
         $query = $publisherRepository->indexQuery();
         $pageSize = $this->getParameter('page_size');
         $page = $request->query->getint('page', 1);
@@ -57,7 +55,7 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
         $q = $request->query->get('q');
         if ($q) {
             $query = $publisherRepository->searchQuery($q);
-            $publishers = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), array('wrap-queries'=>true));
+            $publishers = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), ['wrap-queries' => true]);
         } else {
             $publishers = [];
         }
@@ -82,7 +80,7 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
         foreach ($publisherRepository->typeaheadSearch($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
-                'text' => (string)$result,
+                'text' => (string) $result,
             ];
         }
 
@@ -93,7 +91,6 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
      * @Route("/new", name="publisher_new", methods={"GET","POST"})
      * @Template()
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @param Request $request
      *
      * @return array|RedirectResponse
      */
@@ -121,7 +118,6 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
      * @Route("/new_popup", name="publisher_new_popup", methods={"GET","POST"})
      * @Template()
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @param Request $request
      *
      * @return array|RedirectResponse
      */
@@ -132,7 +128,6 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
     /**
      * @Route("/{id}", name="publisher_show", methods={"GET"})
      * @Template()
-     * @param Publisher $publisher
      *
      * @return array
      */
@@ -145,8 +140,6 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/{id}/edit", name="publisher_edit", methods={"GET","POST"})
-     * @param Request $request
-     * @param Publisher $publisher
      *
      * @Template()
      *
@@ -165,15 +158,13 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
 
         return [
             'publisher' => $publisher,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ];
     }
 
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/{id}", name="publisher_delete", methods={"DELETE"})
-     * @param Request $request
-     * @param Publisher $publisher
      *
      * @return RedirectResponse
      */

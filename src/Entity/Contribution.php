@@ -61,61 +61,51 @@ class Contribution extends AbstractEntity {
         // TODO: Implement __toString() method.
     }
 
-    public function getPerson(): ?Person
-    {
+    public function getPerson() : ?Person {
         return $this->person;
     }
 
-    public function setPerson(?Person $person): self
-    {
+    public function setPerson(?Person $person) : self {
         $this->person = $person;
 
         return $this;
     }
 
-    public function getContributorRole(): ?ContributorRole
-    {
+    public function getContributorRole() : ?ContributorRole {
         return $this->contributorRole;
     }
 
-    public function setContributorRole(?ContributorRole $contributorRole): self
-    {
+    public function setContributorRole(?ContributorRole $contributorRole) : self {
         $this->contributorRole = $contributorRole;
 
         return $this;
     }
 
-    public function getPodcast(): ?Podcast
-    {
+    public function getPodcast() : ?Podcast {
         return $this->podcast;
     }
 
-    public function setPodcast(?Podcast $podcast): self
-    {
+    public function setPodcast(?Podcast $podcast) : self {
         $this->podcast = $podcast;
 
         return $this;
     }
 
-    public function getSeason(): ?Season
-    {
+    public function getSeason() : ?Season {
         return $this->season;
     }
 
-    public function setSeason(?Season $season): self
-    {
+    public function setSeason(?Season $season) : self {
         $this->season = $season;
 
         return $this;
     }
 
-    public function getEpisode(): ?Episode
-    {
+    public function getEpisode() : ?Episode {
         return $this->episode;
     }
 
-    public function setEpisode(?Episode $episode): self
-    {
+    public function setEpisode(?Episode $episode) : self {
         $this->episode = $episode;
 
         return $this;

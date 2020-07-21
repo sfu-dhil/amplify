@@ -34,14 +34,12 @@ class ContributorRole extends AbstractTerm {
     /**
      * @return Collection|Contribution[]
      */
-    public function getContributions(): Collection
-    {
+    public function getContributions() : Collection {
         return $this->contributions;
     }
 
-    public function addContribution(Contribution $contribution): self
-    {
-        if (!$this->contributions->contains($contribution)) {
+    public function addContribution(Contribution $contribution) : self {
+        if ( ! $this->contributions->contains($contribution)) {
             $this->contributions[] = $contribution;
             $contribution->setContributorRole($this);
         }
@@ -49,8 +47,7 @@ class ContributorRole extends AbstractTerm {
         return $this;
     }
 
-    public function removeContribution(Contribution $contribution): self
-    {
+    public function removeContribution(Contribution $contribution) : self {
         if ($this->contributions->contains($contribution)) {
             $this->contributions->removeElement($contribution);
             // set the owning side to null (unless already changed)

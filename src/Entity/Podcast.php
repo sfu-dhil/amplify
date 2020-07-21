@@ -113,121 +113,101 @@ class Podcast extends AbstractEntity {
         // TODO: Implement __toString() method.
     }
 
-    public function getTitle(): ?string
-    {
+    public function getTitle() : ?string {
         return $this->title;
     }
 
-    public function setTitle(string $title): self
-    {
+    public function setTitle(string $title) : self {
         $this->title = $title;
 
         return $this;
     }
 
-    public function getAlternativeTitle(): ?string
-    {
+    public function getAlternativeTitle() : ?string {
         return $this->alternativeTitle;
     }
 
-    public function setAlternativeTitle(?string $alternativeTitle): self
-    {
+    public function setAlternativeTitle(?string $alternativeTitle) : self {
         $this->alternativeTitle = $alternativeTitle;
 
         return $this;
     }
 
-    public function getExplicit(): ?bool
-    {
+    public function getExplicit() : ?bool {
         return $this->explicit;
     }
 
-    public function setExplicit(bool $explicit): self
-    {
+    public function setExplicit(bool $explicit) : self {
         $this->explicit = $explicit;
 
         return $this;
     }
 
-    public function getDescription(): ?string
-    {
+    public function getDescription() : ?string {
         return $this->description;
     }
 
-    public function setDescription(string $description): self
-    {
+    public function setDescription(string $description) : self {
         $this->description = $description;
 
         return $this;
     }
 
-    public function getCopyright(): ?string
-    {
+    public function getCopyright() : ?string {
         return $this->copyright;
     }
 
-    public function setCopyright(string $copyright): self
-    {
+    public function setCopyright(string $copyright) : self {
         $this->copyright = $copyright;
 
         return $this;
     }
 
-    public function getCategory(): ?string
-    {
+    public function getCategory() : ?string {
         return $this->category;
     }
 
-    public function setCategory(string $category): self
-    {
+    public function setCategory(string $category) : self {
         $this->category = $category;
 
         return $this;
     }
 
-    public function getWebsite(): ?string
-    {
+    public function getWebsite() : ?string {
         return $this->website;
     }
 
-    public function setWebsite(string $website): self
-    {
+    public function setWebsite(string $website) : self {
         $this->website = $website;
 
         return $this;
     }
 
-    public function getRss(): ?string
-    {
+    public function getRss() : ?string {
         return $this->rss;
     }
 
-    public function setRss(string $rss): self
-    {
+    public function setRss(string $rss) : self {
         $this->rss = $rss;
 
         return $this;
     }
 
-    public function getTags(): ?array
-    {
+    public function getTags() : ?array {
         return $this->tags;
     }
 
-    public function setTags(array $tags): self
-    {
+    public function setTags(array $tags) : self {
         $this->tags = $tags;
 
         return $this;
     }
 
-    public function getPublisher(): ?Publisher
-    {
+    public function getPublisher() : ?Publisher {
         return $this->publisher;
     }
 
-    public function setPublisher(?Publisher $publisher): self
-    {
+    public function setPublisher(?Publisher $publisher) : self {
         $this->publisher = $publisher;
 
         return $this;
@@ -236,14 +216,12 @@ class Podcast extends AbstractEntity {
     /**
      * @return Collection|Contribution[]
      */
-    public function getContributions(): Collection
-    {
+    public function getContributions() : Collection {
         return $this->contributions;
     }
 
-    public function addContribution(Contribution $contribution): self
-    {
-        if (!$this->contributions->contains($contribution)) {
+    public function addContribution(Contribution $contribution) : self {
+        if ( ! $this->contributions->contains($contribution)) {
             $this->contributions[] = $contribution;
             $contribution->setPodcast($this);
         }
@@ -251,8 +229,7 @@ class Podcast extends AbstractEntity {
         return $this;
     }
 
-    public function removeContribution(Contribution $contribution): self
-    {
+    public function removeContribution(Contribution $contribution) : self {
         if ($this->contributions->contains($contribution)) {
             $this->contributions->removeElement($contribution);
             // set the owning side to null (unless already changed)
@@ -267,14 +244,12 @@ class Podcast extends AbstractEntity {
     /**
      * @return Collection|Season[]
      */
-    public function getSeasons(): Collection
-    {
+    public function getSeasons() : Collection {
         return $this->seasons;
     }
 
-    public function addSeason(Season $season): self
-    {
-        if (!$this->seasons->contains($season)) {
+    public function addSeason(Season $season) : self {
+        if ( ! $this->seasons->contains($season)) {
             $this->seasons[] = $season;
             $season->setPodcast($this);
         }
@@ -282,8 +257,7 @@ class Podcast extends AbstractEntity {
         return $this;
     }
 
-    public function removeSeason(Season $season): self
-    {
+    public function removeSeason(Season $season) : self {
         if ($this->seasons->contains($season)) {
             $this->seasons->removeElement($season);
             // set the owning side to null (unless already changed)
@@ -298,14 +272,12 @@ class Podcast extends AbstractEntity {
     /**
      * @return Collection|Episode[]
      */
-    public function getEpisodes(): Collection
-    {
+    public function getEpisodes() : Collection {
         return $this->episodes;
     }
 
-    public function addEpisode(Episode $episode): self
-    {
-        if (!$this->episodes->contains($episode)) {
+    public function addEpisode(Episode $episode) : self {
+        if ( ! $this->episodes->contains($episode)) {
             $this->episodes[] = $episode;
             $episode->setPodcast($this);
         }
@@ -313,8 +285,7 @@ class Podcast extends AbstractEntity {
         return $this;
     }
 
-    public function removeEpisode(Episode $episode): self
-    {
+    public function removeEpisode(Episode $episode) : self {
         if ($this->episodes->contains($episode)) {
             $this->episodes->removeElement($episode);
             // set the owning side to null (unless already changed)

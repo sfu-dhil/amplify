@@ -7,84 +7,82 @@
     <p class="count">
         Displaying {{ podcasts|length }} podcasts of {{ podcasts.getTotalItemCount }} total.
     </p>
- {% endblock %} 
+{% endblock %}
 
 {% block body %}
 
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
             {% if is_granted('ROLE_ADMIN') %}
-            <a href="{{ path('podcast_new') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-plus"></span> New
-            </a>
+                <a href="{{ path('podcast_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New </a>
             {% endif %}
 
             <a href="{{ path('podcast_search') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-search"></span> Search
-            </a>
+                <span class="glyphicon glyphicon-search"></span> Search </a>
         </div>
     </div>
 
     <table class="table table-bordered table-condensed table-hover table-striped">
         <thead>
             <tr>
-                <th>ID</th>                                           <th>Title</th>
-                                                               <th>Alternative Title</th>
-                                                               <th>Explicit</th>
-                                                               <th>Description</th>
-                                                               <th>Copyright</th>
-                                                               <th>Category</th>
-                                                               <th>Website</th>
-                                                               <th>Rss</th>
-                                                               <th>Tags</th>
-                    
+                <th>ID</th>
+                <th>Title</th>
+                <th>Alternative Title</th>
+                <th>Explicit</th>
+                <th>Description</th>
+                <th>Copyright</th>
+                <th>Category</th>
+                <th>Website</th>
+                <th>Rss</th>
+                <th>Tags</th>
+
             </tr>
         </thead>
         <tbody>
-        {% for podcast in podcasts %}
-            <tr>
+            {% for podcast in podcasts %}
+                <tr>
 
-                <td>
-                    <a href="{{ path('podcast_show', { 'id': podcast.id }) }}">
-                        {{ podcast.id }}
-                    </a>
-                </td>
-                <td>
-                    {{ podcast.title }}
-                </td>
-            
-                <td>
-                    {{ podcast.alternativeTitle }}
-                </td>
-            
-                <td>{% if podcast.explicit %}Yes{% else %}No{% endif %}</td>
+                    <td>
+                        <a href="{{ path('podcast_show', { 'id': podcast.id }) }}">
+                            {{ podcast.id }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ podcast.title }}
+                    </td>
 
-            
-            
-                <td>
-                    {{ podcast.description }}
-                </td>
-            
-                <td>
-                    {{ podcast.copyright }}
-                </td>
-            
-                <td>
-                    {{ podcast.category }}
-                </td>
-            
-                <td>
-                    {{ podcast.website }}
-                </td>
-            
-                <td>
-                    {{ podcast.rss }}
-                </td>
-            
-                <td>{% if podcast.tags %}{{ podcast.tags|join(', ') }}{% endif %}</td>
-            
-            </tr>
-        {% endfor %}
+                    <td>
+                        {{ podcast.alternativeTitle }}
+                    </td>
+
+                    <td>{% if podcast.explicit %}Yes{% else %}No{% endif %}</td>
+
+
+                    <td>
+                        {{ podcast.description }}
+                    </td>
+
+                    <td>
+                        {{ podcast.copyright }}
+                    </td>
+
+                    <td>
+                        {{ podcast.category }}
+                    </td>
+
+                    <td>
+                        {{ podcast.website }}
+                    </td>
+
+                    <td>
+                        {{ podcast.rss }}
+                    </td>
+
+                    <td>{% if podcast.tags %}{{ podcast.tags|join(', ') }}{% endif %}</td>
+
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 

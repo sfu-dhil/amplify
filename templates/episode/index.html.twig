@@ -7,92 +7,91 @@
     <p class="count">
         Displaying {{ episodes|length }} episodes of {{ episodes.getTotalItemCount }} total.
     </p>
- {% endblock %} 
+{% endblock %}
 
 {% block body %}
 
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
             {% if is_granted('ROLE_ADMIN') %}
-            <a href="{{ path('episode_new') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-plus"></span> New
-            </a>
+                <a href="{{ path('episode_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New </a>
             {% endif %}
 
             <a href="{{ path('episode_search') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-search"></span> Search
-            </a>
+                <span class="glyphicon glyphicon-search"></span> Search </a>
         </div>
     </div>
 
     <table class="table table-bordered table-condensed table-hover table-striped">
         <thead>
             <tr>
-                <th>ID</th>                                           <th>Number</th>
-                                                               <th>Date</th>
-                                                               <th>Run Time</th>
-                                                               <th>Title</th>
-                                                               <th>Alternative Title</th>
-                                                               <th>Language</th>
-                                                               <th>Tags</th>
-                                                               <th>References</th>
-                                                               <th>Copyright</th>
-                                                               <th>Transcript</th>
-                                                               <th>Abstract</th>
-                    
+                <th>ID</th>
+                <th>Number</th>
+                <th>Date</th>
+                <th>Run Time</th>
+                <th>Title</th>
+                <th>Alternative Title</th>
+                <th>Language</th>
+                <th>Tags</th>
+                <th>References</th>
+                <th>Copyright</th>
+                <th>Transcript</th>
+                <th>Abstract</th>
+
             </tr>
         </thead>
         <tbody>
-        {% for episode in episodes %}
-            <tr>
+            {% for episode in episodes %}
+                <tr>
 
-                <td>
-                    <a href="{{ path('episode_show', { 'id': episode.id }) }}">
-                        {{ episode.id }}
-                    </a>
-                </td>
-                <td>
-                    {{ episode.number }}
-                </td>
-            
-                <td>{% if episode.date %}{{ episode.date|date('Y-m-d') }}{% endif %}</td>
-            
-                <td>
-                    {{ episode.runTime }}
-                </td>
-            
-                <td>
-                    {{ episode.title }}
-                </td>
-            
-                <td>
-                    {{ episode.alternativeTitle }}
-                </td>
-            
-                <td>
-                    {{ episode.language }}
-                </td>
-            
-                <td>{% if episode.tags %}{{ episode.tags|join(', ') }}{% endif %}</td>
-            
-                <td>
-                    {{ episode.references }}
-                </td>
-            
-                <td>
-                    {{ episode.copyright }}
-                </td>
-            
-                <td>
-                    {{ episode.transcript }}
-                </td>
-            
-                <td>
-                    {{ episode.abstract }}
-                </td>
-            
-            </tr>
-        {% endfor %}
+                    <td>
+                        <a href="{{ path('episode_show', { 'id': episode.id }) }}">
+                            {{ episode.id }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ episode.number }}
+                    </td>
+
+                    <td>{% if episode.date %}{{ episode.date|date('Y-m-d') }}{% endif %}</td>
+
+                    <td>
+                        {{ episode.runTime }}
+                    </td>
+
+                    <td>
+                        {{ episode.title }}
+                    </td>
+
+                    <td>
+                        {{ episode.alternativeTitle }}
+                    </td>
+
+                    <td>
+                        {{ episode.language }}
+                    </td>
+
+                    <td>{% if episode.tags %}{{ episode.tags|join(', ') }}{% endif %}</td>
+
+                    <td>
+                        {{ episode.references }}
+                    </td>
+
+                    <td>
+                        {{ episode.copyright }}
+                    </td>
+
+                    <td>
+                        {{ episode.transcript }}
+                    </td>
+
+                    <td>
+                        {{ episode.abstract }}
+                    </td>
+
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 

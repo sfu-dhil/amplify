@@ -2,27 +2,26 @@
 
 {% block title %}Contributor Role Details {% endblock %}
 
- {% block pageheader %} 
-    <h1>Contributor Role Details</h1>
- {% endblock %} 
+ {% block pageheader %}
+     <h1>Contributor Role Details</h1>
+ {% endblock %}
 
 {% block body %}
 
     {% if is_granted('ROLE_ADMIN') %}
-    <div class='btn-toolbar pull-right'>
-        <div class='btn-group'>
-            <a href="{{ path('contributor_role_edit', {'id': contributor_role.id }) }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-edit"></span> Edit
-            </a>
+        <div class='btn-toolbar pull-right'>
+            <div class='btn-group'>
+                <a href="{{ path('contributor_role_edit', {'id': contributor_role.id }) }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-edit"></span> Edit </a>
+            </div>
+            <div class='btn-group'>
+                <form class='delete-form' method="post" action="{{ path('contributor_role_delete', {'id': contributor_role.id }) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="_token" value="{{ csrf_token("delete" ~ contributor_role.id) }}">
+                    <button class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+                </form>
+            </div>
         </div>
-        <div class='btn-group'>
-            <form class='delete-form' method="post" action="{{ path('contributor_role_delete', {'id': contributor_role.id }) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
-                <input type="hidden" name="_method" value="DELETE">
-                <input type="hidden" name="_token" value="{{ csrf_token("delete" ~ contributor_role.id) }}">
-                <button class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> Delete</button>
-            </form>
-        </div>
-    </div>
     {% endif %}
 
     <table class="table table-bordered table-condensed table-hover table-striped">
@@ -31,22 +30,22 @@
                 <th>Name</th>
                 <td>{{ contributor_role.name }}</td>
             </tr>
-        <tr>
+            <tr>
                 <th>Label</th>
                 <td>{{ contributor_role.label }}</td>
             </tr>
-        <tr>
+            <tr>
                 <th>Description</th>
                 <td>{{ contributor_role.description }}</td>
             </tr>
-                <tr>
-            <th>Created</th>
-            <td>{{ contributor_role.created|date }}</td>
-        </tr>
-        <tr>
-            <th>Updated</th>
-            <td>{{ contributor_role.updated|date }}</td>
-        </tr>
+            <tr>
+                <th>Created</th>
+                <td>{{ contributor_role.created|date }}</td>
+            </tr>
+            <tr>
+                <th>Updated</th>
+                <td>{{ contributor_role.updated|date }}</td>
+            </tr>
         </tbody>
     </table>
 

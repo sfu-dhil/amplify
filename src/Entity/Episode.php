@@ -67,7 +67,7 @@ class Episode extends AbstractEntity {
 
     /**
      * @var string
-     * @ORM\Column(type="text")
+     * @ORM\Column(name="biblography", type="text")
      */
     private $references;
 
@@ -129,157 +129,131 @@ class Episode extends AbstractEntity {
         // TODO: Implement __toString() method.
     }
 
-    public function getNumber(): ?int
-    {
+    public function getNumber() : ?int {
         return $this->number;
     }
 
-    public function setNumber(int $number): self
-    {
+    public function setNumber(int $number) : self {
         $this->number = $number;
 
         return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
-    {
+    public function getDate() : ?\DateTimeInterface {
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): self
-    {
+    public function setDate(\DateTimeInterface $date) : self {
         $this->date = $date;
 
         return $this;
     }
 
-    public function getRunTime(): ?int
-    {
+    public function getRunTime() : ?int {
         return $this->runTime;
     }
 
-    public function setRunTime(int $runTime): self
-    {
+    public function setRunTime(int $runTime) : self {
         $this->runTime = $runTime;
 
         return $this;
     }
 
-    public function getTitle(): ?string
-    {
+    public function getTitle() : ?string {
         return $this->title;
     }
 
-    public function setTitle(string $title): self
-    {
+    public function setTitle(string $title) : self {
         $this->title = $title;
 
         return $this;
     }
 
-    public function getAlternativeTitle(): ?string
-    {
+    public function getAlternativeTitle() : ?string {
         return $this->alternativeTitle;
     }
 
-    public function setAlternativeTitle(?string $alternativeTitle): self
-    {
+    public function setAlternativeTitle(?string $alternativeTitle) : self {
         $this->alternativeTitle = $alternativeTitle;
 
         return $this;
     }
 
-    public function getLanguage(): ?string
-    {
+    public function getLanguage() : ?string {
         return $this->language;
     }
 
-    public function setLanguage(string $language): self
-    {
+    public function setLanguage(string $language) : self {
         $this->language = $language;
 
         return $this;
     }
 
-    public function getTags(): ?array
-    {
+    public function getTags() : ?array {
         return $this->tags;
     }
 
-    public function setTags(array $tags): self
-    {
+    public function setTags(array $tags) : self {
         $this->tags = $tags;
 
         return $this;
     }
 
-    public function getReferences(): ?string
-    {
+    public function getReferences() : ?string {
         return $this->references;
     }
 
-    public function setReferences(string $references): self
-    {
+    public function setReferences(string $references) : self {
         $this->references = $references;
 
         return $this;
     }
 
-    public function getCopyright(): ?string
-    {
+    public function getCopyright() : ?string {
         return $this->copyright;
     }
 
-    public function setCopyright(string $copyright): self
-    {
+    public function setCopyright(string $copyright) : self {
         $this->copyright = $copyright;
 
         return $this;
     }
 
-    public function getTranscript(): ?string
-    {
+    public function getTranscript() : ?string {
         return $this->transcript;
     }
 
-    public function setTranscript(string $transcript): self
-    {
+    public function setTranscript(string $transcript) : self {
         $this->transcript = $transcript;
 
         return $this;
     }
 
-    public function getAbstract(): ?string
-    {
+    public function getAbstract() : ?string {
         return $this->abstract;
     }
 
-    public function setAbstract(string $abstract): self
-    {
+    public function setAbstract(string $abstract) : self {
         $this->abstract = $abstract;
 
         return $this;
     }
 
-    public function getSeason(): ?Season
-    {
+    public function getSeason() : ?Season {
         return $this->season;
     }
 
-    public function setSeason(?Season $season): self
-    {
+    public function setSeason(?Season $season) : self {
         $this->season = $season;
 
         return $this;
     }
 
-    public function getPodcast(): ?Podcast
-    {
+    public function getPodcast() : ?Podcast {
         return $this->podcast;
     }
 
-    public function setPodcast(?Podcast $podcast): self
-    {
+    public function setPodcast(?Podcast $podcast) : self {
         $this->podcast = $podcast;
 
         return $this;
@@ -288,22 +262,19 @@ class Episode extends AbstractEntity {
     /**
      * @return Collection|Subject[]
      */
-    public function getSubjects(): Collection
-    {
+    public function getSubjects() : Collection {
         return $this->subjects;
     }
 
-    public function addSubject(Subject $subject): self
-    {
-        if (!$this->subjects->contains($subject)) {
+    public function addSubject(Subject $subject) : self {
+        if ( ! $this->subjects->contains($subject)) {
             $this->subjects[] = $subject;
         }
 
         return $this;
     }
 
-    public function removeSubject(Subject $subject): self
-    {
+    public function removeSubject(Subject $subject) : self {
         if ($this->subjects->contains($subject)) {
             $this->subjects->removeElement($subject);
         }
@@ -314,14 +285,12 @@ class Episode extends AbstractEntity {
     /**
      * @return Collection|Contribution[]
      */
-    public function getContributions(): Collection
-    {
+    public function getContributions() : Collection {
         return $this->contributions;
     }
 
-    public function addContribution(Contribution $contribution): self
-    {
-        if (!$this->contributions->contains($contribution)) {
+    public function addContribution(Contribution $contribution) : self {
+        if ( ! $this->contributions->contains($contribution)) {
             $this->contributions[] = $contribution;
             $contribution->setEpisode($this);
         }
@@ -329,8 +298,7 @@ class Episode extends AbstractEntity {
         return $this;
     }
 
-    public function removeContribution(Contribution $contribution): self
-    {
+    public function removeContribution(Contribution $contribution) : self {
         if ($this->contributions->contains($contribution)) {
             $this->contributions->removeElement($contribution);
             // set the owning side to null (unless already changed)
