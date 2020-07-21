@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Publisher List{% endblock %}
+
+{% block pageheader %}
+    <h1>Publisher List</h1>
+    <p class="count">
+        Displaying {{ publishers|length }} publishers of {{ publishers.getTotalItemCount }} total.
+    </p>
+ {% endblock %} 
+
+{% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('publisher_new') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-plus"></span> New
+            </a>
+            {% endif %}
+
+            <a href="{{ path('publisher_search') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search
+            </a>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>                                           <th>Name</th>
+                                                               <th>Location</th>
+                                                               <th>Website</th>
+                                                               <th>Description</th>
+                                                               <th>Contact</th>
+                    
+            </tr>
+        </thead>
+        <tbody>
+        {% for publisher in publishers %}
+            <tr>
+
+                <td>
+                    <a href="{{ path('publisher_show', { 'id': publisher.id }) }}">
+                        {{ publisher.id }}
+                    </a>
+                </td>
+                <td>
+                    {{ publisher.name }}
+                </td>
+            
+                <td>
+                    {{ publisher.location }}
+                </td>
+            
+                <td>
+                    {{ publisher.website }}
+                </td>
+            
+                <td>
+                    {{ publisher.description }}
+                </td>
+            
+                <td>
+                    {{ publisher.contact }}
+                </td>
+            
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="navigation">
+        {{ knp_pagination_render(publishers) }}
+    </div>
+
+{% endblock %}

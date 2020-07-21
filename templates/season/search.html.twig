@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Season Search{% endblock %}
+
+ {% block pageheader %} 
+    <h1>Season Search</h1>
+    {% if seasons|length %}
+    <p class="count">
+        Displaying {{ seasons|length }} seasons of {{ seasons.getTotalItemCount }} total.
+    </p>
+	{% endif %}
+ {% endblock %} 
+
+{% block body %}
+
+    <form method="get" action="{{ path('season_search') }}" class="form-horizontal">
+        <fieldset>
+            <legend>Search</legend>
+            <div class='form-group'>
+                <label class='col-sm-2 control-label' for='q'>Search term</label>
+                <div class='col-sm-10'>
+                    <div class='input-group'>
+                        <input type='text' name='q' id='q' class='form-control' value='{{ q }}'>
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="submit">
+                                <span class='glyphicon glyphicon-search'></span>
+                                Search
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <p>	Full text searching options, if available:</p>
+            <ul>
+                <li><code>shakespeare</code> - shakespeare should be present, but might not be</li>
+                <li><code>shakes*</code> - words starting with shakes should be present</li>
+                <li><code>+agnes</code> - agnes must be present</li>
+                <li><code>-fisher</code> - fisher must not be present</li>
+                <li>Combinations are OK: <code>+agnes -fisher</code> finds Anges who isn't a Fisher</li>
+                <li>Phrases are OK: <code>"nee agnes"</code> finds rows that contain the literal phrase.
+            </ul>
+        </fieldset>
+    </form>
+
+	{% if seasons|length %}
+<table class="table table-bordered table-condensed table-hover table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+                <th>Number</th>
+                <th>Title</th>
+                <th>Alternative Title</th>
+                <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for season in seasons %}
+        <tr>
+
+            <td>
+                <a href="{{ path('season_show', { 'id': season.id }) }}">
+                    {{ season.id }}
+                </a>
+            </td>
+                        <td>
+                            {{ season.number }}
+                        </td>
+                
+                        <td>
+                            {{ season.title }}
+                        </td>
+                
+                        <td>
+                            {{ season.alternativeTitle }}
+                        </td>
+                
+                        <td>
+                            {{ season.description }}
+                        </td>
+                
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+    <div class="navigation">
+        {{ knp_pagination_render(seasons) }}
+    </div>
+	{% endif %}
+
+{% endblock %}
+

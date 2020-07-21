@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\SubjectRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractTerm;
@@ -27,5 +28,34 @@ class Subject extends AbstractTerm {
 
     public function __construct() {
         parent::__construct();
+        $this->episodes = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection|Episode[]
+     */
+    public function getEpisodes(): Collection
+    {
+        return $this->episodes;
+    }
+
+    public function addEpisode(Episode $episode): self
+    {
+        if (!$this->episodes->contains($episode)) {
+            $this->episodes[] = $episode;
+            $episode->addSubject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEpisode(Episode $episode): self
+    {
+        if ($this->episodes->contains($episode)) {
+            $this->episodes->removeElement($episode);
+            $episode->removeSubject($this);
+        }
+
+        return $this;
     }
 }

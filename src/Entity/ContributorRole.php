@@ -30,4 +30,35 @@ class ContributorRole extends AbstractTerm {
         parent::__construct();
         $this->contributions = new ArrayCollection();
     }
+
+    /**
+     * @return Collection|Contribution[]
+     */
+    public function getContributions(): Collection
+    {
+        return $this->contributions;
+    }
+
+    public function addContribution(Contribution $contribution): self
+    {
+        if (!$this->contributions->contains($contribution)) {
+            $this->contributions[] = $contribution;
+            $contribution->setContributorRole($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContribution(Contribution $contribution): self
+    {
+        if ($this->contributions->contains($contribution)) {
+            $this->contributions->removeElement($contribution);
+            // set the owning side to null (unless already changed)
+            if ($contribution->getContributorRole() === $this) {
+                $contribution->setContributorRole(null);
+            }
+        }
+
+        return $this;
+    }
 }

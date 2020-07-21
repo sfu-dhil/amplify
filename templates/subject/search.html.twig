@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Subject Search{% endblock %}
+
+ {% block pageheader %} 
+    <h1>Subject Search</h1>
+    {% if subjects|length %}
+    <p class="count">
+        Displaying {{ subjects|length }} subjects of {{ subjects.getTotalItemCount }} total.
+    </p>
+	{% endif %}
+ {% endblock %} 
+
+{% block body %}
+
+    <form method="get" action="{{ path('subject_search') }}" class="form-horizontal">
+        <fieldset>
+            <legend>Search</legend>
+            <div class='form-group'>
+                <label class='col-sm-2 control-label' for='q'>Search term</label>
+                <div class='col-sm-10'>
+                    <div class='input-group'>
+                        <input type='text' name='q' id='q' class='form-control' value='{{ q }}'>
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="submit">
+                                <span class='glyphicon glyphicon-search'></span>
+                                Search
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <p>	Full text searching options, if available:</p>
+            <ul>
+                <li><code>shakespeare</code> - shakespeare should be present, but might not be</li>
+                <li><code>shakes*</code> - words starting with shakes should be present</li>
+                <li><code>+agnes</code> - agnes must be present</li>
+                <li><code>-fisher</code> - fisher must not be present</li>
+                <li>Combinations are OK: <code>+agnes -fisher</code> finds Anges who isn't a Fisher</li>
+                <li>Phrases are OK: <code>"nee agnes"</code> finds rows that contain the literal phrase.
+            </ul>
+        </fieldset>
+    </form>
+
+	{% if subjects|length %}
+<table class="table table-bordered table-condensed table-hover table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+                <th>Name</th>
+                <th>Label</th>
+                <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for subject in subjects %}
+        <tr>
+
+            <td>
+                <a href="{{ path('subject_show', { 'id': subject.id }) }}">
+                    {{ subject.id }}
+                </a>
+            </td>
+                        <td>
+                            {{ subject.name }}
+                        </td>
+                
+                        <td>
+                            {{ subject.label }}
+                        </td>
+                
+                        <td>
+                            {{ subject.description }}
+                        </td>
+                
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+    <div class="navigation">
+        {{ knp_pagination_render(subjects) }}
+    </div>
+	{% endif %}
+
+{% endblock %}
+

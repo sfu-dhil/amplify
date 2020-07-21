@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contributor Role List{% endblock %}
+
+{% block pageheader %}
+    <h1>Contributor Role List</h1>
+    <p class="count">
+        Displaying {{ contributor_roles|length }} contributor_roles of {{ contributor_roles.getTotalItemCount }} total.
+    </p>
+ {% endblock %} 
+
+{% block body %}
+
+    <div class='btn-toolbar pull-right'>
+        <div class='btn-group'>
+            {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('contributor_role_new') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-plus"></span> New
+            </a>
+            {% endif %}
+
+            <a href="{{ path('contributor_role_search') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search
+            </a>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>                                           <th>Name</th>
+                                                               <th>Label</th>
+                                                               <th>Description</th>
+                    
+            </tr>
+        </thead>
+        <tbody>
+        {% for contributor_role in contributor_roles %}
+            <tr>
+
+                <td>
+                    <a href="{{ path('contributor_role_show', { 'id': contributor_role.id }) }}">
+                        {{ contributor_role.id }}
+                    </a>
+                </td>
+                <td>
+                    {{ contributor_role.name }}
+                </td>
+            
+                <td>
+                    {{ contributor_role.label }}
+                </td>
+            
+                <td>
+                    {{ contributor_role.description }}
+                </td>
+            
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="navigation">
+        {{ knp_pagination_render(contributor_roles) }}
+    </div>
+
+{% endblock %}
