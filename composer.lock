@@ -8,21 +8,21 @@
     "packages": [
         {
             "name": "composer/package-versions-deprecated",
-            "version": "1.10.99",
+            "version": "1.10.99.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/package-versions-deprecated.git",
-                "reference": "dd51b4443d58b34b6d9344cf4c288e621c9a826f"
+                "reference": "68c9b502036e820c33445ff4d174327f6bb87486"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/package-versions-deprecated/zipball/dd51b4443d58b34b6d9344cf4c288e621c9a826f",
-                "reference": "dd51b4443d58b34b6d9344cf4c288e621c9a826f",
+                "url": "https://api.github.com/repos/composer/package-versions-deprecated/zipball/68c9b502036e820c33445ff4d174327f6bb87486",
+                "reference": "68c9b502036e820c33445ff4d174327f6bb87486",
                 "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^1.1.0 || ^2.0",
-                "php": "^7"
+                "php": "^7 || ^8"
             },
             "replace": {
                 "ocramius/package-versions": "1.10.99"
@@ -73,7 +73,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-07-15T08:39:18+00:00"
+            "time": "2020-08-13T12:55:41+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -2218,16 +2218,16 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "5.2.0",
+            "version": "5.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "3170448f5769fe19f456173d833734e0ff1b84df"
+                "reference": "d870572532cd70bc3fab58f2e23ad423c8404c44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/3170448f5769fe19f456173d833734e0ff1b84df",
-                "reference": "3170448f5769fe19f456173d833734e0ff1b84df",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/d870572532cd70bc3fab58f2e23ad423c8404c44",
+                "reference": "d870572532cd70bc3fab58f2e23ad423c8404c44",
                 "shasum": ""
             },
             "require": {
@@ -2266,7 +2266,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2020-07-20T20:05:34+00:00"
+            "time": "2020-08-15T11:14:08+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -7903,12 +7903,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ubermichael/nines-bundles.git",
-                "reference": "7dc28c16c5d96ed52908ef0a068c91aff3945c3d"
+                "reference": "23ee5d832f20471ca331a805b39c727a3e57c684"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ubermichael/nines-bundles/zipball/7dc28c16c5d96ed52908ef0a068c91aff3945c3d",
-                "reference": "7dc28c16c5d96ed52908ef0a068c91aff3945c3d",
+                "url": "https://api.github.com/repos/ubermichael/nines-bundles/zipball/23ee5d832f20471ca331a805b39c727a3e57c684",
+                "reference": "23ee5d832f20471ca331a805b39c727a3e57c684",
                 "shasum": ""
             },
             "require": {
@@ -7954,7 +7954,7 @@
                 "source": "https://github.com/ubermichael/nines-bundles/tree/4.x",
                 "issues": "https://github.com/ubermichael/nines-bundles/issues"
             },
-            "time": "2020-08-04T20:33:35+00:00"
+            "time": "2020-08-17T16:47:40+00:00"
         },
         {
             "name": "webmozart/assert",
