@@ -1,0 +1,145 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Audio Details {% endblock %}
+
+ {% block pageheader %}
+     <h1>Audio Details</h1>
+ {% endblock %}
+
+{% block body %}
+
+    {% set episode = audio.episode %}
+
+    <div class='well'>
+        <figure>
+            <audio controls src='{{ path('episode_play_audio', {'id': episode.id}) }}' type='{{ audio.mimeType }}'></audio>
+            <figcaption>Listen to the podcast episode <i>{{ episode.podcast }} - {{ audio.episode }}</i></figcaption>
+        </figure>
+    </div>
+
+    <h2>Metadata</h2>
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <tbody>
+            <tr>
+                <th>Public</th>
+                <td>{% if audio.public %}Yes{% else %}No{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Original Name</th>
+                <td>{{ audio.originalName }}</td>
+            </tr>
+            <tr>
+                <th>Audio Path</th>
+                <td>{{ audio.audioPath }}</td>
+            </tr>
+            <tr>
+                <th>Mime Type</th>
+                <td>{{ audio.mimeType }}</td>
+            </tr>
+            <tr>
+                <th>File Size</th>
+                <td>{{ audio.fileSize }}</td>
+            </tr>
+            <tr>
+                <th>Created</th>
+                <td>{{ audio.created|date }}</td>
+            </tr>
+            <tr>
+                <th>Updated</th>
+                <td>{{ audio.updated|date }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Episode Details</h2>
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <tbody>
+            <tr>
+                <th>Number</th>
+                <td>{{ episode.number }}</td>
+            </tr>
+            <tr>
+                <th>Date</th>
+                <td>{% if episode.date %}{{ episode.date|date('Y-m-d') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Run Time</th>
+                <td>{{ episode.runTime }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ episode.title }}</td>
+            </tr>
+            <tr>
+                <th>Alternative Title</th>
+                <td>{{ episode.alternativeTitle }}</td>
+            </tr>
+            <tr>
+                <th>Podcast</th>
+                <td>
+                    <a href='{{ path('podcast_show', {'id': episode.podcast.id}) }}'>
+                        {{ episode.podcast }}
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th>Season</th>
+                <td>
+                    {% if episode.season %}
+                        <a href='{{ path('season_show', {'id': episode.season.id}) }}'>
+                            {{ episode.season }}
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Language</th>
+                <td>{{ episode.language }}</td>
+            </tr>
+            <tr>
+                <th>Tags</th>
+                <td>{% if episode.tags %}{{ episode.tags|join(', ') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>References</th>
+                <td>{{ episode.references }}</td>
+            </tr>
+            <tr>
+                <th>Copyright</th>
+                <td>{{ episode.copyright }}</td>
+            </tr>
+            <tr>
+                <th>Transcript</th>
+                <td>{{ episode.transcript }}</td>
+            </tr>
+            <tr>
+                <th>Abstract</th>
+                <td>{{ episode.abstract }}</td>
+            </tr>
+            <tr>
+                <th>Created</th>
+                <td>{{ episode.created|date }}</td>
+            </tr>
+            <tr>
+                <th>Updated</th>
+                <td>{{ episode.updated|date }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    {% if episode.contributions|length > 0 %}
+        <h2>Contributors</h2>
+        <ul>
+            {% for contribution in episode.contributions %}
+                <li>
+                    <a href='{{ path('person_show', {'id': contribution.person.id}) }}'>
+                        {{ contribution.person -}}
+                    </a>
+                    {{ contribution.contributorRole }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+
+{% endblock %}

@@ -20,6 +20,8 @@ parameters:
 
     page_size: 25
 
+    amplify.image.dir: '%env(string:AMPLIFY_IMAGE_DIR)%'
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -39,7 +41,20 @@ services:
         public: true
         tags: ['controller.service_arguments', 'knp_paginator.injectable']
 
+    App\EventListener\AudioListener:
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+            - { name: doctrine.event_listener, event: postLoad }
+            - { name: doctrine.event_listener, event: postRemove }
+
     App\Menu\Builder:
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: main}
             - { name: knp_menu.menu_builder, method: footerMenu, alias: footer}
+
+    App\Services\FileUploader:
+        arguments:
+            $root: '%kernel.project_dir%'
+        calls:
+            - [ setUploadDir, [ '%amplify.image.dir%/%kernel.environment%'] ]

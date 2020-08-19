@@ -102,6 +102,9 @@ class Builder implements ContainerAwareInterface {
                 'role' => 'separator',
                 'class' => 'divider',
             ]);
+            $browse->addChild('Audio Files', [
+                'route' => 'audio_index',
+            ]);
             $browse->addChild('Contributions', [
                 'route' => 'contribution_index',
             ]);

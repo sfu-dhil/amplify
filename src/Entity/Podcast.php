@@ -15,6 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PodcastRepository::class)
@@ -59,12 +60,20 @@ class Podcast extends AbstractEntity {
     /**
      * @var string
      * @ORM\Column(type="text")
+     * @Assert\Url(
+     *     normalizer="trim",
+     *     protocols={"http", "https"}
+     * )
      */
     private $website;
 
     /**
      * @var string
      * @ORM\Column(type="string")
+     * @Assert\Url(
+     *     normalizer="trim",
+     *     protocols={"http", "https"}
+     * )
      */
     private $rss;
 
