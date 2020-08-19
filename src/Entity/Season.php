@@ -67,6 +67,7 @@ class Season extends AbstractEntity {
     /**
      * @var Collection|Episode[]
      * @ORM\OneToMany(targetEntity="Episode", mappedBy="season")
+     * @ORM\OrderBy({"date"="ASC", "number"="ASC","title"="ASC"})
      */
     private $episodes;
 
@@ -111,6 +112,14 @@ class Season extends AbstractEntity {
         $this->alternativeTitle = $alternativeTitle;
 
         return $this;
+    }
+
+    public function getFirstEpisode() : ?Episode {
+        return $this->episodes->first();
+    }
+
+    public function getLastEpisode() : ?Episode {
+        return $this->episodes->last();
     }
 
     public function getDescription() : ?string {
