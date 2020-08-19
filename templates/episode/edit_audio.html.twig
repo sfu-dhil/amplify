@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Audio {% endblock %}
+
+{% block body %}
+    <h1>Edit Audio</h1>
+
+    <p>Replace this audio file?</p>
+    <div class='well'>
+        <div class='row'>
+            <div class='col-sm-6'>
+                <figure>
+                    <audio controls src='{{ path('episode_play_audio', {'id': audio.episode.id}) }}' type='{{ audio.mimeType }}'></audio>
+                    <figcaption>Listen to the podcast episode</figcaption>
+                </figure>
+            </div>
+            <div class='col-sm-6'>
+                <dl class='dl-horizontal'>
+                    <dt>Public</dt>
+                    <dd>{{ audio.public ? 'Yes' : 'No' }}</dd>
+                    <dt>File name</dt>
+                    <dd>{{ audio.originalName }}</dd>
+                    <dt>Mime type</dt>
+                    <dd>{{ audio.mimeType }}</dd>
+                    <dt>File size</dt>
+                    <dd>{{ audio.fileSize }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <div class="form-group">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10">
+            <input type="submit" value="Update" class="btn btn-primary" />
+            <a href="{{ path('audio_index') }}" class="btn btn-warning">Cancel</a>
+        </div>
+    </div>
+    {{ form_end(form) }}
+
+{% endblock %}

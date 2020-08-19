@@ -1,4 +1,7 @@
 {
+    "alchemy/binary-driver": {
+        "version": "v5.2.0"
+    },
     "composer/package-versions-deprecated": {
         "version": "1.10.99"
     },
@@ -99,6 +102,9 @@
     "egulias/email-validator": {
         "version": "2.1.18"
     },
+    "evenement/evenement": {
+        "version": "v3.0.1"
+    },
     "guzzlehttp/guzzle": {
         "version": "6.5.5"
     },
@@ -126,6 +132,9 @@
     "monolog/monolog": {
         "version": "1.25.4"
     },
+    "neutron/temporary-filesystem": {
+        "version": "2.4"
+    },
     "nikic/php-parser": {
         "version": "v4.6.0"
     },
@@ -137,6 +146,9 @@
     },
     "php": {
         "version": "7.2"
+    },
+    "php-ffmpeg/php-ffmpeg": {
+        "version": "v0.16"
     },
     "phpdocumentor/reflection-common": {
         "version": "2.2.0"

@@ -25,7 +25,7 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface {
 
             $fixture->setTitle('New Title ' . $i);
             $fixture->setAlternativeTitle('New AlternativeTitle ' . $i);
-            $fixture->setExplicit($i % 2 === 0);
+            $fixture->setExplicit(0 === $i % 2);
             $fixture->setDescription('New Description ' . $i);
             $fixture->setCopyright('New Copyright ' . $i);
             $fixture->setCategory('New Category ' . $i);

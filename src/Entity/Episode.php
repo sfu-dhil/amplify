@@ -90,6 +90,12 @@ class Episode extends AbstractEntity {
     private $abstract;
 
     /**
+     * @var Audio
+     * @ORM\OneToOne(targetEntity="App\Entity\Audio", mappedBy="episode")
+     */
+    private $audio;
+
+    /**
      * @var null|Season
      * @ORM\ManyToOne(targetEntity="Season", inversedBy="episodes")
      * @ORM\JoinColumn(nullable=true)
@@ -306,6 +312,16 @@ class Episode extends AbstractEntity {
                 $contribution->setEpisode(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAudio() : ?Audio {
+        return $this->audio;
+    }
+
+    public function setAudio(Audio $audio) : self {
+        $this->audio = $audio;
 
         return $this;
     }

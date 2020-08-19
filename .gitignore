@@ -25,3 +25,5 @@
 # Yarn packages.
 public/yarn
 deploy.yaml
+*.sql
+data

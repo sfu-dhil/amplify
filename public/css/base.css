@@ -31,6 +31,10 @@ a.dropdown-toggle::after {
 
 /* Custom app styles */
 
+audio {
+    width: 100%;
+}
+
 label.required::after {
     content: ' *';
     color: red;
