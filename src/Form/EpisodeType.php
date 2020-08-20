@@ -34,7 +34,7 @@ class EpisodeType extends AbstractType {
             ],
         ]);
         $builder->add('date', null, [
-            'label' => 'Date',
+            'label' => 'Publication Date',
             'required' => true,
             'attr' => [
                 'help_block' => '',
