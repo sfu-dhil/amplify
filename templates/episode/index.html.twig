@@ -30,6 +30,7 @@
                 <th>Date</th>
                 <th>Run Time</th>
                 <th>Title</th>
+                <th>Preserved</th>
             </tr>
         </thead>
         <tbody>
@@ -52,6 +53,9 @@
 
                     <td>
                         {{ episode.title }}
+                    </td>
+                    <td>
+                        {{ season.preserved ? 'Yes' : 'No' }}
                     </td>
                 </tr>
             {% endfor %}

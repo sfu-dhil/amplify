@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\SeasonRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -18,6 +19,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 
 /**
  * @ORM\Entity(repositoryClass=SeasonRepository::class)
+ * @ORM\HasLifecycleCallbacks
  */
 class Season extends AbstractEntity {
     /**
@@ -25,6 +27,12 @@ class Season extends AbstractEntity {
      * @ORM\Column(type="integer", nullable=true)
      */
     private $number;
+
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", nullable=false)
+     */
+    private $preserved;
 
     /**
      * @var string
@@ -73,6 +81,7 @@ class Season extends AbstractEntity {
 
     public function __construct() {
         parent::__construct();
+        $this->preserved = false;
         $this->contributions = new ArrayCollection();
         $this->episodes = new ArrayCollection();
     }
@@ -206,5 +215,27 @@ class Season extends AbstractEntity {
         }
 
         return $this;
+    }
+
+    public function getPreserved(): ?bool
+    {
+        return $this->preserved;
+    }
+
+    public function setPreserved(bool $preserved): self
+    {
+        $this->preserved = $preserved;
+
+        return $this;
+    }
+
+    /**
+     * Sets the updated timestamp.
+     *
+     * @ORM\PreUpdate()
+     */
+    public function preUpdate() : void {
+        parent::preUpdate();
+        $this->preserved = false;
     }
 }

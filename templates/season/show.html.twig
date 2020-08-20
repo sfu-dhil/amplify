@@ -61,6 +61,12 @@
                 <td>{{ season.alternativeTitle }}</td>
             </tr>
             <tr>
+                <th>Preserved</th>
+                <td>
+                    {{ season.preserved ? 'Yes' : 'No' }}
+                </td>
+            </tr>
+            <tr>
                 <th>Start Date</th>
                 <td>{{season.firstEpisode ? season.firstEpisode.date|date('M d, Y') : ''}}</td>
             </tr>

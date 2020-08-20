@@ -102,6 +102,12 @@
                 <td>{{ episode.alternativeTitle }}</td>
             </tr>
             <tr>
+                <th>Preserved</th>
+                <td>
+                    {{ season.preserved ? 'Yes' : 'No' }}
+                </td>
+            </tr>
+            <tr>
                 <th>Podcast</th>
                 <td>
                     <a href='{{ path('podcast_show', {'id': episode.podcast.id}) }}'>

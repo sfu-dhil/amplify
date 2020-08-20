@@ -28,6 +28,12 @@ class Episode extends AbstractEntity {
     private $number;
 
     /**
+     * @var bool
+     * @ORM\Column(type="boolean", nullable=false)
+     */
+    private $preserved;
+
+    /**
      * @var DateTime
      * @ORM\Column(type="date")
      */
@@ -123,6 +129,7 @@ class Episode extends AbstractEntity {
 
     public function __construct() {
         parent::__construct();
+        $this->preserved = false;
         $this->tags = [];
         $this->subjects = new ArrayCollection();
         $this->contributions = new ArrayCollection();
@@ -324,5 +331,25 @@ class Episode extends AbstractEntity {
         $this->audio = $audio;
 
         return $this;
+    }
+
+    public function getPreserved() : ?bool {
+        return $this->preserved;
+    }
+
+    public function setPreserved(bool $preserved) : self {
+        $this->preserved = $preserved;
+
+        return $this;
+    }
+
+    /**
+     * Sets the updated timestamp.
+     *
+     * @ORM\PreUpdate()
+     */
+    public function preUpdate() : void {
+        parent::preUpdate();
+        $this->preserved = false;
     }
 }

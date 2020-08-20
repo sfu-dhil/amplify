@@ -29,6 +29,7 @@
                 <th>Podcast</th>
                 <th>Title</th>
                 <th>Episodes</th>
+                <th>Preserved</th>
             </tr>
         </thead>
         <tbody>
@@ -48,7 +49,9 @@
                     <td>
                         {{ season.episodes|length }}
                     </td>
-
+                    <td>
+                        {{ season.preserved ? 'Yes' : 'No' }}
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
