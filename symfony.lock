@@ -126,6 +126,9 @@
     "knplabs/knp-paginator-bundle": {
         "version": "v5.3.0"
     },
+    "league/csv": {
+        "version": "9.6.0"
+    },
     "liip/test-fixtures-bundle": {
         "version": "1.9.1"
     },

@@ -81,6 +81,9 @@ class Builder implements ContainerAwareInterface {
         $browse->addChild('People', [
             'route' => 'person_index',
         ]);
+        $browse->addChild('Institutions', [
+            'route' => 'institution_index',
+        ]);
         $browse->addChild('Podcasts', [
             'route' => 'podcast_index',
         ]);
