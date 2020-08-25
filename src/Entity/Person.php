@@ -36,12 +36,6 @@ class Person extends AbstractEntity {
      * @var string
      * @ORM\Column(type="string")
      */
-    private $affiliation;
-
-    /**
-     * @var string
-     * @ORM\Column(type="string")
-     */
     private $location;
 
     /**
@@ -55,6 +49,12 @@ class Person extends AbstractEntity {
      * @ORM\Column(type="array")
      */
     private $links;
+
+    /**
+     * @var Institution
+     * @ORM\ManyToOne(targetEntity="App\Entity\Institution", inversedBy="people")
+     */
+    private $institution;
 
     /**
      * @var Collection|Contribution[]
@@ -158,6 +158,18 @@ class Person extends AbstractEntity {
                 $contribution->setPerson(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getInstitution(): ?Institution
+    {
+        return $this->institution;
+    }
+
+    public function setInstitution(?Institution $institution): self
+    {
+        $this->institution = $institution;
 
         return $this;
     }
