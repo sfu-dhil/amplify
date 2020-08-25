@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Institution;
 use App\Entity\Person;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -17,6 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 /**
  * Person form.
@@ -40,9 +42,15 @@ class PersonType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-        $builder->add('affiliation', TextType::class, [
-            'label' => 'Affiliation',
-            'required' => true,
+        $builder->add('institution', Select2EntityType::class, [
+            'label' => 'Institution',
+            'remote_route' => 'institution_typeahead',
+            'primary_key' => 'id',
+            'class' => Institution::class,
+            'text_property' => 'name',
+            'page_limit' => 10,
+            'allow_clear' => true,
+            'delay' => 250,
             'attr' => [
                 'help_block' => '',
             ],

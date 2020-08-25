@@ -37,14 +37,14 @@ class InstitutionRepository extends ServiceEntityRepository
      * @return Collection|Institution[]
      */
     public function typeaheadSearch($q) {
-        throw new \RuntimeException("Not implemented yet.");
         $qb = $this->createQueryBuilder('institution');
-        $qb->andWhere('institution.column LIKE :q');
-        $qb->orderBy('institution.column', 'ASC');
-        $qb->setParameter('q', "{$q}%");
+        $qb->andWhere('institution.name LIKE :q');
+        $qb->orderBy('institution.name', 'ASC');
+        $qb->addOrderBy('institution.province', 'ASC');
+        $qb->setParameter('q', "%{$q}%");
 
         return $qb->getQuery()->execute();
     }
 
-    
+
 }

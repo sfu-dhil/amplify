@@ -45,7 +45,7 @@ class Person extends AbstractEntity {
     private $bio;
 
     /**
-     * @var string
+     * @var array
      * @ORM\Column(type="array")
      */
     private $links;
@@ -90,16 +90,6 @@ class Person extends AbstractEntity {
 
     public function setSortableName(string $sortableName) : self {
         $this->sortableName = $sortableName;
-
-        return $this;
-    }
-
-    public function getAffiliation() : ?string {
-        return $this->affiliation;
-    }
-
-    public function setAffiliation(string $affiliation) : self {
-        $this->affiliation = $affiliation;
 
         return $this;
     }
