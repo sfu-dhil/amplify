@@ -40,7 +40,7 @@
             </tr>
             <tr>
                 <th>Description</th>
-                <td>{{ podcast.description }}</td>
+                <td>{{ podcast.description|raw }}</td>
             </tr>
             <tr>
                 <th>Publisher</th>
@@ -52,11 +52,11 @@
             </tr>
             <tr>
                 <th>Copyright</th>
-                <td>{{ podcast.copyright }}</td>
+                <td>{{ podcast.copyright|raw }}</td>
             </tr>
             <tr>
-                <th>Category</th>
-                <td>{{ podcast.category }}</td>
+                <th>Categories</th>
+                <td>{{ podcast.categories|join(', ') }}</td>
             </tr>
             <tr>
                 <th>Website</th>

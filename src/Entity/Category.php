@@ -1,0 +1,58 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Entity;
+
+use App\Repository\CategoryRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Nines\UtilBundle\Entity\AbstractEntity;
+use Nines\UtilBundle\Entity\AbstractTerm;
+
+/**
+ * @ORM\Entity(repositoryClass=CategoryRepository::class)
+ */
+class Category extends AbstractTerm {
+
+    /**
+     * @var Collection|Podcast[]
+     * @ORM\ManyToMany(targetEntity="Podcast", mappedBy="categories")
+     */
+    private $podcasts;
+
+    public function __construct() {
+        parent::__construct();
+        $this->podcasts = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection|Podcast[]
+     */
+    public function getPodcasts(): Collection
+    {
+        return $this->podcasts;
+    }
+
+    public function addPodcast(Podcast $podcast): self
+    {
+        if (!$this->podcasts->contains($podcast)) {
+            $this->podcasts[] = $podcast;
+            $podcast->addCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removePodcast(Podcast $podcast): self
+    {
+        if ($this->podcasts->contains($podcast)) {
+            $this->podcasts->removeElement($podcast);
+            $podcast->removeCategory($this);
+        }
+
+        return $this;
+    }
+
+}

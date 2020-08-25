@@ -105,6 +105,9 @@ class Builder implements ContainerAwareInterface {
                 'role' => 'separator',
                 'class' => 'divider',
             ]);
+            $browse->addChild('Categories', [
+                'route' => 'category_index',
+            ]);
             $browse->addChild('Lanugages', [
                 'route' => 'language_index',
             ]);

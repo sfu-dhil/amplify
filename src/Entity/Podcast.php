@@ -53,12 +53,6 @@ class Podcast extends AbstractEntity {
 
     /**
      * @var string
-     * @ORM\Column(type="string")
-     */
-    private $category;
-
-    /**
-     * @var string
      * @ORM\Column(type="text")
      * @Assert\Url(
      *     normalizer="trim",
@@ -107,12 +101,19 @@ class Podcast extends AbstractEntity {
      */
     private $episodes;
 
+    /**
+     * @var Collection|Category[]
+     * @ORM\ManyToMany(targetEntity="App\Entity\Category", inversedBy="podcasts")
+     */
+    private $categories;
+
     public function __construct() {
         parent::__construct();
         $this->tags = [];
         $this->contributions = new ArrayCollection();
         $this->seasons = new ArrayCollection();
         $this->episodes = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     /**
@@ -168,16 +169,6 @@ class Podcast extends AbstractEntity {
 
     public function setCopyright(string $copyright) : self {
         $this->copyright = $copyright;
-
-        return $this;
-    }
-
-    public function getCategory() : ?string {
-        return $this->category;
-    }
-
-    public function setCategory(string $category) : self {
-        $this->category = $category;
 
         return $this;
     }
@@ -301,6 +292,32 @@ class Podcast extends AbstractEntity {
             if ($episode->getPodcast() === $this) {
                 $episode->setPodcast(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Category[]
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(Category $category): self
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories[] = $category;
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Category $category): self
+    {
+        if ($this->categories->contains($category)) {
+            $this->categories->removeElement($category);
         }
 
         return $this;

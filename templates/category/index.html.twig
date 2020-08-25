@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Podcast List{% endblock %}
+{% block title %}Category List{% endblock %}
 
 {% block pageheader %}
-    <h1>Podcast List</h1>
+    <h1>Category List</h1>
     <p class="count">
-        Displaying {{ podcasts|length }} podcasts of {{ podcasts.getTotalItemCount }} total.
+        Displaying {{ categories|length }} categories of {{ categories.getTotalItemCount }} total.
     </p>
 {% endblock %}
 
@@ -14,11 +14,11 @@
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
             {% if is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('podcast_new') }}" class="btn btn-default">
+                <a href="{{ path('category_new') }}" class="btn btn-default">
                     <span class="glyphicon glyphicon-plus"></span> New </a>
             {% endif %}
 
-            <a href="{{ path('podcast_search') }}" class="btn btn-default">
+            <a href="{{ path('category_search') }}" class="btn btn-default">
                 <span class="glyphicon glyphicon-search"></span> Search </a>
         </div>
     </div>
@@ -26,35 +26,35 @@
     <table class="table table-bordered table-condensed table-hover table-striped">
         <thead>
             <tr>
-                <th>Title</th>
-                <th>Website</th>
-                <th>Episodes</th>
+                <th>Name</th>
+                <th>Label</th>
+                <th>Description</th>
             </tr>
         </thead>
         <tbody>
-            {% for podcast in podcasts %}
+            {% for category in categories %}
                 <tr>
+
                     <td>
-                        <a href="{{ path('podcast_show', { 'id': podcast.id }) }}">
-                            {{ podcast.title }}
+                        <a href="{{ path('category_show', { 'id': category.id }) }}">
+                            {{ category.name }}
                         </a>
-                        {% if podcast.alternativeTitle %}
-                            <br /> {{ podcast.alternativeTitle }}
-                        {% endif %}
                     </td>
                     <td>
-                        {{ podcast.website }}
+                        {{ category.label }}
                     </td>
+
                     <td>
-                        {{ podcast.episodes|length }}
+                        {{ category.description }}
                     </td>
+
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 
     <div class="navigation">
-        {{ knp_pagination_render(podcasts) }}
+        {{ knp_pagination_render(categories) }}
     </div>
 
 {% endblock %}
