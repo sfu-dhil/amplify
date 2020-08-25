@@ -98,10 +98,23 @@ class Builder implements ContainerAwareInterface {
         ]);
 
         if ($this->hasRole('ROLE_CONTENT_ADMIN')) {
-            $browse->addChild('divider', [
+            $divider = $browse->addChild('divider_content', [
                 'label' => '',
             ]);
-            $browse['divider']->setAttributes([
+            $divider->setAttributes([
+                'role' => 'separator',
+                'class' => 'divider',
+            ]);
+            $browse->addChild('Lanugages', [
+                'route' => 'language_index',
+            ]);
+        }
+
+        if ($this->hasRole('ROLE_ADMIN')) {
+            $divider = $browse->addChild('divider_admin', [
+                'label' => '',
+            ]);
+            $divider->setAttributes([
                 'role' => 'separator',
                 'class' => 'divider',
             ]);

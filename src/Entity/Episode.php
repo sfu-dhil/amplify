@@ -60,10 +60,10 @@ class Episode extends AbstractEntity {
     private $alternativeTitle;
 
     /**
-     * @var string
-     * @ORM\Column(type="string", length=32, nullable=false)
+     * @var Collection|Language[]
+     * @ORM\ManyToMany(targetEntity="App\Entity\Language", inversedBy="episodes")
      */
-    private $language;
+    private $languages;
 
     /**
      * @var array|string[]
@@ -131,6 +131,7 @@ class Episode extends AbstractEntity {
         parent::__construct();
         $this->preserved = false;
         $this->tags = [];
+        $this->languages = new ArrayCollection();
         $this->subjects = new ArrayCollection();
         $this->contributions = new ArrayCollection();
     }
@@ -188,16 +189,6 @@ class Episode extends AbstractEntity {
 
     public function setAlternativeTitle(?string $alternativeTitle) : self {
         $this->alternativeTitle = $alternativeTitle;
-
-        return $this;
-    }
-
-    public function getLanguage() : ?string {
-        return $this->language;
-    }
-
-    public function setLanguage(string $language) : self {
-        $this->language = $language;
 
         return $this;
     }
@@ -351,5 +342,31 @@ class Episode extends AbstractEntity {
     public function preUpdate() : void {
         parent::preUpdate();
         $this->preserved = false;
+    }
+
+    /**
+     * @return Collection|Language[]
+     */
+    public function getLanguages(): Collection
+    {
+        return $this->languages;
+    }
+
+    public function addLanguage(Language $language): self
+    {
+        if (!$this->languages->contains($language)) {
+            $this->languages[] = $language;
+        }
+
+        return $this;
+    }
+
+    public function removeLanguage(Language $language): self
+    {
+        if ($this->languages->contains($language)) {
+            $this->languages->removeElement($language);
+        }
+
+        return $this;
     }
 }

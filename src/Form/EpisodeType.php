@@ -11,12 +11,16 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Episode;
+use App\Entity\Language;
+use App\Entity\Place;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 /**
  * Episode form.
@@ -33,8 +37,10 @@ class EpisodeType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-        $builder->add('date', null, [
+        $builder->add('date', DateType::class, [
             'label' => 'Publication Date',
+            'html5' => true,
+            'widget' => 'single_text',
             'required' => true,
             'attr' => [
                 'help_block' => '',
@@ -61,11 +67,17 @@ class EpisodeType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-        $builder->add('language', TextType::class, [
-            'label' => 'Language',
-            'required' => true,
+        $builder->add('languages', Select2EntityType::class, [
+            'multiple' => true,
+            'remote_route' => 'language_typeahead',
+            'class' => Language::class,
+            'primary_key' => 'id',
+            'text_property' => 'label',
+            'page_limit' => 10,
+            'allow_clear' => true,
+            'delay' => 250,
             'attr' => [
-                'help_block' => '',
+                'help_block' => 'List of languages used in the episode',
             ],
         ]);
         $builder->add('tags', CollectionType::class, [

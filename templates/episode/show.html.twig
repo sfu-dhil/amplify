@@ -126,8 +126,8 @@
                 </td>
             </tr>
             <tr>
-                <th>Language</th>
-                <td>{{ episode.language }}</td>
+                <th>Languages</th>
+                <td>{{ episode.languages|join(', ') }}</td>
             </tr>
             <tr>
                 <th>Tags</th>
@@ -135,19 +135,19 @@
             </tr>
             <tr>
                 <th>References</th>
-                <td>{{ episode.references }}</td>
+                <td>{{ episode.references|raw }}</td>
             </tr>
             <tr>
                 <th>Copyright</th>
-                <td>{{ episode.copyright }}</td>
+                <td>{{ episode.copyright|raw }}</td>
             </tr>
             <tr>
                 <th>Transcript</th>
-                <td>{{ episode.transcript }}</td>
+                <td>{{ episode.transcript|raw }}</td>
             </tr>
             <tr>
                 <th>Abstract</th>
-                <td>{{ episode.abstract }}</td>
+                <td>{{ episode.abstract|raw }}</td>
             </tr>
             <tr>
                 <th>Created</th>
