@@ -39,7 +39,7 @@ class CategoryTest extends ControllerBaseCase {
         $this->login('user.user');
         $crawler = $this->client->request('GET', '/category/');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertEquals(0, $crawler->selectLink('New')->count());
+        $this->assertEquals(4, $crawler->selectLink('New')->count());
     }
 
     /**
@@ -50,7 +50,7 @@ class CategoryTest extends ControllerBaseCase {
         $this->login('user.admin');
         $crawler = $this->client->request('GET', '/category/');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertEquals(1, $crawler->selectLink('New')->count());
+        $this->assertEquals(5, $crawler->selectLink('New')->count());
     }
 
     /**
@@ -108,7 +108,7 @@ class CategoryTest extends ControllerBaseCase {
      */
     public function testUserTypeahead() {
         $this->login('user.user');
-        $this->client->request('GET', '/category/typeahead?q=category');
+        $this->client->request('GET', '/category/typeahead?q=new');
         $response = $this->client->getResponse();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertEquals('application/json', $response->headers->get('content-type'));
@@ -122,7 +122,7 @@ class CategoryTest extends ControllerBaseCase {
      */
     public function testAdminTypeahead() {
         $this->login('user.admin');
-        $this->client->request('GET', '/category/typeahead?q=category');
+        $this->client->request('GET', '/category/typeahead?q=new');
         $response = $this->client->getResponse();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertEquals('application/json', $response->headers->get('content-type'));
@@ -154,41 +154,40 @@ class CategoryTest extends ControllerBaseCase {
     }
 
     public function testUserSearch() : void {
-        $crawler = $this->client->request('GET', '/category/search');
-        $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
-
-        $this->login('user.user');
         $repo = $this->createMock(CategoryRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('category.1')]);
         $this->client->disableReboot();
         $this->client->getContainer()->set(CategoryRepository::class, $repo);
 
-        $form = $crawler->selectButton('Search')->form([
+        $this->login('user.user');
+        $crawler = $this->client->request('GET', '/category/search');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+        $form = $crawler->selectButton('btn-search')->form([
             'q' => 'category',
         ]);
 
         $responseCrawler = $this->client->submit($form);
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New")')->count());
+        $this->assertSame(3, $responseCrawler->filter('td:contains("New")')->count());
     }
 
     public function testAdminSearch() : void {
-        $crawler = $this->client->request('GET', '/category/search');
-        $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
-
-        $this->login('user.admin');
         $repo = $this->createMock(CategoryRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('category.1')]);
         $this->client->disableReboot();
         $this->client->getContainer()->set(CategoryRepository::class, $repo);
 
-        $form = $crawler->selectButton('Search')->form([
+        $this->login('user.admin');
+        $crawler = $this->client->request('GET', '/category/search');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $crawler->selectButton('btn-search')->form([
             'q' => 'category',
         ]);
 
         $responseCrawler = $this->client->submit($form);
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New")')->count());
+        $this->assertSame(3, $responseCrawler->filter('td:contains("New")')->count());
     }
 
     /**
