@@ -1,13 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-/*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\DataFixtures;
 
 use App\Entity\Season;
@@ -16,18 +8,21 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
 class SeasonFixtures extends Fixture implements DependentFixtureInterface {
+
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $em) : void {
+    public function load(ObjectManager $em) {
         for ($i = 0; $i < 4; $i++) {
             $fixture = new Season();
 
             $fixture->setNumber($i);
+            $fixture->setPreserved($i % 2 == 0);
             $fixture->setTitle('New Title ' . $i);
             $fixture->setAlternativeTitle('New AlternativeTitle ' . $i);
             $fixture->setDescription('New Description ' . $i);
             $fixture->setPodcast($this->getReference('podcast.' . $i));
+            $fixture->setPublisher($this->getReference('publisher.' . $i));
 
             $em->persist($fixture);
             $this->setReference('season.' . $i, $fixture);
@@ -44,6 +39,8 @@ class SeasonFixtures extends Fixture implements DependentFixtureInterface {
         // function and "implements DependentFixtureInterface" above
         return [
             PodcastFixtures::class,
+            PublisherFixtures::class,
         ];
     }
+
 }

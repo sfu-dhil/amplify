@@ -2,30 +2,28 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Publisher;
+use App\Entity\Institution;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class PublisherFixtures extends Fixture {
+class InstitutionFixtures extends Fixture {
 
     /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $em) {
         for ($i = 0; $i < 4; $i++) {
-            $fixture = new Publisher();
+            $fixture = new Institution();
 
+            $fixture->setProvince('New Province ' . $i);
             $fixture->setName('New Name ' . $i);
-            $fixture->setLocation('New Location ' . $i);
-            $fixture->setWebsite('New Website ' . $i);
-            $fixture->setDescription('New Description ' . $i);
-            $fixture->setContact('New Contact ' . $i);
 
             $em->persist($fixture);
-            $this->setReference('publisher.' . $i, $fixture);
+            $this->setReference('institution.' . $i, $fixture);
         }
 
         $em->flush();
     }
+
 }
