@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -20,7 +19,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  * @author Michael Joyce <ubermichael@gmail.com>
  */
 class FileUploader {
-
     public const FORBIDDEN = '/[^a-z0-9_. -]/i';
 
     /**
@@ -40,8 +38,8 @@ class FileUploader {
         $this->root = $root;
     }
 
-    public function setUploadDir($dir) {
-        if( $dir[0] !== '/') {
+    public function setUploadDir($dir) : void {
+        if ('/' !== $dir[0]) {
             $this->uploadDir = $this->root . '/' . $dir;
         } else {
             $this->uploadDir = $dir;
@@ -59,6 +57,7 @@ class FileUploader {
             mkdir($this->uploadDir, 0777, true);
         }
         $file->move($this->uploadDir, $filename);
+
         return $filename;
     }
 

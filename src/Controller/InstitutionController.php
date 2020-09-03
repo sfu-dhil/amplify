@@ -1,42 +1,41 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace App\Controller;
 
 use App\Entity\Institution;
 use App\Form\InstitutionType;
 use App\Repository\InstitutionRepository;
-
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/institution")
  * @IsGranted("ROLE_USER")
  */
-class InstitutionController extends AbstractController implements PaginatorAwareInterface
-{
+class InstitutionController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**
      * @Route("/", name="institution_index", methods={"GET"})
-     * @param Request $request
-     * @param InstitutionRepository $institutionRepository
      *
      * @Template()
-     *
-     * @return array
      */
-    public function index(Request $request, InstitutionRepository $institutionRepository) : array
-    {
+    public function index(Request $request, InstitutionRepository $institutionRepository) : array {
         $query = $institutionRepository->indexQuery();
         $pageSize = $this->getParameter('page_size');
         $page = $request->query->getint('page', 1);
@@ -57,7 +56,7 @@ class InstitutionController extends AbstractController implements PaginatorAware
         $q = $request->query->get('q');
         if ($q) {
             $query = $institutionRepository->searchQuery($q);
-            $institutions = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), array('wrap-queries'=>true));
+            $institutions = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), ['wrap-queries' => true]);
         } else {
             $institutions = [];
         }
@@ -82,7 +81,7 @@ class InstitutionController extends AbstractController implements PaginatorAware
         foreach ($institutionRepository->typeaheadSearch($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
-                'text' => (string)$result,
+                'text' => (string) $result,
             ];
         }
 
@@ -93,7 +92,6 @@ class InstitutionController extends AbstractController implements PaginatorAware
      * @Route("/new", name="institution_new", methods={"GET","POST"})
      * @Template()
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @param Request $request
      *
      * @return array|RedirectResponse
      */
@@ -121,7 +119,6 @@ class InstitutionController extends AbstractController implements PaginatorAware
      * @Route("/new_popup", name="institution_new_popup", methods={"GET","POST"})
      * @Template()
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @param Request $request
      *
      * @return array|RedirectResponse
      */
@@ -132,7 +129,6 @@ class InstitutionController extends AbstractController implements PaginatorAware
     /**
      * @Route("/{id}", name="institution_show", methods={"GET"})
      * @Template()
-     * @param Institution $institution
      *
      * @return array
      */
@@ -145,8 +141,6 @@ class InstitutionController extends AbstractController implements PaginatorAware
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/{id}/edit", name="institution_edit", methods={"GET","POST"})
-     * @param Request $request
-     * @param Institution $institution
      *
      * @Template()
      *
@@ -165,15 +159,13 @@ class InstitutionController extends AbstractController implements PaginatorAware
 
         return [
             'institution' => $institution,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ];
     }
 
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/{id}", name="institution_delete", methods={"DELETE"})
-     * @param Request $request
-     * @param Institution $institution
      *
      * @return RedirectResponse
      */

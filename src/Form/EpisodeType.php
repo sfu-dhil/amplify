@@ -12,7 +12,6 @@ namespace App\Form;
 
 use App\Entity\Episode;
 use App\Entity\Language;
-use App\Entity\Place;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;

@@ -152,13 +152,11 @@ class Person extends AbstractEntity {
         return $this;
     }
 
-    public function getInstitution(): ?Institution
-    {
+    public function getInstitution() : ?Institution {
         return $this->institution;
     }
 
-    public function setInstitution(?Institution $institution): self
-    {
+    public function setInstitution(?Institution $institution) : self {
         $this->institution = $institution;
 
         return $this;

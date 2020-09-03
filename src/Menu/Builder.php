@@ -108,7 +108,7 @@ class Builder implements ContainerAwareInterface {
             $browse->addChild('Categories', [
                 'route' => 'category_index',
             ]);
-            $browse->addChild('Lanugages', [
+            $browse->addChild('Languages', [
                 'route' => 'language_index',
             ]);
         }

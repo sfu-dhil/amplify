@@ -73,9 +73,9 @@ class Episode extends AbstractEntity {
 
     /**
      * @var string
-     * @ORM\Column(name="biblography", type="text")
+     * @ORM\Column(name="bibliography", type="text")
      */
-    private $references;
+    private $bibliography;
 
     /**
      * @var string
@@ -203,12 +203,12 @@ class Episode extends AbstractEntity {
         return $this;
     }
 
-    public function getReferences() : ?string {
-        return $this->references;
+    public function getBibliography() : ?string {
+        return $this->bibliography;
     }
 
-    public function setReferences(string $references) : self {
-        $this->references = $references;
+    public function setBibliography(string $bibliography) : self {
+        $this->bibliography = $bibliography;
 
         return $this;
     }
@@ -347,22 +347,19 @@ class Episode extends AbstractEntity {
     /**
      * @return Collection|Language[]
      */
-    public function getLanguages(): Collection
-    {
+    public function getLanguages() : Collection {
         return $this->languages;
     }
 
-    public function addLanguage(Language $language): self
-    {
-        if (!$this->languages->contains($language)) {
+    public function addLanguage(Language $language) : self {
+        if ( ! $this->languages->contains($language)) {
             $this->languages[] = $language;
         }
 
         return $this;
     }
 
-    public function removeLanguage(Language $language): self
-    {
+    public function removeLanguage(Language $language) : self {
         if ($this->languages->contains($language)) {
             $this->languages->removeElement($language);
         }

@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace App\DataFixtures;
 
 use App\Entity\Audio;
@@ -8,19 +16,18 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
 class AudioFixtures extends Fixture implements DependentFixtureInterface {
-
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function load(ObjectManager $em) {
+    public function load(ObjectManager $em) : void {
         for ($i = 0; $i < 4; $i++) {
             $fixture = new Audio();
-
-            $fixture->setPublic('Public ' . $i);
+            $fixture->setPublic(0 === $i % 2);
             $fixture->setOriginalName('OriginalName ' . $i);
             $fixture->setAudioPath('AudioPath ' . $i);
             $fixture->setMimeType('MimeType ' . $i);
-            $fixture->setFileSize('FileSize ' . $i);
+            $fixture->setFileSize($i);
+            $fixture->setEpisode($this->getReference('episode.' . $i));
             $em->persist($fixture);
             $this->setReference('audio.' . $i, $fixture);
         }
@@ -32,9 +39,8 @@ class AudioFixtures extends Fixture implements DependentFixtureInterface {
      * {@inheritdoc}
      */
     public function getDependencies() {
-        // add dependencies here, or remove this
-        // function and "implements DependentFixtureInterface" above
-        return [];
+        return [
+            EpisodeFixtures::class,
+        ];
     }
-
 }

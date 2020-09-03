@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace App\Command;
 
 use App\Entity\Category;
@@ -8,24 +16,21 @@ use League\Csv\Reader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ImportCategoriesCommand extends Command {
-    protected static $defaultName = 'app:import:categories';
-
     /**
      * @var EntityManagerInterface
      */
     private $em;
+    protected static $defaultName = 'app:import:categories';
 
     public function __construct(EntityManagerInterface $em) {
         $this->em = $em;
         parent::__construct(null);
     }
 
-    protected function configure() {
+    protected function configure() : void {
         $this->setDescription('Import categories from a CSV file.');
         $this->addArgument('file', InputArgument::REQUIRED, 'A CSV file to import');
     }
@@ -36,7 +41,7 @@ class ImportCategoriesCommand extends Command {
         $csv->setHeaderOffset(0);
         foreach ($csv->getRecords() as $record) {
             $category = new Category();
-            if($record['Secondary']) {
+            if ($record['Secondary']) {
                 $category->setLabel(implode(' - ', $record));
             } else {
                 $category->setLabel($record['Primary']);
@@ -45,6 +50,7 @@ class ImportCategoriesCommand extends Command {
             $this->em->persist($category);
         }
         $this->em->flush();
+
         return 0;
     }
 }

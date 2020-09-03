@@ -2,20 +2,24 @@
 
 declare(strict_types=1);
 
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace App\Entity;
 
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Nines\UtilBundle\Entity\AbstractEntity;
 use Nines\UtilBundle\Entity\AbstractTerm;
 
 /**
  * @ORM\Entity(repositoryClass=CategoryRepository::class)
  */
 class Category extends AbstractTerm {
-
     /**
      * @var Collection|Podcast[]
      * @ORM\ManyToMany(targetEntity="Podcast", mappedBy="categories")
@@ -30,14 +34,12 @@ class Category extends AbstractTerm {
     /**
      * @return Collection|Podcast[]
      */
-    public function getPodcasts(): Collection
-    {
+    public function getPodcasts() : Collection {
         return $this->podcasts;
     }
 
-    public function addPodcast(Podcast $podcast): self
-    {
-        if (!$this->podcasts->contains($podcast)) {
+    public function addPodcast(Podcast $podcast) : self {
+        if ( ! $this->podcasts->contains($podcast)) {
             $this->podcasts[] = $podcast;
             $podcast->addCategory($this);
         }
@@ -45,8 +47,7 @@ class Category extends AbstractTerm {
         return $this;
     }
 
-    public function removePodcast(Podcast $podcast): self
-    {
+    public function removePodcast(Podcast $podcast) : self {
         if ($this->podcasts->contains($podcast)) {
             $this->podcasts->removeElement($podcast);
             $podcast->removeCategory($this);
@@ -54,5 +55,4 @@ class Category extends AbstractTerm {
 
         return $this;
     }
-
 }

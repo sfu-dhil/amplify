@@ -13,7 +13,6 @@ namespace App\EventListener;
 use App\Entity\Audio;
 use App\Services\FileUploader;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use FFMpeg\FFMpeg;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -86,6 +85,7 @@ class AudioListener {
         $entity = $args->getEntity();
         if ($entity instanceof Audio) {
             $fs = new Filesystem();
+
             try {
                 $fs->remove($entity->getAudioFile());
             } catch (IOExceptionInterface $ex) {
