@@ -2,25 +2,27 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\ContributorRole;
+use App\Entity\Audio;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class ContributorRoleFixtures extends Fixture implements DependentFixtureInterface {
+class AudioFixtures extends Fixture implements DependentFixtureInterface {
 
     /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $em) {
         for ($i = 0; $i < 4; $i++) {
-            $fixture = new ContributorRole();
+            $fixture = new Audio();
 
-            $fixture->setName('Name ' . $i);
-            $fixture->setLabel('Label ' . $i);
-            $fixture->setDescription('Description ' . $i);
+            $fixture->setPublic('Public ' . $i);
+            $fixture->setOriginalName('OriginalName ' . $i);
+            $fixture->setAudioPath('AudioPath ' . $i);
+            $fixture->setMimeType('MimeType ' . $i);
+            $fixture->setFileSize('FileSize ' . $i);
             $em->persist($fixture);
-            $this->setReference('contributorrole.' . $i, $fixture);
+            $this->setReference('audio.' . $i, $fixture);
         }
 
         $em->flush();

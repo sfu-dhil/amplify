@@ -2,37 +2,30 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\ContributorRole;
+use App\Entity\Category;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class ContributorRoleFixtures extends Fixture implements DependentFixtureInterface {
+
+class CategoryFixtures extends Fixture {
 
     /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $em) {
         for ($i = 0; $i < 4; $i++) {
-            $fixture = new ContributorRole();
+            $fixture = new Category();
 
             $fixture->setName('Name ' . $i);
             $fixture->setLabel('Label ' . $i);
             $fixture->setDescription('Description ' . $i);
             $em->persist($fixture);
-            $this->setReference('contributorrole.' . $i, $fixture);
+            $this->setReference('category.' . $i, $fixture);
         }
 
         $em->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies() {
-        // add dependencies here, or remove this
-        // function and "implements DependentFixtureInterface" above
-        return [];
-    }
 
 }

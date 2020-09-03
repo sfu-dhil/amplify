@@ -1,13 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-/*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\DataFixtures;
 
 use App\Entity\Contribution;
@@ -15,20 +7,22 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
+
 class ContributionFixtures extends Fixture implements DependentFixtureInterface {
+
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $em) : void {
+    public function load(ObjectManager $em) {
         for ($i = 0; $i < 4; $i++) {
             $fixture = new Contribution();
 
-            $fixture->setPerson($this->getReference('person.' . $i));
-            $fixture->setContributorRole($this->getReference('contributorrole.' . $i));
-            $fixture->setPodcast($this->getReference('podcast.' . $i));
-            $fixture->setSeason($this->getReference('season.' . $i));
-            $fixture->setEpisode($this->getReference('episode.' . $i));
 
+            $fixture->setPerson($this->getReference('person.1'));
+            $fixture->setContributorrole($this->getReference('contributorRole.1'));
+            $fixture->setPodcast($this->getReference('podcast.1'));
+            $fixture->setSeason($this->getReference('season.1'));
+            $fixture->setEpisode($this->getReference('episode.1'));
             $em->persist($fixture);
             $this->setReference('contribution.' . $i, $fixture);
         }
@@ -50,4 +44,5 @@ class ContributionFixtures extends Fixture implements DependentFixtureInterface 
             EpisodeFixtures::class,
         ];
     }
+
 }

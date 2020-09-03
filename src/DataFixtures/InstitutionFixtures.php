@@ -2,25 +2,24 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\ContributorRole;
+use App\Entity\Institution;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class ContributorRoleFixtures extends Fixture implements DependentFixtureInterface {
+class InstitutionFixtures extends Fixture implements DependentFixtureInterface {
 
     /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $em) {
         for ($i = 0; $i < 4; $i++) {
-            $fixture = new ContributorRole();
+            $fixture = new Institution();
 
+            $fixture->setProvince('Province ' . $i);
             $fixture->setName('Name ' . $i);
-            $fixture->setLabel('Label ' . $i);
-            $fixture->setDescription('Description ' . $i);
             $em->persist($fixture);
-            $this->setReference('contributorrole.' . $i, $fixture);
+            $this->setReference('institution.' . $i, $fixture);
         }
 
         $em->flush();

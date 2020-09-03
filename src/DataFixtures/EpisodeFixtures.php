@@ -1,13 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-/*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\DataFixtures;
 
 use App\Entity\Episode;
@@ -16,28 +8,27 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
 class EpisodeFixtures extends Fixture implements DependentFixtureInterface {
+
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $em) : void {
+    public function load(ObjectManager $em) {
         for ($i = 0; $i < 4; $i++) {
             $fixture = new Episode();
 
-            $fixture->setNumber($i);
-            $fixture->setDate(new \DateTime("2020-{$i}-{$i}"));
-            $fixture->setRunTime($i * 60 * 60 + $i);
-            $fixture->setTitle('New Title ' . $i);
-            $fixture->setAlternativeTitle('New AlternativeTitle ' . $i);
-            $fixture->setLanguage('New Language ' . $i);
-            $fixture->setTags(['New Tags ' . $i]);
-            $fixture->setReferences('New References ' . $i);
-            $fixture->setCopyright('New Copyright ' . $i);
-            $fixture->setTranscript('New Transcript ' . $i);
-            $fixture->setAbstract('New Abstract ' . $i);
-            $fixture->setPodcast($this->getReference('podcast.' . $i));
-            $fixture->setSeason($this->getReference('season.' . $i));
-            $fixture->addSubject($this->getReference('subject.' . $i));
-
+            $fixture->setNumber('Number ' . $i);
+            $fixture->setPreserved('Preserved ' . $i);
+            $fixture->setDate('Date ' . $i);
+            $fixture->setRunTime('RunTime ' . $i);
+            $fixture->setTitle('Title ' . $i);
+            $fixture->setAlternativeTitle('AlternativeTitle ' . $i);
+            $fixture->setTags('Tags ' . $i);
+            $fixture->setBiblography('Biblography ' . $i);
+            $fixture->setCopyright('Copyright ' . $i);
+            $fixture->setTranscript('Transcript ' . $i);
+            $fixture->setAbstract('Abstract ' . $i);
+            $fixture->setSeason($this->getReference('season.1'));
+            $fixture->setPodcast($this->getReference('podcast.1'));
             $em->persist($fixture);
             $this->setReference('episode.' . $i, $fixture);
         }
@@ -49,10 +40,12 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface {
      * {@inheritdoc}
      */
     public function getDependencies() {
+        // add dependencies here, or remove this
+        // function and "implements DependentFixtureInterface" above
         return [
             SeasonFixtures::class,
             PodcastFixtures::class,
-            SubjectFixtures::class,
         ];
     }
+
 }

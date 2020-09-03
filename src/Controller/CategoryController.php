@@ -79,7 +79,7 @@ class CategoryController extends AbstractController implements PaginatorAwareInt
             return new JsonResponse([]);
         }
         $data = [];
-        foreach ($categoryRepository->typeaheadSearch($q) as $result) {
+        foreach ($categoryRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
                 'text' => (string)$result,
