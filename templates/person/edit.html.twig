@@ -5,16 +5,8 @@
     {% block body %}
         <h1>Edit Person</h1>
 
-        {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <div class="form-group">
-            <div class="col-sm-2"></div>
-            <div class="col-sm-10">
-                <input type="submit" value="Save" class="btn btn-primary" />
-                <a href="{{ path('person_show', { 'id': person.id }) }}" class="btn btn-warning"> Cancel </a>
-            </div>
-        </div>
-        {{ form_end(form) }}
+        {% embed 'person/partial/form.html.twig' %}
+        {% endembed %}
 
     {% endblock %}
 

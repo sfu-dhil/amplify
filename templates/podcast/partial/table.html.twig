@@ -1,0 +1,56 @@
+<table class="table table-bordered table-condensed table-hover table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Alternative Title</th>
+            <th>Explicit</th>
+            <th>Description</th>
+            <th>Copyright</th>
+            <th>Website</th>
+            <th>Rss</th>
+            <th>Tags</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for podcast in podcasts %}
+            <tr>
+                <td>
+                    <a href="{{ path('podcast_show', { 'id': podcast.id }) }}">
+                        {{ podcast.id }}
+                    </a>
+                </td>
+                <td>
+                    {{ podcast.title }}
+                </td>
+
+                <td>
+                    {{ podcast.alternativeTitle }}
+                </td>
+
+                <td>{% if podcast.explicit %}Yes{% else %}No{% endif %}</td>
+
+
+                <td>
+                    {{ podcast.description|raw }}
+                </td>
+
+                <td>
+                    {{ podcast.copyright|raw }}
+                </td>
+
+                <td>
+                    {{ podcast.website|raw }}
+                </td>
+
+                <td>
+                    {{ podcast.rss }}
+                </td>
+
+                <td>{% if podcast.tags %}{{ podcast.tags|join(', ') }}{% endif %}</td>
+
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -24,25 +24,7 @@
         </div>
     {% endif %}
 
-    <table class="table table-bordered table-condensed table-hover table-striped">
-        <tbody>
-            <tr>
-                <th>Name</th>
-                <td>{{ language.name }}</td>
-            </tr>
-            <tr>
-                <th>Label</th>
-                <td>{{ language.label }}</td>
-            </tr>
-            <tr>
-                <th>Created</th>
-                <td>{{ language.created|date }}</td>
-            </tr>
-            <tr>
-                <th>Updated</th>
-                <td>{{ language.updated|date }}</td>
-            </tr>
-        </tbody>
-    </table>
+    {% embed 'language/partial/detail.html.twig' %}
+    {% endembed %}
 
 {% endblock %}

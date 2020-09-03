@@ -23,34 +23,8 @@
         </div>
     </div>
 
-    <table class="table table-bordered table-condensed table-hover table-striped">
-        <thead>
-            <tr>
-                <th>Fullname</th>
-                <th>Affiliation</th>
-                <th>Location</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for person in people %}
-                <tr>
-
-                    <td>
-                        <a href="{{ path('person_show', { 'id': person.id }) }}">
-                            {{ person.fullname }}
-                        </a>
-                    </td>
-                    <td>
-                        {{ person.institution }}
-                    </td>
-
-                    <td>
-                        {{ person.location }}
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% embed 'person/partial/table.html.twig' %}
+    {% endembed %}
 
     <div class="navigation">
         {{ knp_pagination_render(people) }}

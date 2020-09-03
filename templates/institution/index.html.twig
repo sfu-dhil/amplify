@@ -7,53 +7,24 @@
     <p class="count">
         Displaying {{ institutions|length }} institutions of {{ institutions.getTotalItemCount }} total.
     </p>
- {% endblock %}
+{% endblock %}
 
 {% block body %}
 
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
             {% if is_granted('ROLE_CONTENT_ADMIN') %}
-            <a href="{{ path('institution_new') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-plus"></span> New
-            </a>
+                <a href="{{ path('institution_new') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> New </a>
             {% endif %}
 
             <a href="{{ path('institution_search') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-search"></span> Search
-            </a>
+                <span class="glyphicon glyphicon-search"></span> Search </a>
         </div>
     </div>
 
-    <table class="table table-bordered table-condensed table-hover table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>                                           <th>Province</th>
-                                                               <th>Name</th>
-
-            </tr>
-        </thead>
-        <tbody>
-        {% for institution in institutions %}
-            <tr>
-
-                <td>
-                    <a href="{{ path('institution_show', { 'id': institution.id }) }}">
-                        {{ institution.id }}
-                    </a>
-                </td>
-                <td>
-                    {{ institution.province }}
-                </td>
-
-                <td>
-                    {{ institution.name }}
-                </td>
-
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {% embed 'institution/partial/table.html.twig' %}
+    {% endembed %}
 
     <div class="navigation">
         {{ knp_pagination_render(institutions) }}

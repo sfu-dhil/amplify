@@ -24,17 +24,7 @@
         </div>
     {% endif %}
 
-    <table class="table table-bordered table-condensed table-hover table-striped">
-        <tbody>
-            <tr>
-                <th>Created</th>
-                <td>{{ contribution.created|date }}</td>
-            </tr>
-            <tr>
-                <th>Updated</th>
-                <td>{{ contribution.updated|date }}</td>
-            </tr>
-        </tbody>
-    </table>
+    {% embed 'contribution/partial/detail.html.twig' %}
+    {% endembed %}
 
 {% endblock %}

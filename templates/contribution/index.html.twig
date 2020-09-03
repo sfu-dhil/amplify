@@ -23,25 +23,8 @@
         </div>
     </div>
 
-    <table class="table table-bordered table-condensed table-hover table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for contribution in contributions %}
-                <tr>
-
-                    <td>
-                        <a href="{{ path('contribution_show', { 'id': contribution.id }) }}">
-                            {{ contribution.id }}
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% embed 'contribution/partial/table.html.twig' %}
+    {% endembed %}
 
     <div class="navigation">
         {{ knp_pagination_render(contributions) }}

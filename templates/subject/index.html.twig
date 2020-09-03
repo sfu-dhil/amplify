@@ -23,9 +23,7 @@
         </div>
     </div>
 
-    {% embed '@NinesUtil/term/partial/index.html.twig' with {
-        'terms': subjects,
-        'path': 'subject_show'} %}
+    {% embed 'subject/partial/table.html.twig' %}
     {% endembed %}
 
     <div class="navigation">

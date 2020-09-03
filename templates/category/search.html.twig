@@ -43,36 +43,9 @@
     </form>
 
     {% if categories|length %}
-        <table class="table table-bordered table-condensed table-hover table-striped">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Label</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for category in categories %}
-                    <tr>
 
-                        <td>
-                            <a href="{{ path('category_show', { 'id': category.id }) }}">
-                                {{ category.name }}
-                            </a>
-                        </td>
-                        <td>
-                            {{ category.label }}
-                        </td>
-
-                        <td>
-                            {{ category.description }}
-                        </td>
-
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
+        {% embed 'category/partial/table.html.twig' %}
+        {% endembed %}
 
         <div class="navigation">
             {{ knp_pagination_render(categories) }}

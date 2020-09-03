@@ -66,7 +66,14 @@ class Audio extends AbstractEntity {
     }
 
     public function __toString() : string {
-        return $this->audioFile->getFilename();
+        if ($this->audioFile) {
+            return $this->audioFile->getFilename();
+        }
+        if ($this->id) {
+            return (string) $this->id;
+        }
+
+        return '';
     }
 
     public function getAudioFile() : ?File {
