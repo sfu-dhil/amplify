@@ -16,14 +16,11 @@ class AudioFixtures extends Fixture implements DependentFixtureInterface {
         for ($i = 0; $i < 4; $i++) {
             $fixture = new Audio();
 
-            $fixture->setPublic('New Public ' . $i);
-            $fixture->setOriginalName('New OriginalName ' . $i);
-            $fixture->setAudioPath('/path/to/audio/' . $i);
-            $fixture->setMimeType('New MimeType ' . $i);
-            $fixture->setFileSize(2400 * ($i+1));
-
-            $fixture->setEpisode($this->getReference('episode.' . $i));
-
+            $fixture->setPublic('Public ' . $i);
+            $fixture->setOriginalName('OriginalName ' . $i);
+            $fixture->setAudioPath('AudioPath ' . $i);
+            $fixture->setMimeType('MimeType ' . $i);
+            $fixture->setFileSize('FileSize ' . $i);
             $em->persist($fixture);
             $this->setReference('audio.' . $i, $fixture);
         }
@@ -37,9 +34,7 @@ class AudioFixtures extends Fixture implements DependentFixtureInterface {
     public function getDependencies() {
         // add dependencies here, or remove this
         // function and "implements DependentFixtureInterface" above
-        return [
-            EpisodeFixtures::class,
-        ];
+        return [];
     }
 
 }

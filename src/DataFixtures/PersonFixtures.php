@@ -2,7 +2,6 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Institution;
 use App\Entity\Person;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -17,13 +16,12 @@ class PersonFixtures extends Fixture implements DependentFixtureInterface {
         for ($i = 0; $i < 4; $i++) {
             $fixture = new Person();
 
-            $fixture->setFullname('New Fullname ' . $i);
-            $fixture->setSortableName('New SortableName ' . $i);
-            $fixture->setLocation('New Location ' . $i);
-            $fixture->setBio('New Bio ' . $i);
-            $fixture->setLinks(['http://example.com/link/' . $i]);
-            $fixture->setInstitution($this->getReference('institution.' . $i));
-
+            $fixture->setFullname('Fullname ' . $i);
+            $fixture->setSortableName('SortableName ' . $i);
+            $fixture->setLocation('Location ' . $i);
+            $fixture->setBio('Bio ' . $i);
+            $fixture->setLinks('Links ' . $i);
+            $fixture->setInstitution($this->getReference('institution.1'));
             $em->persist($fixture);
             $this->setReference('person.' . $i, $fixture);
         }

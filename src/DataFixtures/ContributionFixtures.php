@@ -7,22 +7,22 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
+
 class ContributionFixtures extends Fixture implements DependentFixtureInterface {
 
     /**
      * {@inheritDoc}
      */
-    public function load(ObjectManager $em)
-    {
-        for($i = 0; $i < 4; $i++) {
+    public function load(ObjectManager $em) {
+        for ($i = 0; $i < 4; $i++) {
             $fixture = new Contribution();
 
-            $fixture->setPerson($this->getReference('person.' . $i));
-            $fixture->setContributorRole($this->getReference('contributorrole.' . $i));
-            $fixture->setPodcast($this->getReference('podcast.' . $i));
-            $fixture->setSeason($this->getReference('season.' . $i));
-            $fixture->setEpisode($this->getReference('episode.' . $i));
 
+            $fixture->setPerson($this->getReference('person.1'));
+            $fixture->setContributorrole($this->getReference('contributorRole.1'));
+            $fixture->setPodcast($this->getReference('podcast.1'));
+            $fixture->setSeason($this->getReference('season.1'));
+            $fixture->setEpisode($this->getReference('episode.1'));
             $em->persist($fixture);
             $this->setReference('contribution.' . $i, $fixture);
         }

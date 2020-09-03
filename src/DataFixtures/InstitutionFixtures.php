@@ -7,7 +7,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class InstitutionFixtures extends Fixture {
+class InstitutionFixtures extends Fixture implements DependentFixtureInterface {
 
     /**
      * {@inheritDoc}
@@ -16,14 +16,22 @@ class InstitutionFixtures extends Fixture {
         for ($i = 0; $i < 4; $i++) {
             $fixture = new Institution();
 
-            $fixture->setProvince('New Province ' . $i);
-            $fixture->setName('New Name ' . $i);
-
+            $fixture->setProvince('Province ' . $i);
+            $fixture->setName('Name ' . $i);
             $em->persist($fixture);
             $this->setReference('institution.' . $i, $fixture);
         }
 
         $em->flush();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDependencies() {
+        // add dependencies here, or remove this
+        // function and "implements DependentFixtureInterface" above
+        return [];
     }
 
 }

@@ -16,14 +16,13 @@ class SeasonFixtures extends Fixture implements DependentFixtureInterface {
         for ($i = 0; $i < 4; $i++) {
             $fixture = new Season();
 
-            $fixture->setNumber($i);
-            $fixture->setPreserved($i % 2 == 0);
-            $fixture->setTitle('New Title ' . $i);
-            $fixture->setAlternativeTitle('New AlternativeTitle ' . $i);
-            $fixture->setDescription('New Description ' . $i);
-            $fixture->setPodcast($this->getReference('podcast.' . $i));
-            $fixture->setPublisher($this->getReference('publisher.' . $i));
-
+            $fixture->setNumber('Number ' . $i);
+            $fixture->setPreserved('Preserved ' . $i);
+            $fixture->setTitle('Title ' . $i);
+            $fixture->setAlternativeTitle('AlternativeTitle ' . $i);
+            $fixture->setDescription('Description ' . $i);
+            $fixture->setPodcast($this->getReference('podcast.1'));
+            $fixture->setPublisher($this->getReference('publisher.1'));
             $em->persist($fixture);
             $this->setReference('season.' . $i, $fixture);
         }

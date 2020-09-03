@@ -7,7 +7,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class ContributorRoleFixtures extends Fixture {
+class ContributorRoleFixtures extends Fixture implements DependentFixtureInterface {
 
     /**
      * {@inheritDoc}
@@ -16,15 +16,23 @@ class ContributorRoleFixtures extends Fixture {
         for ($i = 0; $i < 4; $i++) {
             $fixture = new ContributorRole();
 
-            $fixture->setName('New Name ' . $i);
-            $fixture->setLabel('New Label ' . $i);
-            $fixture->setDescription('New Description ' . $i);
-
+            $fixture->setName('Name ' . $i);
+            $fixture->setLabel('Label ' . $i);
+            $fixture->setDescription('Description ' . $i);
             $em->persist($fixture);
             $this->setReference('contributorrole.' . $i, $fixture);
         }
 
         $em->flush();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDependencies() {
+        // add dependencies here, or remove this
+        // function and "implements DependentFixtureInterface" above
+        return [];
     }
 
 }
