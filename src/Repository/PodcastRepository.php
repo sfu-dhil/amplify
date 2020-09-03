@@ -12,6 +12,7 @@ namespace App\Repository;
 
 use App\Entity\Podcast;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -42,10 +43,9 @@ class PodcastRepository extends ServiceEntityRepository {
      * @return Collection|Podcast[]
      */
     public function typeaheadSearch($q) {
-        throw new \RuntimeException('Not implemented yet.');
         $qb = $this->createQueryBuilder('podcast');
-        $qb->andWhere('podcast.column LIKE :q');
-        $qb->orderBy('podcast.column', 'ASC');
+        $qb->andWhere('podcast.title LIKE :q');
+        $qb->orderBy('podcast.title', 'ASC');
         $qb->setParameter('q', "{$q}%");
 
         return $qb->getQuery()->execute();

@@ -78,7 +78,7 @@ class InstitutionController extends AbstractController implements PaginatorAware
             return new JsonResponse([]);
         }
         $data = [];
-        foreach ($institutionRepository->typeaheadSearch($q) as $result) {
+        foreach ($institutionRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
                 'text' => (string) $result,

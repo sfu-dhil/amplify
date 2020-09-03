@@ -2,15 +2,14 @@
 
 {% block title %}Contributor Role Search{% endblock %}
 
- {% block pageheader %}
-     <h1>Contributor Role Search</h1>
-     {% if contributor_roles|length %}
-         <p class="count">
-             Displaying {{ contributor_roles|length }} contributor_roles of {{ contributor_roles.getTotalItemCount }}
-             total.
-         </p>
-     {% endif %}
- {% endblock %}
+ {% block pageheader %} 
+    <h1>Contributor Role Search</h1>
+    {% if contributor_roles|length %}
+    <p class="count">
+        Displaying {{ contributor_roles|length }} contributor_roles of {{ contributor_roles.getTotalItemCount }} total.
+    </p>
+	{% endif %}
+ {% endblock %} 
 
 {% block body %}
 
@@ -23,7 +22,7 @@
                     <div class='input-group'>
                         <input type='text' name='q' id='q' class='form-control' value='{{ q }}'>
                         <span class="input-group-btn">
-                            <button class="btn btn-primary" type="submit">
+                            <button class="btn btn-primary" id='btn-search' type="submit">
                                 <span class='glyphicon glyphicon-search'></span>
                                 Search
                             </button>
@@ -31,7 +30,7 @@
                     </div>
                 </div>
             </div>
-            <p> Full text searching options, if available:</p>
+            <p>	Full text searching options, if available:</p>
             <ul>
                 <li><code>shakespeare</code> - shakespeare should be present, but might not be</li>
                 <li><code>shakes*</code> - words starting with shakes should be present</li>
@@ -43,47 +42,15 @@
         </fieldset>
     </form>
 
-    {% if contributor_roles|length %}
-        <table class="table table-bordered table-condensed table-hover table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Label</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for contributor_role in contributor_roles %}
-                    <tr>
+	{% if contributor_roles|length %}
 
-                        <td>
-                            <a href="{{ path('contributor_role_show', { 'id': contributor_role.id }) }}">
-                                {{ contributor_role.id }}
-                            </a>
-                        </td>
-                        <td>
-                            {{ contributor_role.name }}
-                        </td>
+  {% embed 'contributor_role/partial/table.html.twig' %}
+  {% endembed %}
 
-                        <td>
-                            {{ contributor_role.label }}
-                        </td>
-
-                        <td>
-                            {{ contributor_role.description }}
-                        </td>
-
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-
-        <div class="navigation">
-            {{ knp_pagination_render(contributor_roles) }}
-        </div>
-    {% endif %}
+    <div class="navigation">
+        {{ knp_pagination_render(contributor_roles) }}
+    </div>
+	{% endif %}
 
 {% endblock %}
 

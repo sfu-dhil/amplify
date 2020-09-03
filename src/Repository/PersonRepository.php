@@ -42,10 +42,9 @@ class PersonRepository extends ServiceEntityRepository {
      * @return Collection|Person[]
      */
     public function typeaheadSearch($q) {
-        throw new \RuntimeException('Not implemented yet.');
         $qb = $this->createQueryBuilder('person');
-        $qb->andWhere('person.column LIKE :q');
-        $qb->orderBy('person.column', 'ASC');
+        $qb->andWhere('person.fullName LIKE :q');
+        $qb->orderBy('person.sortableName', 'ASC');
         $qb->setParameter('q', "{$q}%");
 
         return $qb->getQuery()->execute();

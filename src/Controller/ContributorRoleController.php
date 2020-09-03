@@ -25,6 +25,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/contributor_role")
+ * @IsGranted("ROLE_USER")
  */
 class ContributorRoleController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
@@ -77,7 +78,7 @@ class ContributorRoleController extends AbstractController implements PaginatorA
             return new JsonResponse([]);
         }
         $data = [];
-        foreach ($contributorRoleRepository->typeaheadSearch($q) as $result) {
+        foreach ($contributorRoleRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
                 'text' => (string) $result,

@@ -77,7 +77,7 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
             return new JsonResponse([]);
         }
         $data = [];
-        foreach ($seasonRepository->typeaheadSearch($q) as $result) {
+        foreach ($seasonRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
                 'text' => (string) $result,

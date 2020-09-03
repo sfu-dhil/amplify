@@ -73,7 +73,7 @@ class Episode extends AbstractEntity {
 
     /**
      * @var string
-     * @ORM\Column(name="foo", type="text")
+     * @ORM\Column(type="text")
      */
     private $bibliography;
 

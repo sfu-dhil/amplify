@@ -77,7 +77,7 @@ class SubjectController extends AbstractController implements PaginatorAwareInte
             return new JsonResponse([]);
         }
         $data = [];
-        foreach ($subjectRepository->typeaheadSearch($q) as $result) {
+        foreach ($subjectRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
                 'text' => (string) $result,
