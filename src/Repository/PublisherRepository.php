@@ -12,6 +12,7 @@ namespace App\Repository;
 
 use App\Entity\Publisher;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -42,10 +43,9 @@ class PublisherRepository extends ServiceEntityRepository {
      * @return Collection|Publisher[]
      */
     public function typeaheadSearch($q) {
-        throw new \RuntimeException('Not implemented yet.');
         $qb = $this->createQueryBuilder('publisher');
-        $qb->andWhere('publisher.column LIKE :q');
-        $qb->orderBy('publisher.column', 'ASC');
+        $qb->andWhere('publisher.name LIKE :q');
+        $qb->orderBy('publisher.name', 'ASC');
         $qb->setParameter('q', "{$q}%");
 
         return $qb->getQuery()->execute();

@@ -8,7 +8,7 @@
 
 {% block body %}
 
-    {% if is_granted('ROLE_ADMIN') %}
+    {% if is_granted('ROLE_CONTENT_ADMIN') %}
         <div class='btn-toolbar pull-right'>
             <div class='btn-group'>
                 <a href="{{ path('person_edit', {'id': person.id }) }}" class="btn btn-default">
@@ -24,70 +24,7 @@
         </div>
     {% endif %}
 
-    <table class="table table-bordered table-condensed table-hover table-striped">
-        <tbody>
-            <tr>
-                <th>Full name</th>
-                <td>{{ person.fullname }}</td>
-            </tr>
-            <tr>
-                <th>Sortable Name</th>
-                <td>{{ person.sortableName }}</td>
-            </tr>
-            <tr>
-                <th>Affiliation</th>
-                <td>{{ person.institution }}</td>
-            </tr>
-            <tr>
-                <th>Location</th>
-                <td>{{ person.location }}</td>
-            </tr>
-            <tr>
-                <th>Bio</th>
-                <td>{{ person.bio|raw }}</td>
-            </tr>
-            <tr>
-                <th>Links</th>
-                <td>
-                    {% for link in person.links %}
-                        <a href='{{ link }}'>{{ link }}</a><br/>
-                    {% endfor %}
-                </td>
-            </tr>
-            <tr>
-                <th>Created</th>
-                <td>{{ person.created|date }}</td>
-            </tr>
-            <tr>
-                <th>Updated</th>
-                <td>{{ person.updated|date }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    {% if person.contributions %}
-        <h2>Contributions</h2>
-        <dl>
-            {% for contribution in person.contributions %}
-                <dt>
-                    {{ contribution.contributorRole }}
-                </dt>
-                <dd>
-                    {% if contribution.podcast %}
-                        Podcast <a href='{{ path('podcast_show', {'id': contribution.podcast.id}) }}'>
-                        {{ contribution.podcast }}</a>
-                    {% endif %}
-                    {% if contribution.season %}
-                        Season <a href='{{ path('season_show', {'id': contribution.season.id}) }}'>
-                        {{ contribution.season }}</a>
-                    {% endif %}
-                    {% if contribution.episode %}
-                        Episode <a href='{{ path('episode_show', {'id': contribution.episode.id}) }}'>
-                        {{ contribution.episode }}</a>
-                    {% endif %}
-                </dd>
-            {% endfor %}
-        </dl>
-    {% endif %}
+    {% embed 'person/partial/detail.html.twig' %}
+    {% endembed %}
 
 {% endblock %}

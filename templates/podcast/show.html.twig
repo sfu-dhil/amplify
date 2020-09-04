@@ -8,7 +8,7 @@
 
 {% block body %}
 
-    {% if is_granted('ROLE_ADMIN') %}
+    {% if is_granted('ROLE_CONTENT_ADMIN') %}
         <div class='btn-toolbar pull-right'>
             <div class='btn-group'>
                 <a href="{{ path('podcast_edit', {'id': podcast.id }) }}" class="btn btn-default">
@@ -24,111 +24,7 @@
         </div>
     {% endif %}
 
-    <table class="table table-bordered table-condensed table-hover table-striped">
-        <tbody>
-            <tr>
-                <th>Title</th>
-                <td>{{ podcast.title }}</td>
-            </tr>
-            <tr>
-                <th>Alternative Title</th>
-                <td>{{ podcast.alternativeTitle }}</td>
-            </tr>
-            <tr>
-                <th>Explicit</th>
-                <td>{% if podcast.explicit %}Yes{% else %}No{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ podcast.description|raw }}</td>
-            </tr>
-            <tr>
-                <th>Publisher</th>
-                <td>
-                    <a href='{{ path('publisher_show', {'id': podcast.publisher.id}) }}'>
-                        {{ podcast.publisher }}
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <th>Copyright</th>
-                <td>{{ podcast.copyright|raw }}</td>
-            </tr>
-            <tr>
-                <th>Categories</th>
-                <td>{{ podcast.categories|join(', ') }}</td>
-            </tr>
-            <tr>
-                <th>Website</th>
-                <td>
-                    {% if podcast.website %}
-                        <a href='{{ podcast.website }}'>
-                            {{ podcast.website }}
-                        </a>
-                    {% endif %}
-                </td>
-            </tr>
-            <tr>
-                <th>Rss</th>
-                <td>{{ podcast.rss }}</td>
-            </tr>
-            <tr>
-                <th>Tags</th>
-                <td>{% if podcast.tags %}{{ podcast.tags|join(', ') }}{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Created</th>
-                <td>{{ podcast.created|date }}</td>
-            </tr>
-            <tr>
-                <th>Updated</th>
-                <td>{{ podcast.updated|date }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    {% if podcast.seasons|length > 0 %}
-        <h2>Seasons</h2>
-        <ol>
-            {% for season in podcast.seasons %}
-                <li>
-                    <a href='{{ path('season_show', {'id': season.id}) }}'>
-                        S{{ season.number|format_number({min_integer_digit: 2}) }} - {{ season }}
-                    </a>
-                </li>
-            {% endfor %}
-        </ol>
-    {% endif %}
-
-    {% if podcast.episodes|length > 0 %}
-        <h2>Episodes</h2>
-        <ol>
-            {% for episode in podcast.episodes %}
-                <li>
-                    <a href='{{ path('episode_show', {'id': episode.id}) }}'>
-                        {% if episode.season %}
-                            S{{ episode.season.number|format_number({min_integer_digit: 2}) }}
-                        {%- endif -%}
-                        E{{ episode.number|format_number({min_integer_digit: 2}) }} - {{ episode }}
-                    </a>
-                </li>
-            {% endfor %}
-        </ol>
-    {% endif %}
-
-    {% if podcast.contributions|length > 0 %}
-        <h2>Contributors</h2>
-        <ul>
-            {% for contribution in podcast.contributions %}
-                <li>
-                    <a href='{{ path('person_show', {'id': contribution.person.id}) }}'>
-                        {{ contribution.person -}}
-                    </a>
-                    {{ contribution.contributorRole }}
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
+    {% embed 'podcast/partial/detail.html.twig' %}
+    {% endembed %}
 
 {% endblock %}

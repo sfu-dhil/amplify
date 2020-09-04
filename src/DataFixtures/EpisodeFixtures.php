@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace App\DataFixtures;
 
 use App\Entity\Episode;
@@ -8,25 +16,23 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
 class EpisodeFixtures extends Fixture implements DependentFixtureInterface {
-
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function load(ObjectManager $em) {
+    public function load(ObjectManager $em) : void {
         for ($i = 0; $i < 4; $i++) {
             $fixture = new Episode();
-
-            $fixture->setNumber('Number ' . $i);
-            $fixture->setPreserved('Preserved ' . $i);
-            $fixture->setDate('Date ' . $i);
-            $fixture->setRunTime('RunTime ' . $i);
+            $fixture->setNumber($i);
+            $fixture->setPreserved(0 === $i % 2);
+            $fixture->setDate(new \DateTime("2020-{$i}-{$i}"));
+            $fixture->setRunTime($i);
             $fixture->setTitle('Title ' . $i);
             $fixture->setAlternativeTitle('AlternativeTitle ' . $i);
-            $fixture->setTags('Tags ' . $i);
-            $fixture->setBiblography('Biblography ' . $i);
-            $fixture->setCopyright('Copyright ' . $i);
-            $fixture->setTranscript('Transcript ' . $i);
-            $fixture->setAbstract('Abstract ' . $i);
+            $fixture->setTags(['Tags ' . $i]);
+            $fixture->setBibliography("<p>This is paragraph {$i}</p>");
+            $fixture->setCopyright("<p>This is paragraph {$i}</p>");
+            $fixture->setTranscript("<p>This is paragraph {$i}</p>");
+            $fixture->setAbstract("<p>This is paragraph {$i}</p>");
             $fixture->setSeason($this->getReference('season.1'));
             $fixture->setPodcast($this->getReference('podcast.1'));
             $em->persist($fixture);
@@ -40,12 +46,9 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface {
      * {@inheritdoc}
      */
     public function getDependencies() {
-        // add dependencies here, or remove this
-        // function and "implements DependentFixtureInterface" above
         return [
             SeasonFixtures::class,
             PodcastFixtures::class,
         ];
     }
-
 }

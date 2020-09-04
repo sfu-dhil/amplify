@@ -77,7 +77,7 @@ class ContributionController extends AbstractController implements PaginatorAwar
             return new JsonResponse([]);
         }
         $data = [];
-        foreach ($contributionRepository->typeaheadSearch($q) as $result) {
+        foreach ($contributionRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
                 'text' => (string) $result,

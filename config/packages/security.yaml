@@ -46,8 +46,8 @@ security:
 
         # user controller stuff - open to the public
         - { path: ^/request$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/reset, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/reset/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 
         # Other controllers that should never be public
         - { path: ^/dublin_core/element, roles: ROLE_USER }

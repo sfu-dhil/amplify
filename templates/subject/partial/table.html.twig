@@ -1,0 +1,34 @@
+<table class="table table-bordered table-condensed table-hover table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Label</th>
+            <th>Description</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for subject in subjects %}
+            <tr>
+                <td>
+                    <a href="{{ path('subject_show', { 'id': subject.id }) }}">
+                        {{ subject.id }}
+                    </a>
+                </td>
+                <td>
+                    {{ subject.name }}
+                </td>
+
+                <td>
+                    {{ subject.label }}
+                </td>
+
+                <td>
+                    {{ subject.description|raw }}
+                </td>
+
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

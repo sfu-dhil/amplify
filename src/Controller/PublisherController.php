@@ -77,7 +77,7 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
             return new JsonResponse([]);
         }
         $data = [];
-        foreach ($publisherRepository->typeaheadSearch($q) as $result) {
+        foreach ($publisherRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
                 'text' => (string) $result,

@@ -11,16 +11,13 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Episode;
-use App\Entity\Language;
-use App\Entity\Place;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 /**
  * Episode form.
@@ -37,10 +34,22 @@ class EpisodeType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-        $builder->add('date', DateType::class, [
-            'label' => 'Publication Date',
-            'html5' => true,
-            'widget' => 'single_text',
+        $builder->add('preserved', ChoiceType::class, [
+            'label' => 'Preserved',
+            'expanded' => true,
+            'multiple' => false,
+            'choices' => [
+                'Yes' => true,
+                'No' => false,
+            ],
+            'required' => true,
+            'attr' => [
+                'help_block' => '',
+            ],
+        ]);
+
+        $builder->add('date', null, [
+            'label' => 'Date',
             'required' => true,
             'attr' => [
                 'help_block' => '',
@@ -67,19 +76,6 @@ class EpisodeType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-        $builder->add('languages', Select2EntityType::class, [
-            'multiple' => true,
-            'remote_route' => 'language_typeahead',
-            'class' => Language::class,
-            'primary_key' => 'id',
-            'text_property' => 'label',
-            'page_limit' => 10,
-            'allow_clear' => true,
-            'delay' => 250,
-            'attr' => [
-                'help_block' => 'List of languages used in the episode',
-            ],
-        ]);
         $builder->add('tags', CollectionType::class, [
             'label' => 'Tags',
             'required' => true,
@@ -96,8 +92,8 @@ class EpisodeType extends AbstractType {
                 'help_block' => 'A URL link to the specificed publication',
             ],
         ]);
-        $builder->add('references', TextareaType::class, [
-            'label' => 'References',
+        $builder->add('bibliography', TextareaType::class, [
+            'label' => 'Bibliography',
             'required' => true,
             'attr' => [
                 'help_block' => '',

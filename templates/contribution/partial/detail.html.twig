@@ -1,0 +1,45 @@
+<table class='table table-bordered table-condensed table-hover table-striped'>
+    <tbody>
+
+        <tr>
+            <th>Person</th>
+            <td>
+                <a href='{{ path("person_show", {"id": contribution.person.id}) }}'>{{ contribution.person }}</a>
+            </td>
+        </tr>
+        <tr>
+            <th>ContributorRole</th>
+            <td>
+                <a href='{{ path("contributor_role_show", {"id": contribution.contributorRole.id}) }}'>{{ contribution.contributorRole }}</a>
+            </td>
+        </tr>
+        <tr>
+            <th>Podcast</th>
+            <td>
+                <a href='{{ path("podcast_show", {"id": contribution.podcast.id}) }}'>{{ contribution.podcast }}</a>
+            </td>
+        </tr>
+        <tr>
+            <th>Season</th>
+            <td>
+                <a href='{{ path("season_show", {"id": contribution.season.id}) }}'>{{ contribution.season }}</a>
+            </td>
+        </tr>
+        <tr>
+            <th>Episode</th>
+            <td>
+                <a href='{{ path("episode_show", {"id": contribution.episode.id}) }}'>{{ contribution.episode }}</a>
+            </td>
+        </tr>
+        <tr>
+            <th>Created</th>
+            <td>{{ contribution.created|date }}</td>
+        </tr>
+        <tr>
+            <th>Updated</th>
+            <td>{{ contribution.updated|date }}</td>
+        </tr>
+    </tbody>
+</table>
+
+

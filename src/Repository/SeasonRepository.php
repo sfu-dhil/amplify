@@ -12,6 +12,7 @@ namespace App\Repository;
 
 use App\Entity\Season;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -42,10 +43,9 @@ class SeasonRepository extends ServiceEntityRepository {
      * @return Collection|Season[]
      */
     public function typeaheadSearch($q) {
-        throw new \RuntimeException('Not implemented yet.');
         $qb = $this->createQueryBuilder('season');
-        $qb->andWhere('season.column LIKE :q');
-        $qb->orderBy('season.column', 'ASC');
+        $qb->andWhere('season.title LIKE :q');
+        $qb->orderBy('season.title', 'ASC');
         $qb->setParameter('q', "{$q}%");
 
         return $qb->getQuery()->execute();

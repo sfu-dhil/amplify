@@ -8,7 +8,7 @@
 
 {% block body %}
 
-    {% if is_granted('ROLE_ADMIN') %}
+    {% if is_granted('ROLE_CONTENT_ADMIN') %}
         <div class='btn-toolbar pull-right'>
             <div class='btn-group'>
                 <a href="{{ path('subject_edit', {'id': subject.id }) }}" class="btn btn-default">
@@ -24,18 +24,7 @@
         </div>
     {% endif %}
 
-    {% embed '@NinesUtil/term/partial/show.html.twig' with {
-        'term': subject} %}
+    {% embed 'subject/partial/detail.html.twig' %}
     {% endembed %}
-
-    {% if subject.episodes |length > 0 %}
-        <h2>Episodes</h2>
-        <ul>
-            {% for episode in subject.episodes %}
-                <li>{{ episode }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
 
 {% endblock %}

@@ -42,10 +42,9 @@ class EpisodeRepository extends ServiceEntityRepository {
      * @return Collection|Episode[]
      */
     public function typeaheadSearch($q) {
-        throw new \RuntimeException('Not implemented yet.');
         $qb = $this->createQueryBuilder('episode');
-        $qb->andWhere('episode.column LIKE :q');
-        $qb->orderBy('episode.column', 'ASC');
+        $qb->andWhere('episode.title LIKE :q');
+        $qb->orderBy('episode.title', 'ASC');
         $qb->setParameter('q', "{$q}%");
 
         return $qb->getQuery()->execute();

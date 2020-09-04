@@ -35,19 +35,4 @@ class ContributionRepository extends ServiceEntityRepository {
             ->getQuery()
         ;
     }
-
-    /**
-     * @param string $q
-     *
-     * @return Collection|Contribution[]
-     */
-    public function typeaheadSearch($q) {
-        throw new \RuntimeException('Not implemented yet.');
-        $qb = $this->createQueryBuilder('contribution');
-        $qb->andWhere('contribution.column LIKE :q');
-        $qb->orderBy('contribution.column', 'ASC');
-        $qb->setParameter('q', "{$q}%");
-
-        return $qb->getQuery()->execute();
-    }
 }

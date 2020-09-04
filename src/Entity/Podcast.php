@@ -102,7 +102,7 @@ class Podcast extends AbstractEntity {
     private $episodes;
 
     /**
-     * @var Collection|Category[]
+     * @var Category[]|Collection
      * @ORM\ManyToMany(targetEntity="App\Entity\Category", inversedBy="podcasts")
      */
     private $categories;
@@ -298,24 +298,21 @@ class Podcast extends AbstractEntity {
     }
 
     /**
-     * @return Collection|Category[]
+     * @return Category[]|Collection
      */
-    public function getCategories(): Collection
-    {
+    public function getCategories() : Collection {
         return $this->categories;
     }
 
-    public function addCategory(Category $category): self
-    {
-        if (!$this->categories->contains($category)) {
+    public function addCategory(Category $category) : self {
+        if ( ! $this->categories->contains($category)) {
             $this->categories[] = $category;
         }
 
         return $this;
     }
 
-    public function removeCategory(Category $category): self
-    {
+    public function removeCategory(Category $category) : self {
         if ($this->categories->contains($category)) {
             $this->categories->removeElement($category);
         }

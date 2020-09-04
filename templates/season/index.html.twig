@@ -13,7 +13,7 @@
 
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
-            {% if is_granted('ROLE_ADMIN') %}
+            {% if is_granted('ROLE_CONTENT_ADMIN') %}
                 <a href="{{ path('season_new') }}" class="btn btn-default">
                     <span class="glyphicon glyphicon-plus"></span> New </a>
             {% endif %}
@@ -23,39 +23,8 @@
         </div>
     </div>
 
-    <table class="table table-bordered table-condensed table-hover table-striped">
-        <thead>
-            <tr>
-                <th>Podcast</th>
-                <th>Title</th>
-                <th>Episodes</th>
-                <th>Preserved</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for season in seasons %}
-                <tr>
-
-                    <td>
-                        <a href='{{ path('podcast_show', {'id': season.podcast.id}) }}'>
-                            {{ season.podcast }}
-                        </a>
-                    </td>
-                    <td>
-                        <a href="{{ path('season_show', { 'id': season.id }) }}">
-                            S{{ season.number|format_number({min_integer_digit: 2}) }} - {{ season.title }}
-                        </a>
-                    </td>
-                    <td>
-                        {{ season.episodes|length }}
-                    </td>
-                    <td>
-                        {{ season.preserved ? 'Yes' : 'No' }}
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% embed 'season/partial/table.html.twig' %}
+    {% endembed %}
 
     <div class="navigation">
         {{ knp_pagination_render(seasons) }}

@@ -77,7 +77,7 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
             return new JsonResponse([]);
         }
         $data = [];
-        foreach ($podcastRepository->typeaheadSearch($q) as $result) {
+        foreach ($podcastRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
                 'text' => (string) $result,

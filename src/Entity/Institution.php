@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace App\Entity;
 
 use App\Repository\InstitutionRepository;
@@ -17,7 +23,6 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * })
  */
 class Institution extends AbstractEntity {
-
     /**
      * @var string
      * @ORM\Column(type="string", length=40, nullable=false)
@@ -36,37 +41,33 @@ class Institution extends AbstractEntity {
      */
     private $people;
 
-    /**
-     * @inheritDoc
-     */
-    public function __toString() : string {
-        return $this->name;
-    }
-
     public function __construct() {
         parent::__construct();
         $this->people = new ArrayCollection();
     }
 
-    public function getProvince(): ?string
-    {
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString() : string {
+        return $this->name;
+    }
+
+    public function getProvince() : ?string {
         return $this->province;
     }
 
-    public function setProvince(string $province): self
-    {
+    public function setProvince(string $province) : self {
         $this->province = $province;
 
         return $this;
     }
 
-    public function getName(): ?string
-    {
+    public function getName() : ?string {
         return $this->name;
     }
 
-    public function setName(string $name): self
-    {
+    public function setName(string $name) : self {
         $this->name = $name;
 
         return $this;
@@ -75,14 +76,12 @@ class Institution extends AbstractEntity {
     /**
      * @return Collection|Person[]
      */
-    public function getPeople(): Collection
-    {
+    public function getPeople() : Collection {
         return $this->people;
     }
 
-    public function addPerson(Person $person): self
-    {
-        if (!$this->people->contains($person)) {
+    public function addPerson(Person $person) : self {
+        if ( ! $this->people->contains($person)) {
             $this->people[] = $person;
             $person->setInstitution($this);
         }
@@ -90,8 +89,7 @@ class Institution extends AbstractEntity {
         return $this;
     }
 
-    public function removePerson(Person $person): self
-    {
+    public function removePerson(Person $person) : self {
         if ($this->people->contains($person)) {
             $this->people->removeElement($person);
             // set the owning side to null (unless already changed)
@@ -102,5 +100,4 @@ class Institution extends AbstractEntity {
 
         return $this;
     }
-
 }

@@ -23,7 +23,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -84,7 +83,7 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
             return new JsonResponse([]);
         }
         $data = [];
-        foreach ($episodeRepository->typeaheadSearch($q) as $result) {
+        foreach ($episodeRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
                 'text' => (string) $result,
@@ -194,7 +193,7 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @return array|RedirectResponse
      */
     public function newAudio(Request $request, Episode $episode) {
-        if($episode->getAudio()) {
+        if ($episode->getAudio()) {
             $this->addFlash('danger', 'This episode already has an audio file. Use the controls below to edit or delete the audio file.');
 
             return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
@@ -228,9 +227,10 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @return BinaryFileResponse
      */
     public function playAudio(Request $request, Episode $episode) {
-        if($episode->getAudio()) {
+        if ($episode->getAudio()) {
             return new BinaryFileResponse($episode->getAudio()->getAudioFile());
         }
+
         throw new NotFoundHttpException();
     }
 
@@ -242,7 +242,7 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @return array|RedirectResponse
      */
     public function editAudio(Request $request, Episode $episode, FileUploader $fileUploader) {
-        if( ! $episode->getAudio()) {
+        if ( ! $episode->getAudio()) {
             $this->addFlash('danger', 'This episode does not have an audio file. Use the button below to add one.');
 
             return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
@@ -261,7 +261,7 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if(($upload = $form->get('newAudioFile')->getData())) {
+            if (($upload = $form->get('newAudioFile')->getData())) {
                 $episode->getAudio()->setAudioFile($upload);
                 $episode->getAudio()->preUpdate();
             }

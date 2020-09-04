@@ -23,7 +23,7 @@
                     <div class='input-group'>
                         <input type='text' name='q' id='q' class='form-control' value='{{ q }}'>
                         <span class="input-group-btn">
-                            <button class="btn btn-primary" type="submit">
+                            <button class="btn btn-primary" id='btn-search' type="submit">
                                 <span class='glyphicon glyphicon-search'></span>
                                 Search
                             </button>
@@ -44,41 +44,9 @@
     </form>
 
     {% if contributor_roles|length %}
-        <table class="table table-bordered table-condensed table-hover table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Label</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for contributor_role in contributor_roles %}
-                    <tr>
 
-                        <td>
-                            <a href="{{ path('contributor_role_show', { 'id': contributor_role.id }) }}">
-                                {{ contributor_role.id }}
-                            </a>
-                        </td>
-                        <td>
-                            {{ contributor_role.name }}
-                        </td>
-
-                        <td>
-                            {{ contributor_role.label }}
-                        </td>
-
-                        <td>
-                            {{ contributor_role.description }}
-                        </td>
-
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
+        {% embed 'contributor_role/partial/table.html.twig' %}
+        {% endembed %}
 
         <div class="navigation">
             {{ knp_pagination_render(contributor_roles) }}

@@ -1,0 +1,77 @@
+<table class='table table-bordered table-condensed table-hover table-striped'>
+    <tbody>
+        <tr>
+            <th>Name</th>
+            <td>
+                {{ publisher.name }}
+            </td>
+        </tr>
+        <tr>
+            <th>Location</th>
+            <td>
+                {{ publisher.location }}
+            </td>
+        </tr>
+        <tr>
+            <th>Website</th>
+            <td>
+                {{ publisher.website }}
+            </td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>
+                {{ publisher.description|raw }}
+            </td>
+        </tr>
+        <tr>
+            <th>Contact</th>
+            <td>
+                {{ publisher.contact|raw }}
+            </td>
+        </tr>
+
+        <tr>
+            <th>Podcast</th>
+            <td>
+                {% if publisher.podcasts|length > 0 %}
+                    <ul>
+                        {% for podcast in publisher.podcasts %}
+                            <li>
+                                <a href='{{ path("podcast_show", {"id":podcast.id }) }}'>
+                                    {{ podcast }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Season</th>
+            <td>
+                {% if publisher.seasons|length > 0 %}
+                    <ul>
+                        {% for season in publisher.seasons %}
+                            <li>
+                                <a href='{{ path("season_show", {"id":season.id }) }}'>
+                                    {{ season }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Created</th>
+            <td>{{ publisher.created|date }}</td>
+        </tr>
+        <tr>
+            <th>Updated</th>
+            <td>{{ publisher.updated|date }}</td>
+        </tr>
+    </tbody>
+</table>
+
+

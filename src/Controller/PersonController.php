@@ -77,7 +77,7 @@ class PersonController extends AbstractController implements PaginatorAwareInter
             return new JsonResponse([]);
         }
         $data = [];
-        foreach ($personRepository->typeaheadSearch($q) as $result) {
+        foreach ($personRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
                 'text' => (string) $result,

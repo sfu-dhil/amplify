@@ -8,7 +8,7 @@
 
 {% block body %}
 
-    {% if is_granted('ROLE_ADMIN') %}
+    {% if is_granted('ROLE_CONTENT_ADMIN') %}
         <div class='btn-toolbar pull-right'>
             <div class='btn-group'>
                 <a href="{{ path('contribution_edit', {'id': contribution.id }) }}" class="btn btn-default">
@@ -24,17 +24,7 @@
         </div>
     {% endif %}
 
-    <table class="table table-bordered table-condensed table-hover table-striped">
-        <tbody>
-            <tr>
-                <th>Created</th>
-                <td>{{ contribution.created|date }}</td>
-            </tr>
-            <tr>
-                <th>Updated</th>
-                <td>{{ contribution.updated|date }}</td>
-            </tr>
-        </tbody>
-    </table>
+    {% embed 'contribution/partial/detail.html.twig' %}
+    {% endembed %}
 
 {% endblock %}

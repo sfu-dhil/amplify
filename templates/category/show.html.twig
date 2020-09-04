@@ -8,7 +8,7 @@
 
 {% block body %}
 
-    {% if is_granted('ROLE_ADMIN') %}
+    {% if is_granted('ROLE_CONTENT_ADMIN') %}
         <div class='btn-toolbar pull-right'>
             <div class='btn-group'>
                 <a href="{{ path('category_edit', {'id': category.id }) }}" class="btn btn-default">
@@ -24,29 +24,7 @@
         </div>
     {% endif %}
 
-    <table class="table table-bordered table-condensed table-hover table-striped">
-        <tbody>
-            <tr>
-                <th>Name</th>
-                <td>{{ category.name }}</td>
-            </tr>
-            <tr>
-                <th>Label</th>
-                <td>{{ category.label }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ category.description }}</td>
-            </tr>
-            <tr>
-                <th>Created</th>
-                <td>{{ category.created|date }}</td>
-            </tr>
-            <tr>
-                <th>Updated</th>
-                <td>{{ category.updated|date }}</td>
-            </tr>
-        </tbody>
-    </table>
+    {% embed 'category/partial/detail.html.twig' %}
+    {% endembed %}
 
 {% endblock %}

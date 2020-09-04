@@ -22,7 +22,7 @@
                     <div class='input-group'>
                         <input type='text' name='q' id='q' class='form-control' value='{{ q }}'>
                         <span class="input-group-btn">
-                            <button class="btn btn-primary" type="submit">
+                            <button class="btn btn-primary" id='btn-search' type="submit">
                                 <span class='glyphicon glyphicon-search'></span>
                                 Search
                             </button>
@@ -43,46 +43,9 @@
     </form>
 
     {% if seasons|length %}
-        <table class="table table-bordered table-condensed table-hover table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Number</th>
-                    <th>Title</th>
-                    <th>Alternative Title</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for season in seasons %}
-                    <tr>
 
-                        <td>
-                            <a href="{{ path('season_show', { 'id': season.id }) }}">
-                                {{ season.id }}
-                            </a>
-                        </td>
-                        <td>
-                            {{ season.number }}
-                        </td>
-
-                        <td>
-                            {{ season.title }}
-                        </td>
-
-                        <td>
-                            {{ season.alternativeTitle }}
-                        </td>
-
-                        <td>
-                            {{ season.description }}
-                        </td>
-
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
+        {% embed 'season/partial/table.html.twig' %}
+        {% endembed %}
 
         <div class="navigation">
             {{ knp_pagination_render(seasons) }}
