@@ -227,7 +227,7 @@ class EpisodeTest extends ControllerBaseCase {
         $form = $formCrawler->selectButton('Save')->form([
             'episode[number]' => 12,
             'episode[podcast]' => 2,
-            'episode[date]' => "2020-09-09",
+            'episode[date]' => '2020-09-09',
             'episode[runTime]' => '1234',
             'episode[title]' => 'Updated Title',
             'episode[alternativeTitle]' => 'Updated AlternativeTitle',
@@ -303,7 +303,7 @@ class EpisodeTest extends ControllerBaseCase {
         $form = $formCrawler->selectButton('Save')->form([
             'episode[number]' => 12,
             'episode[podcast]' => $this->getReference('podcast.1')->getId(),
-            'episode[date]' => "2020-09-09",
+            'episode[date]' => '2020-09-09',
             'episode[runTime]' => '1234',
             'episode[title]' => 'New Title',
             'episode[alternativeTitle]' => 'New AlternativeTitle',
@@ -339,7 +339,7 @@ class EpisodeTest extends ControllerBaseCase {
         $form = $formCrawler->selectButton('Save')->form([
             'episode[number]' => 12,
             'episode[podcast]' => $this->getReference('podcast.1')->getId(),
-            'episode[date]' => "2020-09-09",
+            'episode[date]' => '2020-09-09',
             'episode[runTime]' => '1234',
             'episode[title]' => 'New Title',
             'episode[alternativeTitle]' => 'New AlternativeTitle',

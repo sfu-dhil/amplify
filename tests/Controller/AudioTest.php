@@ -146,5 +146,4 @@ class AudioTest extends ControllerBaseCase {
         $responseCrawler = $this->client->submit($form);
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
     }
-
 }

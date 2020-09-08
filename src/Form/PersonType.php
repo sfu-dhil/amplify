@@ -12,7 +12,6 @@ namespace App\Form;
 
 use App\Entity\Institution;
 use App\Entity\Person;
-use App\Entity\Season;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;

@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use App\DataFixtures\ContributionFixtures;
-use App\Repository\ContributionRepository;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -88,5 +87,4 @@ class ContributionTest extends ControllerBaseCase {
         $crawler = $this->client->request('GET', '/contribution/1');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
-
 }

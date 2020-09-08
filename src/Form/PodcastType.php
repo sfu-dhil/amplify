@@ -72,7 +72,6 @@ class PodcastType extends AbstractType {
             'language' => 'en',
         ]);
 
-
         $builder->add('description', TextareaType::class, [
             'label' => 'Description',
             'required' => true,
