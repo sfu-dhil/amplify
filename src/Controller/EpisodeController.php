@@ -290,6 +290,8 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
             $entityManager->remove($episode->getAudio());
             $entityManager->flush();
             $this->addFlash('success', 'The audio file has been deleted.');
+        } else {
+            $this->addFlash('warning', 'Invalid security token.');
         }
 
         return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
