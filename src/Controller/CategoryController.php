@@ -1,41 +1,41 @@
 <?php
 
-declare(strict_types=1);
-
-/*
- * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Controller;
 
 use App\Entity\Category;
 use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
+
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/category")
- * @IsGranted("ROLE_USER")
  */
-class CategoryController extends AbstractController implements PaginatorAwareInterface {
+class CategoryController extends AbstractController implements PaginatorAwareInterface
+{
     use PaginatorTrait;
 
     /**
      * @Route("/", name="category_index", methods={"GET"})
+     * @param Request $request
+     * @param CategoryRepository $categoryRepository
      *
      * @Template()
+     *
+     * @return array
      */
-    public function index(Request $request, CategoryRepository $categoryRepository) : array {
+    public function index(Request $request, CategoryRepository $categoryRepository) : array
+    {
         $query = $categoryRepository->indexQuery();
         $pageSize = $this->getParameter('page_size');
         $page = $request->query->getint('page', 1);
@@ -56,7 +56,7 @@ class CategoryController extends AbstractController implements PaginatorAwareInt
         $q = $request->query->get('q');
         if ($q) {
             $query = $categoryRepository->searchQuery($q);
-            $categories = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), ['wrap-queries' => true]);
+            $categories = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), array('wrap-queries'=>true));
         } else {
             $categories = [];
         }
@@ -81,7 +81,7 @@ class CategoryController extends AbstractController implements PaginatorAwareInt
         foreach ($categoryRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
-                'text' => (string) $result,
+                'text' => (string)$result,
             ];
         }
 
@@ -92,6 +92,7 @@ class CategoryController extends AbstractController implements PaginatorAwareInt
      * @Route("/new", name="category_new", methods={"GET","POST"})
      * @Template()
      * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @param Request $request
      *
      * @return array|RedirectResponse
      */
@@ -119,6 +120,7 @@ class CategoryController extends AbstractController implements PaginatorAwareInt
      * @Route("/new_popup", name="category_new_popup", methods={"GET","POST"})
      * @Template()
      * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @param Request $request
      *
      * @return array|RedirectResponse
      */
@@ -129,6 +131,7 @@ class CategoryController extends AbstractController implements PaginatorAwareInt
     /**
      * @Route("/{id}", name="category_show", methods={"GET"})
      * @Template()
+     * @param Category $category
      *
      * @return array
      */
@@ -141,6 +144,8 @@ class CategoryController extends AbstractController implements PaginatorAwareInt
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/{id}/edit", name="category_edit", methods={"GET","POST"})
+     * @param Request $request
+     * @param Category $category
      *
      * @Template()
      *
@@ -159,13 +164,15 @@ class CategoryController extends AbstractController implements PaginatorAwareInt
 
         return [
             'category' => $category,
-            'form' => $form->createView(),
+            'form' => $form->createView()
         ];
     }
 
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/{id}", name="category_delete", methods={"DELETE"})
+     * @param Request $request
+     * @param Category $category
      *
      * @return RedirectResponse
      */
