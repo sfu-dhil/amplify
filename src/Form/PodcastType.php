@@ -17,7 +17,6 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
@@ -57,21 +56,6 @@ class PodcastType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-
-        $builder->add('publisher', Select2EntityType::class, [
-            'label' => 'Publisher',
-            'multiple' => false,
-            'required' => false,
-            'remote_route' => 'publisher_typeahead',
-            'class' => Publisher::class,
-            'primary_key' => 'id',
-            'text_property' => 'name',
-            'page_limit' => 10,
-            'allow_clear' => true,
-            'delay' => 250,
-            'language' => 'en',
-        ]);
-
         $builder->add('description', TextareaType::class, [
             'label' => 'Description',
             'required' => true,
@@ -88,14 +72,15 @@ class PodcastType extends AbstractType {
                 'class' => 'tinymce',
             ],
         ]);
-        $builder->add('website', UrlType::class, [
+        $builder->add('website', TextareaType::class, [
             'label' => 'Website',
             'required' => true,
             'attr' => [
                 'help_block' => '',
+                'class' => 'tinymce',
             ],
         ]);
-        $builder->add('rss', UrlType::class, [
+        $builder->add('rss', TextType::class, [
             'label' => 'Rss',
             'required' => true,
             'attr' => [
@@ -115,7 +100,19 @@ class PodcastType extends AbstractType {
             'by_reference' => false,
             'attr' => [
                 'class' => 'collection collection-simple',
-                'help_block' => 'A URL link to the specificed publication',
+                'help_block' => '',
+            ],
+        ]);
+
+        $builder->add('publisher', Select2EntityType::class, [
+            'label' => 'Publisher',
+            'class' => Publisher::class,
+            'remote_route' => 'publisher_typeahead',
+            'allow_clear' => true,
+            'attr' => [
+                'help_block' => '',
+                'add_path' => 'publisher_new_popup',
+                'add_label' => 'Add Publisher',
             ],
         ]);
     }

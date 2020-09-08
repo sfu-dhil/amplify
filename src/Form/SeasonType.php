@@ -11,8 +11,10 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Podcast;
+use App\Entity\Publisher;
 use App\Entity\Season;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -34,20 +36,19 @@ class SeasonType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-        $builder->add('podcast', Select2EntityType::class, [
-            'label' => 'Podcast',
+        $builder->add('preserved', ChoiceType::class, [
+            'label' => 'Preserved',
+            'expanded' => true,
             'multiple' => false,
+            'choices' => [
+                'Yes' => true,
+                'No' => false,
+            ],
             'required' => true,
-            'remote_route' => 'podcast_typeahead',
-            'class' => Podcast::class,
-            'primary_key' => 'id',
-            'text_property' => 'title',
-            'page_limit' => 10,
-            'allow_clear' => true,
-            'delay' => 250,
-            'language' => 'en',
+            'attr' => [
+                'help_block' => '',
+            ],
         ]);
-
         $builder->add('title', TextType::class, [
             'label' => 'Title',
             'required' => true,
@@ -68,6 +69,30 @@ class SeasonType extends AbstractType {
             'attr' => [
                 'help_block' => '',
                 'class' => 'tinymce',
+            ],
+        ]);
+
+        $builder->add('podcast', Select2EntityType::class, [
+            'label' => 'Podcast',
+            'class' => Podcast::class,
+            'remote_route' => 'podcast_typeahead',
+            'allow_clear' => true,
+            'attr' => [
+                'help_block' => '',
+                'add_path' => 'podcast_new_popup',
+                'add_label' => 'Add Podcast',
+            ],
+        ]);
+
+        $builder->add('publisher', Select2EntityType::class, [
+            'label' => 'Publisher',
+            'class' => Publisher::class,
+            'remote_route' => 'publisher_typeahead',
+            'allow_clear' => true,
+            'attr' => [
+                'help_block' => '',
+                'add_path' => 'publisher_new_popup',
+                'add_label' => 'Add Publisher',
             ],
         ]);
     }

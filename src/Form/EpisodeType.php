@@ -10,12 +10,14 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Audio;
 use App\Entity\Episode;
 use App\Entity\Podcast;
 use App\Entity\Season;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -37,35 +39,19 @@ class EpisodeType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-
-        $builder->add('podcast', Select2EntityType::class, [
-            'label' => 'Podcast',
+        $builder->add('preserved', ChoiceType::class, [
+            'label' => 'Preserved',
+            'expanded' => true,
             'multiple' => false,
+            'choices' => [
+                'Yes' => true,
+                'No' => false,
+            ],
             'required' => true,
-            'remote_route' => 'podcast_typeahead',
-            'class' => Podcast::class,
-            'primary_key' => 'id',
-            'text_property' => 'title',
-            'page_limit' => 10,
-            'allow_clear' => true,
-            'delay' => 250,
-            'language' => 'en',
+            'attr' => [
+                'help_block' => '',
+            ],
         ]);
-
-        $builder->add('season', Select2EntityType::class, [
-            'label' => 'Season',
-            'multiple' => false,
-            'required' => false,
-            'remote_route' => 'season_typeahead',
-            'class' => Season::class,
-            'primary_key' => 'id',
-            'text_property' => 'title',
-            'page_limit' => 10,
-            'allow_clear' => true,
-            'delay' => 250,
-            'language' => 'en',
-        ]);
-
         $builder->add('date', DateType::class, [
             'label' => 'Date',
             'required' => true,
@@ -109,7 +95,7 @@ class EpisodeType extends AbstractType {
             'by_reference' => false,
             'attr' => [
                 'class' => 'collection collection-simple',
-                'help_block' => 'A URL link to the specificed publication',
+                'help_block' => '',
             ],
         ]);
         $builder->add('bibliography', TextareaType::class, [
@@ -142,6 +128,30 @@ class EpisodeType extends AbstractType {
             'attr' => [
                 'help_block' => '',
                 'class' => 'tinymce',
+            ],
+        ]);
+
+        $builder->add('season', Select2EntityType::class, [
+            'label' => 'Season',
+            'class' => Season::class,
+            'remote_route' => 'season_typeahead',
+            'allow_clear' => true,
+            'attr' => [
+                'help_block' => '',
+                'add_path' => 'season_new_popup',
+                'add_label' => 'Add Season',
+            ],
+        ]);
+
+        $builder->add('podcast', Select2EntityType::class, [
+            'label' => 'Podcast',
+            'class' => Podcast::class,
+            'remote_route' => 'podcast_typeahead',
+            'allow_clear' => true,
+            'attr' => [
+                'help_block' => '',
+                'add_path' => 'podcast_new_popup',
+                'add_label' => 'Add Podcast',
             ],
         ]);
     }

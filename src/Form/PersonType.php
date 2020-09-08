@@ -42,20 +42,6 @@ class PersonType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-        $builder->add('institution', Select2EntityType::class, [
-            'label' => 'Institution',
-            'multiple' => false,
-            'required' => false,
-            'remote_route' => 'institution_typeahead',
-            'class' => Institution::class,
-            'primary_key' => 'id',
-            'text_property' => 'name',
-            'page_limit' => 10,
-            'allow_clear' => true,
-            'delay' => 250,
-            'language' => 'en',
-        ]);
-
         $builder->add('location', TextType::class, [
             'label' => 'Location',
             'required' => true,
@@ -73,7 +59,7 @@ class PersonType extends AbstractType {
         ]);
         $builder->add('links', CollectionType::class, [
             'label' => 'Links',
-            'required' => false,
+            'required' => true,
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
@@ -85,6 +71,18 @@ class PersonType extends AbstractType {
             'attr' => [
                 'class' => 'collection collection-simple',
                 'help_block' => '',
+            ],
+        ]);
+
+        $builder->add('institution', Select2EntityType::class, [
+            'label' => 'Institution',
+            'class' => Institution::class,
+            'remote_route' => 'institution_typeahead',
+            'allow_clear' => true,
+            'attr' => [
+                'help_block' => '',
+                'add_path' => 'institution_new_popup',
+                'add_label' => 'Add Institution',
             ],
         ]);
     }
