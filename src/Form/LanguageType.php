@@ -12,6 +12,7 @@ namespace App\Form;
 
 use App\Entity\Language;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -28,14 +29,22 @@ class LanguageType extends AbstractType {
             'label' => 'Name',
             'required' => true,
             'attr' => [
-                'help_block' => 'Find the language code in <a href="https://r12a.github.io/app-subtags/">R12A</a>',
+                'help_block' => '',
             ],
         ]);
         $builder->add('label', TextType::class, [
             'label' => 'Label',
             'required' => true,
             'attr' => [
-                'help_block' => 'Full name',
+                'help_block' => '',
+            ],
+        ]);
+        $builder->add('description', TextareaType::class, [
+            'label' => 'Description',
+            'required' => false,
+            'attr' => [
+                'help_block' => '',
+                'class' => 'tinymce',
             ],
         ]);
     }

@@ -70,13 +70,17 @@
         <tr>
             <th>Audio</th>
             <td>
-                <a href='{{ path("audio_show", {"id": episode.audio.id}) }}'>{{ episode.audio }}</a>
+                {% if episode.audio %}
+                    <a href='{{ path("audio_show", {"id": episode.audio.id}) }}'>{{ episode.audio }}</a>
+                {% endif %}
             </td>
         </tr>
         <tr>
             <th>Season</th>
             <td>
-                <a href='{{ path("season_show", {"id": episode.season.id}) }}'>{{ episode.season }}</a>
+                {% if episode.season %}
+                    <a href='{{ path("season_show", {"id": episode.season.id}) }}'>{{ episode.season }}</a>
+                {% endif %}
             </td>
         </tr>
         <tr>

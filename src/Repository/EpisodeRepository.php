@@ -12,6 +12,7 @@ namespace App\Repository;
 
 use App\Entity\Episode;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -41,7 +42,21 @@ class EpisodeRepository extends ServiceEntityRepository {
      *
      * @return Collection|Episode[]
      */
-    public function typeaheadSearch($q) {
+    public function typeaheadQuery($q) {
+        $qb = $this->createQueryBuilder('episode');
+        $qb->andWhere('episode.title LIKE :q');
+        $qb->orderBy('episode.title', 'ASC');
+        $qb->setParameter('q', "{$q}%");
+
+        return $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param string $q
+     *
+     * @return Collection|Episode[]
+     */
+    public function searchQuery($q) {
         $qb = $this->createQueryBuilder('episode');
         $qb->andWhere('episode.title LIKE :q');
         $qb->orderBy('episode.title', 'ASC');

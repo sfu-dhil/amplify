@@ -1,42 +1,43 @@
+
 <table class='table table-bordered table-condensed table-hover table-striped'>
     <tbody>
         <tr>
             <th>Province</th>
             <td>
-                {{ institution.province }}
-            </td>
-        </tr>
-        <tr>
+                                                            {{ institution.province }}
+                                  </td>
+          </tr>
+          <tr>
             <th>Name</th>
             <td>
-                {{ institution.name }}
-            </td>
-        </tr>
-
-        <tr>
-            <th>Person</th>
-            <td>
-                {% if institution.people|length > 0 %}
-                    <ul>
-                        {% for person in institution.people %}
-                            <li>
-                                <a href='{{ path("person_show", {"id":person.id }) }}'>
-                                    {{ person }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <th>Created</th>
-            <td>{{ institution.created|date }}</td>
-        </tr>
-        <tr>
-            <th>Updated</th>
-            <td>{{ institution.updated|date }}</td>
-        </tr>
+                                                            {{ institution.name }}
+                                  </td>
+          </tr>
+          
+                                                                  <tr>
+                <th>Person</th>
+                <td>
+                  {% if institution.people|length > 0 %}
+                  <ul>
+                      {% for person in institution.people %} 
+                      <li>
+                          <a href='{{ path("person_show", {"id":person.id }) }}'>
+                              {{ person }}
+                          </a>
+                      </li>
+                      {% endfor %}
+                  </ul>
+                  {% endif %}
+                </td>
+              </tr>
+          <tr>
+        <th>Created</th>
+        <td>{{ institution.created|date }}</td>
+    </tr>
+    <tr>
+        <th>Updated</th>
+        <td>{{ institution.updated|date }}</td>
+    </tr>
     </tbody>
 </table>
 

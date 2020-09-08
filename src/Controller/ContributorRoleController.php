@@ -25,7 +25,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/contributor_role")
- * @IsGranted("ROLE_USER")
  */
 class ContributorRoleController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
@@ -110,7 +109,7 @@ class ContributorRoleController extends AbstractController implements PaginatorA
         }
 
         return [
-            'contributorRole' => $contributorRole,
+            'contributor_role' => $contributorRole,
             'form' => $form->createView(),
         ];
     }

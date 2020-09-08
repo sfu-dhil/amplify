@@ -42,7 +42,7 @@ class SeasonRepository extends ServiceEntityRepository {
      *
      * @return Collection|Season[]
      */
-    public function typeaheadSearch($q) {
+    public function typeaheadQuery($q) {
         $qb = $this->createQueryBuilder('season');
         $qb->andWhere('season.title LIKE :q');
         $qb->orderBy('season.title', 'ASC');

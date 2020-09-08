@@ -42,7 +42,7 @@ class PodcastRepository extends ServiceEntityRepository {
      *
      * @return Collection|Podcast[]
      */
-    public function typeaheadSearch($q) {
+    public function typeaheadQuery($q) {
         $qb = $this->createQueryBuilder('podcast');
         $qb->andWhere('podcast.title LIKE :q');
         $qb->orderBy('podcast.title', 'ASC');

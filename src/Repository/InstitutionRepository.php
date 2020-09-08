@@ -41,7 +41,7 @@ class InstitutionRepository extends ServiceEntityRepository {
      *
      * @return Collection|Institution[]
      */
-    public function typeaheadSearch($q) {
+    public function typeaheadQuery($q) {
         $qb = $this->createQueryBuilder('institution');
         $qb->andWhere('institution.name LIKE :q');
         $qb->orderBy('institution.name', 'ASC');

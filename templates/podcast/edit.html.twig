@@ -1,15 +1,15 @@
-{% extends 'base.html.twig' %}
+    {% extends 'base.html.twig' %}
 
     {% block title %}Edit Podcast {% endblock %}
 
     {% block body %}
-        <h1>Edit Podcast</h1>
+    <h1>Edit Podcast</h1>
 
-        {% embed 'podcast/partial/form.html.twig' %}
-        {% endembed %}
+    {% embed 'podcast/partial/form.html.twig' %}
+    {% endembed %}
 
     {% endblock %}
 
     {% block javascripts %}
-        {% include '@NinesEditor/editor/widget.html.twig' %}
+    {% include '@NinesEditor/editor/widget.html.twig' %}
     {% endblock %}

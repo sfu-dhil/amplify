@@ -1,132 +1,133 @@
+
 <table class='table table-bordered table-condensed table-hover table-striped'>
     <tbody>
         <tr>
             <th>Title</th>
             <td>
-                {{ podcast.title }}
-            </td>
-        </tr>
-        <tr>
+                                                            {{ podcast.title }}
+                                  </td>
+          </tr>
+          <tr>
             <th>Alternative Title</th>
             <td>
-                {{ podcast.alternativeTitle }}
-            </td>
-        </tr>
-        <tr>
+                                                            {{ podcast.alternativeTitle }}
+                                  </td>
+          </tr>
+          <tr>
             <th>Explicit</th>
             <td>
-                {% if podcast.explicit %}Yes{% else %}No{% endif %}
-            </td>
-        </tr>
-        <tr>
+                                                            {% if podcast.explicit %}Yes{% else %}No{% endif %}
+                                  </td>
+          </tr>
+          <tr>
             <th>Description</th>
             <td>
-                {{ podcast.description|raw }}
-            </td>
-        </tr>
-        <tr>
+                                                            {{ podcast.description|raw }}
+                                  </td>
+          </tr>
+          <tr>
             <th>Copyright</th>
             <td>
-                {{ podcast.copyright|raw }}
-            </td>
-        </tr>
-        <tr>
+                                                            {{ podcast.copyright|raw }}
+                                  </td>
+          </tr>
+          <tr>
             <th>Website</th>
             <td>
-                {{ podcast.website|raw }}
-            </td>
-        </tr>
-        <tr>
+                                                            {{ podcast.website|raw }}
+                                  </td>
+          </tr>
+          <tr>
             <th>Rss</th>
             <td>
-                {{ podcast.rss }}
-            </td>
-        </tr>
-        <tr>
+                                                            {{ podcast.rss }}
+                                  </td>
+          </tr>
+          <tr>
             <th>Tags</th>
             <td>
-                {% if podcast.tags %}{{ podcast.tags|join(', ') }}{% endif %}
-            </td>
-        </tr>
-
-        <tr>
-            <th>Publisher</th>
-            <td>
-                <a href='{{ path("publisher_show", {"id": podcast.publisher.id}) }}'>{{ podcast.publisher }}</a>
-            </td>
-        </tr>
-        <tr>
-            <th>Contribution</th>
-            <td>
-                {% if podcast.contributions|length > 0 %}
-                    <ul>
-                        {% for contribution in podcast.contributions %}
-                            <li>
-                                <a href='{{ path("contribution_show", {"id":contribution.id }) }}'>
-                                    {{ contribution }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <th>Season</th>
-            <td>
-                {% if podcast.seasons|length > 0 %}
-                    <ul>
-                        {% for season in podcast.seasons %}
-                            <li>
-                                <a href='{{ path("season_show", {"id":season.id }) }}'>
-                                    {{ season }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <th>Episode</th>
-            <td>
-                {% if podcast.episodes|length > 0 %}
-                    <ul>
-                        {% for episode in podcast.episodes %}
-                            <li>
-                                <a href='{{ path("episode_show", {"id":episode.id }) }}'>
-                                    {{ episode }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <th>Category</th>
-            <td>
-                {% if podcast.categories|length > 0 %}
-                    <ul>
-                        {% for category in podcast.categories %}
-                            <li>
-                                <a href='{{ path("category_show", {"id":category.id }) }}'>
-                                    {{ category }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <th>Created</th>
-            <td>{{ podcast.created|date }}</td>
-        </tr>
-        <tr>
-            <th>Updated</th>
-            <td>{{ podcast.updated|date }}</td>
-        </tr>
+                                                            {% if podcast.tags %}{{ podcast.tags|join(', ') }}{% endif %}
+                                  </td>
+          </tr>
+          
+                                                                  <tr>
+                <th>Publisher</th>
+                <td>
+                  <a href='{{ path("publisher_show", {"id": podcast.publisher.id}) }}'>{{ podcast.publisher }}</a>
+                </td>
+              </tr>
+                                                                  <tr>
+                <th>Contribution</th>
+                <td>
+                  {% if podcast.contributions|length > 0 %}
+                  <ul>
+                      {% for contribution in podcast.contributions %} 
+                      <li>
+                          <a href='{{ path("contribution_show", {"id":contribution.id }) }}'>
+                              {{ contribution }}
+                          </a>
+                      </li>
+                      {% endfor %}
+                  </ul>
+                  {% endif %}
+                </td>
+              </tr>
+                                                                  <tr>
+                <th>Season</th>
+                <td>
+                  {% if podcast.seasons|length > 0 %}
+                  <ul>
+                      {% for season in podcast.seasons %} 
+                      <li>
+                          <a href='{{ path("season_show", {"id":season.id }) }}'>
+                              {{ season }}
+                          </a>
+                      </li>
+                      {% endfor %}
+                  </ul>
+                  {% endif %}
+                </td>
+              </tr>
+                                                                  <tr>
+                <th>Episode</th>
+                <td>
+                  {% if podcast.episodes|length > 0 %}
+                  <ul>
+                      {% for episode in podcast.episodes %} 
+                      <li>
+                          <a href='{{ path("episode_show", {"id":episode.id }) }}'>
+                              {{ episode }}
+                          </a>
+                      </li>
+                      {% endfor %}
+                  </ul>
+                  {% endif %}
+                </td>
+              </tr>
+                                                                  <tr>
+                <th>Category</th>
+                <td>
+                  {% if podcast.categories|length > 0 %}
+                  <ul>
+                      {% for category in podcast.categories %} 
+                      <li>
+                          <a href='{{ path("category_show", {"id":category.id }) }}'>
+                              {{ category }}
+                          </a>
+                      </li>
+                      {% endfor %}
+                  </ul>
+                  {% endif %}
+                </td>
+              </tr>
+          <tr>
+        <th>Created</th>
+        <td>{{ podcast.created|date }}</td>
+    </tr>
+    <tr>
+        <th>Updated</th>
+        <td>{{ podcast.updated|date }}</td>
+    </tr>
     </tbody>
 </table>
 

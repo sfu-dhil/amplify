@@ -41,7 +41,7 @@ class PersonRepository extends ServiceEntityRepository {
      *
      * @return Collection|Person[]
      */
-    public function typeaheadSearch($q) {
+    public function typeaheadQuery($q) {
         $qb = $this->createQueryBuilder('person');
         $qb->andWhere('person.fullName LIKE :q');
         $qb->orderBy('person.sortableName', 'ASC');

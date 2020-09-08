@@ -7,19 +7,21 @@
     <p class="count">
         Displaying {{ subjects|length }} subjects of {{ subjects.getTotalItemCount }} total.
     </p>
-{% endblock %}
+ {% endblock %} 
 
 {% block body %}
 
     <div class='btn-toolbar pull-right'>
         <div class='btn-group'>
             {% if is_granted('ROLE_CONTENT_ADMIN') %}
-                <a href="{{ path('subject_new') }}" class="btn btn-default">
-                    <span class="glyphicon glyphicon-plus"></span> New </a>
+            <a href="{{ path('subject_new') }}" class="btn btn-default">
+                <span class="glyphicon glyphicon-plus"></span> New
+            </a>
             {% endif %}
 
             <a href="{{ path('subject_search') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-search"></span> Search </a>
+                <span class="glyphicon glyphicon-search"></span> Search
+            </a>
         </div>
     </div>
 

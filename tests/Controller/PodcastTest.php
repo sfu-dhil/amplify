@@ -20,6 +20,8 @@ class PodcastTest extends ControllerBaseCase {
     // Change this to HTTP_OK when the site is public.
     private const ANON_RESPONSE_CODE = Response::HTTP_FOUND;
 
+    private const TYPEAHEAD_QUERY = 'podcast';
+
     protected function fixtures() : array {
         return [
             PodcastFixtures::class,
@@ -96,7 +98,7 @@ class PodcastTest extends ControllerBaseCase {
      * @group typeahead
      */
     public function testAnonTypeahead() : void {
-        $this->client->request('GET', '/podcast/typeahead?q=podcast');
+        $this->client->request('GET', '/podcast/typeahead?q=' . self::TYPEAHEAD_QUERY);
         $response = $this->client->getResponse();
         $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
         if (self::ANON_RESPONSE_CODE === Response::HTTP_FOUND) {
@@ -114,7 +116,7 @@ class PodcastTest extends ControllerBaseCase {
      */
     public function testUserTypeahead() : void {
         $this->login('user.user');
-        $this->client->request('GET', '/podcast/typeahead?q=podcast');
+        $this->client->request('GET', '/podcast/typeahead?q=' . self::TYPEAHEAD_QUERY);
         $response = $this->client->getResponse();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame('application/json', $response->headers->get('content-type'));
@@ -128,7 +130,7 @@ class PodcastTest extends ControllerBaseCase {
      */
     public function testAdminTypeahead() : void {
         $this->login('user.admin');
-        $this->client->request('GET', '/podcast/typeahead?q=podcast');
+        $this->client->request('GET', '/podcast/typeahead?q=' . self::TYPEAHEAD_QUERY);
         $response = $this->client->getResponse();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame('application/json', $response->headers->get('content-type'));
@@ -155,7 +157,6 @@ class PodcastTest extends ControllerBaseCase {
 
         $responseCrawler = $this->client->submit($form);
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New")')->count());
     }
 
     public function testUserSearch() : void {
@@ -174,7 +175,6 @@ class PodcastTest extends ControllerBaseCase {
 
         $responseCrawler = $this->client->submit($form);
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New")')->count());
     }
 
     public function testAdminSearch() : void {
@@ -193,7 +193,6 @@ class PodcastTest extends ControllerBaseCase {
 
         $responseCrawler = $this->client->submit($form);
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New")')->count());
     }
 
     /**
@@ -299,7 +298,7 @@ class PodcastTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/podcast/new');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
-        $form = $formCrawler->selectButton('Create')->form([
+        $form = $formCrawler->selectButton('Save')->form([
             'podcast[title]' => 'New Title',
             'podcast[alternativeTitle]' => 'New AlternativeTitle',
             'podcast[explicit]' => 'New Explicit',
@@ -333,7 +332,7 @@ class PodcastTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/podcast/new_popup');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
-        $form = $formCrawler->selectButton('Create')->form([
+        $form = $formCrawler->selectButton('Save')->form([
             'podcast[title]' => 'New Title',
             'podcast[alternativeTitle]' => 'New AlternativeTitle',
             'podcast[explicit]' => 'New Explicit',

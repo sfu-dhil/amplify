@@ -42,7 +42,7 @@ class PublisherRepository extends ServiceEntityRepository {
      *
      * @return Collection|Publisher[]
      */
-    public function typeaheadSearch($q) {
+    public function typeaheadQuery($q) {
         $qb = $this->createQueryBuilder('publisher');
         $qb->andWhere('publisher.name LIKE :q');
         $qb->orderBy('publisher.name', 'ASC');

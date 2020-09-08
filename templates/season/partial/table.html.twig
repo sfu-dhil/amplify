@@ -1,43 +1,44 @@
-<table class="table table-bordered table-condensed table-hover table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Number</th>
-            <th>Preserved</th>
-            <th>Title</th>
-            <th>Alternative Title</th>
-            <th>Description</th>
+  <table class="table table-bordered table-condensed table-hover table-striped">
+      <thead>
+          <tr>
+              <th>ID</th>                                       <th>Number</th>
+                                                         <th>Preserved</th>
+                                                         <th>Title</th>
+                                                         <th>Alternative Title</th>
+                                                         <th>Description</th>
+                  
+          </tr>
+      </thead>
+      <tbody>
+      {% for season in seasons %}
+          <tr>
+              <td>
+                  <a href="{{ path('season_show', { 'id': season.id }) }}">
+                      {{ season.id }}
+                  </a>
+              </td>
+              <td>
+                  {{ season.number }}
+              </td>
+          
+              <td>{% if season.preserved %}Yes{% else %}No{% endif %}</td>
 
-        </tr>
-    </thead>
-    <tbody>
-        {% for season in seasons %}
-            <tr>
-                <td>
-                    <a href="{{ path('season_show', { 'id': season.id }) }}">
-                        {{ season.id }}
-                    </a>
-                </td>
-                <td>
-                    {{ season.number }}
-                </td>
-
-                <td>{% if season.preserved %}Yes{% else %}No{% endif %}</td>
-
-
-                <td>
-                    {{ season.title }}
-                </td>
-
-                <td>
-                    {{ season.alternativeTitle }}
-                </td>
-
-                <td>
-                    {{ season.description|raw }}
-                </td>
-
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+          
+          
+              <td>
+                  {{ season.title }}
+              </td>
+          
+              <td>
+                  {{ season.alternativeTitle }}
+              </td>
+          
+              <td>
+                  {{ season.description|raw }}
+              </td>
+          
+          </tr>
+      {% endfor %}
+      </tbody>
+  </table>
+  

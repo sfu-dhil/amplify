@@ -11,13 +11,17 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Episode;
+use App\Entity\Podcast;
+use App\Entity\Season;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 /**
  * Episode form.
@@ -34,23 +38,40 @@ class EpisodeType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-        $builder->add('preserved', ChoiceType::class, [
-            'label' => 'Preserved',
-            'expanded' => true,
+
+        $builder->add('podcast', Select2EntityType::class, [
+            'label' => 'Podcast',
             'multiple' => false,
-            'choices' => [
-                'Yes' => true,
-                'No' => false,
-            ],
             'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
+            'remote_route' => 'podcast_typeahead',
+            'class' => Podcast::class,
+            'primary_key' => 'id',
+            'text_property' => 'title',
+            'page_limit' => 10,
+            'allow_clear' => true,
+            'delay' => 250,
+            'language' => 'en',
         ]);
 
-        $builder->add('date', null, [
+        $builder->add('season', Select2EntityType::class, [
+            'label' => 'Season',
+            'multiple' => false,
+            'required' => false,
+            'remote_route' => 'season_typeahead',
+            'class' => Season::class,
+            'primary_key' => 'id',
+            'text_property' => 'title',
+            'page_limit' => 10,
+            'allow_clear' => true,
+            'delay' => 250,
+            'language' => 'en',
+        ]);
+
+        $builder->add('date', DateType::class, [
             'label' => 'Date',
             'required' => true,
+            'widget' => 'single_text',
+            'html5' => true,
             'attr' => [
                 'help_block' => '',
             ],

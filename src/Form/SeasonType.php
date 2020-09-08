@@ -12,6 +12,7 @@ namespace App\Form;
 
 use App\Entity\Season;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -32,6 +33,20 @@ class SeasonType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
+        $builder->add('preserved', ChoiceType::class, [
+            'label' => 'Preserved',
+            'expanded' => true,
+            'multiple' => false,
+            'choices' => [
+                'Yes' => true,
+                'No' => false,
+            ],
+            'required' => true,
+            'attr' => [
+                'help_block' => '',
+            ],
+        ]);
+
         $builder->add('title', TextType::class, [
             'label' => 'Title',
             'required' => true,
