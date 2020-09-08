@@ -42,7 +42,7 @@ class ContributionType extends AbstractType {
         ]);
 
         $builder->add('contributorRole', Select2EntityType::class, [
-            'label' => 'ContributorRole',
+            'label' => 'Role',
             'class' => ContributorRole::class,
             'remote_route' => 'contributor_role_typeahead',
             'allow_clear' => true,
@@ -53,41 +53,6 @@ class ContributionType extends AbstractType {
             ],
         ]);
 
-        $builder->add('podcast', Select2EntityType::class, [
-            'label' => 'Podcast',
-            'class' => Podcast::class,
-            'remote_route' => 'podcast_typeahead',
-            'allow_clear' => true,
-            'attr' => [
-                'help_block' => '',
-                'add_path' => 'podcast_new_popup',
-                'add_label' => 'Add Podcast',
-            ],
-        ]);
-
-        $builder->add('season', Select2EntityType::class, [
-            'label' => 'Season',
-            'class' => Season::class,
-            'remote_route' => 'season_typeahead',
-            'allow_clear' => true,
-            'attr' => [
-                'help_block' => '',
-                'add_path' => 'season_new_popup',
-                'add_label' => 'Add Season',
-            ],
-        ]);
-
-        $builder->add('episode', Select2EntityType::class, [
-            'label' => 'Episode',
-            'class' => Episode::class,
-            'remote_route' => 'episode_typeahead',
-            'allow_clear' => true,
-            'attr' => [
-                'help_block' => '',
-                'add_path' => 'episode_new_popup',
-                'add_label' => 'Add Episode',
-            ],
-        ]);
     }
 
     /**

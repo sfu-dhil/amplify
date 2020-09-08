@@ -101,6 +101,10 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+            foreach($season->getContributions() as $contribution) {
+                $contribution->setPodcast($season);
+                $entityManager->persist($contribution);
+            }
             $entityManager->persist($season);
             $entityManager->flush();
             $this->addFlash('success', 'The new season has been saved.');
@@ -150,6 +154,13 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            foreach($season->getContributions() as $contribution) {
+                $contribution->setPodcast($season);
+                if( ! $entityManager->contains($contribution)) {
+                    $entityManager->persist($contribution);
+                }
+            }
             $this->getDoctrine()->getManager()->flush();
             $this->addFlash('success', 'The updated season has been saved.');
 

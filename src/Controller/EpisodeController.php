@@ -107,6 +107,10 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+            foreach($episode->getContributions() as $contribution) {
+                $contribution->setEpisode($episode);
+                $entityManager->persist($contribution);
+            }
             $entityManager->persist($episode);
             $entityManager->flush();
             $this->addFlash('success', 'The new episode has been saved.');
@@ -156,6 +160,13 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            foreach($episode->getContributions() as $contribution) {
+                $contribution->setEpisode($episode);
+                if( ! $entityManager->contains($contribution)) {
+                    $entityManager->persist($contribution);
+                }
+            }
             $this->getDoctrine()->getManager()->flush();
             $this->addFlash('success', 'The updated episode has been saved.');
 

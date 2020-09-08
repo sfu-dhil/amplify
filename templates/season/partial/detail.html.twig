@@ -52,9 +52,7 @@
                     <ul>
                         {% for contribution in season.contributions %}
                             <li>
-                                <a href='{{ path("contribution_show", {"id":contribution.id }) }}'>
-                                    {{ contribution }}
-                                </a>
+                                {{ contribution }}
                             </li>
                         {% endfor %}
                     </ul>
