@@ -1,15 +1,15 @@
-    {% extends 'base.html.twig' %}
+{% extends 'base.html.twig' %}
 
     {% block title %}Edit Publisher {% endblock %}
 
     {% block body %}
-    <h1>Edit Publisher</h1>
+        <h1>Edit Publisher</h1>
 
-    {% embed 'publisher/partial/form.html.twig' %}
-    {% endembed %}
+        {% embed 'publisher/partial/form.html.twig' %}
+        {% endembed %}
 
     {% endblock %}
 
     {% block javascripts %}
-    {% include '@NinesEditor/editor/widget.html.twig' %}
+        {% include '@NinesEditor/editor/widget.html.twig' %}
     {% endblock %}

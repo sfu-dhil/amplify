@@ -20,7 +20,7 @@ class PersonTest extends ControllerBaseCase {
     // Change this to HTTP_OK when the site is public.
     private const ANON_RESPONSE_CODE = Response::HTTP_FOUND;
 
-    private const TYPEAHEAD_QUERY = 'person';
+    private const TYPEAHEAD_QUERY = 'fullname';
 
     protected function fixtures() : array {
         return [
@@ -229,7 +229,6 @@ class PersonTest extends ControllerBaseCase {
             'person[sortableName]' => 'Updated SortableName',
             'person[location]' => 'Updated Location',
             'person[bio]' => 'Updated Bio',
-            'person[links]' => 'Updated Links',
         ]);
 
         $this->client->submit($form);
@@ -240,7 +239,6 @@ class PersonTest extends ControllerBaseCase {
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated SortableName")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Location")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Bio")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Links")')->count());
     }
 
     /**
@@ -297,7 +295,6 @@ class PersonTest extends ControllerBaseCase {
             'person[sortableName]' => 'New SortableName',
             'person[location]' => 'New Location',
             'person[bio]' => 'New Bio',
-            'person[links]' => 'New Links',
         ]);
 
         $this->client->submit($form);
@@ -308,7 +305,6 @@ class PersonTest extends ControllerBaseCase {
         $this->assertSame(1, $responseCrawler->filter('td:contains("New SortableName")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Location")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Bio")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Links")')->count());
     }
 
     /**
@@ -325,7 +321,6 @@ class PersonTest extends ControllerBaseCase {
             'person[sortableName]' => 'New SortableName',
             'person[location]' => 'New Location',
             'person[bio]' => 'New Bio',
-            'person[links]' => 'New Links',
         ]);
 
         $this->client->submit($form);
@@ -336,7 +331,6 @@ class PersonTest extends ControllerBaseCase {
         $this->assertSame(1, $responseCrawler->filter('td:contains("SortableName")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Location")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Bio")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Links")')->count());
     }
 
     /**

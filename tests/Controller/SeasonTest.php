@@ -20,7 +20,7 @@ class SeasonTest extends ControllerBaseCase {
     // Change this to HTTP_OK when the site is public.
     private const ANON_RESPONSE_CODE = Response::HTTP_FOUND;
 
-    private const TYPEAHEAD_QUERY = 'season';
+    private const TYPEAHEAD_QUERY = 'title';
 
     protected function fixtures() : array {
         return [
@@ -225,19 +225,18 @@ class SeasonTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Save')->form([
-            'season[number]' => 'Updated Number',
-            'season[preserved]' => 'Updated Preserved',
+            'season[number]' => 12,
             'season[title]' => 'Updated Title',
             'season[alternativeTitle]' => 'Updated AlternativeTitle',
             'season[description]' => 'Updated Description',
+            'season[podcast]' => 1,
         ]);
 
         $this->client->submit($form);
         $this->assertTrue($this->client->getResponse()->isRedirect('/season/1'));
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Number")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Preserved")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("12")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Title")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated AlternativeTitle")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Description")')->count());
@@ -293,19 +292,18 @@ class SeasonTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Save')->form([
-            'season[number]' => 'New Number',
-            'season[preserved]' => 'New Preserved',
+            'season[number]' => '14',
             'season[title]' => 'New Title',
             'season[alternativeTitle]' => 'New AlternativeTitle',
             'season[description]' => 'New Description',
+            'season[podcast]' => 1,
         ]);
 
         $this->client->submit($form);
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Number")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Preserved")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("14")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Title")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New AlternativeTitle")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Description")')->count());
@@ -321,22 +319,21 @@ class SeasonTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Save')->form([
-            'season[number]' => 'New Number',
-            'season[preserved]' => 'New Preserved',
+            'season[number]' => '15',
             'season[title]' => 'New Title',
             'season[alternativeTitle]' => 'New AlternativeTitle',
             'season[description]' => 'New Description',
+            'season[podcast]' => 1,
         ]);
 
         $this->client->submit($form);
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Number")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Preserved")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Title")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("AlternativeTitle")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Description")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("15")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("New Title")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("New AlternativeTitle")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("New Description")')->count());
     }
 
     /**

@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Podcast;
 use App\Entity\Season;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -17,6 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 /**
  * Season form.
@@ -33,19 +35,20 @@ class SeasonType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-        $builder->add('preserved', ChoiceType::class, [
-            'label' => 'Preserved',
-            'expanded' => true,
+        $builder->add('podcast', Select2EntityType::class, [
+            'label' => 'Podcast',
             'multiple' => false,
-            'choices' => [
-                'Yes' => true,
-                'No' => false,
-            ],
             'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
+            'remote_route' => 'podcast_typeahead',
+            'class' => Podcast::class,
+            'primary_key' => 'id',
+            'text_property' => 'title',
+            'page_limit' => 10,
+            'allow_clear' => true,
+            'delay' => 250,
+            'language' => 'en',
         ]);
+
 
         $builder->add('title', TextType::class, [
             'label' => 'Title',

@@ -2,14 +2,14 @@
 
 {% block title %}Person Search{% endblock %}
 
- {% block pageheader %} 
-    <h1>Person Search</h1>
-    {% if people|length %}
-    <p class="count">
-        Displaying {{ people|length }} people of {{ people.getTotalItemCount }} total.
-    </p>
-	{% endif %}
- {% endblock %} 
+ {% block pageheader %}
+     <h1>Person Search</h1>
+     {% if people|length %}
+         <p class="count">
+             Displaying {{ people|length }} people of {{ people.getTotalItemCount }} total.
+         </p>
+     {% endif %}
+ {% endblock %}
 
 {% block body %}
 
@@ -30,7 +30,7 @@
                     </div>
                 </div>
             </div>
-            <p>	Full text searching options, if available:</p>
+            <p> Full text searching options, if available:</p>
             <ul>
                 <li><code>shakespeare</code> - shakespeare should be present, but might not be</li>
                 <li><code>shakes*</code> - words starting with shakes should be present</li>
@@ -42,15 +42,15 @@
         </fieldset>
     </form>
 
-	{% if people|length %}
+    {% if people|length %}
 
-  {% embed 'person/partial/table.html.twig' %}
-  {% endembed %}
+        {% embed 'person/partial/table.html.twig' %}
+        {% endembed %}
 
-    <div class="navigation">
-        {{ knp_pagination_render(people) }}
-    </div>
-	{% endif %}
+        <div class="navigation">
+            {{ knp_pagination_render(people) }}
+        </div>
+    {% endif %}
 
 {% endblock %}
 

@@ -1,49 +1,48 @@
-
 <table class='table table-bordered table-condensed table-hover table-striped'>
     <tbody>
         <tr>
             <th>Name</th>
             <td>
-                                                            {{ language.name }}
-                                  </td>
-          </tr>
-          <tr>
+                {{ language.name }}
+            </td>
+        </tr>
+        <tr>
             <th>Label</th>
             <td>
-                                                            {{ language.label }}
-                                  </td>
-          </tr>
-          <tr>
+                {{ language.label }}
+            </td>
+        </tr>
+        <tr>
             <th>Description</th>
             <td>
-                                                            {{ language.description|raw }}
-                                  </td>
-          </tr>
-          
-                                                                  <tr>
-                <th>Episode</th>
-                <td>
-                  {% if language.episodes|length > 0 %}
-                  <ul>
-                      {% for episode in language.episodes %} 
-                      <li>
-                          <a href='{{ path("episode_show", {"id":episode.id }) }}'>
-                              {{ episode }}
-                          </a>
-                      </li>
-                      {% endfor %}
-                  </ul>
-                  {% endif %}
-                </td>
-              </tr>
-          <tr>
-        <th>Created</th>
-        <td>{{ language.created|date }}</td>
-    </tr>
-    <tr>
-        <th>Updated</th>
-        <td>{{ language.updated|date }}</td>
-    </tr>
+                {{ language.description|raw }}
+            </td>
+        </tr>
+
+        <tr>
+            <th>Episode</th>
+            <td>
+                {% if language.episodes|length > 0 %}
+                    <ul>
+                        {% for episode in language.episodes %}
+                            <li>
+                                <a href='{{ path("episode_show", {"id":episode.id }) }}'>
+                                    {{ episode }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Created</th>
+            <td>{{ language.created|date }}</td>
+        </tr>
+        <tr>
+            <th>Updated</th>
+            <td>{{ language.updated|date }}</td>
+        </tr>
     </tbody>
 </table>
 

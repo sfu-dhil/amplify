@@ -1,89 +1,90 @@
-
 <table class='table table-bordered table-condensed table-hover table-striped'>
     <tbody>
         <tr>
             <th>Number</th>
             <td>
-                                                            {{ season.number }}
-                                  </td>
-          </tr>
-          <tr>
+                {{ season.number }}
+            </td>
+        </tr>
+        <tr>
             <th>Preserved</th>
             <td>
-                                                            {% if season.preserved %}Yes{% else %}No{% endif %}
-                                  </td>
-          </tr>
-          <tr>
+                {% if season.preserved %}Yes{% else %}No{% endif %}
+            </td>
+        </tr>
+        <tr>
             <th>Title</th>
             <td>
-                                                            {{ season.title }}
-                                  </td>
-          </tr>
-          <tr>
+                {{ season.title }}
+            </td>
+        </tr>
+        <tr>
             <th>Alternative Title</th>
             <td>
-                                                            {{ season.alternativeTitle }}
-                                  </td>
-          </tr>
-          <tr>
+                {{ season.alternativeTitle }}
+            </td>
+        </tr>
+        <tr>
             <th>Description</th>
             <td>
-                                                            {{ season.description|raw }}
-                                  </td>
-          </tr>
-          
-                                                                  <tr>
-                <th>Podcast</th>
-                <td>
-                  <a href='{{ path("podcast_show", {"id": season.podcast.id}) }}'>{{ season.podcast }}</a>
-                </td>
-              </tr>
-                                                                  <tr>
-                <th>Publisher</th>
-                <td>
-                  <a href='{{ path("publisher_show", {"id": season.publisher.id}) }}'>{{ season.publisher }}</a>
-                </td>
-              </tr>
-                                                                  <tr>
-                <th>Contribution</th>
-                <td>
-                  {% if season.contributions|length > 0 %}
-                  <ul>
-                      {% for contribution in season.contributions %} 
-                      <li>
-                          <a href='{{ path("contribution_show", {"id":contribution.id }) }}'>
-                              {{ contribution }}
-                          </a>
-                      </li>
-                      {% endfor %}
-                  </ul>
-                  {% endif %}
-                </td>
-              </tr>
-                                                                  <tr>
-                <th>Episode</th>
-                <td>
-                  {% if season.episodes|length > 0 %}
-                  <ul>
-                      {% for episode in season.episodes %} 
-                      <li>
-                          <a href='{{ path("episode_show", {"id":episode.id }) }}'>
-                              {{ episode }}
-                          </a>
-                      </li>
-                      {% endfor %}
-                  </ul>
-                  {% endif %}
-                </td>
-              </tr>
-          <tr>
-        <th>Created</th>
-        <td>{{ season.created|date }}</td>
-    </tr>
-    <tr>
-        <th>Updated</th>
-        <td>{{ season.updated|date }}</td>
-    </tr>
+                {{ season.description|raw }}
+            </td>
+        </tr>
+
+        <tr>
+            <th>Podcast</th>
+            <td>
+                <a href='{{ path("podcast_show", {"id": season.podcast.id}) }}'>{{ season.podcast }}</a>
+            </td>
+        </tr>
+        <tr>
+            <th>Publisher</th>
+            <td>
+                {% if season.publisher %}
+                    <a href='{{ path("publisher_show", {"id": season.publisher.id}) }}'>{{ season.publisher }}</a>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Contribution</th>
+            <td>
+                {% if season.contributions|length > 0 %}
+                    <ul>
+                        {% for contribution in season.contributions %}
+                            <li>
+                                <a href='{{ path("contribution_show", {"id":contribution.id }) }}'>
+                                    {{ contribution }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Episode</th>
+            <td>
+                {% if season.episodes|length > 0 %}
+                    <ul>
+                        {% for episode in season.episodes %}
+                            <li>
+                                <a href='{{ path("episode_show", {"id":episode.id }) }}'>
+                                    {{ episode }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Created</th>
+            <td>{{ season.created|date }}</td>
+        </tr>
+        <tr>
+            <th>Updated</th>
+            <td>{{ season.updated|date }}</td>
+        </tr>
     </tbody>
 </table>
 

@@ -5,13 +5,9 @@
     <div class="col-sm-10">
         <input type="submit" value="Save" class="btn btn-primary" />
         {% if language.id is null %}
-        <a href="{{ path('language_index') }}" class="btn btn-warning">
-            Cancel
-        </a>
+            <a href="{{ path('language_index') }}" class="btn btn-warning"> Cancel </a>
         {% else %}
-            <a href="{{ path('language_show', { 'id': language.id }) }}" class="btn btn-warning">
-                Cancel
-            </a>
+            <a href="{{ path('language_show', { 'id': language.id }) }}" class="btn btn-warning"> Cancel </a>
         {% endif %}
     </div>
 </div>

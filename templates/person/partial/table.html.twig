@@ -1,42 +1,42 @@
-  <table class="table table-bordered table-condensed table-hover table-striped">
-      <thead>
-          <tr>
-              <th>ID</th>                                       <th>Fullname</th>
-                                                         <th>Sortable Name</th>
-                                                         <th>Location</th>
-                                                         <th>Bio</th>
-                                                         <th>Links</th>
-                  
-          </tr>
-      </thead>
-      <tbody>
-      {% for person in people %}
-          <tr>
-              <td>
-                  <a href="{{ path('person_show', { 'id': person.id }) }}">
-                      {{ person.id }}
-                  </a>
-              </td>
-              <td>
-                  {{ person.fullname }}
-              </td>
-          
-              <td>
-                  {{ person.sortableName }}
-              </td>
-          
-              <td>
-                  {{ person.location }}
-              </td>
-          
-              <td>
-                  {{ person.bio|raw }}
-              </td>
-          
-              <td>{% if person.links %}{{ person.links|join(', ') }}{% endif %}</td>
-          
-          </tr>
-      {% endfor %}
-      </tbody>
-  </table>
-  
+<table class="table table-bordered table-condensed table-hover table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Fullname</th>
+            <th>Sortable Name</th>
+            <th>Location</th>
+            <th>Bio</th>
+            <th>Links</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for person in people %}
+            <tr>
+                <td>
+                    <a href="{{ path('person_show', { 'id': person.id }) }}">
+                        {{ person.id }}
+                    </a>
+                </td>
+                <td>
+                    {{ person.fullname }}
+                </td>
+
+                <td>
+                    {{ person.sortableName }}
+                </td>
+
+                <td>
+                    {{ person.location }}
+                </td>
+
+                <td>
+                    {{ person.bio|raw }}
+                </td>
+
+                <td>{% if person.links %}{{ person.links|join(', ') }}{% endif %}</td>
+
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

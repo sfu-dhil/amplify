@@ -12,6 +12,7 @@ namespace App\Repository;
 
 use App\Entity\Institution;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -42,6 +43,21 @@ class InstitutionRepository extends ServiceEntityRepository {
      * @return Collection|Institution[]
      */
     public function typeaheadQuery($q) {
+        $qb = $this->createQueryBuilder('institution');
+        $qb->andWhere('institution.name LIKE :q');
+        $qb->orderBy('institution.name', 'ASC');
+        $qb->addOrderBy('institution.province', 'ASC');
+        $qb->setParameter('q', "%{$q}%");
+
+        return $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param string $q
+     *
+     * @return Collection|Institution[]
+     */
+    public function searchQuery($q) {
         $qb = $this->createQueryBuilder('institution');
         $qb->andWhere('institution.name LIKE :q');
         $qb->orderBy('institution.name', 'ASC');

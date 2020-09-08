@@ -12,6 +12,7 @@ namespace App\Repository;
 
 use App\Entity\Person;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -43,10 +44,24 @@ class PersonRepository extends ServiceEntityRepository {
      */
     public function typeaheadQuery($q) {
         $qb = $this->createQueryBuilder('person');
-        $qb->andWhere('person.fullName LIKE :q');
+        $qb->andWhere('person.fullname LIKE :q');
         $qb->orderBy('person.sortableName', 'ASC');
         $qb->setParameter('q', "{$q}%");
 
         return $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param string $q
+     *
+     * @return Query
+     */
+    public function searchQuery($q) {
+        $qb = $this->createQueryBuilder('person');
+        $qb->andWhere('person.fullname LIKE :q');
+        $qb->orderBy('person.sortableName', 'ASC');
+        $qb->setParameter('q', "{$q}%");
+
+        return $qb->getQuery();
     }
 }

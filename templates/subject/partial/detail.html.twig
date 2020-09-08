@@ -1,49 +1,48 @@
-
 <table class='table table-bordered table-condensed table-hover table-striped'>
     <tbody>
         <tr>
             <th>Name</th>
             <td>
-                                                            {{ subject.name }}
-                                  </td>
-          </tr>
-          <tr>
+                {{ subject.name }}
+            </td>
+        </tr>
+        <tr>
             <th>Label</th>
             <td>
-                                                            {{ subject.label }}
-                                  </td>
-          </tr>
-          <tr>
+                {{ subject.label }}
+            </td>
+        </tr>
+        <tr>
             <th>Description</th>
             <td>
-                                                            {{ subject.description|raw }}
-                                  </td>
-          </tr>
-          
-                                                                  <tr>
-                <th>Episode</th>
-                <td>
-                  {% if subject.episodes|length > 0 %}
-                  <ul>
-                      {% for episode in subject.episodes %} 
-                      <li>
-                          <a href='{{ path("episode_show", {"id":episode.id }) }}'>
-                              {{ episode }}
-                          </a>
-                      </li>
-                      {% endfor %}
-                  </ul>
-                  {% endif %}
-                </td>
-              </tr>
-          <tr>
-        <th>Created</th>
-        <td>{{ subject.created|date }}</td>
-    </tr>
-    <tr>
-        <th>Updated</th>
-        <td>{{ subject.updated|date }}</td>
-    </tr>
+                {{ subject.description|raw }}
+            </td>
+        </tr>
+
+        <tr>
+            <th>Episode</th>
+            <td>
+                {% if subject.episodes|length > 0 %}
+                    <ul>
+                        {% for episode in subject.episodes %}
+                            <li>
+                                <a href='{{ path("episode_show", {"id":episode.id }) }}'>
+                                    {{ episode }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Created</th>
+            <td>{{ subject.created|date }}</td>
+        </tr>
+        <tr>
+            <th>Updated</th>
+            <td>{{ subject.updated|date }}</td>
+        </tr>
     </tbody>
 </table>
 

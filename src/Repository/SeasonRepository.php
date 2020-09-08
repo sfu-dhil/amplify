@@ -50,4 +50,18 @@ class SeasonRepository extends ServiceEntityRepository {
 
         return $qb->getQuery()->execute();
     }
+
+    /**
+     * @param string $q
+     *
+     * @return Query
+     */
+    public function searchQuery($q) {
+        $qb = $this->createQueryBuilder('season');
+        $qb->andWhere('season.title LIKE :q');
+        $qb->orderBy('season.title', 'ASC');
+        $qb->setParameter('q', "{$q}%");
+
+        return $qb->getQuery();
+    }
 }

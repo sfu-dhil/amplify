@@ -50,4 +50,18 @@ class PublisherRepository extends ServiceEntityRepository {
 
         return $qb->getQuery()->execute();
     }
+
+    /**
+     * @param string $q
+     *
+     * @return Query
+     */
+    public function searchQuery($q) {
+        $qb = $this->createQueryBuilder('publisher');
+        $qb->andWhere('publisher.name LIKE :q');
+        $qb->orderBy('publisher.name', 'ASC');
+        $qb->setParameter('q', "{$q}%");
+
+        return $qb->getQuery();
+    }
 }

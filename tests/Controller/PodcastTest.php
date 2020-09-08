@@ -20,7 +20,7 @@ class PodcastTest extends ControllerBaseCase {
     // Change this to HTTP_OK when the site is public.
     private const ANON_RESPONSE_CODE = Response::HTTP_FOUND;
 
-    private const TYPEAHEAD_QUERY = 'podcast';
+    private const TYPEAHEAD_QUERY = 'title';
 
     protected function fixtures() : array {
         return [
@@ -227,12 +227,11 @@ class PodcastTest extends ControllerBaseCase {
         $form = $formCrawler->selectButton('Save')->form([
             'podcast[title]' => 'Updated Title',
             'podcast[alternativeTitle]' => 'Updated AlternativeTitle',
-            'podcast[explicit]' => 'Updated Explicit',
+            'podcast[explicit]' => 1,
             'podcast[description]' => 'Updated Description',
             'podcast[copyright]' => 'Updated Copyright',
-            'podcast[website]' => 'Updated Website',
-            'podcast[rss]' => 'Updated Rss',
-            'podcast[tags]' => 'Updated Tags',
+            'podcast[website]' => 'http://example.com/foo',
+            'podcast[rss]' => 'http://example.com/rss',
         ]);
 
         $this->client->submit($form);
@@ -241,12 +240,10 @@ class PodcastTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Title")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated AlternativeTitle")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Explicit")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Description")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Copyright")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Website")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Rss")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Tags")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("http://example.com/foo")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("http://example.com/rss")')->count());
     }
 
     /**
@@ -301,12 +298,11 @@ class PodcastTest extends ControllerBaseCase {
         $form = $formCrawler->selectButton('Save')->form([
             'podcast[title]' => 'New Title',
             'podcast[alternativeTitle]' => 'New AlternativeTitle',
-            'podcast[explicit]' => 'New Explicit',
+            'podcast[explicit]' => 0,
             'podcast[description]' => 'New Description',
             'podcast[copyright]' => 'New Copyright',
-            'podcast[website]' => 'New Website',
-            'podcast[rss]' => 'New Rss',
-            'podcast[tags]' => 'New Tags',
+            'podcast[website]' => 'http://example.com/foo',
+            'podcast[rss]' => 'http://example.com/rss',
         ]);
 
         $this->client->submit($form);
@@ -315,12 +311,10 @@ class PodcastTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Title")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New AlternativeTitle")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Explicit")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Description")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Copyright")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Website")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Rss")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Tags")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("http://example.com/foo")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("http://example.com/rss")')->count());
     }
 
     /**
@@ -335,26 +329,23 @@ class PodcastTest extends ControllerBaseCase {
         $form = $formCrawler->selectButton('Save')->form([
             'podcast[title]' => 'New Title',
             'podcast[alternativeTitle]' => 'New AlternativeTitle',
-            'podcast[explicit]' => 'New Explicit',
+            'podcast[explicit]' => 0,
             'podcast[description]' => 'New Description',
             'podcast[copyright]' => 'New Copyright',
-            'podcast[website]' => 'New Website',
-            'podcast[rss]' => 'New Rss',
-            'podcast[tags]' => 'New Tags',
+            'podcast[website]' => 'http://example.com/foo',
+            'podcast[rss]' => 'http://example.com/rss',
         ]);
 
         $this->client->submit($form);
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Title")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("AlternativeTitle")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Explicit")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Description")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Copyright")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Website")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Rss")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Tags")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("New Title")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("New AlternativeTitle")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("New Description")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("New Copyright")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("http://example.com/foo")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("http://example.com/rss")')->count());
     }
 
     /**

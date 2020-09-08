@@ -1,15 +1,15 @@
-    {% extends 'base.html.twig' %}
+{% extends 'base.html.twig' %}
 
     {% block title %}New Person {% endblock %}
 
     {% block body %}
-    <h1>New Person</h1>
+        <h1>New Person</h1>
 
-    {% embed 'person/partial/form.html.twig' %}
-    {% endembed %}
+        {% embed 'person/partial/form.html.twig' %}
+        {% endembed %}
 
     {% endblock %}
 
     {% block javascripts %}
-    {% include '@NinesEditor/editor/widget.html.twig' %}
+        {% include '@NinesEditor/editor/widget.html.twig' %}
     {% endblock %}

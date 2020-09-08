@@ -5,13 +5,10 @@
     <div class="col-sm-10">
         <input type="submit" value="Save" class="btn btn-primary" />
         {% if contributor_role.id is null %}
-        <a href="{{ path('contributor_role_index') }}" class="btn btn-warning">
-            Cancel
-        </a>
+            <a href="{{ path('contributor_role_index') }}" class="btn btn-warning"> Cancel </a>
         {% else %}
             <a href="{{ path('contributor_role_show', { 'id': contributor_role.id }) }}" class="btn btn-warning">
-                Cancel
-            </a>
+                Cancel </a>
         {% endif %}
     </div>
 </div>

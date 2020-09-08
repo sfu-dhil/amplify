@@ -1,44 +1,44 @@
-  <table class="table table-bordered table-condensed table-hover table-striped">
-      <thead>
-          <tr>
-              <th>ID</th>                                       <th>Name</th>
-                                                         <th>Location</th>
-                                                         <th>Website</th>
-                                                         <th>Description</th>
-                                                         <th>Contact</th>
-                  
-          </tr>
-      </thead>
-      <tbody>
-      {% for publisher in publishers %}
-          <tr>
-              <td>
-                  <a href="{{ path('publisher_show', { 'id': publisher.id }) }}">
-                      {{ publisher.id }}
-                  </a>
-              </td>
-              <td>
-                  {{ publisher.name }}
-              </td>
-          
-              <td>
-                  {{ publisher.location }}
-              </td>
-          
-              <td>
-                  {{ publisher.website }}
-              </td>
-          
-              <td>
-                  {{ publisher.description|raw }}
-              </td>
-          
-              <td>
-                  {{ publisher.contact|raw }}
-              </td>
-          
-          </tr>
-      {% endfor %}
-      </tbody>
-  </table>
-  
+<table class="table table-bordered table-condensed table-hover table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Website</th>
+            <th>Description</th>
+            <th>Contact</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for publisher in publishers %}
+            <tr>
+                <td>
+                    <a href="{{ path('publisher_show', { 'id': publisher.id }) }}">
+                        {{ publisher.id }}
+                    </a>
+                </td>
+                <td>
+                    {{ publisher.name }}
+                </td>
+
+                <td>
+                    {{ publisher.location }}
+                </td>
+
+                <td>
+                    {{ publisher.website }}
+                </td>
+
+                <td>
+                    {{ publisher.description|raw }}
+                </td>
+
+                <td>
+                    {{ publisher.contact|raw }}
+                </td>
+
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

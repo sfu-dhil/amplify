@@ -10,13 +10,16 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Institution;
 use App\Entity\Person;
+use App\Entity\Season;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 /**
  * Person form.
@@ -40,6 +43,20 @@ class PersonType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
+        $builder->add('institution', Select2EntityType::class, [
+            'label' => 'Institution',
+            'multiple' => false,
+            'required' => false,
+            'remote_route' => 'institution_typeahead',
+            'class' => Institution::class,
+            'primary_key' => 'id',
+            'text_property' => 'name',
+            'page_limit' => 10,
+            'allow_clear' => true,
+            'delay' => 250,
+            'language' => 'en',
+        ]);
+
         $builder->add('location', TextType::class, [
             'label' => 'Location',
             'required' => true,
@@ -57,7 +74,7 @@ class PersonType extends AbstractType {
         ]);
         $builder->add('links', CollectionType::class, [
             'label' => 'Links',
-            'required' => true,
+            'required' => false,
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
@@ -68,7 +85,7 @@ class PersonType extends AbstractType {
             'by_reference' => false,
             'attr' => [
                 'class' => 'collection collection-simple',
-                'help_block' => 'A URL link to the specificed publication',
+                'help_block' => '',
             ],
         ]);
     }
