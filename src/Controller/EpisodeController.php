@@ -15,7 +15,7 @@ use App\Entity\Episode;
 use App\Form\AudioType;
 use App\Form\EpisodeType;
 use App\Repository\EpisodeRepository;
-use App\Services\FileUploader;
+use App\Services\AudioFileUploader;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -252,7 +252,7 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      *
      * @return array|RedirectResponse
      */
-    public function editAudio(Request $request, Episode $episode, FileUploader $fileUploader) {
+    public function editAudio(Request $request, Episode $episode, AudioFileUploader $fileUploader) {
         if ( ! $episode->getAudio()) {
             $this->addFlash('danger', 'This episode does not have an audio file. Use the button below to add one.');
 
@@ -280,7 +280,7 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
             $entityManager->flush();
             $this->addFlash('success', 'The new audio has been saved.');
 
-            return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
+//            return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
         }
 
         return [
