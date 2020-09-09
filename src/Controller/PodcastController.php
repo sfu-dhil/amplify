@@ -101,7 +101,7 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
-            foreach($podcast->getContributions() as $contribution) {
+            foreach ($podcast->getContributions() as $contribution) {
                 $contribution->setPodcast($podcast);
                 $entityManager->persist($contribution);
             }
@@ -155,9 +155,9 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
-            foreach($podcast->getContributions() as $contribution) {
+            foreach ($podcast->getContributions() as $contribution) {
                 $contribution->setPodcast($podcast);
-                if( ! $entityManager->contains($contribution)) {
+                if ( ! $entityManager->contains($contribution)) {
                     $entityManager->persist($contribution);
                 }
             }

@@ -12,10 +12,7 @@ namespace App\Form;
 
 use App\Entity\Contribution;
 use App\Entity\ContributorRole;
-use App\Entity\Episode;
 use App\Entity\Person;
-use App\Entity\Podcast;
-use App\Entity\Season;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -52,7 +49,6 @@ class ContributionType extends AbstractType {
                 'add_label' => 'Add ContributorRole',
             ],
         ]);
-
     }
 
     /**

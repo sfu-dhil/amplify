@@ -44,11 +44,27 @@ class AudioFileUploader {
         $this->root = $root;
     }
 
+    private function uploadFile(Audio $audio) : void {
+        $file = $audio->getAudioFile();
+        if ( ! $file instanceof UploadedFile) {
+            return;
+        }
+        $audio->setOriginalName($file->getClientOriginalName());
+
+        $filename = $this->upload($file);
+        $path = $this->uploadDir . '/' . $filename;
+
+        $audioFile = new File($path);
+        $audio->setFileSize($audioFile->getSize());
+        $audio->setAudioFile($audioFile);
+        $audio->setAudioPath($filename);
+        $audio->setMimeType($audioFile->getMimeType());
+    }
+
     public function setUploadDir($dir) : void {
         if ('/' !== $dir[0]) {
             $this->uploadDir = $this->root . '/' . $dir;
-        }
-        else {
+        } else {
             $this->uploadDir = $dir;
         }
     }
@@ -73,23 +89,6 @@ class AudioFileUploader {
         $file->move($this->uploadDir, $filename);
 
         return $filename;
-    }
-
-    private function uploadFile(Audio $audio) : void {
-        $file = $audio->getAudioFile();
-        if ( ! $file instanceof UploadedFile) {
-            return;
-        }
-        $audio->setOriginalName($file->getClientOriginalName());
-
-        $filename = $this->upload($file);
-        $path = $this->uploadDir . '/' . $filename;
-
-        $audioFile = new File($path);
-        $audio->setFileSize($audioFile->getSize());
-        $audio->setAudioFile($audioFile);
-        $audio->setAudioPath($filename);
-        $audio->setMimeType($audioFile->getMimeType());
     }
 
     public function prePersist(LifecycleEventArgs $args) : void {
@@ -124,8 +123,7 @@ class AudioFileUploader {
 
             try {
                 $fs->remove($entity->getAudioFile());
-            }
-            catch (IOExceptionInterface $ex) {
+            } catch (IOExceptionInterface $ex) {
                 $this->logger->error("An error occured removing {$ex->getPath()}: {$ex->getMessage()}");
             }
         }
@@ -165,6 +163,4 @@ class AudioFileUploader {
 
         return round($bytes);
     }
-
-
 }
