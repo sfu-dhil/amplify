@@ -20,7 +20,12 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 /**
  * @ORM\Entity(repositoryClass=EpisodeRepository::class)
  */
-class Episode extends AbstractEntity {
+class Episode extends AbstractEntity implements ImageContainerInterface {
+
+    use ImageContainerTrait {
+        ImageContainerTrait::__construct as protected trait_constructor;
+    }
+
     /**
      * @var int
      * @ORM\Column(type="integer")
@@ -129,6 +134,8 @@ class Episode extends AbstractEntity {
 
     public function __construct() {
         parent::__construct();
+        $this->trait_constructor();
+
         $this->preserved = false;
         $this->tags = [];
         $this->languages = new ArrayCollection();

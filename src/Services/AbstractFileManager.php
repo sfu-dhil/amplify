@@ -24,41 +24,27 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
-class AudioFileUploader {
+abstract class AbstractFileManager {
     public const FORBIDDEN = '/[^a-z0-9_. -]/i';
 
     /**
      * @var LoggerInterface
      */
-    private $logger;
-
-    private $root;
+    protected $logger;
 
     /**
      * @var string
      */
-    private $uploadDir;
+    protected $root;
+
+    /**
+     * @var string
+     */
+    protected $uploadDir;
 
     public function __construct(LoggerInterface $logger, $root) {
         $this->logger = $logger;
         $this->root = $root;
-    }
-
-    private function uploadFile(Audio $audio) : void {
-        $file = $audio->getAudioFile();
-        if ( ! $file instanceof UploadedFile) {
-            return;
-        }
-        $audio->setOriginalName($file->getClientOriginalName());
-
-        $filename = $this->upload($file);
-        $path = $this->uploadDir . '/' . $filename;
-
-        $audioFile = new File($path);
-        $audio->setFileSize($audioFile->getSize());
-        $audio->setAudioFile($audioFile);
-        $audio->setAudioPath($filename);
-        $audio->setMimeType($audioFile->getMimeType());
     }
 
     public function setUploadDir($dir) : void {
@@ -91,54 +77,16 @@ class AudioFileUploader {
         return $filename;
     }
 
-    public function prePersist(LifecycleEventArgs $args) : void {
-        $entity = $args->getEntity();
-        if ($entity instanceof Audio) {
-            $this->uploadFile($entity);
-        }
-    }
-
-    public function preUpdate(PreUpdateEventArgs $args) : void {
-        $entity = $args->getEntity();
-        if ( ! $entity instanceof Audio) {
-            return;
-        }
-        $this->uploadFile($entity);
-    }
-
-    public function postLoad(LifecycleEventArgs $args) : void {
-        $entity = $args->getEntity();
-        if ($entity instanceof Audio) {
-            $filePath = $this->uploadDir . '/' . $entity->getAudioPath();
-            if (file_exists($filePath)) {
-                $entity->setAudioFile(new File($filePath));
-            }
-        }
-    }
-
-    public function postRemove(LifecycleEventArgs $args) : void {
-        $entity = $args->getEntity();
-        if ($entity instanceof Audio) {
-            $fs = new Filesystem();
-
-            try {
-                $fs->remove($entity->getAudioFile());
-            } catch (IOExceptionInterface $ex) {
-                $this->logger->error("An error occured removing {$ex->getPath()}: {$ex->getMessage()}");
-            }
-        }
-    }
-
-    public function getMaxUploadSize($asBytes = true) {
+    public static function getMaxUploadSize($asBytes = true) {
         static $maxBytes = -1;
 
         if ($maxBytes < 0) {
-            $postMax = $this->parseSize(ini_get('post_max_size'));
+            $postMax = self::parseSize(ini_get('post_max_size'));
             if ($postMax > 0) {
                 $maxBytes = $postMax;
             }
 
-            $uploadMax = $this->parseSize(ini_get('upload_max_filesize'));
+            $uploadMax = self::parseSize(ini_get('upload_max_filesize'));
             if ($uploadMax > 0 && $uploadMax < $maxBytes) {
                 $maxBytes = $uploadMax;
             }
@@ -153,7 +101,15 @@ class AudioFileUploader {
         return $est . $units[$exp];
     }
 
-    public function parseSize($size) {
+    public static function bytesToSize($bytes) {
+        $units = ['b', 'Kb', 'Mb', 'Gb', 'Tb'];
+        $exp = floor(log($bytes, 1024));
+        $est = round($bytes / 1024 ** $exp, 1);
+
+        return $est . $units[$exp];
+    }
+
+    public static function parseSize($size) {
         $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
         $bytes = preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
         if ($unit) {

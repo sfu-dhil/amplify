@@ -1,0 +1,22 @@
+<div class="thumbnail">
+
+    <div class="img-container">
+        <a href="#imgModal" data-toggle="modal" data-title="{{ image.originalName }}"
+                data-date="{{ image.created|date }}" data-target="#imgModal"
+                data-img="{{ path('image_view', {'id': image.id}) }}">
+            <img src="{{ path('image_thumb', {'id': image.id}) }}" class="img-thumbnail" />
+        </a>
+    </div>
+
+    <div class="caption">
+        <div class='title'>
+            {{ image.originalName }}
+        </div>
+        {{ image.description|raw }}
+
+        {% if image.license %}
+            {{ image.license|raw }}
+        {% endif %}
+    </div>
+
+</div>

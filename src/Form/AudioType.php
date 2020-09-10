@@ -12,7 +12,7 @@ namespace App\Form;
 
 use App\Entity\Audio;
 use App\Entity\Episode;
-use App\Services\AudioFileUploader;
+use App\Services\AudioManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -25,11 +25,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class AudioType extends AbstractType {
     /**
-     * @var AudioFileUploader
+     * @var AudioManager
      */
     private $fileUploader;
 
-    public function __construct(AudioFileUploader $fileUploader) {
+    public function __construct(AudioManager $fileUploader) {
         $this->fileUploader = $fileUploader;
     }
 

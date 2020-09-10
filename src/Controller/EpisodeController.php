@@ -12,10 +12,12 @@ namespace App\Controller;
 
 use App\Entity\Audio;
 use App\Entity\Episode;
+use App\Entity\Image;
 use App\Form\AudioType;
 use App\Form\EpisodeType;
+use App\Form\ImageType;
 use App\Repository\EpisodeRepository;
-use App\Services\AudioFileUploader;
+use App\Services\AudioManager;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -252,7 +254,7 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      *
      * @return array|RedirectResponse
      */
-    public function editAudio(Request $request, Episode $episode, AudioFileUploader $fileUploader) {
+    public function editAudio(Request $request, Episode $episode, AudioManager $fileUploader) {
         if ( ! $episode->getAudio()) {
             $this->addFlash('danger', 'This episode does not have an audio file. Use the button below to add one.');
 
@@ -307,4 +309,34 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
 
         return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
     }
+
+    /**
+     * @Route("/{id}/new_image", name="episode_new_image", methods={"GET","POST"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     *
+     * @Template()
+     */
+    public function newImage(Request $request, Episode $episode) {
+        $image = new Image();
+        $form = $this->createForm(ImageType::class, $image);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $image->setEntity($episode);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($image);
+            $entityManager->flush();
+            $this->addFlash('success', 'The new image has been saved.');
+
+            return $this->redirectToRoute('entity_show', ['id' => $episode->getId()]);
+        }
+
+        return [
+            'image' => $image,
+            'form' => $form->createView(),
+            'entity' => $episode,
+        ];
+
+    }
+
 }
