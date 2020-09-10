@@ -236,7 +236,6 @@ class SeasonTest extends ControllerBaseCase {
         $this->assertTrue($this->client->getResponse()->isRedirect('/season/1'));
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("12")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Title")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated AlternativeTitle")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Description")')->count());
