@@ -241,7 +241,6 @@ class EpisodeTest extends ControllerBaseCase {
         $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(2, $responseCrawler->filter('td:contains("12")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("1234")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Title")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated AlternativeTitle")')->count());
