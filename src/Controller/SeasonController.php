@@ -10,12 +10,15 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Episode;
+use App\Entity\Image;
 use App\Entity\Season;
 use App\Form\SeasonType;
 use App\Repository\SeasonRepository;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,7 +29,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/season")
  */
-class SeasonController extends AbstractController implements PaginatorAwareInterface {
+class SeasonController extends AbstractImageController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**
@@ -188,5 +191,35 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
         }
 
         return $this->redirectToRoute('season_index');
+    }
+
+    /**
+     * @Route("/{id}/new_image", name="season_new_image", methods={"GET","POST"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     *
+     * @Template()
+     */
+    public function newImage(Request $request, Season $season) {
+        return parent::newImageAction($request, $season, 'season_show');
+    }
+
+    /**
+     * @Route("/{id}/edit_image/{image_id}", name="season_edit_image", methods={"GET","POST"})
+     * @ParamConverter("image", options={"id" = "image_id"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     *
+     * @Template()
+     */
+    public function editImage(Request $request, Season $season, Image $image) {
+        return parent::editImageAction($request, $season, $image, 'season_show');
+    }
+
+    /**
+     * @Route("/{id}/delete_image/{image_id}", name="season_delete_image", methods={"DELETE"})
+     * @ParamConverter("image", options={"id" = "image_id"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     */
+    public function deleteImage(Request $request, Season $season, Image $image) {
+        return parent::deleteImageAction($request, $season, $image, 'season_show');
     }
 }

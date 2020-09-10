@@ -27,4 +27,23 @@
     {% embed 'podcast/partial/detail.html.twig' %}
     {% endembed %}
 
+    <h2>Podcast Images</h2>
+
+    {% if is_granted('ROLE_CONTENT_ADMIN') %}
+        <div class='btn-toolbar pull-right'>
+            <div class='btn-group'>
+                <a href="{{ path('podcast_new_image', {'id': podcast.id }) }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> Add Image </a>
+            </div>
+        </div>
+        <div class='clearfix'></div>
+    {% endif %}
+    {% embed 'image/partial/list.html.twig' with {
+        'images': podcast.images,
+        'path_delete': 'podcast_delete_image',
+        'path_edit': 'podcast_edit_image',
+        'entity_id': podcast.id,
+    } %}
+    {% endembed %}
+
 {% endblock %}

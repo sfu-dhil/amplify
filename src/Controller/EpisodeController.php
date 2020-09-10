@@ -21,6 +21,7 @@ use App\Services\AudioManager;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -34,7 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/episode")
  */
-class EpisodeController extends AbstractController implements PaginatorAwareInterface {
+class EpisodeController extends AbstractImageController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**
@@ -317,26 +318,27 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @Template()
      */
     public function newImage(Request $request, Episode $episode) {
-        $image = new Image();
-        $form = $this->createForm(ImageType::class, $image);
-        $form->handleRequest($request);
+        return parent::newImageAction($request, $episode, 'episode_show');
+    }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $image->setEntity($episode);
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($image);
-            $entityManager->flush();
-            $this->addFlash('success', 'The new image has been saved.');
+    /**
+     * @Route("/{id}/edit_image/{image_id}", name="episode_edit_image", methods={"GET","POST"})
+     * @ParamConverter("image", options={"id" = "image_id"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     *
+     * @Template()
+     */
+    public function editImage(Request $request, Episode $episode, Image $image) {
+        return parent::editImageAction($request, $episode, $image, 'episode_show');
+    }
 
-            return $this->redirectToRoute('entity_show', ['id' => $episode->getId()]);
-        }
-
-        return [
-            'image' => $image,
-            'form' => $form->createView(),
-            'entity' => $episode,
-        ];
-
+    /**
+     * @Route("/{id}/delete_image/{image_id}", name="episode_delete_image", methods={"DELETE"})
+     * @ParamConverter("image", options={"id" = "image_id"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     */
+    public function deleteImage(Request $request, Episode $episode, Image $image) {
+        return parent::deleteImageAction($request, $episode, $image, 'episode_show');
     }
 
 }

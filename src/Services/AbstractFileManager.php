@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Entity\Audio;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Psr\Log\LoggerInterface;
@@ -42,15 +43,30 @@ abstract class AbstractFileManager {
      */
     protected $uploadDir;
 
+    /**
+     * @var EntityManagerInterface
+     */
+    protected $em;
+
     public function __construct(LoggerInterface $logger, $root) {
         $this->logger = $logger;
         $this->root = $root;
     }
 
+    /**
+     * @param EntityManagerInterface $em
+     *
+     * @required
+     */
+    public function setEntityManager(EntityManagerInterface $em) {
+        $this->em = $em;
+    }
+
     public function setUploadDir($dir) : void {
         if ('/' !== $dir[0]) {
             $this->uploadDir = $this->root . '/' . $dir;
-        } else {
+        }
+        else {
             $this->uploadDir = $dir;
         }
     }

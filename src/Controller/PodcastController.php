@@ -10,12 +10,15 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Episode;
+use App\Entity\Image;
 use App\Entity\Podcast;
 use App\Form\PodcastType;
 use App\Repository\PodcastRepository;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,7 +29,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/podcast")
  */
-class PodcastController extends AbstractController implements PaginatorAwareInterface {
+class PodcastController extends AbstractImageController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**
@@ -188,5 +191,35 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
         }
 
         return $this->redirectToRoute('podcast_index');
+    }
+
+    /**
+     * @Route("/{id}/new_image", name="podcast_new_image", methods={"GET","POST"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     *
+     * @Template()
+     */
+    public function newImage(Request $request, Podcast $podcast) {
+        return parent::newImageAction($request, $podcast, 'podcast_show');
+    }
+
+    /**
+     * @Route("/{id}/edit_image/{image_id}", name="podcast_edit_image", methods={"GET","POST"})
+     * @ParamConverter("image", options={"id" = "image_id"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     *
+     * @Template()
+     */
+    public function editImage(Request $request, Podcast $podcast, Image $image) {
+        return parent::editImageAction($request, $podcast, $image, 'podcast_show');
+    }
+
+    /**
+     * @Route("/{id}/delete_image/{image_id}", name="podcast_delete_image", methods={"DELETE"})
+     * @ParamConverter("image", options={"id" = "image_id"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     */
+    public function deleteImage(Request $request, Podcast $podcast, Image $image) {
+        return parent::deleteImageAction($request, $podcast, $image, 'podcast_show');
     }
 }

@@ -6,6 +6,7 @@ use App\Entity\Image;
 use App\Form\ImageType;
 use App\Repository\ImageRepository;
 
+use App\Services\ImageManager;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -91,55 +92,18 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
     }
 
     /**
-     * @Route("/new", name="image_new", methods={"GET","POST"})
-     * @Template()
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @param Request $request
-     *
-     * @return array|RedirectResponse
-     */
-    public function new(Request $request) {
-        $image = new Image();
-        $form = $this->createForm(ImageType::class, $image);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($image);
-            $entityManager->flush();
-            $this->addFlash('success', 'The new image has been saved.');
-
-            return $this->redirectToRoute('image_show', ['id' => $image->getId()]);
-        }
-
-        return [
-            'image' => $image,
-            'form' => $form->createView(),
-        ];
-    }
-
-    /**
-     * @Route("/new_popup", name="image_new_popup", methods={"GET","POST"})
-     * @Template()
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @param Request $request
-     *
-     * @return array|RedirectResponse
-     */
-    public function new_popup(Request $request) {
-        return $this->new($request);
-    }
-
-    /**
      * @Route("/{id}", name="image_show", methods={"GET"})
      * @Template()
      * @param Image $image
      *
+     * @param ImageManager $manager
+     *
      * @return array
      */
-    public function show(Image $image) {
+    public function show(Image $image, ImageManager $manager) {
         return [
             'image' => $image,
+            'manager' => $manager
         ];
     }
 
@@ -170,49 +134,4 @@ class ImageController extends AbstractController implements PaginatorAwareInterf
         return new BinaryFileResponse($image->getThumbFile());
     }
 
-    /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}/edit", name="image_edit", methods={"GET","POST"})
-     * @param Request $request
-     * @param Image $image
-     *
-     * @Template()
-     *
-     * @return array|RedirectResponse
-     */
-    public function edit(Request $request, Image $image) {
-        $form = $this->createForm(ImageType::class, $image);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-            $this->addFlash('success', 'The updated image has been saved.');
-
-            return $this->redirectToRoute('image_show', ['id' => $image->getId()]);
-        }
-
-        return [
-            'image' => $image,
-            'form' => $form->createView()
-        ];
-    }
-
-    /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}", name="image_delete", methods={"DELETE"})
-     * @param Request $request
-     * @param Image $image
-     *
-     * @return RedirectResponse
-     */
-    public function delete(Request $request, Image $image) {
-        if ($this->isCsrfTokenValid('delete' . $image->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($image);
-            $entityManager->flush();
-            $this->addFlash('success', 'The image has been deleted.');
-        }
-
-        return $this->redirectToRoute('image_index');
-    }
 }

@@ -55,6 +55,12 @@ class ImageManager extends AbstractFileManager {
         $image->setThumbPath($thumbPath);
     }
 
+    public function findEntity(Image $image) {
+        [$class, $id] = explode(':', $image->getEntity());
+
+        return $this->em->find($class, $id);
+    }
+
     /**
      * @param Thumbnailer $thumbnailer
      * @required
@@ -92,7 +98,7 @@ class ImageManager extends AbstractFileManager {
             }
         }
         if($entity instanceof ImageContainerInterface) {
-            $repo = $args->getEntityManager()->getRepository(Image::class);
+            $repo = $this->em->getRepository(Image::class);
             $images = $repo->findBy([
                 'entity' => get_class($entity) . ':' . $entity->getId(),
             ]);
@@ -112,11 +118,10 @@ class ImageManager extends AbstractFileManager {
             }
         }
         if($entity instanceof ImageContainerInterface) {
-            $em = $args->getEntityManager();
             foreach($entity->getImages() as $image) {
-                $em->remove($image);
+                $this->em->remove($image);
             }
-            $em->flush();
+            $this->em->flush();
         }
     }
 

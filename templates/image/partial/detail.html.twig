@@ -45,7 +45,8 @@
         <tr>
             <th>Entity</th>
             <td>
-                {{ image.entity }}
+                {% set entity = manager.findEntity(image) %}
+                {{ entity|short_name|camel_title }} {{ entity }}
             </td>
         </tr>
 
