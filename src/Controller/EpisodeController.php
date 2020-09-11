@@ -323,8 +323,8 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/{id}/edit_image/{image_id}", name="episode_edit_image", methods={"GET","POST"})
-     * @ParamConverter("image", options={"id" = "image_id"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @ParamConverter("image", options={"id" = "image_id"})
      *
      * @Template()
      */

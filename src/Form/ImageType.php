@@ -29,11 +29,12 @@ class ImageType extends AbstractType {
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
+        $size = AbstractFileManager::getMaxUploadSize(false);
         $builder->add('imageFile', FileType::class, [
             'label' => 'Image',
             'required' => true,
             'attr' => [
-                'help_block' => "Select a file to upload which is less than {AbstractFileManager::getMaxUploadSize(false)} in size.",
+                'help_block' => "Select a file to upload which is less than {$size} in size.",
                 'data-maxsize' => AbstractFileManager::getMaxUploadSize(),
             ],
         ]);

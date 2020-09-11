@@ -11,9 +11,11 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use App\DataFixtures\SeasonFixtures;
+use App\Entity\Season;
 use App\Repository\SeasonRepository;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 
 class SeasonTest extends ControllerBaseCase {
@@ -302,7 +304,6 @@ class SeasonTest extends ControllerBaseCase {
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("14")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Title")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New AlternativeTitle")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Description")')->count());
@@ -329,7 +330,6 @@ class SeasonTest extends ControllerBaseCase {
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("15")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Title")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New AlternativeTitle")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Description")')->count());
@@ -356,5 +356,118 @@ class SeasonTest extends ControllerBaseCase {
         $this->entityManager->clear();
         $postCount = count($repo->findAll());
         $this->assertSame($preCount - 1, $postCount);
+    }
+
+    public function testAnonNewImage() : void {
+        $formCrawler = $this->client->request('GET', '/season/1/new_image');
+        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+    }
+
+    public function testUserNewImage() : void {
+        $this->login('user.user');
+        $formCrawler = $this->client->request('GET', '/season/1/new_image');
+        $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminNewImage() : void {
+        $this->login('user.admin');
+        $upload = new UploadedFile(__DIR__ . '/../data/35597651312_a188de382c_c.jpg', 'chicken.jpg');
+
+        $formCrawler = $this->client->request('GET', '/season/1/new_image');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $formCrawler->selectButton('Create')->form([
+            'image[imageFile]' => $upload,
+            'image[public]' => 1,
+        ]);
+        $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('/season/1'));
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(2, $responseCrawler->filter('div:contains("The new image has been saved")')->count());
+
+        $this->entityManager->clear();
+        $season = $this->entityManager->find(Season::class, 1);
+        foreach($season->getImages() as $image) {
+            $this->cleanUp($image->getImageFile());
+            $this->cleanUp($image->getThumbFile());
+        }
+    }
+    public function testAnonEditImage() : void {
+        $formCrawler = $this->client->request('GET', '/season/1/edit_image/1');
+        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+    }
+
+    public function testUserEditImage() : void {
+        $this->login('user.admin');
+        $upload = new UploadedFile(__DIR__ . '/../data/35597651312_a188de382c_c.jpg', 'chicken.jpg');
+
+        $formCrawler = $this->client->request('GET', '/season/1/new_image');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $formCrawler->selectButton('Create')->form([
+            'image[imageFile]' => $upload,
+            'image[public]' => 1,
+        ]);
+        $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('/season/1'));
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(2, $responseCrawler->filter('div:contains("The new image has been saved")')->count());
+
+        $this->entityManager->clear();
+        $season = $this->entityManager->find(Season::class, 1);
+        foreach($season->getImages() as $image) {
+            $this->cleanUp($image->getImageFile());
+            $this->cleanUp($image->getThumbFile());
+        }
+
+        $this->login('user.user');
+        $formCrawler = $this->client->request('GET', '/season/1/edit_image/1');
+        $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminEditImage() : void {
+        $this->login('user.admin');
+        $upload = new UploadedFile(__DIR__ . '/../data/24708385605_c5387e7743_c.jpg', 'cat.jpg');
+
+        $formCrawler = $this->client->request('GET', '/season/1/new_image');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $formCrawler->selectButton('Create')->form([
+            'image[imageFile]' => $upload,
+            'image[public]' => 1,
+        ]);
+        $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('/season/1'));
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(2, $responseCrawler->filter('div:contains("The new image has been saved")')->count());
+
+        $this->entityManager->clear();
+        $season = $this->entityManager->find(Season::class, 1);
+        foreach($season->getImages() as $image) {
+            $this->cleanUp($image->getImageFile());
+            $this->cleanUp($image->getThumbFile());
+        }
+
+        $upload = new UploadedFile(__DIR__ . '/../data/32024919067_c2c18aa1c5_c.jpg', 'dog.jpg');
+        $formCrawler = $this->client->request('GET', '/season/1/edit_image/1');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $formCrawler->selectButton('Update')->form([
+            'image[newImageFile]' => $upload,
+            'image[public]' => 1,
+        ]);
+        $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('/season/1'));
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(2, $responseCrawler->filter('div:contains("The image has been updated")')->count());
+
+        $this->entityManager->clear();
+        $season = $this->entityManager->find(Season::class, 1);
+        foreach($season->getImages() as $image) {
+            $this->cleanUp($image->getImageFile());
+            $this->cleanUp($image->getThumbFile());
+        }
     }
 }

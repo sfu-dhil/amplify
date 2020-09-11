@@ -40,7 +40,6 @@ abstract class AbstractImageController extends AbstractController {
             'form' => $form->createView(),
             'entity' => $container,
         ];
-
     }
 
     public function editImageAction(Request $request, ImageContainerInterface $container, Image $image, $route) {

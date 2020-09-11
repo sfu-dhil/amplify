@@ -23,7 +23,7 @@
 /templates/jquery.collection.html.twig
 
 # Yarn packages.
-public/yarn
-deploy.yaml
+/public/yarn
+/config/deploy.yaml
 *.sql
-data
+/data
