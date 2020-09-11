@@ -20,7 +20,7 @@
                         <form class='delete-form' method="post" action="{{ path('episode_delete_audio', {'id': episode.id }) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
                             <input type="hidden" name="_method" value="DELETE">
                             <input type="hidden" name="_token" value="{{ csrf_token("delete_audio_" ~ episode.id) }}">
-                            <button class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> Delete
+                            <button class="btn btn-danger" id='btn-delete-audio'><span class="glyphicon glyphicon-trash"></span> Delete
                             </button>
                         </form>
                     </div>

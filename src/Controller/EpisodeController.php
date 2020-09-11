@@ -283,7 +283,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
             $entityManager->flush();
             $this->addFlash('success', 'The new audio has been saved.');
 
-//            return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
+            return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
         }
 
         return [

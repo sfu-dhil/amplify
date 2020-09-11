@@ -11,9 +11,13 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use App\DataFixtures\EpisodeFixtures;
+use App\Entity\Episode;
 use App\Repository\EpisodeRepository;
+use App\Services\AudioManager;
+use Doctrine\ORM\Mapping\Entity;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 
 class EpisodeTest extends ControllerBaseCase {
@@ -22,11 +26,31 @@ class EpisodeTest extends ControllerBaseCase {
 
     private const TYPEAHEAD_QUERY = 'title';
 
+    private $toClean;
+
     protected function fixtures() : array {
         return [
             EpisodeFixtures::class,
             UserFixtures::class,
         ];
+    }
+
+    protected function setUp() : void {
+        parent::setUp();
+        $this->toClean = [];
+    }
+
+    protected function tearDown() : void {
+        parent::tearDown();
+        if( ! count($this->toClean)) {
+            return;
+        }
+        foreach($this->toClean as $path) {
+            if( ! file_exists($path)) {
+                continue;
+            }
+            unlink($path);
+        }
     }
 
     /**
@@ -316,7 +340,6 @@ class EpisodeTest extends ControllerBaseCase {
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(2, $responseCrawler->filter('td:contains("12")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("1234")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Title")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New AlternativeTitle")')->count());
@@ -383,5 +406,156 @@ class EpisodeTest extends ControllerBaseCase {
         $this->entityManager->clear();
         $postCount = count($repo->findAll());
         $this->assertSame($preCount - 1, $postCount);
+    }
+
+    public function testAnonNewAudio() : void {
+        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
+        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+    }
+
+    public function testUserNewAudio() : void {
+        $this->login('user.user');
+        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
+        $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminNewAudio() : void {
+        $this->login('user.admin');
+        $upload = new UploadedFile(__DIR__ . '/../data/534023__fission9__thunderclap.mp3', 'thunder.mp3');
+
+        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $formCrawler->selectButton('Create')->form([
+            'audio[audioFile]' => $upload,
+            'audio[public]' => 1,
+        ]);
+        $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(1, $responseCrawler->filter('figcaption:contains("Listen to the podcast episode")')->count());
+
+        $this->entityManager->clear();
+        $episode = $this->entityManager->find(Episode::class, 1);
+        $this->toClean[] = $episode->getAudio()->getAudioFile()->getRealPath();
+    }
+
+    public function testAdminDuplicateAudio() : void {
+        $this->login('user.admin');
+        $upload = new UploadedFile(__DIR__ . '/../data/534023__fission9__thunderclap.mp3', 'thunder.mp3');
+
+        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $formCrawler->selectButton('Create')->form([
+            'audio[audioFile]' => $upload,
+            'audio[public]' => 1,
+        ]);
+        $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(1, $responseCrawler->filter('figcaption:contains("Listen to the podcast episode")')->count());
+
+        $this->client->request('GET', '/episode/1/new_audio');
+        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
+
+        $this->entityManager->clear();
+        $episode = $this->entityManager->find(Episode::class, 1);
+        $this->toClean[] = $episode->getAudio()->getAudioFile()->getRealPath();
+    }
+
+    public function testAnonEditAudio() : void {
+        $formCrawler = $this->client->request('GET', '/episode/1/edit_audio');
+        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+    }
+
+    public function testUserEditAudio() : void {
+        $this->login('user.user');
+        $formCrawler = $this->client->request('GET', '/episode/1/edit_audio');
+        $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+    }
+
+
+    public function testAdminEditAudio() : void {
+        $this->login('user.admin');
+        $upload = new UploadedFile(__DIR__ . '/../data/534023__fission9__thunderclap.mp3', 'thunder.mp3');
+
+        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $formCrawler->selectButton('Create')->form([
+            'audio[audioFile]' => $upload,
+            'audio[public]' => 1,
+        ]);
+        $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(1, $responseCrawler->filter('figcaption:contains("Listen to the podcast episode")')->count());
+
+        $this->entityManager->clear();
+        $episode = $this->entityManager->find(Episode::class, 1);
+        $this->toClean[] = $episode->getAudio()->getAudioFile()->getRealPath();
+
+        $formCrawler = $this->client->request('GET', '/episode/1/edit_audio');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $formCrawler->selectButton('Update')->form([
+            'audio[newAudioFile]' => $upload,
+            'audio[public]' => 1,
+        ]);
+        $this->client->submit($form);
+        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(1, $responseCrawler->filter('figcaption:contains("Listen to the podcast episode")')->count());
+
+        $this->entityManager->clear();
+        $episode = $this->entityManager->find(Episode::class, 1);
+        $this->toClean[] = $episode->getAudio()->getAudioFile()->getRealPath();
+    }
+
+    public function testAnonDeleteAudio() : void {
+        $formCrawler = $this->client->request('DELETE', '/episode/1/delete_audio');
+        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+    }
+
+    public function testUserDeleteAudio() : void {
+        $this->login('user.user');
+        $formCrawler = $this->client->request('DELETE', '/episode/1/delete_audio');
+        $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminDeleteAudio() : void {
+        $this->login('user.admin');
+        $upload = new UploadedFile(__DIR__ . '/../data/534023__fission9__thunderclap.mp3', 'thunder.mp3');
+
+        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $formCrawler->selectButton('Create')->form([
+            'audio[audioFile]' => $upload,
+            'audio[public]' => 1,
+        ]);
+        $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(1, $responseCrawler->filter('figcaption:contains("Listen to the podcast episode")')->count());
+
+        $this->entityManager->clear();
+        $episode = $this->entityManager->find(Episode::class, 1);
+        $this->toClean[] = $episode->getAudio()->getAudioFile()->getRealPath();
+
+        $formCrawler = $this->client->request('GET', '/episode/1');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $formCrawler->selectButton('btn-delete-audio')->form();
+        $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
+        $responseCrawler = $this->client->followRedirect();
+
+        $this->entityManager->clear();
+        $episode = $this->entityManager->find(Episode::class, 1);
+        $this->assertNull($episode->getAudio());
     }
 }
