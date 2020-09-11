@@ -11,14 +11,18 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use App\DataFixtures\PodcastFixtures;
+use App\Entity\Podcast;
 use App\Repository\PodcastRepository;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 
 class PodcastTest extends ControllerBaseCase {
     // Change this to HTTP_OK when the site is public.
     private const ANON_RESPONSE_CODE = Response::HTTP_FOUND;
+
+    private const TYPEAHEAD_QUERY = 'title';
 
     protected function fixtures() : array {
         return [
@@ -96,7 +100,7 @@ class PodcastTest extends ControllerBaseCase {
      * @group typeahead
      */
     public function testAnonTypeahead() : void {
-        $this->client->request('GET', '/podcast/typeahead?q=podcast');
+        $this->client->request('GET', '/podcast/typeahead?q=' . self::TYPEAHEAD_QUERY);
         $response = $this->client->getResponse();
         $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
         if (self::ANON_RESPONSE_CODE === Response::HTTP_FOUND) {
@@ -114,7 +118,7 @@ class PodcastTest extends ControllerBaseCase {
      */
     public function testUserTypeahead() : void {
         $this->login('user.user');
-        $this->client->request('GET', '/podcast/typeahead?q=podcast');
+        $this->client->request('GET', '/podcast/typeahead?q=' . self::TYPEAHEAD_QUERY);
         $response = $this->client->getResponse();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame('application/json', $response->headers->get('content-type'));
@@ -128,7 +132,7 @@ class PodcastTest extends ControllerBaseCase {
      */
     public function testAdminTypeahead() : void {
         $this->login('user.admin');
-        $this->client->request('GET', '/podcast/typeahead?q=podcast');
+        $this->client->request('GET', '/podcast/typeahead?q=' . self::TYPEAHEAD_QUERY);
         $response = $this->client->getResponse();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame('application/json', $response->headers->get('content-type'));
@@ -155,7 +159,6 @@ class PodcastTest extends ControllerBaseCase {
 
         $responseCrawler = $this->client->submit($form);
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New")')->count());
     }
 
     public function testUserSearch() : void {
@@ -174,7 +177,6 @@ class PodcastTest extends ControllerBaseCase {
 
         $responseCrawler = $this->client->submit($form);
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New")')->count());
     }
 
     public function testAdminSearch() : void {
@@ -193,7 +195,6 @@ class PodcastTest extends ControllerBaseCase {
 
         $responseCrawler = $this->client->submit($form);
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New")')->count());
     }
 
     /**
@@ -228,12 +229,11 @@ class PodcastTest extends ControllerBaseCase {
         $form = $formCrawler->selectButton('Save')->form([
             'podcast[title]' => 'Updated Title',
             'podcast[alternativeTitle]' => 'Updated AlternativeTitle',
-            'podcast[explicit]' => 'Updated Explicit',
+            'podcast[explicit]' => 1,
             'podcast[description]' => 'Updated Description',
             'podcast[copyright]' => 'Updated Copyright',
-            'podcast[website]' => 'Updated Website',
-            'podcast[rss]' => 'Updated Rss',
-            'podcast[tags]' => 'Updated Tags',
+            'podcast[website]' => 'http://example.com/foo',
+            'podcast[rss]' => 'http://example.com/rss',
         ]);
 
         $this->client->submit($form);
@@ -242,12 +242,10 @@ class PodcastTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Title")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated AlternativeTitle")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Explicit")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Description")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Copyright")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Website")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Rss")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Tags")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("http://example.com/foo")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("http://example.com/rss")')->count());
     }
 
     /**
@@ -299,15 +297,14 @@ class PodcastTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/podcast/new');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
-        $form = $formCrawler->selectButton('Create')->form([
+        $form = $formCrawler->selectButton('Save')->form([
             'podcast[title]' => 'New Title',
             'podcast[alternativeTitle]' => 'New AlternativeTitle',
-            'podcast[explicit]' => 'New Explicit',
+            'podcast[explicit]' => 0,
             'podcast[description]' => 'New Description',
             'podcast[copyright]' => 'New Copyright',
-            'podcast[website]' => 'New Website',
-            'podcast[rss]' => 'New Rss',
-            'podcast[tags]' => 'New Tags',
+            'podcast[website]' => 'http://example.com/foo',
+            'podcast[rss]' => 'http://example.com/rss',
         ]);
 
         $this->client->submit($form);
@@ -316,12 +313,10 @@ class PodcastTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Title")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New AlternativeTitle")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Explicit")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Description")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Copyright")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Website")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Rss")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Tags")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("http://example.com/foo")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("http://example.com/rss")')->count());
     }
 
     /**
@@ -333,29 +328,26 @@ class PodcastTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/podcast/new_popup');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
-        $form = $formCrawler->selectButton('Create')->form([
+        $form = $formCrawler->selectButton('Save')->form([
             'podcast[title]' => 'New Title',
             'podcast[alternativeTitle]' => 'New AlternativeTitle',
-            'podcast[explicit]' => 'New Explicit',
+            'podcast[explicit]' => 0,
             'podcast[description]' => 'New Description',
             'podcast[copyright]' => 'New Copyright',
-            'podcast[website]' => 'New Website',
-            'podcast[rss]' => 'New Rss',
-            'podcast[tags]' => 'New Tags',
+            'podcast[website]' => 'http://example.com/foo',
+            'podcast[rss]' => 'http://example.com/rss',
         ]);
 
         $this->client->submit($form);
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Title")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("AlternativeTitle")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Explicit")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Description")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Copyright")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Website")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Rss")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Tags")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("New Title")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("New AlternativeTitle")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("New Description")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("New Copyright")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("http://example.com/foo")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("http://example.com/rss")')->count());
     }
 
     /**
@@ -379,5 +371,118 @@ class PodcastTest extends ControllerBaseCase {
         $this->entityManager->clear();
         $postCount = count($repo->findAll());
         $this->assertSame($preCount - 1, $postCount);
+    }
+
+    public function testAnonNewImage() : void {
+        $formCrawler = $this->client->request('GET', '/podcast/1/new_image');
+        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+    }
+
+    public function testUserNewImage() : void {
+        $this->login('user.user');
+        $formCrawler = $this->client->request('GET', '/podcast/1/new_image');
+        $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminNewImage() : void {
+        $this->login('user.admin');
+        $upload = new UploadedFile(__DIR__ . '/../data/35597651312_a188de382c_c.jpg', 'chicken.jpg');
+
+        $formCrawler = $this->client->request('GET', '/podcast/1/new_image');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $formCrawler->selectButton('Create')->form([
+            'image[imageFile]' => $upload,
+            'image[public]' => 1,
+        ]);
+        $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('/podcast/1'));
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(2, $responseCrawler->filter('div:contains("The new image has been saved")')->count());
+
+        $this->entityManager->clear();
+        $podcast = $this->entityManager->find(Podcast::class, 1);
+        foreach($podcast->getImages() as $image) {
+            $this->cleanUp($image->getImageFile());
+            $this->cleanUp($image->getThumbFile());
+        }
+    }
+    public function testAnonEditImage() : void {
+        $formCrawler = $this->client->request('GET', '/podcast/1/edit_image/1');
+        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
+        $this->assertTrue($this->client->getResponse()->isRedirect());
+    }
+
+    public function testUserEditImage() : void {
+        $this->login('user.admin');
+        $upload = new UploadedFile(__DIR__ . '/../data/35597651312_a188de382c_c.jpg', 'chicken.jpg');
+
+        $formCrawler = $this->client->request('GET', '/podcast/1/new_image');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $formCrawler->selectButton('Create')->form([
+            'image[imageFile]' => $upload,
+            'image[public]' => 1,
+        ]);
+        $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('/podcast/1'));
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(2, $responseCrawler->filter('div:contains("The new image has been saved")')->count());
+
+        $this->entityManager->clear();
+        $podcast = $this->entityManager->find(Podcast::class, 1);
+        foreach($podcast->getImages() as $image) {
+            $this->cleanUp($image->getImageFile());
+            $this->cleanUp($image->getThumbFile());
+        }
+
+        $this->login('user.user');
+        $formCrawler = $this->client->request('GET', '/podcast/1/edit_image/1');
+        $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminEditImage() : void {
+        $this->login('user.admin');
+        $upload = new UploadedFile(__DIR__ . '/../data/24708385605_c5387e7743_c.jpg', 'cat.jpg');
+
+        $formCrawler = $this->client->request('GET', '/podcast/1/new_image');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $formCrawler->selectButton('Create')->form([
+            'image[imageFile]' => $upload,
+            'image[public]' => 1,
+        ]);
+        $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('/podcast/1'));
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(2, $responseCrawler->filter('div:contains("The new image has been saved")')->count());
+
+        $this->entityManager->clear();
+        $podcast = $this->entityManager->find(Podcast::class, 1);
+        foreach($podcast->getImages() as $image) {
+            $this->cleanUp($image->getImageFile());
+            $this->cleanUp($image->getThumbFile());
+        }
+
+        $upload = new UploadedFile(__DIR__ . '/../data/32024919067_c2c18aa1c5_c.jpg', 'dog.jpg');
+        $formCrawler = $this->client->request('GET', '/podcast/1/edit_image/1');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $formCrawler->selectButton('Update')->form([
+            'image[newImageFile]' => $upload,
+            'image[public]' => 1,
+        ]);
+        $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect('/podcast/1'));
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertSame(2, $responseCrawler->filter('div:contains("The image has been updated")')->count());
+
+        $this->entityManager->clear();
+        $podcast = $this->entityManager->find(Podcast::class, 1);
+        foreach($podcast->getImages() as $image) {
+            $this->cleanUp($image->getImageFile());
+            $this->cleanUp($image->getThumbFile());
+        }
     }
 }

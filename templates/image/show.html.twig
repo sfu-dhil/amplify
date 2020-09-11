@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Image Details {% endblock %}
+
+ {% block pageheader %}
+     <h1>Image Details</h1>
+ {% endblock %}
+
+{% block body %}
+
+    <div class='well'>
+        <a href='{{ path('image_view', {'id': image.id}) }}'>
+            <img src='{{ path('image_thumb', {'id': image.id}) }}' class='img-responsive center-block'>
+        </a>
+    </div>
+
+    {% embed 'image/partial/detail.html.twig' %}
+    {% endembed %}
+
+{% endblock %}

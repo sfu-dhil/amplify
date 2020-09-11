@@ -25,7 +25,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/institution")
- * @IsGranted("ROLE_USER")
  */
 class InstitutionController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;

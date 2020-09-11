@@ -27,26 +27,31 @@
         <tr>
             <th>Links</th>
             <td>
-                {% if person.links %}{{ person.links|join(', ') }}{% endif %}
+                {% if person.links %}
+                    <ul>{% for link in person.links %}
+                            <li><a href='{{ link }}'>{{ link }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
             </td>
         </tr>
 
         <tr>
             <th>Institution</th>
             <td>
-                <a href='{{ path("institution_show", {"id": person.institution.id}) }}'>{{ person.institution }}</a>
+                {% if person.institution %}
+                    <a href='{{ path("institution_show", {"id": person.institution.id}) }}'>{{ person.institution }}</a>
+                {% endif %}
             </td>
         </tr>
         <tr>
-            <th>Contribution</th>
+            <th>Contributions</th>
             <td>
                 {% if person.contributions|length > 0 %}
                     <ul>
                         {% for contribution in person.contributions %}
                             <li>
-                                <a href='{{ path("contribution_show", {"id":contribution.id }) }}'>
-                                    {{ contribution }}
-                                </a>
+                                {{ contribution }}
                             </li>
                         {% endfor %}
                     </ul>

@@ -42,19 +42,6 @@ class PersonType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-        $builder->add('institution', Select2EntityType::class, [
-            'label' => 'Institution',
-            'remote_route' => 'institution_typeahead',
-            'primary_key' => 'id',
-            'class' => Institution::class,
-            'text_property' => 'name',
-            'page_limit' => 10,
-            'allow_clear' => true,
-            'delay' => 250,
-            'attr' => [
-                'help_block' => '',
-            ],
-        ]);
         $builder->add('location', TextType::class, [
             'label' => 'Location',
             'required' => true,
@@ -83,7 +70,19 @@ class PersonType extends AbstractType {
             'by_reference' => false,
             'attr' => [
                 'class' => 'collection collection-simple',
-                'help_block' => 'A URL link to the specificed publication',
+                'help_block' => '',
+            ],
+        ]);
+
+        $builder->add('institution', Select2EntityType::class, [
+            'label' => 'Institution',
+            'class' => Institution::class,
+            'remote_route' => 'institution_typeahead',
+            'allow_clear' => true,
+            'attr' => [
+                'help_block' => '',
+                'add_path' => 'institution_new_popup',
+                'add_label' => 'Add Institution',
             ],
         ]);
     }

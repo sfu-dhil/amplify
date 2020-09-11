@@ -12,13 +12,16 @@ namespace App\Controller;
 
 use App\Entity\Audio;
 use App\Entity\Episode;
+use App\Entity\Image;
 use App\Form\AudioType;
 use App\Form\EpisodeType;
+use App\Form\ImageType;
 use App\Repository\EpisodeRepository;
-use App\Services\FileUploader;
+use App\Services\AudioManager;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -32,7 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/episode")
  */
-class EpisodeController extends AbstractController implements PaginatorAwareInterface {
+class EpisodeController extends AbstractImageController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**
@@ -107,6 +110,10 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+            foreach ($episode->getContributions() as $contribution) {
+                $contribution->setEpisode($episode);
+                $entityManager->persist($contribution);
+            }
             $entityManager->persist($episode);
             $entityManager->flush();
             $this->addFlash('success', 'The new episode has been saved.');
@@ -156,6 +163,13 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            foreach ($episode->getContributions() as $contribution) {
+                $contribution->setEpisode($episode);
+                if ( ! $entityManager->contains($contribution)) {
+                    $entityManager->persist($contribution);
+                }
+            }
             $this->getDoctrine()->getManager()->flush();
             $this->addFlash('success', 'The updated episode has been saved.');
 
@@ -241,7 +255,7 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      *
      * @return array|RedirectResponse
      */
-    public function editAudio(Request $request, Episode $episode, FileUploader $fileUploader) {
+    public function editAudio(Request $request, Episode $episode, AudioManager $fileUploader) {
         if ( ! $episode->getAudio()) {
             $this->addFlash('danger', 'This episode does not have an audio file. Use the button below to add one.');
 
@@ -290,8 +304,41 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
             $entityManager->remove($episode->getAudio());
             $entityManager->flush();
             $this->addFlash('success', 'The audio file has been deleted.');
+        } else {
+            $this->addFlash('warning', 'Invalid security token.');
         }
 
         return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
     }
+
+    /**
+     * @Route("/{id}/new_image", name="episode_new_image", methods={"GET","POST"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     *
+     * @Template()
+     */
+    public function newImage(Request $request, Episode $episode) {
+        return parent::newImageAction($request, $episode, 'episode_show');
+    }
+
+    /**
+     * @Route("/{id}/edit_image/{image_id}", name="episode_edit_image", methods={"GET","POST"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @ParamConverter("image", options={"id" = "image_id"})
+     *
+     * @Template()
+     */
+    public function editImage(Request $request, Episode $episode, Image $image) {
+        return parent::editImageAction($request, $episode, $image, 'episode_show');
+    }
+
+    /**
+     * @Route("/{id}/delete_image/{image_id}", name="episode_delete_image", methods={"DELETE"})
+     * @ParamConverter("image", options={"id" = "image_id"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     */
+    public function deleteImage(Request $request, Episode $episode, Image $image) {
+        return parent::deleteImageAction($request, $episode, $image, 'episode_show');
+    }
+
 }

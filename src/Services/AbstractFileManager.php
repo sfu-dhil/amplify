@@ -10,7 +10,14 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Entity\Audio;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -18,32 +25,57 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  *
  * @author Michael Joyce <ubermichael@gmail.com>
  */
-class FileUploader {
+abstract class AbstractFileManager {
     public const FORBIDDEN = '/[^a-z0-9_. -]/i';
 
     /**
      * @var LoggerInterface
      */
-    private $logger;
-
-    private $root;
+    protected $logger;
 
     /**
      * @var string
      */
-    private $uploadDir;
+    protected $root;
+
+    /**
+     * @var string
+     */
+    protected $uploadDir;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    protected $em;
 
     public function __construct(LoggerInterface $logger, $root) {
         $this->logger = $logger;
         $this->root = $root;
     }
 
+    /**
+     * @param EntityManagerInterface $em
+     *
+     * @required
+     */
+    public function setEntityManager(EntityManagerInterface $em) {
+        $this->em = $em;
+    }
+
     public function setUploadDir($dir) : void {
         if ('/' !== $dir[0]) {
             $this->uploadDir = $this->root . '/' . $dir;
-        } else {
+        }
+        else {
             $this->uploadDir = $dir;
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getUploadDir() {
+        return $this->uploadDir;
     }
 
     public function upload(UploadedFile $file) {
@@ -61,23 +93,16 @@ class FileUploader {
         return $filename;
     }
 
-    /**
-     * @return string
-     */
-    public function getUploadDir() {
-        return $this->uploadDir;
-    }
-
-    public function getMaxUploadSize($asBytes = true) {
+    public static function getMaxUploadSize($asBytes = true) {
         static $maxBytes = -1;
 
         if ($maxBytes < 0) {
-            $postMax = $this->parseSize(ini_get('post_max_size'));
+            $postMax = self::parseSize(ini_get('post_max_size'));
             if ($postMax > 0) {
                 $maxBytes = $postMax;
             }
 
-            $uploadMax = $this->parseSize(ini_get('upload_max_filesize'));
+            $uploadMax = self::parseSize(ini_get('upload_max_filesize'));
             if ($uploadMax > 0 && $uploadMax < $maxBytes) {
                 $maxBytes = $uploadMax;
             }
@@ -92,7 +117,15 @@ class FileUploader {
         return $est . $units[$exp];
     }
 
-    public function parseSize($size) {
+    public static function bytesToSize($bytes) {
+        $units = ['b', 'Kb', 'Mb', 'Gb', 'Tb'];
+        $exp = floor(log($bytes, 1024));
+        $est = round($bytes / 1024 ** $exp, 1);
+
+        return $est . $units[$exp];
+    }
+
+    public static function parseSize($size) {
         $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
         $bytes = preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
         if ($unit) {

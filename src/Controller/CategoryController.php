@@ -25,7 +25,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/category")
- * @IsGranted("ROLE_USER")
  */
 class CategoryController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;

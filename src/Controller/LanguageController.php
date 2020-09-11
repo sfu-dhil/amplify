@@ -25,7 +25,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/language")
- * @IsGranted("ROLE_USER")
  */
 class LanguageController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;

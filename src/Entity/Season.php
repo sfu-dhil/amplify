@@ -20,7 +20,11 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Entity(repositoryClass=SeasonRepository::class)
  * @ORM\HasLifecycleCallbacks
  */
-class Season extends AbstractEntity {
+class Season extends AbstractEntity  implements ImageContainerInterface {
+
+    use ImageContainerTrait {
+        ImageContainerTrait::__construct as protected trait_constructor;
+    }
     /**
      * @var int
      * @ORM\Column(type="integer", nullable=true)
@@ -80,6 +84,7 @@ class Season extends AbstractEntity {
 
     public function __construct() {
         parent::__construct();
+        $this->trait_constructor();
         $this->preserved = false;
         $this->contributions = new ArrayCollection();
         $this->episodes = new ArrayCollection();

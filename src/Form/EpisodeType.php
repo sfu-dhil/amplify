@@ -11,13 +11,17 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Episode;
+use App\Entity\Podcast;
+use App\Entity\Season;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 /**
  * Episode form.
@@ -47,10 +51,11 @@ class EpisodeType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-
-        $builder->add('date', null, [
+        $builder->add('date', DateType::class, [
             'label' => 'Date',
             'required' => true,
+            'widget' => 'single_text',
+            'html5' => true,
             'attr' => [
                 'help_block' => '',
             ],
@@ -89,7 +94,7 @@ class EpisodeType extends AbstractType {
             'by_reference' => false,
             'attr' => [
                 'class' => 'collection collection-simple',
-                'help_block' => 'A URL link to the specificed publication',
+                'help_block' => '',
             ],
         ]);
         $builder->add('bibliography', TextareaType::class, [
@@ -122,6 +127,47 @@ class EpisodeType extends AbstractType {
             'attr' => [
                 'help_block' => '',
                 'class' => 'tinymce',
+            ],
+        ]);
+
+        $builder->add('season', Select2EntityType::class, [
+            'label' => 'Season',
+            'class' => Season::class,
+            'remote_route' => 'season_typeahead',
+            'allow_clear' => true,
+            'attr' => [
+                'help_block' => '',
+                'add_path' => 'season_new_popup',
+                'add_label' => 'Add Season',
+            ],
+        ]);
+
+        $builder->add('podcast', Select2EntityType::class, [
+            'label' => 'Podcast',
+            'class' => Podcast::class,
+            'remote_route' => 'podcast_typeahead',
+            'allow_clear' => true,
+            'attr' => [
+                'help_block' => '',
+                'add_path' => 'podcast_new_popup',
+                'add_label' => 'Add Podcast',
+            ],
+        ]);
+
+        $builder->add('contributions', CollectionType::class, [
+            'label' => 'Contributions',
+            'required' => false,
+            'allow_add' => true,
+            'allow_delete' => true,
+            'delete_empty' => true,
+            'entry_type' => ContributionType::class,
+            'entry_options' => [
+                'label' => false,
+            ],
+            'by_reference' => false,
+            'attr' => [
+                'class' => 'collection collection-complex',
+                'help_block' => '',
             ],
         ]);
     }

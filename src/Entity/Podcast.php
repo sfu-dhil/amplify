@@ -20,7 +20,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=PodcastRepository::class)
  */
-class Podcast extends AbstractEntity {
+class Podcast extends AbstractEntity  implements ImageContainerInterface {
+
+    use ImageContainerTrait {
+        ImageContainerTrait::__construct as protected trait_constructor;
+    }
     /**
      * @var string
      * @ORM\Column(type="string")
@@ -109,6 +113,7 @@ class Podcast extends AbstractEntity {
 
     public function __construct() {
         parent::__construct();
+        $this->trait_constructor();
         $this->tags = [];
         $this->contributions = new ArrayCollection();
         $this->seasons = new ArrayCollection();

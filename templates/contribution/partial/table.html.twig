@@ -2,6 +2,11 @@
     <thead>
         <tr>
             <th>ID</th>
+            <th>Person</th>
+            <th>Role</th>
+            <th>Episode</th>
+            <th>Season</th>
+            <th>Podcast</th>
         </tr>
     </thead>
     <tbody>
@@ -11,6 +16,21 @@
                     <a href="{{ path('contribution_show', { 'id': contribution.id }) }}">
                         {{ contribution.id }}
                     </a>
+                </td>
+                <td>
+                    {{ contribution.person }}
+                </td>
+                <td>
+                    {{ contribution.contributorRole }}
+                </td>
+                <td>
+                    {{ contribution.episode }}
+                </td>
+                <td>
+                    {{ contribution.season }}
+                </td>
+                <td>
+                    {{ contribution.podcast }}
                 </td>
             </tr>
         {% endfor %}

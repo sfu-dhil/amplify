@@ -10,14 +10,13 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\Category;
 use App\Entity\Podcast;
+use App\Entity\Publisher;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
@@ -57,7 +56,6 @@ class PodcastType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-
         $builder->add('description', TextareaType::class, [
             'label' => 'Description',
             'required' => true,
@@ -74,27 +72,15 @@ class PodcastType extends AbstractType {
                 'class' => 'tinymce',
             ],
         ]);
-        $builder->add('categories', Select2EntityType::class, [
-            'multiple' => true,
-            'remote_route' => 'category_typeahead',
-            'class' => Category::class,
-            'primary_key' => 'id',
-            'text_property' => 'label',
-            'page_limit' => 10,
-            'allow_clear' => true,
-            'delay' => 250,
-            'attr' => [
-                'help_block' => '',
-            ],
-        ]);
-        $builder->add('website', UrlType::class, [
+        $builder->add('website', TextareaType::class, [
             'label' => 'Website',
             'required' => true,
             'attr' => [
                 'help_block' => '',
+                'class' => 'tinymce',
             ],
         ]);
-        $builder->add('rss', UrlType::class, [
+        $builder->add('rss', TextType::class, [
             'label' => 'Rss',
             'required' => true,
             'attr' => [
@@ -114,7 +100,35 @@ class PodcastType extends AbstractType {
             'by_reference' => false,
             'attr' => [
                 'class' => 'collection collection-simple',
-                'help_block' => 'A URL link to the specificed publication',
+                'help_block' => '',
+            ],
+        ]);
+
+        $builder->add('publisher', Select2EntityType::class, [
+            'label' => 'Publisher',
+            'class' => Publisher::class,
+            'remote_route' => 'publisher_typeahead',
+            'allow_clear' => true,
+            'attr' => [
+                'help_block' => '',
+                'add_path' => 'publisher_new_popup',
+                'add_label' => 'Add Publisher',
+            ],
+        ]);
+        $builder->add('contributions', CollectionType::class, [
+            'label' => 'Contributions',
+            'required' => false,
+            'allow_add' => true,
+            'allow_delete' => true,
+            'delete_empty' => true,
+            'entry_type' => ContributionType::class,
+            'entry_options' => [
+                'label' => false,
+            ],
+            'by_reference' => false,
+            'attr' => [
+                'class' => 'collection collection-complex',
+                'help_block' => '',
             ],
         ]);
     }

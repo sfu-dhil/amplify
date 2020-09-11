@@ -40,7 +40,9 @@
         <tr>
             <th>Publisher</th>
             <td>
-                <a href='{{ path("publisher_show", {"id": season.publisher.id}) }}'>{{ season.publisher }}</a>
+                {% if season.publisher %}
+                    <a href='{{ path("publisher_show", {"id": season.publisher.id}) }}'>{{ season.publisher }}</a>
+                {% endif %}
             </td>
         </tr>
         <tr>
@@ -50,9 +52,7 @@
                     <ul>
                         {% for contribution in season.contributions %}
                             <li>
-                                <a href='{{ path("contribution_show", {"id":contribution.id }) }}'>
-                                    {{ contribution }}
-                                </a>
+                                {{ contribution }}
                             </li>
                         {% endfor %}
                     </ul>
