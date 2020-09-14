@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1fb03957e06f38221dd9a24f27d3a6fd",
+    "content-hash": "07d3818ca985d60cb3d64ab923a51b11",
     "packages": [
         {
             "name": "composer/package-versions-deprecated",
@@ -8224,20 +8224,21 @@
         },
         {
             "name": "ubermichael/nines",
-            "version": "4.x-dev",
+            "version": "dev-4.x-media",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ubermichael/nines-bundles.git",
-                "reference": "e1de365b57b4df28292bc036a3d95b78027734b5"
+                "reference": "0b654bf4e1226acda9f689543baf6a6b896f0de9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ubermichael/nines-bundles/zipball/e1de365b57b4df28292bc036a3d95b78027734b5",
-                "reference": "e1de365b57b4df28292bc036a3d95b78027734b5",
+                "url": "https://api.github.com/repos/ubermichael/nines-bundles/zipball/0b654bf4e1226acda9f689543baf6a6b896f0de9",
+                "reference": "0b654bf4e1226acda9f689543baf6a6b896f0de9",
                 "shasum": ""
             },
             "require": {
                 "egulias/email-validator": "^2.1",
+                "ext-imagick": "*",
                 "ext-json": "*",
                 "guzzlehttp/guzzle": "^6.5",
                 "knplabs/knp-menu-bundle": "^2.0",
@@ -8261,6 +8262,7 @@
                     "Nines\\EditorBundle\\": "EditorBundle",
                     "Nines\\FeedbackBundle\\": "FeedbackBundle",
                     "Nines\\MakerBundle\\": "MakerBundle",
+                    "Nines\\MediaBundle\\": "MediaBundle",
                     "Nines\\UserBundle\\": "UserBundle",
                     "Nines\\UtilBundle\\": "UtilBundle"
                 }
@@ -8276,10 +8278,10 @@
             ],
             "description": "Some useful bundles.",
             "support": {
-                "source": "https://github.com/ubermichael/nines-bundles/tree/4.x",
+                "source": "https://github.com/ubermichael/nines-bundles/tree/4.x-media",
                 "issues": "https://github.com/ubermichael/nines-bundles/issues"
             },
-            "time": "2020-09-11T21:12:02+00:00"
+            "time": "2020-09-14T18:44:10+00:00"
         },
         {
             "name": "webmozart/assert",

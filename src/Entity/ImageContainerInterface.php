@@ -1,32 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
 
 namespace App\Entity;
-
 
 use Doctrine\Common\Collections\Collection;
 
 interface ImageContainerInterface {
-
     /**
-     * @param Image $image
-     *
      * @return mixed
      */
     public function addImage(Image $image);
 
     /**
-     * @param Image $image
-     *
      * @return mixed
      */
     public function removeImage(Image $image);
 
-    /**
-     * @param Image $image
-     *
-     * @return bool
-     */
     public function hasImage(Image $image) : bool;
 
     /**
@@ -40,5 +36,4 @@ interface ImageContainerInterface {
      * @return Collection|Image[]
      */
     public function getImages();
-
 }

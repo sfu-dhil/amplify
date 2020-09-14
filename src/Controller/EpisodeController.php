@@ -15,7 +15,6 @@ use App\Entity\Episode;
 use App\Entity\Image;
 use App\Form\AudioType;
 use App\Form\EpisodeType;
-use App\Form\ImageType;
 use App\Repository\EpisodeRepository;
 use App\Services\AudioManager;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
@@ -23,7 +22,6 @@ use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -340,5 +338,4 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
     public function deleteImage(Request $request, Episode $episode, Image $image) {
         return parent::deleteImageAction($request, $episode, $image, 'episode_show');
     }
-
 }

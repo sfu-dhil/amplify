@@ -33,7 +33,7 @@
         "tetranz/select2entity-bundle": "^2.9",
         "twig/intl-extra": "^3.0",
         "twig/string-extra": "^3.0",
-        "ubermichael/nines": "4.x-dev"
+        "ubermichael/nines": "dev-4.x-media"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",

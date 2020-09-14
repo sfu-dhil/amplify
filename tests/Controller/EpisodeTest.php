@@ -13,8 +13,6 @@ namespace App\Tests\Controller;
 use App\DataFixtures\EpisodeFixtures;
 use App\Entity\Episode;
 use App\Repository\EpisodeRepository;
-use App\Services\AudioManager;
-use Doctrine\ORM\Mapping\Entity;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -457,7 +455,6 @@ class EpisodeTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
-
     public function testAdminEditAudio() : void {
         $this->login('user.admin');
         $upload = new UploadedFile(__DIR__ . '/../data/534023__fission9__thunderclap.mp3', 'thunder.mp3');
@@ -569,11 +566,12 @@ class EpisodeTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $episode = $this->entityManager->find(Episode::class, 1);
-        foreach($episode->getImages() as $image) {
+        foreach ($episode->getImages() as $image) {
             $this->cleanUp($image->getImageFile());
             $this->cleanUp($image->getThumbFile());
         }
     }
+
     public function testAnonEditImage() : void {
         $formCrawler = $this->client->request('GET', '/episode/1/edit_image/1');
         $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
@@ -598,7 +596,7 @@ class EpisodeTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $episode = $this->entityManager->find(Episode::class, 1);
-        foreach($episode->getImages() as $image) {
+        foreach ($episode->getImages() as $image) {
             $this->cleanUp($image->getImageFile());
             $this->cleanUp($image->getThumbFile());
         }
@@ -626,7 +624,7 @@ class EpisodeTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $episode = $this->entityManager->find(Episode::class, 1);
-        foreach($episode->getImages() as $image) {
+        foreach ($episode->getImages() as $image) {
             $this->cleanUp($image->getImageFile());
             $this->cleanUp($image->getThumbFile());
         }
@@ -646,7 +644,7 @@ class EpisodeTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $episode = $this->entityManager->find(Episode::class, 1);
-        foreach($episode->getImages() as $image) {
+        foreach ($episode->getImages() as $image) {
             $this->cleanUp($image->getImageFile());
             $this->cleanUp($image->getThumbFile());
         }

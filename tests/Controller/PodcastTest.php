@@ -403,11 +403,12 @@ class PodcastTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $podcast = $this->entityManager->find(Podcast::class, 1);
-        foreach($podcast->getImages() as $image) {
+        foreach ($podcast->getImages() as $image) {
             $this->cleanUp($image->getImageFile());
             $this->cleanUp($image->getThumbFile());
         }
     }
+
     public function testAnonEditImage() : void {
         $formCrawler = $this->client->request('GET', '/podcast/1/edit_image/1');
         $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
@@ -432,7 +433,7 @@ class PodcastTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $podcast = $this->entityManager->find(Podcast::class, 1);
-        foreach($podcast->getImages() as $image) {
+        foreach ($podcast->getImages() as $image) {
             $this->cleanUp($image->getImageFile());
             $this->cleanUp($image->getThumbFile());
         }
@@ -460,7 +461,7 @@ class PodcastTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $podcast = $this->entityManager->find(Podcast::class, 1);
-        foreach($podcast->getImages() as $image) {
+        foreach ($podcast->getImages() as $image) {
             $this->cleanUp($image->getImageFile());
             $this->cleanUp($image->getThumbFile());
         }
@@ -480,7 +481,7 @@ class PodcastTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $podcast = $this->entityManager->find(Podcast::class, 1);
-        foreach($podcast->getImages() as $image) {
+        foreach ($podcast->getImages() as $image) {
             $this->cleanUp($image->getImageFile());
             $this->cleanUp($image->getThumbFile());
         }
