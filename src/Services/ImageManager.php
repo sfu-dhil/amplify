@@ -10,12 +10,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Entity\Audio;
 use App\Entity\Image;
 use App\Entity\ImageContainerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
@@ -27,7 +25,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  * @author Michael Joyce <ubermichael@gmail.com>
  */
 class ImageManager extends AbstractFileManager {
-
     /**
      * @var Thumbnailer
      */
@@ -62,10 +59,9 @@ class ImageManager extends AbstractFileManager {
     }
 
     /**
-     * @param Thumbnailer $thumbnailer
      * @required
      */
-    public function setThumbnailer(Thumbnailer $thumbnailer) {
+    public function setThumbnailer(Thumbnailer $thumbnailer) : void {
         $this->thumbnailer = $thumbnailer;
     }
 
@@ -81,7 +77,7 @@ class ImageManager extends AbstractFileManager {
         if ($entity instanceof Image) {
             $this->uploadFile($entity);
         }
-        if($entity instanceof ImageContainerInterface) {
+        if ($entity instanceof ImageContainerInterface) {
         }
     }
 
@@ -93,11 +89,11 @@ class ImageManager extends AbstractFileManager {
                 $entity->setImageFile(new File($filePath));
             }
             $thumbPath = $this->uploadDir . '/' . $entity->getThumbPath();
-            if(file_exists($thumbPath)) {
+            if (file_exists($thumbPath)) {
                 $entity->setThumbFile(new File($thumbPath));
             }
         }
-        if($entity instanceof ImageContainerInterface) {
+        if ($entity instanceof ImageContainerInterface) {
             $repo = $this->em->getRepository(Image::class);
             $images = $repo->findBy([
                 'entity' => get_class($entity) . ':' . $entity->getId(),
@@ -117,12 +113,11 @@ class ImageManager extends AbstractFileManager {
                 $this->logger->error("An error occured removing {$ex->getPath()}: {$ex->getMessage()}");
             }
         }
-        if($entity instanceof ImageContainerInterface) {
-            foreach($entity->getImages() as $image) {
+        if ($entity instanceof ImageContainerInterface) {
+            foreach ($entity->getImages() as $image) {
                 $this->em->remove($image);
             }
             $this->em->flush();
         }
     }
-
 }

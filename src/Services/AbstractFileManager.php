@@ -10,14 +10,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Entity\Audio;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -51,46 +45,6 @@ abstract class AbstractFileManager {
     public function __construct(LoggerInterface $logger, $root) {
         $this->logger = $logger;
         $this->root = $root;
-    }
-
-    /**
-     * @param EntityManagerInterface $em
-     *
-     * @required
-     */
-    public function setEntityManager(EntityManagerInterface $em) {
-        $this->em = $em;
-    }
-
-    public function setUploadDir($dir) : void {
-        if ('/' !== $dir[0]) {
-            $this->uploadDir = $this->root . '/' . $dir;
-        }
-        else {
-            $this->uploadDir = $dir;
-        }
-    }
-
-    /**
-     * @return string
-     */
-    public function getUploadDir() {
-        return $this->uploadDir;
-    }
-
-    public function upload(UploadedFile $file) {
-        $basename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $filename = implode('.', [
-            preg_replace(self::FORBIDDEN, '_', $basename),
-            uniqid(),
-            $file->guessExtension(),
-        ]);
-        if ( ! file_exists($this->uploadDir)) {
-            mkdir($this->uploadDir, 0777, true);
-        }
-        $file->move($this->uploadDir, $filename);
-
-        return $filename;
     }
 
     public static function getMaxUploadSize($asBytes = true) {
@@ -134,5 +88,42 @@ abstract class AbstractFileManager {
         }
 
         return round($bytes);
+    }
+
+    /**
+     * @required
+     */
+    public function setEntityManager(EntityManagerInterface $em) : void {
+        $this->em = $em;
+    }
+
+    public function setUploadDir($dir) : void {
+        if ('/' !== $dir[0]) {
+            $this->uploadDir = $this->root . '/' . $dir;
+        } else {
+            $this->uploadDir = $dir;
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getUploadDir() {
+        return $this->uploadDir;
+    }
+
+    public function upload(UploadedFile $file) {
+        $basename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $filename = implode('.', [
+            preg_replace(self::FORBIDDEN, '_', $basename),
+            uniqid(),
+            $file->guessExtension(),
+        ]);
+        if ( ! file_exists($this->uploadDir)) {
+            mkdir($this->uploadDir, 0777, true);
+        }
+        $file->move($this->uploadDir, $filename);
+
+        return $filename;
     }
 }

@@ -73,12 +73,6 @@ abstract class AbstractImage extends AbstractEntity {
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=64, nullable=false)
-     */
-    private $mimeType;
-
-    /**
-     * @var string
      * @ORM\Column(type="text", nullable=true)
      */
     protected $description;
@@ -88,6 +82,12 @@ abstract class AbstractImage extends AbstractEntity {
      * @ORM\Column(type="text", nullable=true)
      */
     protected $license;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=64, nullable=false)
+     */
+    private $mimeType;
 
     public function __construct() {
         parent::__construct();
@@ -210,13 +210,11 @@ abstract class AbstractImage extends AbstractEntity {
         return $this;
     }
 
-    public function getMimeType(): ?string
-    {
+    public function getMimeType() : ?string {
         return $this->mimeType;
     }
 
-    public function setMimeType(string $mimeType): self
-    {
+    public function setMimeType(string $mimeType) : self {
         $this->mimeType = $mimeType;
 
         return $this;

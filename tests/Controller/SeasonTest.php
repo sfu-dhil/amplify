@@ -388,11 +388,12 @@ class SeasonTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $season = $this->entityManager->find(Season::class, 1);
-        foreach($season->getImages() as $image) {
+        foreach ($season->getImages() as $image) {
             $this->cleanUp($image->getImageFile());
             $this->cleanUp($image->getThumbFile());
         }
     }
+
     public function testAnonEditImage() : void {
         $formCrawler = $this->client->request('GET', '/season/1/edit_image/1');
         $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
@@ -417,7 +418,7 @@ class SeasonTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $season = $this->entityManager->find(Season::class, 1);
-        foreach($season->getImages() as $image) {
+        foreach ($season->getImages() as $image) {
             $this->cleanUp($image->getImageFile());
             $this->cleanUp($image->getThumbFile());
         }
@@ -445,7 +446,7 @@ class SeasonTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $season = $this->entityManager->find(Season::class, 1);
-        foreach($season->getImages() as $image) {
+        foreach ($season->getImages() as $image) {
             $this->cleanUp($image->getImageFile());
             $this->cleanUp($image->getThumbFile());
         }
@@ -465,7 +466,7 @@ class SeasonTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $season = $this->entityManager->find(Season::class, 1);
-        foreach($season->getImages() as $image) {
+        foreach ($season->getImages() as $image) {
             $this->cleanUp($image->getImageFile());
             $this->cleanUp($image->getThumbFile());
         }

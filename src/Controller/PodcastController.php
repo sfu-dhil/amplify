@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Episode;
 use App\Entity\Image;
 use App\Entity\Podcast;
 use App\Form\PodcastType;
@@ -20,7 +19,6 @@ use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;

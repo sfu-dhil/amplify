@@ -17,6 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
@@ -72,15 +73,14 @@ class PodcastType extends AbstractType {
                 'class' => 'tinymce',
             ],
         ]);
-        $builder->add('website', TextareaType::class, [
+        $builder->add('website', UrlType::class, [
             'label' => 'Website',
             'required' => true,
             'attr' => [
                 'help_block' => '',
-                'class' => 'tinymce',
             ],
         ]);
-        $builder->add('rss', TextType::class, [
+        $builder->add('rss', UrlType::class, [
             'label' => 'Rss',
             'required' => true,
             'attr' => [

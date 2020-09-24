@@ -78,6 +78,7 @@ class SeasonType extends AbstractType {
             'class' => Podcast::class,
             'remote_route' => 'podcast_typeahead',
             'allow_clear' => true,
+            'required' => true,
             'attr' => [
                 'help_block' => '',
                 'add_path' => 'podcast_new_popup',

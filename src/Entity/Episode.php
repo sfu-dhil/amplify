@@ -21,7 +21,6 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Entity(repositoryClass=EpisodeRepository::class)
  */
 class Episode extends AbstractEntity implements ImageContainerInterface {
-
     use ImageContainerTrait {
         ImageContainerTrait::__construct as protected trait_constructor;
     }

@@ -405,16 +405,16 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "2.10.3",
+            "version": "2.10.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "03ca23afc2ee062f5d3e32426ad37c34a4770dcf"
+                "reference": "47433196b6390d14409a33885ee42b6208160643"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/03ca23afc2ee062f5d3e32426ad37c34a4770dcf",
-                "reference": "03ca23afc2ee062f5d3e32426ad37c34a4770dcf",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/47433196b6390d14409a33885ee42b6208160643",
+                "reference": "47433196b6390d14409a33885ee42b6208160643",
                 "shasum": ""
             },
             "require": {
@@ -510,7 +510,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-09-02T01:35:42+00:00"
+            "time": "2020-09-12T21:20:41+00:00"
         },
         {
             "name": "doctrine/doctrine-bundle",
@@ -4036,16 +4036,16 @@
         },
         {
             "name": "symfony/flex",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/flex.git",
-                "reference": "1eab1e85f5eb66dac138d6240cc0ceffd6e3ae34"
+                "reference": "115e67f76ba95d70946a6e0b15d4578bf04927c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/flex/zipball/1eab1e85f5eb66dac138d6240cc0ceffd6e3ae34",
-                "reference": "1eab1e85f5eb66dac138d6240cc0ceffd6e3ae34",
+                "url": "https://api.github.com/repos/symfony/flex/zipball/115e67f76ba95d70946a6e0b15d4578bf04927c3",
+                "reference": "115e67f76ba95d70946a6e0b15d4578bf04927c3",
                 "shasum": ""
             },
             "require": {
@@ -4095,7 +4095,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-08-31T14:36:07+00:00"
+            "time": "2020-09-14T14:58:36+00:00"
         },
         {
             "name": "symfony/form",
@@ -8228,16 +8228,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ubermichael/nines-bundles.git",
-                "reference": "e1de365b57b4df28292bc036a3d95b78027734b5"
+                "reference": "1503d9242d9d4f0066b47d28bc451e615137d2f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ubermichael/nines-bundles/zipball/e1de365b57b4df28292bc036a3d95b78027734b5",
-                "reference": "e1de365b57b4df28292bc036a3d95b78027734b5",
+                "url": "https://api.github.com/repos/ubermichael/nines-bundles/zipball/1503d9242d9d4f0066b47d28bc451e615137d2f1",
+                "reference": "1503d9242d9d4f0066b47d28bc451e615137d2f1",
                 "shasum": ""
             },
             "require": {
                 "egulias/email-validator": "^2.1",
+                "ext-imagick": "*",
                 "ext-json": "*",
                 "guzzlehttp/guzzle": "^6.5",
                 "knplabs/knp-menu-bundle": "^2.0",
@@ -8261,6 +8262,7 @@
                     "Nines\\EditorBundle\\": "EditorBundle",
                     "Nines\\FeedbackBundle\\": "FeedbackBundle",
                     "Nines\\MakerBundle\\": "MakerBundle",
+                    "Nines\\MediaBundle\\": "MediaBundle",
                     "Nines\\UserBundle\\": "UserBundle",
                     "Nines\\UtilBundle\\": "UtilBundle"
                 }
@@ -8279,7 +8281,7 @@
                 "source": "https://github.com/ubermichael/nines-bundles/tree/4.x",
                 "issues": "https://github.com/ubermichael/nines-bundles/issues"
             },
-            "time": "2020-09-11T21:12:02+00:00"
+            "time": "2020-09-17T17:02:56+00:00"
         },
         {
             "name": "webmozart/assert",
