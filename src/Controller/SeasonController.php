@@ -103,7 +103,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
             foreach ($season->getContributions() as $contribution) {
-                $contribution->setPodcast($season);
+                $contribution->setSeason($season);
                 $entityManager->persist($contribution);
             }
             $entityManager->persist($season);
@@ -157,7 +157,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
             foreach ($season->getContributions() as $contribution) {
-                $contribution->setPodcast($season);
+                $contribution->setSeason($season);
                 if ( ! $entityManager->contains($contribution)) {
                     $entityManager->persist($contribution);
                 }
