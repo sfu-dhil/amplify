@@ -101,7 +101,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
 
     /**
      * @var array
-     * @ORM\Column(type="json", nullable=false)
+     * @ORM\Column(type="json")
      */
     private $subjects;
 
