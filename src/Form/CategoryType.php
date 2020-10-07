@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Category;
+use Nines\UtilBundle\Form\TermType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -20,33 +21,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Category form.
  */
-class CategoryType extends AbstractType {
+class CategoryType extends TermType {
     /**
      * Add form fields to $builder.
      */
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
-        $builder->add('name', TextType::class, [
-            'label' => 'Name',
-            'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
-        ]);
-        $builder->add('label', TextType::class, [
-            'label' => 'Label',
-            'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
-        ]);
-        $builder->add('description', TextareaType::class, [
-            'label' => 'Description',
-            'required' => false,
-            'attr' => [
-                'help_block' => '',
-                'class' => 'tinymce',
-            ],
-        ]);
+        parent::buildForm($builder, $options);
     }
 
     /**
