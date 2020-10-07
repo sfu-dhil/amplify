@@ -38,19 +38,6 @@ class EpisodeType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-        $builder->add('preserved', ChoiceType::class, [
-            'label' => 'Preserved',
-            'expanded' => true,
-            'multiple' => false,
-            'choices' => [
-                'Yes' => true,
-                'No' => false,
-            ],
-            'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
-        ]);
         $builder->add('date', DateType::class, [
             'label' => 'Date',
             'required' => true,

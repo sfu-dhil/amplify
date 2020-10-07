@@ -168,6 +168,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
                     $entityManager->persist($contribution);
                 }
             }
+            $episode->setPreserved(false);
             $this->getDoctrine()->getManager()->flush();
             $this->addFlash('success', 'The updated episode has been saved.');
 
