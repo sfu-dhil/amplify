@@ -10,6 +10,29 @@
 
     {% endblock %}
 
-    {% block javascripts %}
-        {% include '@NinesEditor/editor/widget.html.twig' %}
-    {% endblock %}
+{% block javascripts %}
+    {% include '@NinesEditor/editor/widget.html.twig' %}
+    <script type='application/javascript' src='{{ asset('yarn/jquery-ui-dist/jquery-ui.min.js') }}'></script>
+{% endblock %}
+
+{% block styles %}
+    <style>
+        #facetButton::after {
+        content('x');
+        }
+        .ui-widget.ui-widget-content {
+            border: none;
+            outline: 1px solid #999999;
+            background-color: white;
+        }
+
+        .ui-menu-item {
+            padding: 4px;
+            list-style: none;
+        }
+
+        .ui-menu .ui-menu-item-wrapper {
+            padding: 0;
+        }
+    </style>
+{% endblock %}

@@ -116,16 +116,20 @@ class EpisodeType extends AbstractType {
                 'class' => 'tinymce',
             ],
         ]);
-
         $builder->add('subjects', CollectionType::class, [
             'label' => 'Subject',
             'required' => false,
+            'allow_add' => true,
+            'allow_delete' => true,
+            'entry_type' => TextType::class,
+            'entry_options' => [
+                'label' => false,
+            ],
             'attr' => [
                 'help_block' => '',
-                'class' => 'collection collection-simple',
+                'class' => 'collection collection-simple oclcfast',
             ],
         ]);
-
         $builder->add('season', Select2EntityType::class, [
             'label' => 'Season',
             'class' => Season::class,

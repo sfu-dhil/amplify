@@ -112,9 +112,7 @@
                     <ul>
                         {% for subject in episode.subjects %}
                             <li>
-                                <a href='{{ path("subject_show", {"id":subject.id }) }}'>
-                                    {{ subject }}
-                                </a>
+                                <a href='{{ path('episode_index', {'q': subject}) }}'>{{ subject }}</a>
                             </li>
                         {% endfor %}
                     </ul>

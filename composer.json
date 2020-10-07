@@ -8,6 +8,7 @@
         "ext-imagick": "*",
         "league/csv": "^9.6",
         "ninsuo/symfony-collection": "^2.1",
+        "scienta/doctrine-json-functions": "^4.1",
         "sensio/framework-extra-bundle": "^5.1",
         "symfony/asset": "4.4.*",
         "symfony/console": "4.4.*",

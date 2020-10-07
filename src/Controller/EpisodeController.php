@@ -42,7 +42,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
      * @Template()
      */
     public function index(Request $request, EpisodeRepository $episodeRepository) : array {
-        $query = $episodeRepository->indexQuery();
+        $query = $episodeRepository->indexQuery($request->query->get('q'));
         $pageSize = $this->getParameter('page_size');
         $page = $request->query->getint('page', 1);
 

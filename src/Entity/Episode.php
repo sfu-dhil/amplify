@@ -100,8 +100,8 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
     private $abstract;
 
     /**
-     * @var Collection
-     * @ORM\Column(type="array", nullable=true)
+     * @var array
+     * @ORM\Column(type="json", nullable=false)
      */
     private $subjects;
 
@@ -138,7 +138,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
         $this->preserved = false;
         $this->tags = [];
         $this->languages = new ArrayCollection();
-        $this->subjects = new ArrayCollection();
+        $this->subjects = [];
         $this->contributions = new ArrayCollection();
     }
 
@@ -270,14 +270,14 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
     }
 
     /**
-     * @return Collection
+     * @return array
      */
-    public function getSubjects() : Collection {
+    public function getSubjects() : array {
         return $this->subjects;
     }
 
     public function addSubject($subject) : self {
-        if ( ! $this->subjects->contains($subject)) {
+        if( ! in_array($subject, $this->subjects)) {
             $this->subjects[] = $subject;
         }
 
@@ -285,8 +285,8 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
     }
 
     public function removeSubject($subject) : self {
-        if ($this->subjects->contains($subject)) {
-            $this->subjects->removeElement($subject);
+        if(false !== ($key = array_search($subject, $this->subjects))) {
+            array_splice($this->subjects, $key, 1);
         }
 
         return $this;

@@ -2,6 +2,8 @@
 
     var hostname = window.location.hostname.replace('www.', '');
 
+    const fastUrl = '//fast.oclc.org/searchfast/fastsuggest';
+
     function confirm() {
         var $this = $(this);
         $this.click(function () {
@@ -48,6 +50,48 @@
         window.open(url, "_blank", "toolbar=no,scrollbars=yes,resizable=yes,top=60,left=60,width=500,height=600");
     }
 
+    function oclcLookup(element, request, response) {
+        let suggestIdx = 'suggestall';
+        let q = $(element).find('input').val();
+        let fields = ['suggestall', 'idroot', 'auth', 'type'].join(',');
+        let url = `${fastUrl}?query=${q}&queryIndex=${suggestIdx}&queryReturn=${fields}&suggest=autoSubject`;
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'jsonp',
+            cache: false,
+
+            success: function(data) {
+                let subjects = [];
+                let result = data.response.docs;
+                result.forEach(function(d){
+                    let label = `<b>${d.auth}</b>`;
+                    if(d.type==='alt') {
+                        label = `<i>${d.suggestall}</i> use ${label}`;
+                    }
+                    subjects.push({
+                        label: `<span>${label}</span>`,
+                        value: d.auth,
+                    });
+                });
+                response(subjects);
+            },
+            error: function(jq, status, error) {
+                console.log(`lookup error: ${status} - ${error}`);
+                response();
+            },
+        });
+    }
+
+    function attachOclcFast(collection, element) {
+        $(element).find('input').autocomplete({
+            minLength: 3,
+            source: function(request, response) {oclcLookup(element,request,response);},
+        }).data("ui-autocomplete")._renderItem = function(ul, item){
+            return $("<li></li>").data('item.autocomplete', item).append(item.label).appendTo(ul);
+        };
+    }
+
     function simpleCollection() {
         $('.collection-simple').collection({
             init_with_n_elements: 1,
@@ -57,6 +101,7 @@
             add: '<a href="#" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span></a>',
             remove: '<a href="#" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-minus"></span></a>',
             add_at_the_end: false,
+            after_add: attachOclcFast
         });
     }
 
