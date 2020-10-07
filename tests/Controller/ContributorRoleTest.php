@@ -225,7 +225,6 @@ class ContributorRoleTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Save')->form([
-            'contributor_role[name]' => 'Updated Name',
             'contributor_role[label]' => 'Updated Label',
             'contributor_role[description]' => 'Updated Description',
         ]);
@@ -234,7 +233,6 @@ class ContributorRoleTest extends ControllerBaseCase {
         $this->assertTrue($this->client->getResponse()->isRedirect('/contributor_role/1'));
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Name")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Label")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Description")')->count());
     }
@@ -289,7 +287,6 @@ class ContributorRoleTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Save')->form([
-            'contributor_role[name]' => 'New Name',
             'contributor_role[label]' => 'New Label',
             'contributor_role[description]' => 'New Description',
         ]);
@@ -298,7 +295,6 @@ class ContributorRoleTest extends ControllerBaseCase {
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Name")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Label")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Description")')->count());
     }
@@ -313,7 +309,6 @@ class ContributorRoleTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Save')->form([
-            'contributor_role[name]' => 'New Name',
             'contributor_role[label]' => 'New Label',
             'contributor_role[description]' => 'New Description',
         ]);
@@ -322,7 +317,6 @@ class ContributorRoleTest extends ControllerBaseCase {
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Name")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Label")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Description")')->count());
     }

@@ -117,6 +117,15 @@ class EpisodeType extends AbstractType {
             ],
         ]);
 
+        $builder->add('subjects', CollectionType::class, [
+            'label' => 'Subject',
+            'required' => false,
+            'attr' => [
+                'help_block' => '',
+                'class' => 'collection collection-simple',
+            ],
+        ]);
+
         $builder->add('season', Select2EntityType::class, [
             'label' => 'Season',
             'class' => Season::class,

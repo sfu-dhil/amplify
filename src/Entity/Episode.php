@@ -100,6 +100,12 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
     private $abstract;
 
     /**
+     * @var Collection
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $subjects;
+
+    /**
      * @var Audio
      * @ORM\OneToOne(targetEntity="App\Entity\Audio", mappedBy="episode")
      */
@@ -118,12 +124,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
      * @ORM\JoinColumn(nullable=false)
      */
     private $podcast;
-
-    /**
-     * @var Collection|Subject[]
-     * @ORM\ManyToMany(targetEntity="Subject", inversedBy="episodes")
-     */
-    private $subjects;
 
     /**
      * @var Collection|Contribution[]
@@ -270,13 +270,13 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
     }
 
     /**
-     * @return Collection|Subject[]
+     * @return Collection
      */
     public function getSubjects() : Collection {
         return $this->subjects;
     }
 
-    public function addSubject(Subject $subject) : self {
+    public function addSubject($subject) : self {
         if ( ! $this->subjects->contains($subject)) {
             $this->subjects[] = $subject;
         }
@@ -284,7 +284,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
-    public function removeSubject(Subject $subject) : self {
+    public function removeSubject($subject) : self {
         if ($this->subjects->contains($subject)) {
             $this->subjects->removeElement($subject);
         }

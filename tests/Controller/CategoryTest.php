@@ -225,7 +225,6 @@ class CategoryTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Save')->form([
-            'category[name]' => 'Updated Name',
             'category[label]' => 'Updated Label',
             'category[description]' => 'Updated Description',
         ]);
@@ -234,7 +233,6 @@ class CategoryTest extends ControllerBaseCase {
         $this->assertTrue($this->client->getResponse()->isRedirect('/category/1'));
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Name")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Label")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Description")')->count());
     }
@@ -289,7 +287,6 @@ class CategoryTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Save')->form([
-            'category[name]' => 'New Name',
             'category[label]' => 'New Label',
             'category[description]' => 'New Description',
         ]);
@@ -298,7 +295,6 @@ class CategoryTest extends ControllerBaseCase {
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Name")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Label")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Description")')->count());
     }
@@ -313,7 +309,6 @@ class CategoryTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Save')->form([
-            'category[name]' => 'New Name',
             'category[label]' => 'New Label',
             'category[description]' => 'New Description',
         ]);
@@ -322,7 +317,6 @@ class CategoryTest extends ControllerBaseCase {
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Name")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Label")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Description")')->count());
     }
