@@ -19,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
@@ -47,11 +48,15 @@ class EpisodeType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-        $builder->add('runTime', null, [
+        $builder->add('runTime', TimeType::class, [
             'label' => 'Run Time',
             'required' => true,
+            'input' => 'string',
+            'widget' => 'single_text',
+            'with_seconds' => true,
+
             'attr' => [
-                'help_block' => '',
+                'help_block' => 'Runtime in hh:mm:ss format',
             ],
         ]);
         $builder->add('title', TextType::class, [

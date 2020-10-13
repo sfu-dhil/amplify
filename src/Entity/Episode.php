@@ -46,8 +46,8 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
     /**
      * Run time in seconds.
      *
-     * @var int
-     * @ORM\Column(type="integer")
+     * @var string
+     * @ORM\Column(type="string", length=9, nullable=false)
      */
     private $runTime;
 
@@ -169,11 +169,11 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
-    public function getRunTime() : ?int {
+    public function getRunTime() : ?string {
         return $this->runTime;
     }
 
-    public function setRunTime(int $runTime) : self {
+    public function setRunTime(string $runTime) : self {
         $this->runTime = $runTime;
 
         return $this;
