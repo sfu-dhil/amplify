@@ -36,7 +36,7 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface {
             $fixture->setSeason($this->getReference('season.1'));
             $fixture->setPodcast($this->getReference('podcast.1'));
             $fixture->addSubject('Subject ' . $i);
-            $fixture->addSubject('Subject ' . ($i+1));
+            $fixture->addSubject('Subject ' . ($i + 1));
             $em->persist($fixture);
             $this->setReference('episode.' . $i, $fixture);
         }

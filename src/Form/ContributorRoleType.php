@@ -12,16 +12,13 @@ namespace App\Form;
 
 use App\Entity\ContributorRole;
 use Nines\UtilBundle\Form\TermType;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * ContributorRole form.
  */
-class ContributorRoleType  extends TermType {
+class ContributorRoleType extends TermType {
     /**
      * Add form fields to $builder.
      */

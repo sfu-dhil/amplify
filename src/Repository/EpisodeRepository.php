@@ -28,15 +28,19 @@ class EpisodeRepository extends ServiceEntityRepository {
     }
 
     /**
+     * @param mixed $q
+     *
      * @return Query
      */
     public function indexQuery($q) {
         $qb = $this->createQueryBuilder('episode')
-            ->orderBy('episode.id');
-        if($q) {
+            ->orderBy('episode.id')
+        ;
+        if ($q) {
             $qb->andWhere("json_search(episode.subjects, 'one', :q) is not null");
             $qb->setParameter('q', $q);
         }
+
         return $qb->getQuery();
     }
 

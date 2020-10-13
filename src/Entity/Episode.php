@@ -269,15 +269,12 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getSubjects() : array {
         return $this->subjects;
     }
 
     public function addSubject($subject) : self {
-        if( ! in_array($subject, $this->subjects)) {
+        if ( ! in_array($subject, $this->subjects, true)) {
             $this->subjects[] = $subject;
         }
 
@@ -285,7 +282,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
     }
 
     public function removeSubject($subject) : self {
-        if(false !== ($key = array_search($subject, $this->subjects))) {
+        if (false !== ($key = array_search($subject, $this->subjects, true))) {
             array_splice($this->subjects, $key, 1);
         }
 
