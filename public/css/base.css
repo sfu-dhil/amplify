@@ -95,3 +95,31 @@ div.collection-complex > div:not(:last-child) {
 div.panel-comments {
     margin-top: 3em;
 }
+
+/* Styling for the FAST autocomplete widget. */
+.ui-widget.ui-widget-content {
+    border: 1px solid #c7c7c7;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.ui-menu {
+    max-width: 80vh !important;
+    margin: 0;
+    padding: 0;
+}
+
+.ui-menu-item {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.ui-menu .ui-menu-item-wrapper {
+    padding: 4px;
+    display: block;
+}
+
+.ui-state-active {
+    background-color: #91d6ec;
+}
