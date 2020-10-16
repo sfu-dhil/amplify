@@ -51,6 +51,7 @@ class EpisodeType extends AbstractType {
             'label' => 'Run Time',
             'required' => true,
             'input' => 'string',
+            'html5' => false,
             'widget' => 'single_text',
             'with_seconds' => true,
 
