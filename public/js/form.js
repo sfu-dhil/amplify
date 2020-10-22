@@ -84,7 +84,12 @@
     }
 
     function attachOclcFast(collection, element) {
-        $(element).find('input').autocomplete({
+        let $element = $(element);
+        if( ! $element.parent().hasClass('oclcfast')) {
+            console.log(element);
+            return;
+        }
+        $element.find('input').autocomplete({
             minLength: 3,
             source: function(request, response) {oclcLookup(element,request,response);},
         }).data("ui-autocomplete")._renderItem = function(ul, item){
