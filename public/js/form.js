@@ -85,8 +85,10 @@
 
     function attachOclcFast(collection, element) {
         let $element = $(element);
+        if( ! $.autocomplete) {
+            console.log('autocomplete plugin not enabled.');
+        }
         if( ! $element.parent().hasClass('oclcfast')) {
-            console.log(element);
             return;
         }
         $element.find('input').autocomplete({
