@@ -59,7 +59,7 @@ class PersonType extends AbstractType {
         ]);
         $builder->add('links', CollectionType::class, [
             'label' => 'Links',
-            'required' => true,
+            'required' => false,
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,

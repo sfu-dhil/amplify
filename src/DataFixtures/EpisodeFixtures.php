@@ -25,7 +25,7 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface {
             $fixture->setNumber($i);
             $fixture->setPreserved(0 === $i % 2);
             $fixture->setDate(new \DateTime("2020-{$i}-{$i}"));
-            $fixture->setRunTime($i);
+            $fixture->setRunTime("00:{$i}5:00");
             $fixture->setTitle('Title ' . $i);
             $fixture->setAlternativeTitle('AlternativeTitle ' . $i);
             $fixture->setTags(['Tags ' . $i]);

@@ -101,6 +101,7 @@ div.panel-comments {
     border: 1px solid #c7c7c7;
     border-radius: 4px;
     background-color: white;
+    z-index: 10;
 }
 
 .ui-menu {
