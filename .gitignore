@@ -27,3 +27,4 @@
 /config/deploy.yaml
 *.sql
 /data
+src/.preload.php
