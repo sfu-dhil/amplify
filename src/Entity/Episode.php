@@ -65,7 +65,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
 
     /**
      * @var Collection|Language[]
-     * @ORM\ManyToMany(targetEntity="App\Entity\Language", inversedBy="episodes")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Language", inversedBy="episodes", cascade={"remove"})
      */
     private $languages;
 
@@ -107,7 +107,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
 
     /**
      * @var Audio
-     * @ORM\OneToOne(targetEntity="App\Entity\Audio", mappedBy="episode")
+     * @ORM\OneToOne(targetEntity="App\Entity\Audio", mappedBy="episode", cascade={"remove"})
      */
     private $audio;
 
@@ -127,7 +127,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
 
     /**
      * @var Collection|Contribution[]
-     * @ORM\OneToMany(targetEntity="Contribution", mappedBy="episode")
+     * @ORM\OneToMany(targetEntity="Contribution", mappedBy="episode", cascade={"remove"})
      */
     private $contributions;
 
