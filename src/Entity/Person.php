@@ -58,7 +58,7 @@ class Person extends AbstractEntity {
 
     /**
      * @var Collection|Contribution[]
-     * @ORM\OneToMany(targetEntity="Contribution", mappedBy="person")
+     * @ORM\OneToMany(targetEntity="Contribution", mappedBy="person", cascade={"remove"})
      */
     private $contributions;
 
