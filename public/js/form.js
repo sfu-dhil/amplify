@@ -85,10 +85,7 @@
 
     function attachOclcFast(collection, element) {
         let $element = $(element);
-        if( ! $.autocomplete) {
-            console.log('autocomplete plugin not enabled.');
-        }
-        if( ! $element.parent().hasClass('oclcfast')) {
+        if(! $element.parent().hasClass('oclcfast')) {
             return;
         }
         $element.find('input').autocomplete({
@@ -153,6 +150,11 @@
             complexCollection();
         }
         imageModals();
+        // The autocomplete widget must be manually added for existing
+        // elements.
+        $(".collection-simple .form-group").each(function(i,e){
+            attachOclcFast(null, e);
+        });
     });
 
 })(jQuery, window);
