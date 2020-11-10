@@ -10,8 +10,3 @@ nines_blog:
   type: annotation
   prefix: /blog
   resource: '@NinesBlogBundle/Controller'
-
-nines_feedback:
-  type: annotation
-  prefix: /feedback
-  resource: '@NinesFeedbackBundle/Controller'

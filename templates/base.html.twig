@@ -41,9 +41,6 @@
                     {{ knp_menu_render('nines_blog_pages') }}
                     {{ knp_menu_render('nines_blog_posts') }}
                     {{ knp_menu_render('main') }}
-                    {% if is_granted('ROLE_COMMENT_ADMIN') %}
-                        {{ knp_menu_render('nines_feedback') }}
-                    {% endif %}
                     {{ knp_menu_render('nines_user_nav') }}
                 </div><!--/.nav-collapse -->
             </div>
