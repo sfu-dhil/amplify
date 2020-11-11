@@ -124,6 +124,9 @@ class Builder implements ContainerAwareInterface {
             $browse->addChild('Contributions', [
                 'route' => 'contribution_index',
             ]);
+            $browse->addChild('Images', [
+                'route' => 'image_index',
+            ]);
         }
 
         return $menu;

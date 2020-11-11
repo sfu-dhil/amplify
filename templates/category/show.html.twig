@@ -24,7 +24,25 @@
         </div>
     {% endif %}
 
-    {% embed 'category/partial/detail.html.twig' %}
+    {% embed '@NinesUtil/term/partial/show.html.twig' with {'term': category} %}
+        {% block callback %}
+            <tr>
+                <th>Podcast</th>
+                <td>
+                    {% if category.podcasts|length > 0 %}
+                        <ul>
+                            {% for podcast in category.podcasts %}
+                                <li>
+                                    <a href='{{ path("podcast_show", {"id":podcast.id }) }}'>
+                                        {{ podcast }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endblock %}
     {% endembed %}
 
 {% endblock %}

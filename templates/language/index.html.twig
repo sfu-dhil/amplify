@@ -23,7 +23,10 @@
         </div>
     </div>
 
-    {% embed 'language/partial/table.html.twig' %}
+    {% embed '@NinesUtil/term/partial/index.html.twig' with {
+        'terms': languages,
+        'path': 'language_show',
+    } %}
     {% endembed %}
 
     <div class="navigation">

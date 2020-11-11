@@ -22,9 +22,8 @@
         <thead>
             <tr>
                 <th>Original Name</th>
-                <th>Public</th>
+                <th>Episode</th>
                 <th>Mime Type</th>
-                <th>File Size</th>
             </tr>
         </thead>
         <tbody>
@@ -35,16 +34,13 @@
                             {{ audio.originalName }}
                         </a>
                     </td>
-                    <td>{% if audio.public %}Yes{% else %}No{% endif %}</td>
+                    <td>
+                        {{ audio.episode.podcast }} {{ audio.episode.slug }}
+                    </td>
 
                     <td>
                         {{ audio.mimeType }}
                     </td>
-
-                    <td>
-                        {{ audio.fileSize }}
-                    </td>
-
                 </tr>
             {% endfor %}
         </tbody>

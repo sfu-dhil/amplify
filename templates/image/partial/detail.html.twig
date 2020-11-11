@@ -46,7 +46,11 @@
             <th>Entity</th>
             <td>
                 {% set entity = manager.findEntity(image) %}
-                {{ entity|short_name|camel_title }} {{ entity }}
+                {% if entity %}
+                    {{ entity|short_name|camel_title }} {{ entity }}
+                {% else %}
+                    <i>Unknown ({{ image.entity }})</i>
+                {% endif %}
             </td>
         </tr>
 

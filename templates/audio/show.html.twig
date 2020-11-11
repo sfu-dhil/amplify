@@ -68,7 +68,11 @@
             </tr>
             <tr>
                 <th>Title</th>
-                <td>{{ episode.title }}</td>
+                <td>{{ episode.slug }}
+                    <a href='{{ path('episode_show', {'id': episode.id}) }}'>
+                        {{ episode.title }}
+                    </a>
+                </td>
             </tr>
             <tr>
                 <th>Alternative Title</th>
@@ -96,50 +100,7 @@
                 <th>Language</th>
                 <td>{{ episode.languages|join(', ') }}</td>
             </tr>
-            <tr>
-                <th>Tags</th>
-                <td>{% if episode.tags %}{{ episode.tags|join(', ') }}{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Bibliography</th>
-                <td>{{ episode.bibliography }}</td>
-            </tr>
-            <tr>
-                <th>Copyright</th>
-                <td>{{ episode.copyright }}</td>
-            </tr>
-            <tr>
-                <th>Transcript</th>
-                <td>{{ episode.transcript }}</td>
-            </tr>
-            <tr>
-                <th>Abstract</th>
-                <td>{{ episode.abstract }}</td>
-            </tr>
-            <tr>
-                <th>Created</th>
-                <td>{{ episode.created|date }}</td>
-            </tr>
-            <tr>
-                <th>Updated</th>
-                <td>{{ episode.updated|date }}</td>
-            </tr>
         </tbody>
     </table>
-
-    {% if episode.contributions|length > 0 %}
-        <h2>Contributors</h2>
-        <ul>
-            {% for contribution in episode.contributions %}
-                <li>
-                    <a href='{{ path('person_show', {'id': contribution.person.id}) }}'>
-                        {{ contribution.person -}}
-                    </a>
-                    {{ contribution.contributorRole }}
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
 
 {% endblock %}

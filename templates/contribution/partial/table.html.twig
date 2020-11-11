@@ -18,19 +18,19 @@
                     </a>
                 </td>
                 <td>
-                    {{ contribution.person }}
+                    <a href='{{ path("person_show", {"id": contribution.person.id}) }}'>{{ contribution.person }}</a>
                 </td>
                 <td>
-                    {{ contribution.contributorRole }}
+                    <a href='{{ path("contributor_role_show", {"id": contribution.contributorRole.id}) }}'>{{ contribution.contributorRole }}</a>
                 </td>
                 <td>
-                    {{ contribution.episode }}
+                    <a href='{{ path("episode_show", {"id": contribution.episode.id}) }}'>{{ contribution.episode }}</a>
                 </td>
                 <td>
-                    {{ contribution.season }}
+                    <a href='{{ path("season_show", {"id": contribution.season.id}) }}'>{{ contribution.season }}</a>
                 </td>
                 <td>
-                    {{ contribution.podcast }}
+                    <a href='{{ path("podcast_show", {"id": contribution.podcast.id}) }}'>{{ contribution.podcast }}</a>
                 </td>
             </tr>
         {% endfor %}

@@ -24,7 +24,25 @@
         </div>
     {% endif %}
 
-    {% embed 'contributor_role/partial/detail.html.twig' %}
+    {% embed '@NinesUtil/term/partial/show.html.twig' with {
+        'term': contributor_role
+    } %}
+        {% block callback %}
+            <tr>
+                <th>Contribution</th>
+                <td>
+                    {% if contributor_role.contributions|length > 0 %}
+                        <ul>
+                            {% for contribution in contributor_role.contributions %}
+                                <li>
+                                    {{ contribution }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endblock %}
     {% endembed %}
 
 {% endblock %}

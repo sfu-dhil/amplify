@@ -54,8 +54,10 @@ class ImageManager extends AbstractFileManager {
 
     public function findEntity(Image $image) {
         [$class, $id] = explode(':', $image->getEntity());
-
-        return $this->em->find($class, $id);
+        if( ! $this->em->getMetadataFactory()->isTransient($class)) {
+            return $this->em->find($class, $id);
+        }
+        return null;
     }
 
     /**

@@ -24,7 +24,27 @@
         </div>
     {% endif %}
 
-    {% embed 'language/partial/detail.html.twig' %}
+    {% embed '@NinesUtil/term/partial/show.html.twig' with {
+        'term': language
+    } %}
+        {% block callback %}
+            <tr>
+                <th>Episode</th>
+                <td>
+                    {% if language.episodes|length > 0 %}
+                        <ul>
+                            {% for episode in language.episodes %}
+                                <li>
+                                    <a href='{{ path("episode_show", {"id":episode.id }) }}'>
+                                        {{ episode }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endblock %}
     {% endembed %}
 
 {% endblock %}

@@ -159,6 +159,14 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
+    public function getSlug() : string {
+        if($this->season) {
+            return sprintf("S%02dE%02d", $this->season->getNumber(), $this->number);
+        } else {
+            return sprintf("E%02d", $this->number);
+        }
+    }
+
     public function getDate() : ?\DateTimeInterface {
         return $this->date;
     }
