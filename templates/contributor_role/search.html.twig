@@ -45,7 +45,10 @@
 
     {% if contributor_roles|length %}
 
-        {% embed 'contributor_role/partial/table.html.twig' %}
+        {% embed '@NinesUtil/term/partial/index.html.twig' with {
+            'terms': contributor_roles,
+            'path': 'contributor_role_show',
+        } %}
         {% endembed %}
 
         <div class="navigation">

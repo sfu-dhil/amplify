@@ -6,22 +6,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="google" content="notranslate" />
         <title>{% block title %}Amplify Podcast Network{% endblock %}</title>
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 
         <link rel="stylesheet" href="{{ asset('yarn/bootstrap3/dist/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ asset('yarn/bootstrap3/dist/css/bootstrap-theme.min.css') }}">
 
         <link rel="stylesheet" href="{{ asset('css/base.css') }}">
 
-        <script src="{{ asset('yarn/jquery/dist/jquery.min.js') }}"></script>
-
-        <script src="{{ asset('yarn/select2/dist/js/select2.full.min.js') }}"></script>
         <link href="{{ asset('yarn/select2/dist/css/select2.min.css') }}" rel="stylesheet">
         <link href="{{ asset('yarn/select2-bootstrap-css/select2-bootstrap.min.css') }}" rel="stylesheet">
+        <link href='{{ asset('yarn/jquery-ui-dist/jquery-ui.css') }}' rel='stylesheet'>
+
+        <script src="{{ asset('yarn/jquery/dist/jquery.min.js') }}"></script>
+        <script src='{{ asset('yarn/jquery-ui-dist/jquery-ui.min.js') }}'></script>
+        <script src="{{ asset('yarn/select2/dist/js/select2.full.min.js') }}"></script>
 
         <script src="{{ asset('bundles/tetranzselect2entity/js/select2entity.js') }}"></script>
         <script src="{{ asset('yarn/symfony-collection/jquery.collection.js') }}"></script>
-
+        <script src="{{ asset('yarn/bootstrap3/dist/js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('js/form.js') }}"></script>
 
         {% block styles %}
@@ -40,9 +41,6 @@
                     {{ knp_menu_render('nines_blog_pages') }}
                     {{ knp_menu_render('nines_blog_posts') }}
                     {{ knp_menu_render('main') }}
-                    {% if is_granted('ROLE_COMMENT_ADMIN') %}
-                        {{ knp_menu_render('nines_feedback') }}
-                    {% endif %}
                     {{ knp_menu_render('nines_user_nav') }}
                 </div><!--/.nav-collapse -->
             </div>
@@ -78,8 +76,6 @@
                 </p>
             </div>
         </footer>
-
-        <script src="{{ asset('yarn/bootstrap3/dist/js/bootstrap.min.js') }}"></script>
 
         {% block javascripts %}
         {% endblock %}
