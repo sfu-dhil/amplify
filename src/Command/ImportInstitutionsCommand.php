@@ -42,7 +42,7 @@ class ImportInstitutionsCommand extends Command {
         $csv->setHeaderOffset(0);
         foreach ($csv->getRecords() as $record) {
             $institution = new Institution();
-            $institution->setProvince($record['Province']);
+            $institution->setCountry($record['Country']);
             $institution->setName($record['Institution']);
             $this->em->persist($institution);
         }

@@ -46,7 +46,7 @@ class InstitutionRepository extends ServiceEntityRepository {
         $qb = $this->createQueryBuilder('institution');
         $qb->andWhere('institution.name LIKE :q');
         $qb->orderBy('institution.name', 'ASC');
-        $qb->addOrderBy('institution.province', 'ASC');
+        $qb->addOrderBy('institution.country', 'ASC');
         $qb->setParameter('q', "%{$q}%");
 
         return $qb->getQuery()->execute();
@@ -61,7 +61,7 @@ class InstitutionRepository extends ServiceEntityRepository {
         $qb = $this->createQueryBuilder('institution');
         $qb->andWhere('institution.name LIKE :q');
         $qb->orderBy('institution.name', 'ASC');
-        $qb->addOrderBy('institution.province', 'ASC');
+        $qb->addOrderBy('institution.country', 'ASC');
         $qb->setParameter('q', "%{$q}%");
 
         return $qb->getQuery()->execute();

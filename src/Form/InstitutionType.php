@@ -24,8 +24,8 @@ class InstitutionType extends AbstractType {
      * Add form fields to $builder.
      */
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
-        $builder->add('province', TextType::class, [
-            'label' => 'Province',
+        $builder->add('country', TextType::class, [
+            'label' => 'Country',
             'required' => true,
             'attr' => [
                 'help_block' => '',

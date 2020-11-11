@@ -225,7 +225,7 @@ class InstitutionTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Save')->form([
-            'institution[province]' => 'Updated Province',
+            'institution[country]' => 'Updated Country',
             'institution[name]' => 'Updated Name',
         ]);
 
@@ -233,7 +233,7 @@ class InstitutionTest extends ControllerBaseCase {
         $this->assertTrue($this->client->getResponse()->isRedirect('/institution/1'));
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Province")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Country")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Name")')->count());
     }
 
@@ -287,7 +287,7 @@ class InstitutionTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Save')->form([
-            'institution[province]' => 'New Province',
+            'institution[country]' => 'New Country',
             'institution[name]' => 'New Name',
         ]);
 
@@ -295,7 +295,7 @@ class InstitutionTest extends ControllerBaseCase {
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Province")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("New Country")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("New Name")')->count());
     }
 
@@ -309,7 +309,7 @@ class InstitutionTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $form = $formCrawler->selectButton('Save')->form([
-            'institution[province]' => 'New Province',
+            'institution[country]' => 'New Country',
             'institution[name]' => 'New Name',
         ]);
 
@@ -317,7 +317,7 @@ class InstitutionTest extends ControllerBaseCase {
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Province")')->count());
+        $this->assertSame(1, $responseCrawler->filter('td:contains("Country")')->count());
         $this->assertSame(1, $responseCrawler->filter('td:contains("Name")')->count());
     }
 

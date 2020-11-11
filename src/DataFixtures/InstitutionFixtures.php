@@ -21,7 +21,7 @@ class InstitutionFixtures extends Fixture {
     public function load(ObjectManager $em) : void {
         for ($i = 0; $i < 4; $i++) {
             $fixture = new Institution();
-            $fixture->setProvince('Province ' . $i);
+            $fixture->setCountry('Country ' . $i);
             $fixture->setName('Name ' . $i);
 
             $em->persist($fixture);

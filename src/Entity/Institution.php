@@ -19,7 +19,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 /**
  * @ORM\Entity(repositoryClass=InstitutionRepository::class)
  * @ORM\Table(uniqueConstraints={
- *   @ORM\UniqueConstraint(name="institutions_uniq", columns={"province", "name"})
+ *   @ORM\UniqueConstraint(name="institutions_uniq", columns={"country", "name"})
  * })
  */
 class Institution extends AbstractEntity {
@@ -27,7 +27,7 @@ class Institution extends AbstractEntity {
      * @var string
      * @ORM\Column(type="string", length=40, nullable=false)
      */
-    private $province;
+    private $country;
 
     /**
      * @var string
@@ -53,12 +53,12 @@ class Institution extends AbstractEntity {
         return $this->name;
     }
 
-    public function getProvince() : ?string {
-        return $this->province;
+    public function getCountry() : ?string {
+        return $this->country;
     }
 
-    public function setProvince(string $province) : self {
-        $this->province = $province;
+    public function setCountry(string $country) : self {
+        $this->country = $country;
 
         return $this;
     }
