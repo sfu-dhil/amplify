@@ -1,0 +1,181 @@
+{# var episode \App\Entity\Episode -#}
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ONIXMessage xmlns="http://www.editeur.org/onix/2.1/reference"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.editeur.org/onix/2.1/reference http://www.editeur.org/onix/2.1/ONIX_BookProduct_Release2.1_reference.xsd">
+    <Header>
+        <FromCompany>Simon Fraser University Library</FromCompany>
+        <SentDate>{{ date('YmdGi') }}</SentDate>
+        <MessageNote>Exported from Amplify (dhil.lib.sfu.ca/amplify). Not intended for
+            dissemination without prior consultation.</MessageNote>
+    </Header>
+    <Product>
+        <RecordReference>{{ episode.id }}</RecordReference>
+        <NotificationType>03</NotificationType>
+        <RecordSourceType>13</RecordSourceType>
+        <RecordSourceName>Simon Fraser University Library</RecordSourceName>
+
+        <ProductIdentifier>
+            <ProductIDType>22</ProductIDType>
+            <IDValue>url:amplify-episode:{{ episode.id }}</IDValue>
+        </ProductIdentifier>
+
+        <ProductIdentifier>
+            <ProductIDType>15</ProductIDType>
+            <IDValue>9781554587513</IDValue>
+        </ProductIdentifier>
+
+        <ProductForm>AZ</ProductForm>
+        {% if episode.audioFile.mimeType == 'audio/mpeg' or
+              episode.audioFile.mimeType == 'audio/MPA' or
+              episode.audioFile.mimeType == 'audio/mpa-robust'%}
+        <ProductFormDetail>A103</ProductFormDetail>
+        {% else if episode.audioFile.mimeType == 'audio/wav' or
+                    episode.audioFile.mimeType == 'audio/vnd.wav' or
+                    episode.audioFile.mimeType == 'audio/wave' or
+                    episode.audioFile.mimeType == 'audio/x-wav' %}
+        <ProductFormDetail>A104</ProductFormDetail>
+        {% endif %}
+        <ProductFormDetail>A301</ProductFormDetail>
+        <ProductFormDetail>A420</ProductFormDetail>
+
+        <Series>
+            <TitleOfSeries>{{ episode.podcast.title }}</TitleOfSeries>
+            <NumberWithinSeries>{{ episode.season.number }}.{{ episode.number }}</NumberWithinSeries>
+            <YearOfAnnual>{{ episode.date|date('Y') }}</YearOfAnnual>
+            <!-- @todo: contributors to the series here. Maybe? -->
+        </Series>
+
+        <Title>
+            <TitleType>01</TitleType>
+            <TitleText>Episode {{ episode.season.number}}.{{ episode.number}} {{ episode.title }}</TitleText>
+        </Title>
+
+        <Title>
+            <TitleType>10</TitleType>
+            <TitleText>Episode {{ episode.season.number}}.{{ episode.number}} {{ episode.title }}</TitleText>
+        </Title>
+
+        <Website>
+            <WebsiteRole>02</WebsiteRole>
+            <WebsiteLink>{{ episode.podcast.website }}</WebsiteLink>
+        </Website>
+
+        <!-- Add more contributors once there is some data entry. -->
+        <Contributor>
+            <SequenceNumber>1</SequenceNumber>
+            <ContributorRole>D01</ContributorRole>
+            <PersonName>Hannah McGregor</PersonName>
+            <PersonNameInverted>McGregor, Hannah</PersonNameInverted>
+            <NamesBeforeKey>Hannah</NamesBeforeKey>
+            <KeyNames>McGregor</KeyNames>
+            <ProfessionalAffiliation>
+                <Affiliation>Simon Fraser University</Affiliation>
+            </ProfessionalAffiliation>
+            <CountryCode>CA</CountryCode>
+        </Contributor>
+        <ContributorStatement>Hannah McGregor is an Assistant Professor in
+            Publishing @ SFU, where her research and teaching focuses on the
+            links between publishing and social change, from the role podcasts
+            might play in expanding public engagement with research, to systemic
+            barriers to access in the Canadian publishing
+            industry.</ContributorStatement>
+
+        <NoEdition/>
+
+        <Language>
+            <LanguageRole>01</LanguageRole>
+            <LanguageCode>eng</LanguageCode>
+        </Language>
+        <Language>
+            <LanguageRole>02</LanguageRole>
+            <LanguageCode>eng</LanguageCode>
+        </Language>
+
+        <NumberOfPages>1</NumberOfPages>
+
+        <Extent>
+            <ExtentType>09</ExtentType>
+            <ExtentValue>1</ExtentValue>
+            <ExtentUnit>11</ExtentUnit>
+        </Extent>
+        <Extent>
+            <ExtentType>09</ExtentType>
+            <ExtentValue>0001652</ExtentValue>
+            <ExtentUnit>16</ExtentUnit>
+        </Extent>
+        <Extent>
+            <ExtentType>22</ExtentType>
+            <ExtentValue>23799</ExtentValue>
+            <ExtentUnit>18</ExtentUnit>
+        </Extent>
+
+        <MainSubject>
+            <MainSubjectSchemeIdentifier>04</MainSubjectSchemeIdentifier>
+            <SubjectHeadingText>Feminism ; Cultural pluralism in mass media</SubjectHeadingText>
+        </MainSubject>
+
+        <Subject>
+            <SubjectSchemeIdentifier>04</SubjectSchemeIdentifier>
+            <SubjectHeadingText>Podcasts ; Scholarly communication</SubjectHeadingText>
+        </Subject>
+
+        <AudienceCode>01</AudienceCode>
+
+        <Audience>
+            <AudienceCodeType>22</AudienceCodeType>
+            <AudienceCodeValue>01</AudienceCodeValue>
+        </Audience>
+
+        <OtherText>
+            <TextTypeCode>01</TextTypeCode>
+            <TextFormat>06</TextFormat>
+            <Text language="eng">&lt;p>Are you ready to learn all about the Amplify Podcast Network?&lt;/p>&lt;p>Great.&lt;/p></Text>
+        </OtherText>
+
+        <OtherText>
+            <TextTypeCode>99</TextTypeCode>
+            <Text>CA</Text>
+        </OtherText>
+
+        <ProductWebsite>
+            <WebsiteRole>10</WebsiteRole>
+            <ProductWebsiteLink>https://secretfeministagenda.com/2020/05/28/episode-4-21-introducing-the-amplify-podcast-network/</ProductWebsiteLink>
+        </ProductWebsite>
+
+        <Imprint>
+            <ImprintName>Wilfrid Laurier University Press</ImprintName>
+        </Imprint>
+
+        <Publisher>
+            <PublishingRole>01</PublishingRole>
+            <PublisherName>Wilfrid Laurier University Press</PublisherName>
+            <Website>
+                <WebsiteRole>01</WebsiteRole>
+                <WebsiteLink>https://www.wlupress.wlu.ca/</WebsiteLink>
+            </Website>
+        </Publisher>
+
+        <CountryOfPublication>CA</CountryOfPublication>
+        <PublishingStatus>08</PublishingStatus>
+        <AnnouncementDate>20200528</AnnouncementDate>
+        <PublicationDate>20200528</PublicationDate>
+        <CopyrightStatement>
+            <CopyrightYear>2020</CopyrightYear>
+            <CopyrightOwner>
+                <PersonName>Hannah McGregor</PersonName>
+            </CopyrightOwner>
+        </CopyrightStatement>
+        <SalesRights>
+            <SalesRightsType>01</SalesRightsType>
+            <RightsTerritory>WORLD</RightsTerritory>
+        </SalesRights>
+        <SupplyDetail>
+            <SupplierName>Wilfrid Laurier University Press</SupplierName>
+            <SupplierRole>09</SupplierRole>
+            <ProductAvailability>20</ProductAvailability>
+            <PackQuantity>1</PackQuantity>
+            <UnpricedItemType>01</UnpricedItemType>
+        </SupplyDetail>
+    </Product>
+</ONIXMessage>

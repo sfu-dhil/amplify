@@ -41,6 +41,6 @@ symfony-collection@^2.1.30:
     jquery-ui ">=1.0"
 
 tinymce@^5.1.5:
-  version "5.4.2"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.4.2.tgz#a1df417ea7e85697c2932269f7f93fbef30d4502"
-  integrity sha512-MRquvKxI28AiSn2ikypgJFD7LH4mQZLtgFn+yROF1bTFp92MdlLeGBrI38/O5mej3cvz27g3Pgr+3MShepbJ+w==
+  version "5.6.1"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.6.1.tgz#82b31bed72135680ad5388968823988489a479e6"
+  integrity sha512-gLtuSk3VH5P36wYOxrkjKvLnPnuNRZ77t2fjTMz95ASnd5FsTBCLadnr8YKcWrBommFQoSzmVlTDyR7gXgR3nw==
