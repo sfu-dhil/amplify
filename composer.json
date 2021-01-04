@@ -1,4 +1,6 @@
 {
+    "name": "sfu_dhil/amp",
+    "description": "Amplify Podcast Network",
     "type": "project",
     "license": "proprietary",
     "require": {
@@ -23,19 +25,19 @@
         "symfony/mailer": "4.4.*",
         "symfony/maker-bundle": "^1.0",
         "symfony/monolog-bundle": "^3.1",
-        "symfony/orm-pack": "*",
+        "symfony/orm-pack": "^2.1",
         "symfony/process": "4.4.*",
         "symfony/security-bundle": "4.4.*",
-        "symfony/serializer-pack": "*",
+        "symfony/serializer-pack": "^1.0",
         "symfony/translation": "4.4.*",
-        "symfony/twig-pack": "*",
+        "symfony/twig-pack": "^1.0",
         "symfony/validator": "4.4.*",
         "symfony/web-link": "4.4.*",
         "symfony/yaml": "4.4.*",
         "tetranz/select2entity-bundle": "^2.9",
         "twig/intl-extra": "^3.0",
         "twig/string-extra": "^3.0",
-        "ubermichael/nines": "4.x-dev"
+        "ubermichael/nines": "~4.x-dev"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",
