@@ -23,6 +23,7 @@ class ImportInstitutionsCommand extends Command {
      * @var EntityManagerInterface
      */
     private $em;
+
     protected static $defaultName = 'app:import:institutions';
 
     public function __construct(EntityManagerInterface $em) {
@@ -40,6 +41,7 @@ class ImportInstitutionsCommand extends Command {
 
         $csv = Reader::createFromPath($file, 'r');
         $csv->setHeaderOffset(0);
+
         foreach ($csv->getRecords() as $record) {
             $institution = new Institution();
             $institution->setCountry($record['Country']);

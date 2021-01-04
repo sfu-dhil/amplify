@@ -39,7 +39,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
     /**
      * @Route("/", name="episode_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function index(Request $request, EpisodeRepository $episodeRepository) : array {
         $query = $episodeRepository->indexQuery($request->query->get('q'));
@@ -54,7 +54,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
     /**
      * @Route("/search", name="episode_search", methods={"GET"})
      *
-     * @Template()
+     * @Template
      *
      * @return array
      */
@@ -84,6 +84,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
             return new JsonResponse([]);
         }
         $data = [];
+
         foreach ($episodeRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
@@ -95,8 +96,8 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
     }
 
     /**
-     * @Route("/new", name="episode_new", methods={"GET","POST"})
-     * @Template()
+     * @Route("/new", name="episode_new", methods={"GET", "POST"})
+     * @Template
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -108,6 +109,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+
             foreach ($episode->getContributions() as $contribution) {
                 $contribution->setEpisode($episode);
                 $entityManager->persist($contribution);
@@ -126,8 +128,8 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
     }
 
     /**
-     * @Route("/new_popup", name="episode_new_popup", methods={"GET","POST"})
-     * @Template()
+     * @Route("/new_popup", name="episode_new_popup", methods={"GET", "POST"})
+     * @Template
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -138,7 +140,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/{id}", name="episode_show", methods={"GET"})
-     * @Template()
+     * @Template
      *
      * @return array
      */
@@ -150,9 +152,9 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}/edit", name="episode_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="episode_edit", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      *
      * @return array|RedirectResponse
      */
@@ -162,6 +164,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+
             foreach ($episode->getContributions() as $contribution) {
                 $contribution->setEpisode($episode);
                 if ( ! $entityManager->contains($contribution)) {
@@ -199,8 +202,8 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
     }
 
     /**
-     * @Route("/{id}/new_audio", name="episode_new_audio", methods={"GET","POST"})
-     * @Template()
+     * @Route("/{id}/new_audio", name="episode_new_audio", methods={"GET", "POST"})
+     * @Template
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -234,7 +237,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/{id}/play_audio", name="episode_play_audio", methods={"GET"})
-     * @Template()
+     * @Template
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return BinaryFileResponse
@@ -248,8 +251,8 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
     }
 
     /**
-     * @Route("/{id}/edit_audio", name="episode_edit_audio", methods={"GET","POST"})
-     * @Template()
+     * @Route("/{id}/edit_audio", name="episode_edit_audio", methods={"GET", "POST"})
+     * @Template
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -311,21 +314,21 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
     }
 
     /**
-     * @Route("/{id}/new_image", name="episode_new_image", methods={"GET","POST"})
+     * @Route("/{id}/new_image", name="episode_new_image", methods={"GET", "POST"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
-     * @Template()
+     * @Template
      */
     public function newImage(Request $request, Episode $episode) {
         return parent::newImageAction($request, $episode, 'episode_show');
     }
 
     /**
-     * @Route("/{id}/edit_image/{image_id}", name="episode_edit_image", methods={"GET","POST"})
+     * @Route("/{id}/edit_image/{image_id}", name="episode_edit_image", methods={"GET", "POST"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @ParamConverter("image", options={"id" = "image_id"})
+     * @ParamConverter("image", options={"id": "image_id"})
      *
-     * @Template()
+     * @Template
      */
     public function editImage(Request $request, Episode $episode, Image $image) {
         return parent::editImageAction($request, $episode, $image, 'episode_show');
@@ -333,7 +336,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/{id}/delete_image/{image_id}", name="episode_delete_image", methods={"DELETE"})
-     * @ParamConverter("image", options={"id" = "image_id"})
+     * @ParamConverter("image", options={"id": "image_id"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      */
     public function deleteImage(Request $request, Episode $episode, Image $image) {

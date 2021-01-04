@@ -30,7 +30,7 @@
               episode.audioFile.mimeType == 'audio/MPA' or
               episode.audioFile.mimeType == 'audio/mpa-robust'%}
         <ProductFormDetail>A103</ProductFormDetail>
-        {% else if episode.audioFile.mimeType == 'audio/wav' or
+        {% elseif episode.audioFile.mimeType == 'audio/wav' or
                     episode.audioFile.mimeType == 'audio/vnd.wav' or
                     episode.audioFile.mimeType == 'audio/wave' or
                     episode.audioFile.mimeType == 'audio/x-wav' %}

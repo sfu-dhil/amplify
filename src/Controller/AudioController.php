@@ -30,7 +30,7 @@ class AudioController extends AbstractController implements PaginatorAwareInterf
     /**
      * @Route("/", name="audio_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function index(Request $request, AudioRepository $audioRepository) : array {
         $query = $audioRepository->indexQuery();
@@ -45,7 +45,7 @@ class AudioController extends AbstractController implements PaginatorAwareInterf
     /**
      * @Route("/search", name="audio_search", methods={"GET"})
      *
-     * @Template()
+     * @Template
      *
      * @return array
      */
@@ -66,7 +66,7 @@ class AudioController extends AbstractController implements PaginatorAwareInterf
 
     /**
      * @Route("/{id}", name="audio_show", methods={"GET"})
-     * @Template()
+     * @Template
      *
      * @return array
      */

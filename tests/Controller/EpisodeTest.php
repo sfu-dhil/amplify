@@ -109,7 +109,7 @@ class EpisodeTest extends ControllerBaseCase {
         }
         $this->assertSame('application/json', $response->headers->get('content-type'));
         $json = json_decode($response->getContent());
-        $this->assertSame(4, count($json));
+        $this->assertCount(4, $json);
     }
 
     /**
@@ -123,7 +123,7 @@ class EpisodeTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame('application/json', $response->headers->get('content-type'));
         $json = json_decode($response->getContent());
-        $this->assertSame(4, count($json));
+        $this->assertCount(4, $json);
     }
 
     /**
@@ -137,7 +137,7 @@ class EpisodeTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame('application/json', $response->headers->get('content-type'));
         $json = json_decode($response->getContent());
-        $this->assertSame(4, count($json));
+        $this->assertCount(4, $json);
     }
 
     public function testAnonSearch() : void {
@@ -565,6 +565,7 @@ class EpisodeTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $episode = $this->entityManager->find(Episode::class, 1);
+
         foreach ($episode->getImages() as $image) {
             $this->cleanUp($image->getImageFile());
             $this->cleanUp($image->getThumbFile());
@@ -595,6 +596,7 @@ class EpisodeTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $episode = $this->entityManager->find(Episode::class, 1);
+
         foreach ($episode->getImages() as $image) {
             $this->cleanUp($image->getImageFile());
             $this->cleanUp($image->getThumbFile());
@@ -623,6 +625,7 @@ class EpisodeTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $episode = $this->entityManager->find(Episode::class, 1);
+
         foreach ($episode->getImages() as $image) {
             $this->cleanUp($image->getImageFile());
             $this->cleanUp($image->getThumbFile());
@@ -643,6 +646,7 @@ class EpisodeTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $episode = $this->entityManager->find(Episode::class, 1);
+
         foreach ($episode->getImages() as $image) {
             $this->cleanUp($image->getImageFile());
             $this->cleanUp($image->getThumbFile());

@@ -32,7 +32,7 @@ class PersonController extends AbstractController implements PaginatorAwareInter
     /**
      * @Route("/", name="person_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function index(Request $request, PersonRepository $personRepository) : array {
         $query = $personRepository->indexQuery();
@@ -47,7 +47,7 @@ class PersonController extends AbstractController implements PaginatorAwareInter
     /**
      * @Route("/search", name="person_search", methods={"GET"})
      *
-     * @Template()
+     * @Template
      *
      * @return array
      */
@@ -77,6 +77,7 @@ class PersonController extends AbstractController implements PaginatorAwareInter
             return new JsonResponse([]);
         }
         $data = [];
+
         foreach ($personRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
@@ -88,8 +89,8 @@ class PersonController extends AbstractController implements PaginatorAwareInter
     }
 
     /**
-     * @Route("/new", name="person_new", methods={"GET","POST"})
-     * @Template()
+     * @Route("/new", name="person_new", methods={"GET", "POST"})
+     * @Template
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -115,8 +116,8 @@ class PersonController extends AbstractController implements PaginatorAwareInter
     }
 
     /**
-     * @Route("/new_popup", name="person_new_popup", methods={"GET","POST"})
-     * @Template()
+     * @Route("/new_popup", name="person_new_popup", methods={"GET", "POST"})
+     * @Template
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -127,7 +128,7 @@ class PersonController extends AbstractController implements PaginatorAwareInter
 
     /**
      * @Route("/{id}", name="person_show", methods={"GET"})
-     * @Template()
+     * @Template
      *
      * @return array
      */
@@ -139,9 +140,9 @@ class PersonController extends AbstractController implements PaginatorAwareInter
 
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}/edit", name="person_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="person_edit", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      *
      * @return array|RedirectResponse
      */

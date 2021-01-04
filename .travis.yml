@@ -1,0 +1,22 @@
+sudo: false
+
+language: php
+
+php:
+- 7.2
+
+cache:
+    directories:
+    - $HOME/.composer/cache
+
+env:
+    global:
+    - SYMFONY_ENV=test
+
+before_script:
+- echo 'date.timezone = America/Vancouver' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+- echo | pecl install imagick
+- composer install -n -o
+
+script:
+- ./bin/phpunit

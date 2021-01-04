@@ -32,7 +32,7 @@ class ContributorRoleController extends AbstractController implements PaginatorA
     /**
      * @Route("/", name="contributor_role_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function index(Request $request, ContributorRoleRepository $contributorRoleRepository) : array {
         $query = $contributorRoleRepository->indexQuery();
@@ -47,7 +47,7 @@ class ContributorRoleController extends AbstractController implements PaginatorA
     /**
      * @Route("/search", name="contributor_role_search", methods={"GET"})
      *
-     * @Template()
+     * @Template
      *
      * @return array
      */
@@ -77,6 +77,7 @@ class ContributorRoleController extends AbstractController implements PaginatorA
             return new JsonResponse([]);
         }
         $data = [];
+
         foreach ($contributorRoleRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
@@ -88,8 +89,8 @@ class ContributorRoleController extends AbstractController implements PaginatorA
     }
 
     /**
-     * @Route("/new", name="contributor_role_new", methods={"GET","POST"})
-     * @Template()
+     * @Route("/new", name="contributor_role_new", methods={"GET", "POST"})
+     * @Template
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -115,8 +116,8 @@ class ContributorRoleController extends AbstractController implements PaginatorA
     }
 
     /**
-     * @Route("/new_popup", name="contributor_role_new_popup", methods={"GET","POST"})
-     * @Template()
+     * @Route("/new_popup", name="contributor_role_new_popup", methods={"GET", "POST"})
+     * @Template
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -127,7 +128,7 @@ class ContributorRoleController extends AbstractController implements PaginatorA
 
     /**
      * @Route("/{id}", name="contributor_role_show", methods={"GET"})
-     * @Template()
+     * @Template
      *
      * @return array
      */
@@ -139,9 +140,9 @@ class ContributorRoleController extends AbstractController implements PaginatorA
 
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}/edit", name="contributor_role_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="contributor_role_edit", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      *
      * @return array|RedirectResponse
      */
