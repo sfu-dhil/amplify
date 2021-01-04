@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * (c) 2020 Michael Joyce <mjoyce@sfu.ca>
+ * This source file is subject to the GPL v2, bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace App\Command;
 
 use Symfony\Component\Console\Command\Command;
@@ -9,12 +17,10 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ExportOnixCommand extends Command
-{
+class ExportOnixCommand extends Command {
     protected static $defaultName = 'app:export:onix';
 
-    protected function configure()
-    {
+    protected function configure() : void {
         $this
             ->setDescription('Add a short description for your command')
             ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
@@ -22,8 +28,7 @@ class ExportOnixCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
+    protected function execute(InputInterface $input, OutputInterface $output) : int {
         $io = new SymfonyStyle($input, $output);
         $arg1 = $input->getArgument('arg1');
 

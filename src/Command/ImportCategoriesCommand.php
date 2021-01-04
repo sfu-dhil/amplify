@@ -23,6 +23,7 @@ class ImportCategoriesCommand extends Command {
      * @var EntityManagerInterface
      */
     private $em;
+
     protected static $defaultName = 'app:import:categories';
 
     public function __construct(EntityManagerInterface $em) {
@@ -39,6 +40,7 @@ class ImportCategoriesCommand extends Command {
         $file = $input->getArgument('file');
         $csv = Reader::createFromPath($file, 'r');
         $csv->setHeaderOffset(0);
+
         foreach ($csv->getRecords() as $record) {
             $category = new Category();
             if ($record['Secondary']) {

@@ -15,8 +15,8 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\HttpFoundation\File\File;
 
 /**
- * @ORM\MappedSuperclass()
- * @ORM\Table()
+ * @ORM\MappedSuperclass
+ * @ORM\Table
  */
 abstract class AbstractImage extends AbstractEntity {
     /**

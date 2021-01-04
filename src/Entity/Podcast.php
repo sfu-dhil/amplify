@@ -24,6 +24,7 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     use ImageContainerTrait {
         ImageContainerTrait::__construct as protected trait_constructor;
     }
+
     /**
      * @var string
      * @ORM\Column(type="string")

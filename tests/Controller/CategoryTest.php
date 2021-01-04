@@ -107,7 +107,7 @@ class CategoryTest extends ControllerBaseCase {
         }
         $this->assertSame('application/json', $response->headers->get('content-type'));
         $json = json_decode($response->getContent());
-        $this->assertSame(4, count($json));
+        $this->assertCount(4, $json);
     }
 
     /**
@@ -121,7 +121,7 @@ class CategoryTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame('application/json', $response->headers->get('content-type'));
         $json = json_decode($response->getContent());
-        $this->assertSame(4, count($json));
+        $this->assertCount(4, $json);
     }
 
     /**
@@ -135,7 +135,7 @@ class CategoryTest extends ControllerBaseCase {
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame('application/json', $response->headers->get('content-type'));
         $json = json_decode($response->getContent());
-        $this->assertSame(4, count($json));
+        $this->assertCount(4, $json);
     }
 
     public function testAnonSearch() : void {

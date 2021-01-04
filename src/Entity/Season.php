@@ -24,6 +24,7 @@ class Season extends AbstractEntity implements ImageContainerInterface {
     use ImageContainerTrait {
         ImageContainerTrait::__construct as protected trait_constructor;
     }
+
     /**
      * @var int
      * @ORM\Column(type="integer", nullable=true)
@@ -77,7 +78,7 @@ class Season extends AbstractEntity implements ImageContainerInterface {
     /**
      * @var Collection|Episode[]
      * @ORM\OneToMany(targetEntity="Episode", mappedBy="season")
-     * @ORM\OrderBy({"date"="ASC", "number"="ASC","title"="ASC"})
+     * @ORM\OrderBy({"date": "ASC", "number": "ASC", "title": "ASC"})
      */
     private $episodes;
 
@@ -233,7 +234,7 @@ class Season extends AbstractEntity implements ImageContainerInterface {
     /**
      * Sets the updated timestamp.
      *
-     * @ORM\PreUpdate()
+     * @ORM\PreUpdate
      */
     public function preUpdate() : void {
         parent::preUpdate();

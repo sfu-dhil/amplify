@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Entity\Episode;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -24,7 +25,7 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface {
             $fixture = new Episode();
             $fixture->setNumber($i);
             $fixture->setPreserved(0 === $i % 2);
-            $fixture->setDate(new \DateTime("2020-{$i}-{$i}"));
+            $fixture->setDate(new DateTimeImmutable("2020-{$i}-{$i}"));
             $fixture->setRunTime("00:{$i}5:00");
             $fixture->setTitle('Title ' . $i);
             $fixture->setAlternativeTitle('AlternativeTitle ' . $i);

@@ -19,7 +19,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 /**
  * @ORM\Entity(repositoryClass=InstitutionRepository::class)
  * @ORM\Table(uniqueConstraints={
- *   @ORM\UniqueConstraint(name="institutions_uniq", columns={"country", "name"})
+ *     @ORM\UniqueConstraint(name="institutions_uniq", columns={"country", "name"})
  * })
  */
 class Institution extends AbstractEntity {

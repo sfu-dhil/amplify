@@ -33,7 +33,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
     /**
      * @Route("/", name="season_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function index(Request $request, SeasonRepository $seasonRepository) : array {
         $query = $seasonRepository->indexQuery();
@@ -48,7 +48,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
     /**
      * @Route("/search", name="season_search", methods={"GET"})
      *
-     * @Template()
+     * @Template
      *
      * @return array
      */
@@ -78,6 +78,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
             return new JsonResponse([]);
         }
         $data = [];
+
         foreach ($seasonRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
@@ -89,8 +90,8 @@ class SeasonController extends AbstractImageController implements PaginatorAware
     }
 
     /**
-     * @Route("/new", name="season_new", methods={"GET","POST"})
-     * @Template()
+     * @Route("/new", name="season_new", methods={"GET", "POST"})
+     * @Template
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -102,6 +103,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+
             foreach ($season->getContributions() as $contribution) {
                 $contribution->setSeason($season);
                 $entityManager->persist($contribution);
@@ -120,8 +122,8 @@ class SeasonController extends AbstractImageController implements PaginatorAware
     }
 
     /**
-     * @Route("/new_popup", name="season_new_popup", methods={"GET","POST"})
-     * @Template()
+     * @Route("/new_popup", name="season_new_popup", methods={"GET", "POST"})
+     * @Template
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -132,7 +134,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
 
     /**
      * @Route("/{id}", name="season_show", methods={"GET"})
-     * @Template()
+     * @Template
      *
      * @return array
      */
@@ -144,9 +146,9 @@ class SeasonController extends AbstractImageController implements PaginatorAware
 
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}/edit", name="season_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="season_edit", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      *
      * @return array|RedirectResponse
      */
@@ -156,6 +158,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+
             foreach ($season->getContributions() as $contribution) {
                 $contribution->setSeason($season);
                 if ( ! $entityManager->contains($contribution)) {
@@ -192,21 +195,21 @@ class SeasonController extends AbstractImageController implements PaginatorAware
     }
 
     /**
-     * @Route("/{id}/new_image", name="season_new_image", methods={"GET","POST"})
+     * @Route("/{id}/new_image", name="season_new_image", methods={"GET", "POST"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
-     * @Template()
+     * @Template
      */
     public function newImage(Request $request, Season $season) {
         return parent::newImageAction($request, $season, 'season_show');
     }
 
     /**
-     * @Route("/{id}/edit_image/{image_id}", name="season_edit_image", methods={"GET","POST"})
-     * @ParamConverter("image", options={"id" = "image_id"})
+     * @Route("/{id}/edit_image/{image_id}", name="season_edit_image", methods={"GET", "POST"})
+     * @ParamConverter("image", options={"id": "image_id"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
-     * @Template()
+     * @Template
      */
     public function editImage(Request $request, Season $season, Image $image) {
         return parent::editImageAction($request, $season, $image, 'season_show');
@@ -214,7 +217,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
 
     /**
      * @Route("/{id}/delete_image/{image_id}", name="season_delete_image", methods={"DELETE"})
-     * @ParamConverter("image", options={"id" = "image_id"})
+     * @ParamConverter("image", options={"id": "image_id"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      */
     public function deleteImage(Request $request, Season $season, Image $image) {

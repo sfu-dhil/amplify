@@ -32,7 +32,7 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
     /**
      * @Route("/", name="publisher_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function index(Request $request, PublisherRepository $publisherRepository) : array {
         $query = $publisherRepository->indexQuery();
@@ -47,7 +47,7 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
     /**
      * @Route("/search", name="publisher_search", methods={"GET"})
      *
-     * @Template()
+     * @Template
      *
      * @return array
      */
@@ -77,6 +77,7 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
             return new JsonResponse([]);
         }
         $data = [];
+
         foreach ($publisherRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
@@ -88,8 +89,8 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
     }
 
     /**
-     * @Route("/new", name="publisher_new", methods={"GET","POST"})
-     * @Template()
+     * @Route("/new", name="publisher_new", methods={"GET", "POST"})
+     * @Template
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -115,8 +116,8 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
     }
 
     /**
-     * @Route("/new_popup", name="publisher_new_popup", methods={"GET","POST"})
-     * @Template()
+     * @Route("/new_popup", name="publisher_new_popup", methods={"GET", "POST"})
+     * @Template
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -127,7 +128,7 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
 
     /**
      * @Route("/{id}", name="publisher_show", methods={"GET"})
-     * @Template()
+     * @Template
      *
      * @return array
      */
@@ -139,9 +140,9 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
 
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}/edit", name="publisher_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="publisher_edit", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      *
      * @return array|RedirectResponse
      */

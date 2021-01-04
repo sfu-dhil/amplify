@@ -12,6 +12,7 @@ namespace App\Entity;
 
 use App\Repository\EpisodeRepository;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -160,18 +161,18 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
     }
 
     public function getSlug() : string {
-        if($this->season) {
-            return sprintf("S%02dE%02d", $this->season->getNumber(), $this->number);
-        } else {
-            return sprintf("E%02d", $this->number);
+        if ($this->season) {
+            return sprintf('S%02dE%02d', $this->season->getNumber(), $this->number);
         }
+
+        return sprintf('E%02d', $this->number);
     }
 
-    public function getDate() : ?\DateTimeInterface {
+    public function getDate() : ?DateTimeInterface {
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date) : self {
+    public function setDate(DateTimeInterface $date) : self {
         $this->date = $date;
 
         return $this;
@@ -348,7 +349,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
     /**
      * Sets the updated timestamp.
      *
-     * @ORM\PreUpdate()
+     * @ORM\PreUpdate
      */
     public function preUpdate() : void {
         parent::preUpdate();

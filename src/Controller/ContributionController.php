@@ -28,7 +28,7 @@ class ContributionController extends AbstractController implements PaginatorAwar
     /**
      * @Route("/", name="contribution_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function index(Request $request, ContributionRepository $contributionRepository) : array {
         $query = $contributionRepository->indexQuery();
@@ -42,7 +42,7 @@ class ContributionController extends AbstractController implements PaginatorAwar
 
     /**
      * @Route("/{id}", name="contribution_show", methods={"GET"})
-     * @Template()
+     * @Template
      *
      * @return array
      */

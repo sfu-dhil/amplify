@@ -33,7 +33,7 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
     /**
      * @Route("/", name="podcast_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function index(Request $request, PodcastRepository $podcastRepository) : array {
         $query = $podcastRepository->indexQuery();
@@ -48,7 +48,7 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
     /**
      * @Route("/search", name="podcast_search", methods={"GET"})
      *
-     * @Template()
+     * @Template
      *
      * @return array
      */
@@ -78,6 +78,7 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
             return new JsonResponse([]);
         }
         $data = [];
+
         foreach ($podcastRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
@@ -89,8 +90,8 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
     }
 
     /**
-     * @Route("/new", name="podcast_new", methods={"GET","POST"})
-     * @Template()
+     * @Route("/new", name="podcast_new", methods={"GET", "POST"})
+     * @Template
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -102,6 +103,7 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+
             foreach ($podcast->getContributions() as $contribution) {
                 $contribution->setPodcast($podcast);
                 $entityManager->persist($contribution);
@@ -120,8 +122,8 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
     }
 
     /**
-     * @Route("/new_popup", name="podcast_new_popup", methods={"GET","POST"})
-     * @Template()
+     * @Route("/new_popup", name="podcast_new_popup", methods={"GET", "POST"})
+     * @Template
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -132,7 +134,7 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/{id}", name="podcast_show", methods={"GET"})
-     * @Template()
+     * @Template
      *
      * @return array
      */
@@ -144,9 +146,9 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}/edit", name="podcast_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="podcast_edit", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      *
      * @return array|RedirectResponse
      */
@@ -156,6 +158,7 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+
             foreach ($podcast->getContributions() as $contribution) {
                 $contribution->setPodcast($podcast);
                 if ( ! $entityManager->contains($contribution)) {
@@ -192,21 +195,21 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
     }
 
     /**
-     * @Route("/{id}/new_image", name="podcast_new_image", methods={"GET","POST"})
+     * @Route("/{id}/new_image", name="podcast_new_image", methods={"GET", "POST"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
-     * @Template()
+     * @Template
      */
     public function newImage(Request $request, Podcast $podcast) {
         return parent::newImageAction($request, $podcast, 'podcast_show');
     }
 
     /**
-     * @Route("/{id}/edit_image/{image_id}", name="podcast_edit_image", methods={"GET","POST"})
-     * @ParamConverter("image", options={"id" = "image_id"})
+     * @Route("/{id}/edit_image/{image_id}", name="podcast_edit_image", methods={"GET", "POST"})
+     * @ParamConverter("image", options={"id": "image_id"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
-     * @Template()
+     * @Template
      */
     public function editImage(Request $request, Podcast $podcast, Image $image) {
         return parent::editImageAction($request, $podcast, $image, 'podcast_show');
@@ -214,7 +217,7 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/{id}/delete_image/{image_id}", name="podcast_delete_image", methods={"DELETE"})
-     * @ParamConverter("image", options={"id" = "image_id"})
+     * @ParamConverter("image", options={"id": "image_id"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      */
     public function deleteImage(Request $request, Podcast $podcast, Image $image) {

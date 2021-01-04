@@ -32,7 +32,7 @@ class InstitutionController extends AbstractController implements PaginatorAware
     /**
      * @Route("/", name="institution_index", methods={"GET"})
      *
-     * @Template()
+     * @Template
      */
     public function index(Request $request, InstitutionRepository $institutionRepository) : array {
         $query = $institutionRepository->indexQuery();
@@ -47,7 +47,7 @@ class InstitutionController extends AbstractController implements PaginatorAware
     /**
      * @Route("/search", name="institution_search", methods={"GET"})
      *
-     * @Template()
+     * @Template
      *
      * @return array
      */
@@ -77,6 +77,7 @@ class InstitutionController extends AbstractController implements PaginatorAware
             return new JsonResponse([]);
         }
         $data = [];
+
         foreach ($institutionRepository->typeaheadQuery($q) as $result) {
             $data[] = [
                 'id' => $result->getId(),
@@ -88,8 +89,8 @@ class InstitutionController extends AbstractController implements PaginatorAware
     }
 
     /**
-     * @Route("/new", name="institution_new", methods={"GET","POST"})
-     * @Template()
+     * @Route("/new", name="institution_new", methods={"GET", "POST"})
+     * @Template
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -115,8 +116,8 @@ class InstitutionController extends AbstractController implements PaginatorAware
     }
 
     /**
-     * @Route("/new_popup", name="institution_new_popup", methods={"GET","POST"})
-     * @Template()
+     * @Route("/new_popup", name="institution_new_popup", methods={"GET", "POST"})
+     * @Template
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -127,7 +128,7 @@ class InstitutionController extends AbstractController implements PaginatorAware
 
     /**
      * @Route("/{id}", name="institution_show", methods={"GET"})
-     * @Template()
+     * @Template
      *
      * @return array
      */
@@ -139,9 +140,9 @@ class InstitutionController extends AbstractController implements PaginatorAware
 
     /**
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}/edit", name="institution_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="institution_edit", methods={"GET", "POST"})
      *
-     * @Template()
+     * @Template
      *
      * @return array|RedirectResponse
      */
