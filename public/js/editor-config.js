@@ -23,8 +23,10 @@ function getTinyMceConfig(editorUploadPath) {
         image_title: true,
 
         resize: true,
-        paste_as_text: true,
+        paste_as_text: false,
         paste_block_drop: true,
+        paste_enable_default_filters: false,
+        paste_word_valid_elements: 'a,b,strong,i,em,h1,h2',
 
         style_formats_merge: true,
         style_formats: [{
