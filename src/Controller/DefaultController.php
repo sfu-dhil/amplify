@@ -17,7 +17,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DefaultController extends AbstractController implements PaginatorAwareInterface {
+class DefaultController extends AbstractController implements PaginatorAwareInterface
+{
     use PaginatorTrait;
 
     /**

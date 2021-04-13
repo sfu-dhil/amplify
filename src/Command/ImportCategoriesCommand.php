@@ -18,7 +18,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ImportCategoriesCommand extends Command {
+class ImportCategoriesCommand extends Command
+{
     /**
      * @var EntityManagerInterface
      */

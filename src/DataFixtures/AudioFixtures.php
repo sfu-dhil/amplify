@@ -15,7 +15,8 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class AudioFixtures extends Fixture implements DependentFixtureInterface {
+class AudioFixtures extends Fixture implements DependentFixtureInterface
+{
     /**
      * {@inheritdoc}
      */

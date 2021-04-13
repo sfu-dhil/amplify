@@ -20,7 +20,8 @@ use Nines\UtilBundle\Repository\TermRepository;
  * @method Language[]    findAll()
  * @method Language[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class LanguageRepository extends TermRepository {
+class LanguageRepository extends TermRepository
+{
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Language::class);
     }

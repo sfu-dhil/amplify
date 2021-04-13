@@ -22,7 +22,8 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  *     @ORM\UniqueConstraint(name="institutions_uniq", columns={"country", "name"})
  * })
  */
-class Institution extends AbstractEntity {
+class Institution extends AbstractEntity
+{
     /**
      * @var string
      * @ORM\Column(type="string", length=40, nullable=false)

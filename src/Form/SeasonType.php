@@ -25,7 +25,8 @@ use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 /**
  * Season form.
  */
-class SeasonType extends AbstractType {
+class SeasonType extends AbstractType
+{
     /**
      * Add form fields to $builder.
      */

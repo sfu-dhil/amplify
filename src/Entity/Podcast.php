@@ -20,7 +20,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=PodcastRepository::class)
  */
-class Podcast extends AbstractEntity implements ImageContainerInterface {
+class Podcast extends AbstractEntity implements ImageContainerInterface
+{
     use ImageContainerTrait {
         ImageContainerTrait::__construct as protected trait_constructor;
     }

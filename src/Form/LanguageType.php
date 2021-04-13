@@ -18,7 +18,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Language form.
  */
-class LanguageType extends TermType {
+class LanguageType extends TermType
+{
     /**
      * Add form fields to $builder.
      */

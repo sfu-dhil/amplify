@@ -17,7 +17,8 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 /**
  * @ORM\Entity(repositoryClass=ContributionRepository::class)
  */
-class Contribution extends AbstractEntity {
+class Contribution extends AbstractEntity
+{
     /**
      * @var Person
      * @ORM\ManyToOne(targetEntity="Person", inversedBy="contributions")

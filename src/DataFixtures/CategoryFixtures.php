@@ -14,7 +14,8 @@ use App\Entity\Category;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class CategoryFixtures extends Fixture {
+class CategoryFixtures extends Fixture
+{
     /**
      * {@inheritdoc}
      */

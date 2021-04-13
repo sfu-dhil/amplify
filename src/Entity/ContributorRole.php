@@ -19,7 +19,8 @@ use Nines\UtilBundle\Entity\AbstractTerm;
 /**
  * @ORM\Entity(repositoryClass=ContributorRoleRepository::class)
  */
-class ContributorRole extends AbstractTerm {
+class ContributorRole extends AbstractTerm
+{
     /**
      * @var Collection|Contribution[]
      * @ORM\OneToMany(targetEntity="Contribution", mappedBy="contributorRole")

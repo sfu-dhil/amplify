@@ -14,7 +14,8 @@ use App\Entity\ContributorRole;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class ContributorRoleFixtures extends Fixture {
+class ContributorRoleFixtures extends Fixture
+{
     /**
      * {@inheritdoc}
      */

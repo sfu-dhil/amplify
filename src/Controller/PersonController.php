@@ -26,7 +26,8 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/person")
  */
-class PersonController extends AbstractController implements PaginatorAwareInterface {
+class PersonController extends AbstractController implements PaginatorAwareInterface
+{
     use PaginatorTrait;
 
     /**

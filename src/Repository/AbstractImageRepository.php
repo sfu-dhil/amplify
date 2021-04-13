@@ -22,7 +22,8 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method AbstractImage[]    findAll()
  * @method AbstractImage[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-abstract class AbstractImageRepository extends ServiceEntityRepository {
+abstract class AbstractImageRepository extends ServiceEntityRepository
+{
     public function __construct(ManagerRegistry $registry, $class) {
         parent::__construct($registry, $class);
     }
