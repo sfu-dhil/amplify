@@ -26,7 +26,8 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/language")
  */
-class LanguageController extends AbstractController implements PaginatorAwareInterface {
+class LanguageController extends AbstractController implements PaginatorAwareInterface
+{
     use PaginatorTrait;
 
     /**

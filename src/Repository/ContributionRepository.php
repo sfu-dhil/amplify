@@ -21,7 +21,8 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Contribution[]    findAll()
  * @method Contribution[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ContributionRepository extends ServiceEntityRepository {
+class ContributionRepository extends ServiceEntityRepository
+{
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Contribution::class);
     }

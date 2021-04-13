@@ -26,7 +26,8 @@ use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 /**
  * Episode form.
  */
-class EpisodeType extends AbstractType {
+class EpisodeType extends AbstractType
+{
     /**
      * Add form fields to $builder.
      */

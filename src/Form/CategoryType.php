@@ -18,7 +18,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Category form.
  */
-class CategoryType extends TermType {
+class CategoryType extends TermType
+{
     /**
      * Add form fields to $builder.
      */

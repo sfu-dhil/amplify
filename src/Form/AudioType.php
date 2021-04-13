@@ -23,7 +23,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Audio form.
  */
-class AudioType extends AbstractType {
+class AudioType extends AbstractType
+{
     /**
      * @var AudioManager
      */

@@ -20,7 +20,8 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  * @ORM\Entity(repositoryClass=SeasonRepository::class)
  * @ORM\HasLifecycleCallbacks
  */
-class Season extends AbstractEntity implements ImageContainerInterface {
+class Season extends AbstractEntity implements ImageContainerInterface
+{
     use ImageContainerTrait {
         ImageContainerTrait::__construct as protected trait_constructor;
     }

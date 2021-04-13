@@ -26,7 +26,8 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/image")
  */
-class ImageController extends AbstractController implements PaginatorAwareInterface {
+class ImageController extends AbstractController implements PaginatorAwareInterface
+{
     use PaginatorTrait;
 
     /**

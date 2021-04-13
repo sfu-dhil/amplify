@@ -22,7 +22,8 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Publisher[]    findAll()
  * @method Publisher[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PublisherRepository extends ServiceEntityRepository {
+class PublisherRepository extends ServiceEntityRepository
+{
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Publisher::class);
     }
