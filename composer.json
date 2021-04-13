@@ -9,6 +9,7 @@
         "ext-iconv": "*",
         "ext-imagick": "*",
         "doctrine/common": "^2.13",
+        "doctrine/doctrine-migrations-bundle": "3.0.*",
         "league/csv": "^9.6",
         "ninsuo/symfony-collection": "^2.1",
         "scienta/doctrine-json-functions": "^4.1",
