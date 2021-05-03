@@ -19,8 +19,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 /**
  * @ORM\Entity(repositoryClass=PersonRepository::class)
  */
-class Person extends AbstractEntity
-{
+class Person extends AbstractEntity {
     /**
      * @var string
      * @ORM\Column(type="string")

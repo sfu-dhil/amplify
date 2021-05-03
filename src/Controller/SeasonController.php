@@ -27,8 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/season")
  */
-class SeasonController extends AbstractImageController implements PaginatorAwareInterface
-{
+class SeasonController extends AbstractImageController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**

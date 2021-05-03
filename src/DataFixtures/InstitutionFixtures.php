@@ -14,8 +14,7 @@ use App\Entity\Institution;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class InstitutionFixtures extends Fixture
-{
+class InstitutionFixtures extends Fixture {
     /**
      * {@inheritdoc}
      */

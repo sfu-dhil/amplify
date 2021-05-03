@@ -22,8 +22,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Podcast[]    findAll()
  * @method Podcast[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PodcastRepository extends ServiceEntityRepository
-{
+class PodcastRepository extends ServiceEntityRepository {
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Podcast::class);
     }

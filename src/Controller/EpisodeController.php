@@ -33,8 +33,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/episode")
  */
-class EpisodeController extends AbstractImageController implements PaginatorAwareInterface
-{
+class EpisodeController extends AbstractImageController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**

@@ -19,8 +19,7 @@ use Nines\UtilBundle\Entity\AbstractTerm;
 /**
  * @ORM\Entity(repositoryClass=CategoryRepository::class)
  */
-class Category extends AbstractTerm
-{
+class Category extends AbstractTerm {
     /**
      * @var Collection|Podcast[]
      * @ORM\ManyToMany(targetEntity="Podcast", mappedBy="categories")

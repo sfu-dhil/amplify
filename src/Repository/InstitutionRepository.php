@@ -22,8 +22,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Institution[]    findAll()
  * @method Institution[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class InstitutionRepository extends ServiceEntityRepository
-{
+class InstitutionRepository extends ServiceEntityRepository {
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Institution::class);
     }

@@ -17,8 +17,7 @@ use Imagick;
 use ImagickPixel;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class ImageFixtures extends Fixture
-{
+class ImageFixtures extends Fixture {
     /**
      * {@inheritdoc}
      */

@@ -20,8 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Publisher form.
  */
-class PublisherType extends AbstractType
-{
+class PublisherType extends AbstractType {
     /**
      * Add form fields to $builder.
      */

@@ -21,8 +21,7 @@ use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 /**
  * Contribution form.
  */
-class ContributionType extends AbstractType
-{
+class ContributionType extends AbstractType {
     /**
      * Add form fields to $builder.
      */
