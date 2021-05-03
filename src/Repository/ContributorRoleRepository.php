@@ -20,8 +20,7 @@ use Nines\UtilBundle\Repository\TermRepository;
  * @method ContributorRole[]    findAll()
  * @method ContributorRole[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ContributorRoleRepository extends TermRepository
-{
+class ContributorRoleRepository extends TermRepository {
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, ContributorRole::class);
     }

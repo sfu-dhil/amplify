@@ -24,8 +24,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/audio")
  * @IsGranted("ROLE_USER")
  */
-class AudioController extends AbstractController implements PaginatorAwareInterface
-{
+class AudioController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**

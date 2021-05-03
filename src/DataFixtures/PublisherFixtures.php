@@ -14,8 +14,7 @@ use App\Entity\Publisher;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class PublisherFixtures extends Fixture
-{
+class PublisherFixtures extends Fixture {
     /**
      * {@inheritdoc}
      */

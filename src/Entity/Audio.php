@@ -18,8 +18,7 @@ use Symfony\Component\HttpFoundation\File\File;
 /**
  * @ORM\Entity(repositoryClass=AudioRepository::class)
  */
-class Audio extends AbstractEntity
-{
+class Audio extends AbstractEntity {
     /**
      * @var File
      */

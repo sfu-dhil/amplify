@@ -15,8 +15,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class PodcastFixtures extends Fixture implements DependentFixtureInterface
-{
+class PodcastFixtures extends Fixture implements DependentFixtureInterface {
     /**
      * {@inheritdoc}
      */

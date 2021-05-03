@@ -27,8 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/podcast")
  */
-class PodcastController extends AbstractImageController implements PaginatorAwareInterface
-{
+class PodcastController extends AbstractImageController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     /**

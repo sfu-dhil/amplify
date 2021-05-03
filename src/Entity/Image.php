@@ -17,8 +17,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 /**
  * @ORM\Entity(repositoryClass=ImageRepository::class)
  */
-class Image extends AbstractImage
-{
+class Image extends AbstractImage {
     /**
      * @var string
      * @ORM\Column(type="string", length=80, nullable=false)

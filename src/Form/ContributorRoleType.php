@@ -18,8 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * ContributorRole form.
  */
-class ContributorRoleType extends TermType
-{
+class ContributorRoleType extends TermType {
     /**
      * Add form fields to $builder.
      */
