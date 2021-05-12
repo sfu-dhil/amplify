@@ -1,7 +1,7 @@
 <?php
 
 $header = <<<'HEADER'
-(c) 2020 Michael Joyce <mjoyce@sfu.ca>
+(c) 2021 Michael Joyce <mjoyce@sfu.ca>
 This source file is subject to the GPL v2, bundled
 with this source code in the file LICENSE.
 HEADER;
@@ -13,7 +13,8 @@ $finder = PhpCsFixer\Finder::create()
     ->notPath('Kernel.php')
 ;
 
-return PhpCsFixer\Config::create()
+$config = new PhpCsFixer\Config();
+return $config
     ->setRiskyAllowed(true)
     ->setUsingCache(true)
     ->setCacheFile(__DIR__. '/var/cache/php_cs.cache')
@@ -24,12 +25,8 @@ return PhpCsFixer\Config::create()
         '@PhpCsFixer' => true,
         '@PSR2'        => true,
 
-        '@PHP56Migration' => true,
-        '@PHP56Migration:risky' => true,
-        '@PHP70Migration' => true,
-        '@PHP70Migration:risky' => true,
-        '@PHP71Migration' => true,
-        '@PHP71Migration:risky' => true,
+        '@PHP74Migration' => true,
+        '@PHP74Migration:risky' => true,
 
         'align_multiline_comment' => [
             'comment_type' => 'all_multiline',
@@ -40,11 +37,11 @@ return PhpCsFixer\Config::create()
         'backtick_to_shell_exec' => true,
         'blank_line_after_namespace' => true,
         'blank_line_after_opening_tag' => true,
-        'blank_line_before_statement' => [
-            'statements' => [
-                'declare', 'die', 'exit', 'for', 'foreach', 'return', 'try',
-            ]
-        ],
+//        'blank_line_before_statement' => [
+//            'statements' => [
+//                'declare', 'die', 'exit', 'for', 'foreach', 'return', 'try',
+//            ]
+//        ],
         'braces' => [
             'allow_single_line_closure' => true,
             'position_after_functions_and_oop_constructs' => 'same'
@@ -95,7 +92,7 @@ return PhpCsFixer\Config::create()
         'mb_str_functions' => true,
         'modernize_types_casting' => true,
 
-        'no_extra_consecutive_blank_lines' => true,
+        'no_extra_blank_lines' => true,
         'no_mixed_echo_print' => ['use' => 'echo'],
         'no_php4_constructor' => true,
         'no_unused_imports' => true,
@@ -174,9 +171,6 @@ return PhpCsFixer\Config::create()
         ],
         'phpdoc_annotation_without_dot' => false,
         'phpdoc_order' => true,
-
-        'psr0' => true,
-        'psr4' => true,
 
         'random_api_migration' => true,
         'return_type_declaration' => [
