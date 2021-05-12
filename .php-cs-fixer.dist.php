@@ -13,7 +13,8 @@ $finder = PhpCsFixer\Finder::create()
     ->notPath('Kernel.php')
 ;
 
-return PhpCsFixer\Config::create()
+$config = new PhpCsFixer\Config();
+return $config
     ->setRiskyAllowed(true)
     ->setUsingCache(true)
     ->setCacheFile(__DIR__. '/var/cache/php_cs.cache')
