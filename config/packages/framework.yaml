@@ -17,3 +17,5 @@ framework:
     #fragments: true
     php_errors:
         log: true
+
+    error_controller: Nines\UtilBundle\Controller\ErrorController::show
