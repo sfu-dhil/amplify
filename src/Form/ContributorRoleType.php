@@ -12,6 +12,7 @@ namespace App\Form;
 
 use App\Entity\ContributorRole;
 use Nines\UtilBundle\Form\TermType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -23,6 +24,13 @@ class ContributorRoleType extends TermType {
      * Add form fields to $builder.
      */
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
+        $builder->add('relatorTerm', TextType::class, [
+            'label' => 'MARC Relator Term',
+            'required' => false,
+            'attr' => [
+                'help_block' => 'One of the three letter codes from <a href="https://www.loc.gov/marc/relators/relaterm.html">this list</a>'
+            ]
+        ]);
         parent::buildForm($builder, $options);
     }
 

@@ -57,6 +57,7 @@ class ImageManager extends AbstractFileManager {
         if ( ! $this->em->getMetadataFactory()->isTransient($class)) {
             return $this->em->find($class, $id);
         }
+        return null;
     }
 
     /**
@@ -88,6 +89,8 @@ class ImageManager extends AbstractFileManager {
             $filePath = $this->uploadDir . '/' . $entity->getImagePath();
             if (file_exists($filePath)) {
                 $entity->setImageFile(new File($filePath));
+            } else {
+                dump(['cannot find', $filePath]);
             }
             $thumbPath = $this->uploadDir . '/' . $entity->getThumbPath();
             if (file_exists($thumbPath)) {

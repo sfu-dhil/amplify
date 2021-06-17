@@ -86,6 +86,10 @@ class Audio extends AbstractEntity {
         return $this;
     }
 
+    public function getExtension() : string {
+        return $this->audioFile->getExtension();
+    }
+
     public function getPublic() : ?bool {
         return $this->public;
     }

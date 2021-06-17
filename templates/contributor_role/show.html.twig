@@ -29,6 +29,10 @@
     } %}
         {% block callback %}
             <tr>
+                <th>MARC Relator Code</th>
+                <td>{{ contributor_role.relatorTerm }}</td>
+            </tr>
+            <tr>
                 <th>Contribution</th>
                 <td>
                     {% if contributor_role.contributions|length > 0 %}

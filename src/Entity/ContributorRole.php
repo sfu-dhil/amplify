@@ -21,6 +21,12 @@ use Nines\UtilBundle\Entity\AbstractTerm;
  */
 class ContributorRole extends AbstractTerm {
     /**
+     * @var string
+     * @ORM\Column(type="string", length=10, nullable=true)
+     */
+    private $relatorTerm;
+
+    /**
      * @var Collection|Contribution[]
      * @ORM\OneToMany(targetEntity="Contribution", mappedBy="contributorRole")
      */
@@ -55,6 +61,18 @@ class ContributorRole extends AbstractTerm {
                 $contribution->setContributorRole(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getRelatorTerm(): ?string
+    {
+        return $this->relatorTerm;
+    }
+
+    public function setRelatorTerm(?string $relatorTerm): self
+    {
+        $this->relatorTerm = $relatorTerm;
 
         return $this;
     }

@@ -299,6 +299,9 @@
             "config/packages/sensio_framework_extra.yaml"
         ]
     },
+    "soundasleep/html2text": {
+        "version": "1.1.0"
+    },
     "symfony/asset": {
         "version": "v4.4.10"
     },
