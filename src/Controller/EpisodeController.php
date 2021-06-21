@@ -12,12 +12,13 @@ namespace App\Controller;
 
 use App\Entity\Audio;
 use App\Entity\Episode;
-use App\Entity\Image;
 use App\Form\AudioType;
 use App\Form\EpisodeType;
 use App\Repository\EpisodeRepository;
 use App\Services\AudioManager;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
+use Nines\MediaBundle\Controller\AbstractImageController;
+use Nines\MediaBundle\Entity\Image;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -39,7 +40,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
     /**
      * @Route("/", name="episode_index", methods={"GET"})
      *
-     * @Template
+     * @Template("episode/index.html.twig")
      */
     public function index(Request $request, EpisodeRepository $episodeRepository) : array {
         $query = $episodeRepository->indexQuery($request->query->get('q'));
@@ -54,7 +55,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
     /**
      * @Route("/search", name="episode_search", methods={"GET"})
      *
-     * @Template
+     * @Template("episode/search.html.twig")
      *
      * @return array
      */
@@ -97,7 +98,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/new", name="episode_new", methods={"GET", "POST"})
-     * @Template
+     * @Template("episode/new.html.twig")
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -129,7 +130,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/new_popup", name="episode_new_popup", methods={"GET", "POST"})
-     * @Template
+     * @Template("episode/new_popup.html.twig")
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -140,7 +141,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/{id}", name="episode_show", methods={"GET"})
-     * @Template
+     * @Template("episode/show.html.twig")
      *
      * @return array
      */
@@ -154,7 +155,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/{id}/edit", name="episode_edit", methods={"GET", "POST"})
      *
-     * @Template
+     * @Template("episode/edit.html.twig")
      *
      * @return array|RedirectResponse
      */
@@ -203,7 +204,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/{id}/new_audio", name="episode_new_audio", methods={"GET", "POST"})
-     * @Template
+     * @Template("episode/new_audio.html.twig")
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -237,7 +238,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/{id}/play_audio", name="episode_play_audio", methods={"GET"})
-     * @Template
+     *
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return BinaryFileResponse
@@ -252,7 +253,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/{id}/edit_audio", name="episode_edit_audio", methods={"GET", "POST"})
-     * @Template
+     * @Template("episode/edit_audio.html.twig")
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -317,7 +318,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
      * @Route("/{id}/new_image", name="episode_new_image", methods={"GET", "POST"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
-     * @Template
+     * @Template("episode/new_image.html.twig")
      */
     public function newImage(Request $request, Episode $episode) {
         return parent::newImageAction($request, $episode, 'episode_show');
@@ -328,7 +329,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @ParamConverter("image", options={"id": "image_id"})
      *
-     * @Template
+     * @Template("episode/edit_image.html.twig")
      */
     public function editImage(Request $request, Episode $episode, Image $image) {
         return parent::editImageAction($request, $episode, $image, 'episode_show');

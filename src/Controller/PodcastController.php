@@ -10,11 +10,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Image;
 use App\Entity\Podcast;
 use App\Form\PodcastType;
 use App\Repository\PodcastRepository;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
+use Nines\MediaBundle\Controller\AbstractImageController;
+use Nines\MediaBundle\Entity\Image;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -33,7 +34,7 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
     /**
      * @Route("/", name="podcast_index", methods={"GET"})
      *
-     * @Template
+     * @Template("podcast/index.html.twig")
      */
     public function index(Request $request, PodcastRepository $podcastRepository) : array {
         $query = $podcastRepository->indexQuery();
@@ -48,7 +49,7 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
     /**
      * @Route("/search", name="podcast_search", methods={"GET"})
      *
-     * @Template
+     * @Template("podcast/search.html.twig")
      *
      * @return array
      */
@@ -91,7 +92,7 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/new", name="podcast_new", methods={"GET", "POST"})
-     * @Template
+     * @Template("podcast/new.html.twig")
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -123,7 +124,7 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/new_popup", name="podcast_new_popup", methods={"GET", "POST"})
-     * @Template
+     * @Template("podcast/new_popup.html.twig")
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -134,7 +135,7 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/{id}", name="podcast_show", methods={"GET"})
-     * @Template
+     * @Template("podcast/show.html.twig")
      *
      * @return array
      */
@@ -148,7 +149,7 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/{id}/edit", name="podcast_edit", methods={"GET", "POST"})
      *
-     * @Template
+     * @Template("podcast/edit.html.twig")
      *
      * @return array|RedirectResponse
      */
@@ -198,7 +199,7 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
      * @Route("/{id}/new_image", name="podcast_new_image", methods={"GET", "POST"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
-     * @Template
+     * @Template("podcast/new_image.html.twig")
      */
     public function newImage(Request $request, Podcast $podcast) {
         return parent::newImageAction($request, $podcast, 'podcast_show');
@@ -209,7 +210,7 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
      * @ParamConverter("image", options={"id": "image_id"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
-     * @Template
+     * @Template("podcast/edit_image.html.twig")
      */
     public function editImage(Request $request, Podcast $podcast, Image $image) {
         return parent::editImageAction($request, $podcast, $image, 'podcast_show');

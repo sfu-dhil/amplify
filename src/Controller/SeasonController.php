@@ -10,11 +10,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Image;
 use App\Entity\Season;
 use App\Form\SeasonType;
 use App\Repository\SeasonRepository;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
+use Nines\MediaBundle\Controller\AbstractImageController;
+use Nines\MediaBundle\Entity\Image;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -33,7 +34,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
     /**
      * @Route("/", name="season_index", methods={"GET"})
      *
-     * @Template
+     * @Template("season/index.html.twig")
      */
     public function index(Request $request, SeasonRepository $seasonRepository) : array {
         $query = $seasonRepository->indexQuery();
@@ -48,7 +49,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
     /**
      * @Route("/search", name="season_search", methods={"GET"})
      *
-     * @Template
+     * @Template("season/search.html.twig")
      *
      * @return array
      */
@@ -91,7 +92,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
 
     /**
      * @Route("/new", name="season_new", methods={"GET", "POST"})
-     * @Template
+     * @Template("season/new.html.twig")
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -123,7 +124,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
 
     /**
      * @Route("/new_popup", name="season_new_popup", methods={"GET", "POST"})
-     * @Template
+     * @Template("season/new_popup.html.twig")
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -134,7 +135,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
 
     /**
      * @Route("/{id}", name="season_show", methods={"GET"})
-     * @Template
+     * @Template("season/show.html.twig")
      *
      * @return array
      */
@@ -148,7 +149,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/{id}/edit", name="season_edit", methods={"GET", "POST"})
      *
-     * @Template
+     * @Template("season/edit.html.twig")
      *
      * @return array|RedirectResponse
      */
@@ -198,7 +199,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
      * @Route("/{id}/new_image", name="season_new_image", methods={"GET", "POST"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
-     * @Template
+     * @Template("season/new_image.html.twig")
      */
     public function newImage(Request $request, Season $season) {
         return parent::newImageAction($request, $season, 'season_show');
@@ -209,7 +210,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
      * @ParamConverter("image", options={"id": "image_id"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
-     * @Template
+     * @Template("season/edit_image.html.twig")
      */
     public function editImage(Request $request, Season $season, Image $image) {
         return parent::editImageAction($request, $season, $image, 'season_show');

@@ -60,17 +60,6 @@ services:
             - { name: doctrine.event_listener, event: postLoad }
             - { name: doctrine.event_listener, event: postRemove }
 
-    App\Services\ImageManager:
-        arguments:
-            $root: '%kernel.project_dir%'
-        calls:
-            - [ setUploadDir, [ '%amplify.image.dir%/%kernel.environment%'] ]
-        tags:
-            - { name: doctrine.event_listener, event: prePersist }
-            - { name: doctrine.event_listener, event: preUpdate }
-            - { name: doctrine.event_listener, event: postLoad }
-            - { name: doctrine.event_listener, event: postRemove }
-
     App\Services\Thumbnailer:
         calls:
             - [ setHeight, [ '%amplify.thumb.height%' ] ]

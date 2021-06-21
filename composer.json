@@ -63,7 +63,8 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "App\\": "src/",
+            "Nines\\": "lib/"
         }
     },
     "autoload-dev": {

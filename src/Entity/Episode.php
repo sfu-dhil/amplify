@@ -16,6 +16,8 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Nines\MediaBundle\Entity\ImageContainerInterface;
+use Nines\MediaBundle\Entity\ImageContainerTrait;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 /**
@@ -23,7 +25,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
  */
 class Episode extends AbstractEntity implements ImageContainerInterface {
     use ImageContainerTrait {
-        ImageContainerTrait::__construct as protected trait_constructor;
+        ImageContainerTrait::__construct as protected image_constructor;
     }
 
     /**
@@ -134,7 +136,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
 
     public function __construct() {
         parent::__construct();
-        $this->trait_constructor();
+        $this->image_constructor();
 
         $this->preserved = false;
         $this->tags = [];
