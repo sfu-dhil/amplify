@@ -74,11 +74,12 @@ class ExportBatchCommand extends Command {
 
             if($episode->getTranscript()) {
                 $text = Html2Text::convert($episode->getTranscript());
-                $fs->dumpFile("{$path}/TRANSCRIPT.txt", wordwrap($text));
+                $fs->dumpFile("{$path}/FULL_TEXT.txt", wordwrap($text));
             }
 
             $audio = $episode->getAudio();
             $fs->copy($audio->getAudioFile()->getRealPath(), "{$path}/OBJ." . $audio->getExtension());
+            $fs->copy($audio->getAudioFile()->getRealPath(), "{$path}/PROXY_MP3." . $audio->getExtension());
 
             $images = array_merge($episode->getImages(), $episode->getSeason()->getImages(), $episode->getPodcast()->getImages());
             if(count($images)) {
