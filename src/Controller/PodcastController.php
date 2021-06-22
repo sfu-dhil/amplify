@@ -15,11 +15,13 @@ use App\Form\PodcastType;
 use App\Repository\PodcastRepository;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\MediaBundle\Controller\AbstractImageController;
+use Nines\MediaBundle\Controller\ImageControllerTrait;
 use Nines\MediaBundle\Entity\Image;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,8 +30,9 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/podcast")
  */
-class PodcastController extends AbstractImageController implements PaginatorAwareInterface {
+class PodcastController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
+    use ImageControllerTrait;
 
     /**
      * @Route("/", name="podcast_index", methods={"GET"})
@@ -202,7 +205,7 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
      * @Template("podcast/new_image.html.twig")
      */
     public function newImage(Request $request, Podcast $podcast) {
-        return parent::newImageAction($request, $podcast, 'podcast_show');
+        return $this->newImageAction($request, $podcast, 'podcast_show');
     }
 
     /**
@@ -213,7 +216,7 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
      * @Template("podcast/edit_image.html.twig")
      */
     public function editImage(Request $request, Podcast $podcast, Image $image) {
-        return parent::editImageAction($request, $podcast, $image, 'podcast_show');
+        return $this->editImageAction($request, $podcast, $image, 'podcast_show');
     }
 
     /**
@@ -222,6 +225,6 @@ class PodcastController extends AbstractImageController implements PaginatorAwar
      * @IsGranted("ROLE_CONTENT_ADMIN")
      */
     public function deleteImage(Request $request, Podcast $podcast, Image $image) {
-        return parent::deleteImageAction($request, $podcast, $image, 'podcast_show');
+        return $this->deleteImageAction($request, $podcast, $image, 'podcast_show');
     }
 }

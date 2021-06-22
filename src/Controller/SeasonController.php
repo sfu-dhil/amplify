@@ -15,11 +15,13 @@ use App\Form\SeasonType;
 use App\Repository\SeasonRepository;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\MediaBundle\Controller\AbstractImageController;
+use Nines\MediaBundle\Controller\ImageControllerTrait;
 use Nines\MediaBundle\Entity\Image;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,8 +30,9 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/season")
  */
-class SeasonController extends AbstractImageController implements PaginatorAwareInterface {
+class SeasonController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
+    use ImageControllerTrait;
 
     /**
      * @Route("/", name="season_index", methods={"GET"})
@@ -202,7 +205,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
      * @Template("season/new_image.html.twig")
      */
     public function newImage(Request $request, Season $season) {
-        return parent::newImageAction($request, $season, 'season_show');
+        return $this->newImageAction($request, $season, 'season_show');
     }
 
     /**
@@ -213,7 +216,7 @@ class SeasonController extends AbstractImageController implements PaginatorAware
      * @Template("season/edit_image.html.twig")
      */
     public function editImage(Request $request, Season $season, Image $image) {
-        return parent::editImageAction($request, $season, $image, 'season_show');
+        return $this->editImageAction($request, $season, $image, 'season_show');
     }
 
     /**
@@ -222,6 +225,6 @@ class SeasonController extends AbstractImageController implements PaginatorAware
      * @IsGranted("ROLE_CONTENT_ADMIN")
      */
     public function deleteImage(Request $request, Season $season, Image $image) {
-        return parent::deleteImageAction($request, $season, $image, 'season_show');
+        return $this->deleteImageAction($request, $season, $image, 'season_show');
     }
 }
