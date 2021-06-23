@@ -10,16 +10,15 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Audio;
 use App\Entity\Episode;
-use App\Form\AudioType;
 use App\Form\EpisodeType;
 use App\Repository\EpisodeRepository;
-use App\Services\AudioManager;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
-use Nines\MediaBundle\Controller\AbstractImageController;
+use Nines\MediaBundle\Controller\AudioControllerTrait;
 use Nines\MediaBundle\Controller\ImageControllerTrait;
+use Nines\MediaBundle\Entity\Audio;
 use Nines\MediaBundle\Entity\Image;
+use Nines\MediaBundle\Service\AudioManager;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -39,6 +38,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class EpisodeController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
     use ImageControllerTrait;
+    use AudioControllerTrait;
 
     /**
      * @Route("/", name="episode_index", methods={"GET"})
@@ -213,108 +213,30 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @return array|RedirectResponse
      */
     public function newAudio(Request $request, Episode $episode) {
-        if ($episode->getAudio()) {
-            $this->addFlash('danger', 'This episode already has an audio file. Use the controls below to edit or delete the audio file.');
-
-            return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
-        }
-
-        $audio = new Audio();
-        $audio->setEpisode($episode);
-        $form = $this->createForm(AudioType::class, $audio);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($audio);
-            $entityManager->flush();
-            $this->addFlash('success', 'The new audio has been saved.');
-
-            return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
-        }
-
-        return [
-            'audio' => $audio,
-            'form' => $form->createView(),
-        ];
+        return $this->newAudioAction($request, $episode, 'episode_show');
     }
 
     /**
-     * @Route("/{id}/play_audio", name="episode_play_audio", methods={"GET"})
-     *
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
-     * @return BinaryFileResponse
-     */
-    public function playAudio(Request $request, Episode $episode) {
-        if ($episode->getAudio()) {
-            return new BinaryFileResponse($episode->getAudio()->getAudioFile());
-        }
-
-        throw new NotFoundHttpException();
-    }
-
-    /**
-     * @Route("/{id}/edit_audio", name="episode_edit_audio", methods={"GET", "POST"})
+     * @Route("/{id}/edit_audio/{audio_id}", name="episode_edit_audio", methods={"GET", "POST"})
      * @Template("episode/edit_audio.html.twig")
      * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @ParamConverter("audio", options={"id": "audio_id"})
      *
      * @return array|RedirectResponse
      */
-    public function editAudio(Request $request, Episode $episode, AudioManager $fileUploader) {
-        if ( ! $episode->getAudio()) {
-            $this->addFlash('danger', 'This episode does not have an audio file. Use the button below to add one.');
-
-            return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
-        }
-
-        $form = $this->createForm(AudioType::class, $episode->getAudio());
-        $form->remove('audioFile');
-        $form->add('newAudioFile', FileType::class, [
-            'mapped' => false,
-            'required' => false,
-            'attr' => [
-                'help_block' => "Select a file to upload which is less than {$fileUploader->getMaxUploadSize(false)} in size.",
-                'data-maxsize' => $fileUploader->getMaxUploadSize(),
-            ],
-        ]);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            if (($upload = $form->get('newAudioFile')->getData())) {
-                $episode->getAudio()->setAudioFile($upload);
-                $episode->getAudio()->preUpdate();
-            }
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->flush();
-            $this->addFlash('success', 'The new audio has been saved.');
-
-            return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
-        }
-
-        return [
-            'audio' => $episode->getAudio(),
-            'form' => $form->createView(),
-        ];
+    public function editAudio(Request $request, Episode $episode, Audio $audio, AudioManager $fileUploader) {
+        return $this->editAudioAction($request, $episode, $audio, 'episode_show');
     }
 
     /**
-     * @Route("/{id}/delete_audio", name="episode_delete_audio", methods={"DELETE"})
+     * @Route("/{id}/delete_audio/{audio_id}", name="episode_delete_audio", methods={"DELETE"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @ParamConverter("audio", options={"id": "audio_id"})
      *
      * @return RedirectResponse
      */
-    public function deleteAudio(Request $request, Episode $episode) {
-        if ($this->isCsrfTokenValid('delete_audio_' . $episode->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($episode->getAudio());
-            $entityManager->flush();
-            $this->addFlash('success', 'The audio file has been deleted.');
-        } else {
-            $this->addFlash('warning', 'Invalid security token.');
-        }
-
-        return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
+    public function deleteAudio(Request $request, Episode $episode, Audio $audio) {
+        return $this->deleteAudioAction($request, $episode, $audio, 'episode_index');
     }
 
     /**

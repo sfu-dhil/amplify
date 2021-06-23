@@ -12,8 +12,8 @@ namespace App\Command;
 
 use App\Entity\Episode;
 use App\Repository\SeasonRepository;
-use App\Services\AudioManager;
 use DOMDocument;
+use Nines\MediaBundle\Service\AudioManager;
 use Soundasleep\Html2Text;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

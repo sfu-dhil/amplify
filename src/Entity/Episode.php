@@ -16,6 +16,8 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Nines\MediaBundle\Entity\AudioContainerInterface;
+use Nines\MediaBundle\Entity\AudioContainerTrait;
 use Nines\MediaBundle\Entity\ImageContainerInterface;
 use Nines\MediaBundle\Entity\ImageContainerTrait;
 use Nines\UtilBundle\Entity\AbstractEntity;
@@ -23,9 +25,12 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 /**
  * @ORM\Entity(repositoryClass=EpisodeRepository::class)
  */
-class Episode extends AbstractEntity implements ImageContainerInterface {
+class Episode extends AbstractEntity implements ImageContainerInterface, AudioContainerInterface {
     use ImageContainerTrait {
         ImageContainerTrait::__construct as protected image_constructor;
+    }
+    use AudioContainerTrait {
+        AudioContainerTrait::__construct as protected audio_constructor;
     }
 
     /**
@@ -109,12 +114,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
     private $subjects;
 
     /**
-     * @var Audio
-     * @ORM\OneToOne(targetEntity="App\Entity\Audio", mappedBy="episode", cascade={"remove"})
-     */
-    private $audio;
-
-    /**
      * @var null|Season
      * @ORM\ManyToOne(targetEntity="Season", inversedBy="episodes")
      * @ORM\JoinColumn(nullable=true)
@@ -137,6 +136,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
     public function __construct() {
         parent::__construct();
         $this->image_constructor();
+        $this->audio_constructor();
 
         $this->preserved = false;
         $this->tags = [];

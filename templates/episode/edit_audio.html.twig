@@ -10,7 +10,7 @@
         <div class='row'>
             <div class='col-sm-6'>
                 <figure>
-                    <audio controls src='{{ path('episode_play_audio', {'id': audio.episode.id}) }}' type='{{ audio.mimeType }}'></audio>
+                    <audio controls src='{{ path('nines_media_audio_play', {'id': audio.id}) }}' type='{{ audio.mimeType }}'></audio>
                     <figcaption>Listen to the podcast episode</figcaption>
                 </figure>
             </div>
@@ -35,7 +35,7 @@
         <div class="col-sm-2"></div>
         <div class="col-sm-10">
             <input type="submit" value="Update" class="btn btn-primary" />
-            <a href="{{ path('audio_index') }}" class="btn btn-warning">Cancel</a>
+            <a href="{{ path('nines_media_audio_index') }}" class="btn btn-warning">Cancel</a>
         </div>
     </div>
     {{ form_end(form) }}
