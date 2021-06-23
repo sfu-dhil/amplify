@@ -16,6 +16,7 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Nines\MediaBundle\Entity\Audio;
 use Nines\MediaBundle\Entity\AudioContainerInterface;
 use Nines\MediaBundle\Entity\AudioContainerTrait;
 use Nines\MediaBundle\Entity\ImageContainerInterface;
@@ -328,14 +329,13 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this;
     }
 
-    public function getAudio() : ?Audio {
-        return $this->audio;
-    }
-
-    public function setAudio(Audio $audio) : self {
-        $this->audio = $audio;
-
-        return $this;
+    public function getAudio(string $mime) : ?Audio {
+        foreach($this->audios as $audio) {
+            if($audio->getMimeType() === $mime) {
+                return $audio;
+            }
+        }
+        return null;
     }
 
     public function getPreserved() : ?bool {

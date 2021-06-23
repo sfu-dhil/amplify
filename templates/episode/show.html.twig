@@ -42,6 +42,7 @@
                     <figcaption>Listen to the podcast episode <i>{{ episode.podcast }} - {{ episode }}</i> ({{ audio.extension }} or {{ audio.mimeType }})</figcaption>
                 </figure>
             </div>
+            {% if not loop.last %}<hr class='divider'>{% endif %}
     {% endfor %}
     </div>
 

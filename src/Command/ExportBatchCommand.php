@@ -77,10 +77,16 @@ class ExportBatchCommand extends Command {
                 $fs->dumpFile("{$path}/FULL_TEXT.txt", wordwrap($text));
             }
 
-            $audio = $episode->getAudio();
-            $fs->copy($audio->getAudioFile()->getRealPath(), "{$path}/OBJ." . $audio->getExtension());
-            $fs->copy($audio->getAudioFile()->getRealPath(), "{$path}/PROXY_MP3." . $audio->getExtension());
+            $obj = $episode->getAudio("audio/x-wav");
+            if( ! $obj) {
+                $obj = $episode->getAudio("audio/mpeg");
+            }
+            $mp3 = $episode->getAudio("audio/mpeg");
 
+            $fs->copy($obj->getAudioFile(), "{$path}/OBJ." . $obj->getExtension());
+            if($mp3 && $mp3 !== $obj) {
+                $fs->copy($mp3->getAudioFile(), "{$path}/PROXY_MP3." . $obj->getExtension());
+            }
             $images = array_merge($episode->getImages(), $episode->getSeason()->getImages(), $episode->getPodcast()->getImages());
             if(count($images)) {
                 $thumb = array_shift($images);

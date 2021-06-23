@@ -69,12 +69,11 @@
 
     <physicalDescription>
         <form authority="marcform">sound recording</form>
-        <internetMediaType>{{ episode.audio.mimeType }}</internetMediaType>
         <extent unit='minutes'>{{ episode.runTime }}</extent>
         <digitalOrigin>born digital</digitalOrigin>
     </physicalDescription>
 
-    <abstract><![CDATA[{{ episode.transcript|raw('xml') }}]]></abstract>
+    <abstract><![CDATA[{{ episode.abstract|raw('xml') }}]]></abstract>
 
     {% for subject in episode.subjects %}
     <subject>
