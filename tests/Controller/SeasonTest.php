@@ -377,7 +377,7 @@ class SeasonTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/season/1/new_image');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'image[imageFile]' => $upload,
+            'image[file]' => $upload,
             'image[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -390,7 +390,7 @@ class SeasonTest extends ControllerBaseCase {
         $season = $this->entityManager->find(Season::class, 1);
 
         foreach ($season->getImages() as $image) {
-            $this->cleanUp($image->getImageFile());
+            $this->cleanUp($image->getFile());
             $this->cleanUp($image->getThumbFile());
         }
     }
@@ -408,7 +408,7 @@ class SeasonTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/season/1/new_image');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'image[imageFile]' => $upload,
+            'image[file]' => $upload,
             'image[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -421,7 +421,7 @@ class SeasonTest extends ControllerBaseCase {
         $season = $this->entityManager->find(Season::class, 1);
 
         foreach ($season->getImages() as $image) {
-            $this->cleanUp($image->getImageFile());
+            $this->cleanUp($image->getFile());
             $this->cleanUp($image->getThumbFile());
         }
 
@@ -437,7 +437,7 @@ class SeasonTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/season/1/new_image');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'image[imageFile]' => $upload,
+            'image[file]' => $upload,
             'image[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -450,7 +450,7 @@ class SeasonTest extends ControllerBaseCase {
         $season = $this->entityManager->find(Season::class, 1);
 
         foreach ($season->getImages() as $image) {
-            $this->cleanUp($image->getImageFile());
+            $this->cleanUp($image->getFile());
             $this->cleanUp($image->getThumbFile());
         }
 
@@ -458,7 +458,7 @@ class SeasonTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/season/1/edit_image/1');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Update')->form([
-            'image[newImageFile]' => $upload,
+            'image[newFile]' => $upload,
             'image[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -471,7 +471,7 @@ class SeasonTest extends ControllerBaseCase {
         $season = $this->entityManager->find(Season::class, 1);
 
         foreach ($season->getImages() as $image) {
-            $this->cleanUp($image->getImageFile());
+            $this->cleanUp($image->getFile());
             $this->cleanUp($image->getThumbFile());
         }
     }

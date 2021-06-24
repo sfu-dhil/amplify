@@ -407,7 +407,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'audio[audioFile]' => $upload,
+            'audio[file]' => $upload,
             'audio[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -428,7 +428,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'audio[audioFile]' => $upload,
+            'audio[file]' => $upload,
             'audio[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -446,7 +446,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'audio[audioFile]' => $upload,
+            'audio[file]' => $upload,
             'audio[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -467,7 +467,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'audio[audioFile]' => $upload,
+            'audio[file]' => $upload,
             'audio[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -482,7 +482,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/edit_audio/1');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Update')->form([
-            'audio[newAudioFile]' => $upload,
+            'audio[newFile]' => $upload,
             'audio[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -498,7 +498,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'audio[audioFile]' => $upload,
+            'audio[file]' => $upload,
             'audio[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -516,7 +516,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'audio[audioFile]' => $upload,
+            'audio[file]' => $upload,
             'audio[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -534,7 +534,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'audio[audioFile]' => $upload,
+            'audio[file]' => $upload,
             'audio[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -578,7 +578,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/new_image');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'image[imageFile]' => $upload,
+            'image[file]' => $upload,
             'image[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -604,7 +604,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/new_image');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'image[imageFile]' => $upload,
+            'image[file]' => $upload,
             'image[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -628,7 +628,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/new_image');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'image[imageFile]' => $upload,
+            'image[file]' => $upload,
             'image[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -644,7 +644,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/edit_image/1');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Update')->form([
-            'image[newImageFile]' => $upload,
+            'image[newFile]' => $upload,
             'image[public]' => 1,
         ]);
         $this->client->submit($form);
