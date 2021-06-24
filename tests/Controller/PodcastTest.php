@@ -144,7 +144,7 @@ class PodcastTest extends ControllerBaseCase {
         $repo = $this->createMock(PodcastRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('podcast.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(PodcastRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . PodcastRepository::class, $repo);
 
         $crawler = $this->client->request('GET', '/podcast/search');
         $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
@@ -165,7 +165,7 @@ class PodcastTest extends ControllerBaseCase {
         $repo = $this->createMock(PodcastRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('podcast.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(PodcastRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . PodcastRepository::class, $repo);
 
         $this->login('user.user');
         $crawler = $this->client->request('GET', '/podcast/search');
@@ -183,7 +183,7 @@ class PodcastTest extends ControllerBaseCase {
         $repo = $this->createMock(PodcastRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('podcast.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(PodcastRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . PodcastRepository::class, $repo);
 
         $this->login('user.admin');
         $crawler = $this->client->request('GET', '/podcast/search');
