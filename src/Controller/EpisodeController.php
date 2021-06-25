@@ -16,8 +16,10 @@ use App\Repository\EpisodeRepository;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\MediaBundle\Controller\AudioControllerTrait;
 use Nines\MediaBundle\Controller\ImageControllerTrait;
+use Nines\MediaBundle\Controller\PdfControllerTrait;
 use Nines\MediaBundle\Entity\Audio;
 use Nines\MediaBundle\Entity\Image;
+use Nines\MediaBundle\Entity\Pdf;
 use Nines\MediaBundle\Service\AudioManager;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -39,6 +41,7 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
     use PaginatorTrait;
     use ImageControllerTrait;
     use AudioControllerTrait;
+    use PdfControllerTrait;
 
     /**
      * @Route("/", name="episode_index", methods={"GET"})
@@ -267,5 +270,36 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      */
     public function deleteImage(Request $request, Episode $episode, Image $image) {
         return $this->deleteImageAction($request, $episode, $image, 'episode_show');
+    }
+
+
+    /**
+     * @Route("/{id}/new_pdf", name="episode_new_pdf", methods={"GET", "POST"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     *
+     * @Template("episode/new_pdf.html.twig")
+     */
+    public function newPdf(Request $request, Episode $episode) {
+        return $this->newPdfAction($request, $episode, 'episode_show');
+    }
+
+    /**
+     * @Route("/{id}/edit_pdf/{pdf_id}", name="episode_edit_pdf", methods={"GET", "POST"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @ParamConverter("pdf", options={"id": "pdf_id"})
+     *
+     * @Template("episode/edit_pdf.html.twig")
+     */
+    public function editPdf(Request $request, Episode $episode, Pdf $pdf) {
+        return $this->editPdfAction($request, $episode, $pdf, 'episode_show');
+    }
+
+    /**
+     * @Route("/{id}/delete_pdf/{pdf_id}", name="episode_delete_pdf", methods={"DELETE"})
+     * @ParamConverter("pdf", options={"id": "pdf_id"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     */
+    public function deletePdf(Request $request, Episode $episode, Pdf $pdf) {
+        return $this->deletePdfAction($request, $episode, $pdf, 'episode_show');
     }
 }

@@ -83,4 +83,21 @@
     } %}
     {% endembed %}
 
+    <h2>Episode PDFs</h2>
+    {% if is_granted('ROLE_CONTENT_ADMIN') %}
+        <div class='btn-toolbar pull-right'>
+            <div class='btn-group'>
+                <a href="{{ path('episode_new_pdf', {'id': episode.id }) }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> Add Pdf </a>
+            </div>
+        </div>
+        <div class='clearfix'></div>
+    {% endif %}
+    {% embed '@NinesMedia/pdf/partial/list.html.twig' with {
+        'pdfs': episode.pdfs,
+        'path_delete': 'episode_delete_pdf',
+        'path_edit': 'episode_edit_pdf',
+        'entity_id': episode.id,
+    } %}
+    {% endembed %}
 {% endblock %}

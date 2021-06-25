@@ -21,17 +21,22 @@ use Nines\MediaBundle\Entity\AudioContainerInterface;
 use Nines\MediaBundle\Entity\AudioContainerTrait;
 use Nines\MediaBundle\Entity\ImageContainerInterface;
 use Nines\MediaBundle\Entity\ImageContainerTrait;
+use Nines\MediaBundle\Entity\PdfContainerInterface;
+use Nines\MediaBundle\Entity\PdfContainerTrait;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 /**
  * @ORM\Entity(repositoryClass=EpisodeRepository::class)
  */
-class Episode extends AbstractEntity implements ImageContainerInterface, AudioContainerInterface {
+class Episode extends AbstractEntity implements ImageContainerInterface, AudioContainerInterface, PdfContainerInterface {
     use ImageContainerTrait {
         ImageContainerTrait::__construct as protected image_constructor;
     }
     use AudioContainerTrait {
         AudioContainerTrait::__construct as protected audio_constructor;
+    }
+    use PdfContainerTrait {
+        PdfContainerTrait::__construct as protected pdf_constructor;
     }
 
     /**
@@ -138,6 +143,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         parent::__construct();
         $this->image_constructor();
         $this->audio_constructor();
+        $this->pdf_constructor();
 
         $this->preserved = false;
         $this->tags = [];
