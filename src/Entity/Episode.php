@@ -16,14 +16,27 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Nines\MediaBundle\Entity\Audio;
+use Nines\MediaBundle\Entity\AudioContainerInterface;
+use Nines\MediaBundle\Entity\AudioContainerTrait;
+use Nines\MediaBundle\Entity\ImageContainerInterface;
+use Nines\MediaBundle\Entity\ImageContainerTrait;
+use Nines\MediaBundle\Entity\PdfContainerInterface;
+use Nines\MediaBundle\Entity\PdfContainerTrait;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 /**
  * @ORM\Entity(repositoryClass=EpisodeRepository::class)
  */
-class Episode extends AbstractEntity implements ImageContainerInterface {
+class Episode extends AbstractEntity implements ImageContainerInterface, AudioContainerInterface, PdfContainerInterface {
     use ImageContainerTrait {
-        ImageContainerTrait::__construct as protected trait_constructor;
+        ImageContainerTrait::__construct as protected image_constructor;
+    }
+    use AudioContainerTrait {
+        AudioContainerTrait::__construct as protected audio_constructor;
+    }
+    use PdfContainerTrait {
+        PdfContainerTrait::__construct as protected pdf_constructor;
     }
 
     /**
@@ -107,12 +120,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
     private $subjects;
 
     /**
-     * @var Audio
-     * @ORM\OneToOne(targetEntity="App\Entity\Audio", mappedBy="episode", cascade={"remove"})
-     */
-    private $audio;
-
-    /**
      * @var null|Season
      * @ORM\ManyToOne(targetEntity="Season", inversedBy="episodes")
      * @ORM\JoinColumn(nullable=true)
@@ -134,7 +141,9 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
 
     public function __construct() {
         parent::__construct();
-        $this->trait_constructor();
+        $this->image_constructor();
+        $this->audio_constructor();
+        $this->pdf_constructor();
 
         $this->preserved = false;
         $this->tags = [];
@@ -326,14 +335,13 @@ class Episode extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
-    public function getAudio() : ?Audio {
-        return $this->audio;
-    }
-
-    public function setAudio(Audio $audio) : self {
-        $this->audio = $audio;
-
-        return $this;
+    public function getAudio(string $mime) : ?Audio {
+        foreach($this->audios as $audio) {
+            if($audio->getMimeType() === $mime) {
+                return $audio;
+            }
+        }
+        return null;
     }
 
     public function getPreserved() : ?bool {

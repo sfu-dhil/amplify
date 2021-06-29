@@ -13,8 +13,11 @@ namespace App\Tests\Controller;
 use App\DataFixtures\EpisodeFixtures;
 use App\Entity\Episode;
 use App\Repository\EpisodeRepository;
+use Nines\MediaBundle\Entity\Audio;
+use Nines\MediaBundle\Entity\Image;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
+use Soundasleep\Html2Text;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -144,7 +147,7 @@ class EpisodeTest extends ControllerBaseCase {
         $repo = $this->createMock(EpisodeRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('episode.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(EpisodeRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . EpisodeRepository::class, $repo);
 
         $crawler = $this->client->request('GET', '/episode/search');
         $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
@@ -165,7 +168,7 @@ class EpisodeTest extends ControllerBaseCase {
         $repo = $this->createMock(EpisodeRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('episode.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(EpisodeRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . EpisodeRepository::class, $repo);
 
         $this->login('user.user');
         $crawler = $this->client->request('GET', '/episode/search');
@@ -183,7 +186,7 @@ class EpisodeTest extends ControllerBaseCase {
         $repo = $this->createMock(EpisodeRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('episode.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(EpisodeRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . EpisodeRepository::class, $repo);
 
         $this->login('user.admin');
         $crawler = $this->client->request('GET', '/episode/search');
@@ -404,7 +407,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'audio[audioFile]' => $upload,
+            'audio[file]' => $upload,
             'audio[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -414,46 +417,49 @@ class EpisodeTest extends ControllerBaseCase {
         $this->assertSame(1, $responseCrawler->filter('figcaption:contains("Listen to the podcast episode")')->count());
 
         $this->entityManager->clear();
+        /** @var Episode $episode */
         $episode = $this->entityManager->find(Episode::class, 1);
-        $this->cleanUp($episode->getAudio()->getAudioFile());
     }
 
-    public function testAdminDuplicateAudio() : void {
+    public function testAnonEditAudio() : void {
         $this->login('user.admin');
         $upload = new UploadedFile(__DIR__ . '/../data/534023__fission9__thunderclap.mp3', 'thunder.mp3');
 
         $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'audio[audioFile]' => $upload,
+            'audio[file]' => $upload,
             'audio[public]' => 1,
         ]);
         $this->client->submit($form);
+        $this->client->getCookieJar()->clear();
 
-        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
-        $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(1, $responseCrawler->filter('figcaption:contains("Listen to the podcast episode")')->count());
-
-        $this->client->request('GET', '/episode/1/new_audio');
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-
-        $this->entityManager->clear();
-        $episode = $this->entityManager->find(Episode::class, 1);
-        $this->cleanUp($episode->getAudio()->getAudioFile());
-    }
-
-    public function testAnonEditAudio() : void {
-        $formCrawler = $this->client->request('GET', '/episode/1/edit_audio');
+        $formCrawler = $this->client->request('GET', '/episode/1/edit_audio/1');
         $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
         $this->assertTrue($this->client->getResponse()->isRedirect());
     }
 
     public function testUserEditAudio() : void {
+        $this->login('user.admin');
+        $upload = new UploadedFile(__DIR__ . '/../data/534023__fission9__thunderclap.mp3', 'thunder.mp3');
+
+        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $formCrawler->selectButton('Create')->form([
+            'audio[file]' => $upload,
+            'audio[public]' => 1,
+        ]);
+        $this->client->submit($form);
+        $this->client->getCookieJar()->clear();
+
         $this->login('user.user');
-        $formCrawler = $this->client->request('GET', '/episode/1/edit_audio');
+        $formCrawler = $this->client->request('GET', '/episode/1/edit_audio/1');
         $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
+    /**
+     * @group x4
+     */
     public function testAdminEditAudio() : void {
         $this->login('user.admin');
         $upload = new UploadedFile(__DIR__ . '/../data/534023__fission9__thunderclap.mp3', 'thunder.mp3');
@@ -461,7 +467,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'audio[audioFile]' => $upload,
+            'audio[file]' => $upload,
             'audio[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -472,33 +478,52 @@ class EpisodeTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $episode = $this->entityManager->find(Episode::class, 1);
-        $this->cleanUp($episode->getAudio()->getAudioFile());
 
-        $formCrawler = $this->client->request('GET', '/episode/1/edit_audio');
+        $formCrawler = $this->client->request('GET', '/episode/1/edit_audio/1');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Update')->form([
-            'audio[newAudioFile]' => $upload,
+            'audio[newFile]' => $upload,
             'audio[public]' => 1,
         ]);
         $this->client->submit($form);
         $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
         $responseCrawler = $this->client->followRedirect();
         $this->assertSame(1, $responseCrawler->filter('figcaption:contains("Listen to the podcast episode")')->count());
-
-        $this->entityManager->clear();
-        $episode = $this->entityManager->find(Episode::class, 1);
-        $this->cleanUp($episode->getAudio()->getAudioFile());
     }
 
     public function testAnonDeleteAudio() : void {
-        $formCrawler = $this->client->request('DELETE', '/episode/1/delete_audio');
+        $this->login('user.admin');
+        $upload = new UploadedFile(__DIR__ . '/../data/534023__fission9__thunderclap.mp3', 'thunder.mp3');
+
+        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $formCrawler->selectButton('Create')->form([
+            'audio[file]' => $upload,
+            'audio[public]' => 1,
+        ]);
+        $this->client->submit($form);
+        $this->client->getCookieJar()->clear();
+
+        $formCrawler = $this->client->request('DELETE', '/episode/1/delete_audio/1');
         $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
         $this->assertTrue($this->client->getResponse()->isRedirect());
     }
 
     public function testUserDeleteAudio() : void {
+        $this->login('user.admin');
+        $upload = new UploadedFile(__DIR__ . '/../data/534023__fission9__thunderclap.mp3', 'thunder.mp3');
+
+        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $form = $formCrawler->selectButton('Create')->form([
+            'audio[file]' => $upload,
+            'audio[public]' => 1,
+        ]);
+        $this->client->submit($form);
+        $this->client->getCookieJar()->clear();
+
         $this->login('user.user');
-        $formCrawler = $this->client->request('DELETE', '/episode/1/delete_audio');
+        $formCrawler = $this->client->request('DELETE', '/episode/1/delete_audio/1');
         $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
@@ -509,7 +534,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'audio[audioFile]' => $upload,
+            'audio[file]' => $upload,
             'audio[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -520,19 +545,18 @@ class EpisodeTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $episode = $this->entityManager->find(Episode::class, 1);
-        $this->cleanUp($episode->getAudio()->getAudioFile());
 
         $formCrawler = $this->client->request('GET', '/episode/1');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('btn-delete-audio')->form();
         $this->client->submit($form);
 
-        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
+        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/'));
         $responseCrawler = $this->client->followRedirect();
 
         $this->entityManager->clear();
         $episode = $this->entityManager->find(Episode::class, 1);
-        $this->assertNull($episode->getAudio());
+        $this->assertEmpty($episode->getAudios());
     }
 
     public function testAnonNewImage() : void {
@@ -554,7 +578,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/new_image');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'image[imageFile]' => $upload,
+            'image[file]' => $upload,
             'image[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -565,11 +589,6 @@ class EpisodeTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $episode = $this->entityManager->find(Episode::class, 1);
-
-        foreach ($episode->getImages() as $image) {
-            $this->cleanUp($image->getImageFile());
-            $this->cleanUp($image->getThumbFile());
-        }
     }
 
     public function testAnonEditImage() : void {
@@ -585,7 +604,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/new_image');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'image[imageFile]' => $upload,
+            'image[file]' => $upload,
             'image[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -596,11 +615,6 @@ class EpisodeTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $episode = $this->entityManager->find(Episode::class, 1);
-
-        foreach ($episode->getImages() as $image) {
-            $this->cleanUp($image->getImageFile());
-            $this->cleanUp($image->getThumbFile());
-        }
 
         $this->login('user.user');
         $formCrawler = $this->client->request('GET', '/episode/1/edit_image/1');
@@ -614,7 +628,7 @@ class EpisodeTest extends ControllerBaseCase {
         $formCrawler = $this->client->request('GET', '/episode/1/new_image');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Create')->form([
-            'image[imageFile]' => $upload,
+            'image[file]' => $upload,
             'image[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -626,16 +640,11 @@ class EpisodeTest extends ControllerBaseCase {
         $this->entityManager->clear();
         $episode = $this->entityManager->find(Episode::class, 1);
 
-        foreach ($episode->getImages() as $image) {
-            $this->cleanUp($image->getImageFile());
-            $this->cleanUp($image->getThumbFile());
-        }
-
         $upload = new UploadedFile(__DIR__ . '/../data/32024919067_c2c18aa1c5_c.jpg', 'dog.jpg');
         $formCrawler = $this->client->request('GET', '/episode/1/edit_image/1');
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $form = $formCrawler->selectButton('Update')->form([
-            'image[newImageFile]' => $upload,
+            'image[newFile]' => $upload,
             'image[public]' => 1,
         ]);
         $this->client->submit($form);
@@ -646,10 +655,5 @@ class EpisodeTest extends ControllerBaseCase {
 
         $this->entityManager->clear();
         $episode = $this->entityManager->find(Episode::class, 1);
-
-        foreach ($episode->getImages() as $image) {
-            $this->cleanUp($image->getImageFile());
-            $this->cleanUp($image->getThumbFile());
-        }
     }
 }

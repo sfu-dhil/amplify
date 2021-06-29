@@ -40,7 +40,7 @@ for import:
 ```bash
 $ drush -v --user=admin --uri=http://localhost islandora_book_batch_preprocess \
       --content_models=islandora:sp-audioCModel --parent=audio:sfa \
-      --target=/home/vagrant/sfa --type=directory
+      --target=/home/vagrant/sfa --type=directory --namespace=sfa
 ```
 
 > The command above uses the word "book" even though this isn't a book import. The book
@@ -54,3 +54,11 @@ batch will be generating derivatives.
 ```bash
 $ drush -v --user=admin --uri=http://localhost islandora_batch_ingest
 ```
+
+### References
+
+- [How to Batch Ingest Files](https://wiki.lyrasis.org/display/ISLANDORA/How+to+Batch+Ingest+Files)
+- [Batch Ingest Module](https://wiki.lyrasis.org/display/ISLANDORA/Islandora+Batch)  
+- [How to Batch Ingest with Thumbnails](https://jira.lyrasis.org/browse/ISLANDORA-1157?focusedCommentId=58603&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#comment-58603)
+- [Islandora Book Batch](https://wiki.lyrasis.org/display/ISLANDORA7111/Islandora+Book+Batch)
+- [Audio Solution Pack](https://wiki.lyrasis.org/display/ISLANDORA/Audio+Solution+Pack)

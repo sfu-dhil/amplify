@@ -6,6 +6,11 @@ nines_editor:
   prefix: /editor
   resource: '@NinesEditorBundle/Controller'
 
+nines_media:
+  type: annotation
+  prefix: /media
+  resource: '@NinesMediaBundle/Controller'
+
 nines_blog:
   type: annotation
   prefix: /blog

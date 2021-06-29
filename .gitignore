@@ -33,3 +33,4 @@ src/.preload.php
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+lib

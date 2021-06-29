@@ -10,18 +10,22 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Audio;
 use App\Entity\Episode;
-use App\Entity\Image;
-use App\Form\AudioType;
 use App\Form\EpisodeType;
 use App\Repository\EpisodeRepository;
-use App\Services\AudioManager;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
+use Nines\MediaBundle\Controller\AudioControllerTrait;
+use Nines\MediaBundle\Controller\ImageControllerTrait;
+use Nines\MediaBundle\Controller\PdfControllerTrait;
+use Nines\MediaBundle\Entity\Audio;
+use Nines\MediaBundle\Entity\Image;
+use Nines\MediaBundle\Entity\Pdf;
+use Nines\MediaBundle\Service\AudioManager;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -33,13 +37,16 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/episode")
  */
-class EpisodeController extends AbstractImageController implements PaginatorAwareInterface {
+class EpisodeController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
+    use ImageControllerTrait;
+    use AudioControllerTrait;
+    use PdfControllerTrait;
 
     /**
      * @Route("/", name="episode_index", methods={"GET"})
      *
-     * @Template
+     * @Template("episode/index.html.twig")
      */
     public function index(Request $request, EpisodeRepository $episodeRepository) : array {
         $query = $episodeRepository->indexQuery($request->query->get('q'));
@@ -54,7 +61,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
     /**
      * @Route("/search", name="episode_search", methods={"GET"})
      *
-     * @Template
+     * @Template("episode/search.html.twig")
      *
      * @return array
      */
@@ -97,7 +104,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/new", name="episode_new", methods={"GET", "POST"})
-     * @Template
+     * @Template("episode/new.html.twig")
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -129,7 +136,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/new_popup", name="episode_new_popup", methods={"GET", "POST"})
-     * @Template
+     * @Template("episode/new_popup.html.twig")
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
@@ -140,7 +147,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/{id}", name="episode_show", methods={"GET"})
-     * @Template
+     * @Template("episode/show.html.twig")
      *
      * @return array
      */
@@ -154,7 +161,7 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @Route("/{id}/edit", name="episode_edit", methods={"GET", "POST"})
      *
-     * @Template
+     * @Template("episode/edit.html.twig")
      *
      * @return array|RedirectResponse
      */
@@ -203,124 +210,46 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
 
     /**
      * @Route("/{id}/new_audio", name="episode_new_audio", methods={"GET", "POST"})
-     * @Template
+     * @Template("episode/new_audio.html.twig")
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @return array|RedirectResponse
      */
     public function newAudio(Request $request, Episode $episode) {
-        if ($episode->getAudio()) {
-            $this->addFlash('danger', 'This episode already has an audio file. Use the controls below to edit or delete the audio file.');
-
-            return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
-        }
-
-        $audio = new Audio();
-        $audio->setEpisode($episode);
-        $form = $this->createForm(AudioType::class, $audio);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($audio);
-            $entityManager->flush();
-            $this->addFlash('success', 'The new audio has been saved.');
-
-            return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
-        }
-
-        return [
-            'audio' => $audio,
-            'form' => $form->createView(),
-        ];
+        return $this->newAudioAction($request, $episode, 'episode_show');
     }
 
     /**
-     * @Route("/{id}/play_audio", name="episode_play_audio", methods={"GET"})
-     * @Template
+     * @Route("/{id}/edit_audio/{audio_id}", name="episode_edit_audio", methods={"GET", "POST"})
+     * @Template("episode/edit_audio.html.twig")
      * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
-     * @return BinaryFileResponse
-     */
-    public function playAudio(Request $request, Episode $episode) {
-        if ($episode->getAudio()) {
-            return new BinaryFileResponse($episode->getAudio()->getAudioFile());
-        }
-
-        throw new NotFoundHttpException();
-    }
-
-    /**
-     * @Route("/{id}/edit_audio", name="episode_edit_audio", methods={"GET", "POST"})
-     * @Template
-     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @ParamConverter("audio", options={"id": "audio_id"})
      *
      * @return array|RedirectResponse
      */
-    public function editAudio(Request $request, Episode $episode, AudioManager $fileUploader) {
-        if ( ! $episode->getAudio()) {
-            $this->addFlash('danger', 'This episode does not have an audio file. Use the button below to add one.');
-
-            return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
-        }
-
-        $form = $this->createForm(AudioType::class, $episode->getAudio());
-        $form->remove('audioFile');
-        $form->add('newAudioFile', FileType::class, [
-            'mapped' => false,
-            'required' => false,
-            'attr' => [
-                'help_block' => "Select a file to upload which is less than {$fileUploader->getMaxUploadSize(false)} in size.",
-                'data-maxsize' => $fileUploader->getMaxUploadSize(),
-            ],
-        ]);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            if (($upload = $form->get('newAudioFile')->getData())) {
-                $episode->getAudio()->setAudioFile($upload);
-                $episode->getAudio()->preUpdate();
-            }
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->flush();
-            $this->addFlash('success', 'The new audio has been saved.');
-
-            return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
-        }
-
-        return [
-            'audio' => $episode->getAudio(),
-            'form' => $form->createView(),
-        ];
+    public function editAudio(Request $request, Episode $episode, Audio $audio, AudioManager $fileUploader) {
+        return $this->editAudioAction($request, $episode, $audio, 'episode_show');
     }
 
     /**
-     * @Route("/{id}/delete_audio", name="episode_delete_audio", methods={"DELETE"})
+     * @Route("/{id}/delete_audio/{audio_id}", name="episode_delete_audio", methods={"DELETE"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @ParamConverter("audio", options={"id": "audio_id"})
      *
      * @return RedirectResponse
      */
-    public function deleteAudio(Request $request, Episode $episode) {
-        if ($this->isCsrfTokenValid('delete_audio_' . $episode->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($episode->getAudio());
-            $entityManager->flush();
-            $this->addFlash('success', 'The audio file has been deleted.');
-        } else {
-            $this->addFlash('warning', 'Invalid security token.');
-        }
-
-        return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
+    public function deleteAudio(Request $request, Episode $episode, Audio $audio) {
+        return $this->deleteAudioAction($request, $episode, $audio, 'episode_index');
     }
 
     /**
      * @Route("/{id}/new_image", name="episode_new_image", methods={"GET", "POST"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
-     * @Template
+     * @Template("episode/new_image.html.twig")
      */
     public function newImage(Request $request, Episode $episode) {
-        return parent::newImageAction($request, $episode, 'episode_show');
+        return $this->newImageAction($request, $episode, 'episode_show');
     }
 
     /**
@@ -328,10 +257,10 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @ParamConverter("image", options={"id": "image_id"})
      *
-     * @Template
+     * @Template("episode/edit_image.html.twig")
      */
     public function editImage(Request $request, Episode $episode, Image $image) {
-        return parent::editImageAction($request, $episode, $image, 'episode_show');
+        return $this->editImageAction($request, $episode, $image, 'episode_show');
     }
 
     /**
@@ -340,6 +269,37 @@ class EpisodeController extends AbstractImageController implements PaginatorAwar
      * @IsGranted("ROLE_CONTENT_ADMIN")
      */
     public function deleteImage(Request $request, Episode $episode, Image $image) {
-        return parent::deleteImageAction($request, $episode, $image, 'episode_show');
+        return $this->deleteImageAction($request, $episode, $image, 'episode_show');
+    }
+
+
+    /**
+     * @Route("/{id}/new_pdf", name="episode_new_pdf", methods={"GET", "POST"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     *
+     * @Template("episode/new_pdf.html.twig")
+     */
+    public function newPdf(Request $request, Episode $episode) {
+        return $this->newPdfAction($request, $episode, 'episode_show');
+    }
+
+    /**
+     * @Route("/{id}/edit_pdf/{pdf_id}", name="episode_edit_pdf", methods={"GET", "POST"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     * @ParamConverter("pdf", options={"id": "pdf_id"})
+     *
+     * @Template("episode/edit_pdf.html.twig")
+     */
+    public function editPdf(Request $request, Episode $episode, Pdf $pdf) {
+        return $this->editPdfAction($request, $episode, $pdf, 'episode_show');
+    }
+
+    /**
+     * @Route("/{id}/delete_pdf/{pdf_id}", name="episode_delete_pdf", methods={"DELETE"})
+     * @ParamConverter("pdf", options={"id": "pdf_id"})
+     * @IsGranted("ROLE_CONTENT_ADMIN")
+     */
+    public function deletePdf(Request $request, Episode $episode, Pdf $pdf) {
+        return $this->deletePdfAction($request, $episode, $pdf, 'episode_show');
     }
 }

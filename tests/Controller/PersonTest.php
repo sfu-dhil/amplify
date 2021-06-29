@@ -142,7 +142,7 @@ class PersonTest extends ControllerBaseCase {
         $repo = $this->createMock(PersonRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('person.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(PersonRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . PersonRepository::class, $repo);
 
         $crawler = $this->client->request('GET', '/person/search');
         $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
@@ -163,7 +163,7 @@ class PersonTest extends ControllerBaseCase {
         $repo = $this->createMock(PersonRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('person.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(PersonRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . PersonRepository::class, $repo);
 
         $this->login('user.user');
         $crawler = $this->client->request('GET', '/person/search');
@@ -181,7 +181,7 @@ class PersonTest extends ControllerBaseCase {
         $repo = $this->createMock(PersonRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('person.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(PersonRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . PersonRepository::class, $repo);
 
         $this->login('user.admin');
         $crawler = $this->client->request('GET', '/person/search');

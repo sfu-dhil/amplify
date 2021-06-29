@@ -12,8 +12,8 @@ namespace App\Command;
 
 use App\Entity\Episode;
 use App\Repository\SeasonRepository;
-use App\Services\AudioManager;
 use DOMDocument;
+use Nines\MediaBundle\Service\AudioManager;
 use Soundasleep\Html2Text;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -74,12 +74,19 @@ class ExportBatchCommand extends Command {
 
             if($episode->getTranscript()) {
                 $text = Html2Text::convert($episode->getTranscript());
-                $fs->dumpFile("{$path}/TRANSCRIPT.txt", wordwrap($text));
+                $fs->dumpFile("{$path}/FULL_TEXT.txt", wordwrap($text));
             }
 
-            $audio = $episode->getAudio();
-            $fs->copy($audio->getAudioFile()->getRealPath(), "{$path}/OBJ." . $audio->getExtension());
+            $obj = $episode->getAudio("audio/x-wav");
+            if( ! $obj) {
+                $obj = $episode->getAudio("audio/mpeg");
+            }
+            $mp3 = $episode->getAudio("audio/mpeg");
 
+            $fs->copy($obj->getFile(), "{$path}/OBJ." . $obj->getExtension());
+            if($mp3 && $mp3 !== $obj) {
+                $fs->copy($mp3->getFile(), "{$path}/PROXY_MP3." . $obj->getExtension());
+            }
             $images = array_merge($episode->getImages(), $episode->getSeason()->getImages(), $episode->getPodcast()->getImages());
             if(count($images)) {
                 $thumb = array_shift($images);

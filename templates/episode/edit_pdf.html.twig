@@ -1,14 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Image {% endblock %}
+{% block title %}Edit PDF{% endblock %}
 
 {% block body %}
-    <h1>Edit Image</h1>
+    <h1>Edit PDF</h1>
 
     <div class='panel panel-default'>
-        <div class='panel-heading'>Current Image</div>
+        <div class='panel-heading'>Current PDF</div>
         <div class='panel-body'>
-            <img src="{{ path('nines_media_image_thumb', {'id': image.id}) }}" class="img-thumbnail img-responsive center-block" />
+            <img src="{{ path('nines_media_pdf_thumb', {'id': pdf.id}) }}" class="img-thumbnail img-responsive center-block" />
         </div>
     </div>
 

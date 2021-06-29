@@ -1,2 +1,6 @@
 nines_util:
     trim_length: 50
+    routing:
+        - { class: App\Entity\Episode, route: episode_show }
+        - { class: App\Entity\Podcast, route: podcast_show }
+        - { class: App\Entity\Season, route: season_show }

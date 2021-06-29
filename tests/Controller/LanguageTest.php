@@ -142,7 +142,7 @@ class LanguageTest extends ControllerBaseCase {
         $repo = $this->createMock(LanguageRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('language.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(LanguageRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . LanguageRepository::class, $repo);
 
         $crawler = $this->client->request('GET', '/language/search');
         $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
@@ -163,7 +163,7 @@ class LanguageTest extends ControllerBaseCase {
         $repo = $this->createMock(LanguageRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('language.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(LanguageRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . LanguageRepository::class, $repo);
 
         $this->login('user.user');
         $crawler = $this->client->request('GET', '/language/search');
@@ -181,7 +181,7 @@ class LanguageTest extends ControllerBaseCase {
         $repo = $this->createMock(LanguageRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('language.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(LanguageRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . LanguageRepository::class, $repo);
 
         $this->login('user.admin');
         $crawler = $this->client->request('GET', '/language/search');

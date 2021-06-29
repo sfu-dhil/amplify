@@ -142,7 +142,7 @@ class CategoryTest extends ControllerBaseCase {
         $repo = $this->createMock(CategoryRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('category.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(CategoryRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . CategoryRepository::class, $repo);
 
         $crawler = $this->client->request('GET', '/category/search');
         $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
@@ -163,7 +163,7 @@ class CategoryTest extends ControllerBaseCase {
         $repo = $this->createMock(CategoryRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('category.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(CategoryRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . CategoryRepository::class, $repo);
 
         $this->login('user.user');
         $crawler = $this->client->request('GET', '/category/search');
@@ -181,7 +181,7 @@ class CategoryTest extends ControllerBaseCase {
         $repo = $this->createMock(CategoryRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('category.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(CategoryRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . CategoryRepository::class, $repo);
 
         $this->login('user.admin');
         $crawler = $this->client->request('GET', '/category/search');

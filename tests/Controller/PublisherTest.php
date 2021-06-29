@@ -142,7 +142,7 @@ class PublisherTest extends ControllerBaseCase {
         $repo = $this->createMock(PublisherRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('publisher.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(PublisherRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . PublisherRepository::class, $repo);
 
         $crawler = $this->client->request('GET', '/publisher/search');
         $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
@@ -163,7 +163,7 @@ class PublisherTest extends ControllerBaseCase {
         $repo = $this->createMock(PublisherRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('publisher.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(PublisherRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . PublisherRepository::class, $repo);
 
         $this->login('user.user');
         $crawler = $this->client->request('GET', '/publisher/search');
@@ -181,7 +181,7 @@ class PublisherTest extends ControllerBaseCase {
         $repo = $this->createMock(PublisherRepository::class);
         $repo->method('searchQuery')->willReturn([$this->getReference('publisher.1')]);
         $this->client->disableReboot();
-        $this->client->getContainer()->set(PublisherRepository::class, $repo);
+        $this->client->getContainer()->set('test.' . PublisherRepository::class, $repo);
 
         $this->login('user.admin');
         $crawler = $this->client->request('GET', '/publisher/search');
