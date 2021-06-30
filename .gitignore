@@ -34,3 +34,4 @@ src/.preload.php
 .phpunit.result.cache
 ###< phpunit/phpunit ###
 lib
+ps

@@ -26,12 +26,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -271,7 +268,6 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
     public function deleteImage(Request $request, Episode $episode, Image $image) {
         return $this->deleteImageAction($request, $episode, $image, 'episode_show');
     }
-
 
     /**
      * @Route("/{id}/new_pdf", name="episode_new_pdf", methods={"GET", "POST"})

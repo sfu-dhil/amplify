@@ -65,13 +65,11 @@ class ContributorRole extends AbstractTerm {
         return $this;
     }
 
-    public function getRelatorTerm(): ?string
-    {
+    public function getRelatorTerm() : ?string {
         return $this->relatorTerm;
     }
 
-    public function setRelatorTerm(?string $relatorTerm): self
-    {
+    public function setRelatorTerm(?string $relatorTerm) : self {
         $this->relatorTerm = $relatorTerm;
 
         return $this;
