@@ -14,7 +14,6 @@ use App\Entity\Podcast;
 use App\Form\PodcastType;
 use App\Repository\PodcastRepository;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
-use Nines\MediaBundle\Controller\AbstractImageController;
 use Nines\MediaBundle\Controller\ImageControllerTrait;
 use Nines\MediaBundle\Entity\Image;
 use Nines\UtilBundle\Controller\PaginatorTrait;

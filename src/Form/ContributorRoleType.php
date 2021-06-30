@@ -28,8 +28,8 @@ class ContributorRoleType extends TermType {
             'label' => 'MARC Relator Term',
             'required' => false,
             'attr' => [
-                'help_block' => 'One of the three letter codes from <a href="https://www.loc.gov/marc/relators/relaterm.html">this list</a>'
-            ]
+                'help_block' => 'One of the three letter codes from <a href="https://www.loc.gov/marc/relators/relaterm.html">this list</a>',
+            ],
         ]);
         parent::buildForm($builder, $options);
     }

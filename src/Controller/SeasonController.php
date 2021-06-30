@@ -14,7 +14,6 @@ use App\Entity\Season;
 use App\Form\SeasonType;
 use App\Repository\SeasonRepository;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
-use Nines\MediaBundle\Controller\AbstractImageController;
 use Nines\MediaBundle\Controller\ImageControllerTrait;
 use Nines\MediaBundle\Entity\Image;
 use Nines\UtilBundle\Controller\PaginatorTrait;

@@ -336,11 +336,12 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     }
 
     public function getAudio(string $mime) : ?Audio {
-        foreach($this->audios as $audio) {
-            if($audio->getMimeType() === $mime) {
+        foreach ($this->audios as $audio) {
+            if ($audio->getMimeType() === $mime) {
                 return $audio;
             }
         }
+
         return null;
     }
 

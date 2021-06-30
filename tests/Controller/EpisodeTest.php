@@ -13,11 +13,8 @@ namespace App\Tests\Controller;
 use App\DataFixtures\EpisodeFixtures;
 use App\Entity\Episode;
 use App\Repository\EpisodeRepository;
-use Nines\MediaBundle\Entity\Audio;
-use Nines\MediaBundle\Entity\Image;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\Tests\ControllerBaseCase;
-use Soundasleep\Html2Text;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 
