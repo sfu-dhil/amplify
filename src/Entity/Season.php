@@ -25,6 +25,7 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 class Season extends AbstractEntity implements ImageContainerInterface {
     use ImageContainerTrait {
         ImageContainerTrait::__construct as protected trait_constructor;
+
     }
 
     /**

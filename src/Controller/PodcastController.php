@@ -31,6 +31,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PodcastController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
+
     use ImageControllerTrait;
 
     /**

@@ -43,7 +43,7 @@ class ExportBatchCommand extends Command {
     }
 
     protected function generateMods($type, Episode $episode) {
-        $mods = $this->twig->render("export/${type}.xml.twig", ['episode' => $episode]);
+        $mods = $this->twig->render("export/{$type}.xml.twig", ['episode' => $episode]);
         $doc = new DOMDocument();
         $doc->preserveWhiteSpace = false;
         $doc->formatOutput = true;
@@ -83,7 +83,7 @@ class ExportBatchCommand extends Command {
             $mods = $this->generateMods('episode', $episode);
             $mods->save("{$path}/MODS.xml");
 
-            $fs->mkdir("$path/episode", 0755);
+            $fs->mkdir("{$path}/episode", 0755);
             $mods = $this->generateMods('audio', $episode);
             $mods->save("{$path}/episode/MODS.xml");
 
@@ -97,13 +97,13 @@ class ExportBatchCommand extends Command {
             if ($mp3 && $mp3 !== $obj) {
                 $fs->copy($mp3->getFile(), "{$path}/episode/PROXY_MP3." . $obj->getExtension());
             }
-            if($thumb) {
+            if ($thumb) {
                 $fs->copy($thumb->getFile()->getRealPath(), "{$path}/episode/TN.{$thumb->getExtension()}");
                 $fs->copy($thumb->getFile()->getRealPath(), "{$path}/TN.{$thumb->getExtension()}");
             }
 
             if ($episode->getTranscript()) {
-                $fs->mkdir("$path/transcript", 0755);
+                $fs->mkdir("{$path}/transcript", 0755);
                 $mods = $this->generateMods('transcript', $episode);
                 $mods->save("{$path}/transcript/MODS.xml");
                 $text = Html2Text::convert($episode->getTranscript());
