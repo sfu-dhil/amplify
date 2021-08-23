@@ -14,12 +14,17 @@ use App\Repository\PersonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Nines\MediaBundle\Entity\LinkableInterface;
+use Nines\MediaBundle\Entity\LinkableTrait;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 /**
  * @ORM\Entity(repositoryClass=PersonRepository::class)
  */
-class Person extends AbstractEntity {
+class Person extends AbstractEntity implements LinkableInterface {
+    use LinkableTrait {
+        LinkableTrait::__construct as linkable_constructor;
+    }
     /**
      * @var string
      * @ORM\Column(type="string")
@@ -45,12 +50,6 @@ class Person extends AbstractEntity {
     private $bio;
 
     /**
-     * @var array
-     * @ORM\Column(type="array")
-     */
-    private $links;
-
-    /**
      * @var Institution
      * @ORM\ManyToOne(targetEntity="App\Entity\Institution", inversedBy="people")
      */
@@ -64,6 +63,7 @@ class Person extends AbstractEntity {
 
     public function __construct() {
         parent::__construct();
+        $this->linkable_constructor();
         $this->contributions = new ArrayCollection();
     }
 
@@ -121,16 +121,6 @@ class Person extends AbstractEntity {
 
     public function setBio(string $bio) : self {
         $this->bio = $bio;
-
-        return $this;
-    }
-
-    public function getLinks() : ?array {
-        return $this->links;
-    }
-
-    public function setLinks(array $links) : self {
-        $this->links = $links;
 
         return $this;
     }

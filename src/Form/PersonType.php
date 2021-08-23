@@ -12,6 +12,8 @@ namespace App\Form;
 
 use App\Entity\Institution;
 use App\Entity\Person;
+use Nines\MediaBundle\Form\LinkableType;
+use Nines\MediaBundle\Form\Mapper\LinkableMapper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -24,6 +26,8 @@ use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
  * Person form.
  */
 class PersonType extends AbstractType {
+    private LinkableMapper $mapper;
+
     /**
      * Add form fields to $builder.
      */
@@ -57,23 +61,6 @@ class PersonType extends AbstractType {
                 'class' => 'tinymce',
             ],
         ]);
-        $builder->add('links', CollectionType::class, [
-            'label' => 'Links',
-            'required' => false,
-            'allow_add' => true,
-            'allow_delete' => true,
-            'delete_empty' => true,
-            'entry_type' => TextType::class,
-            'entry_options' => [
-                'label' => false,
-            ],
-            'by_reference' => false,
-            'attr' => [
-                'class' => 'collection collection-simple',
-                'help_block' => '',
-            ],
-        ]);
-
         $builder->add('institution', Select2EntityType::class, [
             'label' => 'Institution',
             'class' => Institution::class,
@@ -85,6 +72,16 @@ class PersonType extends AbstractType {
                 'add_label' => 'Add Institution',
             ],
         ]);
+        LinkableType::add($builder, $options);
+        $builder->setDataMapper($this->mapper);
+    }
+
+    /**
+     * @param LinkableMapper $mapper
+     * @required
+     */
+    public function setMapper(LinkableMapper $mapper) {
+        $this->mapper = $mapper;
     }
 
     /**
