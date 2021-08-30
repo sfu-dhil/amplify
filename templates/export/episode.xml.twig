@@ -5,9 +5,6 @@
         version="3.7">
     <titleInfo>
         <title>{{ episode.podcast.title }} {{ episode.slug }}</title>
-        <partNumber>{{ episode.slug }}</partNumber>
-        <partName>{{ episode.season.title }}</partName>
-        <partName>{{ episode.podcast.title }}</partName>
     </titleInfo>
     {% if episode.alternativeTitle %}
     <titleInfo type='alternative'>
@@ -46,9 +43,6 @@
         </name>
     {% endfor %}
 
-    <typeOfResource>sound recording-non-musical</typeOfResource>
-    <genre>Podcast</genre>
-
     <originInfo>
         <dateIssued>{{ episode.date|date('Y-m-d') }}</dateIssued>
         <issuance>serial</issuance>
@@ -66,12 +60,6 @@
         {% endfor %}
     </language>
     {% endif %}
-
-    <physicalDescription>
-        <form authority="marcform">sound recording</form>
-        <extent unit='minutes'>{{ episode.runTime }}</extent>
-        <digitalOrigin>born digital</digitalOrigin>
-    </physicalDescription>
 
     <abstract><![CDATA[{{ episode.abstract|raw('xml') }}]]></abstract>
 

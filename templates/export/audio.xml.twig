@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods xmlns="http://www.loc.gov/mods/v3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-7.xsd"
+        version="3.7">
+    <titleInfo>
+        <title>{{ episode.podcast.title }} {{ episode.slug }}</title>
+    </titleInfo>
+
+    {% set contributions = episode.podcast.contributions|merge(episode.season.contributions) %}
+    {% for contribution in contributions %}
+        {% set role = contribution.contributorRole %}
+        {% set person = contribution.person %}
+        <name>
+            <namePart>{{ person.fullName }}</namePart>
+            {% if person.institution %}<affiliation>{{ person.institution}}</affiliation>{% endif %}
+            <role>
+                {% if role.relatorTerm %}<roleTerm type='code' authority='marcrelator'>{{ role.relatorTerm }}</roleTerm>{% endif %}
+                <roleTerm type='marcrel'>{{ role.label }}</roleTerm>
+            </role>
+        </name>
+    {% endfor %}
+
+    {% for contribution in episode.contributions %}
+        {% set role = contribution.contributorRole %}
+        {% set person = contribution.person %}
+        <name>
+            <namePart>{{ person.fullName }}</namePart>
+            {% if person.institution %}<affiliation>{{ person.institution}}</affiliation>{% endif %}
+            <role>
+                {% if role.relatorTerm %}<roleTerm type='code' authority='marcrelator'>{{ role.relatorTerm }}</roleTerm>{% endif %}
+                <roleTerm type='marcrel'>{{ role.label }}</roleTerm>
+            </role>
+            {% if person.bio %}<description>{{ person.bio(true) }}</description>{% endif %}
+        </name>
+    {% endfor %}
+
+    <typeOfResource>sound recording-non-musical</typeOfResource>
+    <genre>Podcast</genre>
+
+    <originInfo>
+        <dateIssued>{{ episode.date|date('Y-m-d') }}</dateIssued>
+        <issuance>serial</issuance>
+        {% if episode.season.publisher %}
+            <publisher>{{ episode.season.publisher.name }}</publisher>
+        {% elseif episode.podcast.publisher %}
+            <publisher>{{ episode.podcast.publisher.name }}</publisher>
+        {% endif %}
+    </originInfo>
+
+    {% if episode.languages|length > 0 %}
+    <language>
+        {% for language in episode.languages %}
+        <languageTerm type='text'>{{ language }}</languageTerm>
+        {% endfor %}
+    </language>
+    {% endif %}
+
+    <physicalDescription>
+        <form authority="marcform">sound recording</form>
+        <extent unit='minutes'>{{ episode.runTime }}</extent>
+        <digitalOrigin>born digital</digitalOrigin>
+    </physicalDescription>
+
+    <abstract><![CDATA[{{ episode.abstract|raw('xml') }}]]></abstract>
+
+    {% for subject in episode.subjects %}
+    <subject>
+        <topic authority='lcsh' authorityURI="http://id.loc.gov/authorities/subjects">{{ subject }}</topic>
+    </subject>
+    {% endfor %}
+
+    {% for tag in episode.tags %}
+        <subject>
+            <topic>{{ tag }}</topic>
+        </subject>
+    {% endfor %}
+
+    {% for category in episode.podcast.categories %}
+        <subject>
+            <topic authorityURI='https://help.apple.com/itc/podcasts_connect/#/itc9267a2f12'>{{ category }}</topic>
+        </subject>
+    {% endfor %}
+
+    <accessCondition type='use and reproduction'>{{ episode.podcast.copyright|raw|striptags }}</accessCondition>
+
+    <relatedItem type='series'>
+        <titleInfo>
+            <title>{{ episode.podcast.title }}</title>
+            <partNumber>{{ episode.slug }}</partNumber>
+        </titleInfo>
+    </relatedItem>
+</mods>
+

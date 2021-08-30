@@ -42,8 +42,8 @@ class ExportBatchCommand extends Command {
         ;
     }
 
-    protected function generateMods(Episode $episode) {
-        $mods = $this->twig->render('episode/mods.xml.twig', ['episode' => $episode]);
+    protected function generateMods($type, Episode $episode) {
+        $mods = $this->twig->render("export/{$type}.xml.twig", ['episode' => $episode]);
         $doc = new DOMDocument();
         $doc->preserveWhiteSpace = false;
         $doc->formatOutput = true;
@@ -67,19 +67,25 @@ class ExportBatchCommand extends Command {
             $output->writeln("Warning: export directory {$dir} already exists.");
             $fs->remove($dir);
         }
-        $fs->mkdir($dir, 0777);
+        $fs->mkdir($dir, 0755);
 
         foreach ($season->getEpisodes() as $episode) {
             $slug = $episode->getSlug();
             $path = "{$dir}/{$slug}";
-            $fs->mkdir($path, 0777);
-            $mods = $this->generateMods($episode);
+
+            $images = array_merge($episode->getImages(), $episode->getSeason()->getImages(), $episode->getPodcast()->getImages());
+            $thumb = null;
+            if (count($images)) {
+                $thumb = array_shift($images);
+            }
+
+            $fs->mkdir($path, 0755);
+            $mods = $this->generateMods('episode', $episode);
             $mods->save("{$path}/MODS.xml");
 
-            if ($episode->getTranscript()) {
-                $text = Html2Text::convert($episode->getTranscript());
-                $fs->dumpFile("{$path}/FULL_TEXT.txt", wordwrap($text));
-            }
+            $fs->mkdir("{$path}/episode", 0755);
+            $mods = $this->generateMods('audio', $episode);
+            $mods->save("{$path}/episode/MODS.xml");
 
             $obj = $episode->getAudio('audio/x-wav');
             if ( ! $obj) {
@@ -87,16 +93,26 @@ class ExportBatchCommand extends Command {
             }
             $mp3 = $episode->getAudio('audio/mpeg');
 
-            $fs->copy($obj->getFile(), "{$path}/OBJ." . $obj->getExtension());
+            $fs->copy($obj->getFile(), "{$path}/episode/OBJ." . $obj->getExtension());
             if ($mp3 && $mp3 !== $obj) {
-                $fs->copy($mp3->getFile(), "{$path}/PROXY_MP3." . $obj->getExtension());
+                $fs->copy($mp3->getFile(), "{$path}/episode/PROXY_MP3." . $obj->getExtension());
             }
-            $images = array_merge($episode->getImages(), $episode->getSeason()->getImages(), $episode->getPodcast()->getImages());
+            if ($thumb) {
+                $fs->copy($thumb->getFile()->getRealPath(), "{$path}/episode/TN.{$thumb->getExtension()}");
+                $fs->copy($thumb->getFile()->getRealPath(), "{$path}/TN.{$thumb->getExtension()}");
+            }
+
+            if ($episode->getTranscript()) {
+                $fs->mkdir("{$path}/transcript", 0755);
+                $mods = $this->generateMods('transcript', $episode);
+                $mods->save("{$path}/transcript/MODS.xml");
+                $text = Html2Text::convert($episode->getTranscript());
+                $fs->dumpFile("{$path}/transcript/FULL_TEXT.txt", wordwrap($text));
+            }
+
             if (count($images)) {
-                $thumb = array_shift($images);
-                $fs->copy($thumb->getImageFile()->getRealPath(), "{$path}/TN.{$thumb->getExtension()}");
                 foreach ($images as $n => $image) {
-                    $fs->copy($image->getImageFile()->getRealPath(), "{$path}/IMG_" . ($n + 1) . '.' . $image->getExtension());
+                    $fs->copy($image->getFile()->getRealPath(), "{$path}/IMG_" . ($n + 1) . '.' . $image->getExtension());
                 }
             }
         }

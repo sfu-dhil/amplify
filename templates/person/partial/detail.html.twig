@@ -27,15 +27,11 @@
         <tr>
             <th>Links</th>
             <td>
-                {% if person.links %}
-                    <ul>{% for link in person.links %}
-                            <li><a href='{{ link }}'>{{ link }}</a></li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+                {% embed '@NinesMedia/link/partial/list.html.twig' with {
+                    'entity': person } %}
+                {% endembed %}
             </td>
         </tr>
-
         <tr>
             <th>Institution</th>
             <td>
