@@ -35,21 +35,16 @@ class ExportBatchCommand extends Command {
     protected static $defaultDescription = 'Export a season of a podcast for an islandora batch import.';
 
     protected function configure() : void {
-        $this
-            ->setDescription(self::$defaultDescription)
-            ->addArgument('seasonId', InputArgument::REQUIRED, 'Season database ID')
-            ->addArgument('directory', InputArgument::REQUIRED, 'Directory to export to')
-        ;
+        $this->setDescription(self::$defaultDescription)->addArgument('seasonId', InputArgument::REQUIRED, 'Season database ID')->addArgument('directory', InputArgument::REQUIRED, 'Directory to export to');
     }
 
-    protected function generateMods($type, Episode $episode) {
-        $mods = $this->twig->render("export/{$type}.xml.twig", ['episode' => $episode]);
+    protected function generateMods($type, $object, $destination) : void {
+        $mods = $this->twig->render("export/{$type}.xml.twig", ['object' => $object]);
         $doc = new DOMDocument();
         $doc->preserveWhiteSpace = false;
         $doc->formatOutput = true;
         $doc->loadXML($mods);
-
-        return $doc;
+        $doc->save($destination);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int {
@@ -73,19 +68,11 @@ class ExportBatchCommand extends Command {
             $slug = $episode->getSlug();
             $path = "{$dir}/{$slug}";
 
-            $images = array_merge($episode->getImages(), $episode->getSeason()->getImages(), $episode->getPodcast()->getImages());
-            $thumb = null;
-            if (count($images)) {
-                $thumb = array_shift($images);
-            }
-
             $fs->mkdir($path, 0755);
-            $mods = $this->generateMods('episode', $episode);
-            $mods->save("{$path}/MODS.xml");
+            $this->generateMods('episode', $episode, "{$path}/MODS.xml");
 
             $fs->mkdir("{$path}/episode", 0755);
-            $mods = $this->generateMods('audio', $episode);
-            $mods->save("{$path}/episode/MODS.xml");
+            $this->generateMods('audio', $episode, "{$path}/episode/MODS.xml");
 
             $obj = $episode->getAudio('audio/x-wav');
             if ( ! $obj) {
@@ -97,27 +84,53 @@ class ExportBatchCommand extends Command {
             if ($mp3 && $mp3 !== $obj) {
                 $fs->copy($mp3->getFile(), "{$path}/episode/PROXY_MP3." . $obj->getExtension());
             }
-            if ($thumb) {
-                $fs->copy($thumb->getFile()->getRealPath(), "{$path}/episode/TN.{$thumb->getExtension()}");
-                $fs->copy($thumb->getFile()->getRealPath(), "{$path}/TN.{$thumb->getExtension()}");
-            }
 
             if ($episode->getTranscript()) {
                 $fs->mkdir("{$path}/transcript", 0755);
-                $mods = $this->generateMods('transcript', $episode);
-                $mods->save("{$path}/transcript/MODS.xml");
+                $this->generateMods('transcript', $episode, "{$path}/transcript/MODS.xml");
                 $text = Html2Text::convert($episode->getTranscript());
                 $fs->dumpFile("{$path}/transcript/FULL_TEXT.txt", wordwrap($text));
-            }
-
-            if (count($images)) {
-                foreach ($images as $n => $image) {
-                    $fs->copy($image->getFile()->getRealPath(), "{$path}/IMG_" . ($n + 1) . '.' . $image->getExtension());
+                if (count($episode->getPdfs())) {
+                    $fs->copy($episode->getPdfs()[0]->getFile(), "{$path}/transcript/OBJ.pdf");
                 }
             }
+
+            $images = array_merge($episode->getImages(), $episode->getSeason()->getImages(), $episode->getPodcast()->getImages());
+            if (count($images)) {
+                foreach ($images as $n => $image) {
+                    $subdir = "{$path}/img_{$n}";
+                    $fs->mkdir($subdir, 0755);
+                    $this->generateMods('image', $image, "{$subdir}/MODS.xml");
+                    $fs->copy($image->getFile()->getRealPath(), "{$subdir}/OBJ." . $image->getExtension());
+                }
+            }
+
+            $this->generateStructure($episode, "{$path}/structure.xml");
         }
 
         return 0;
+    }
+
+    public function generateStructure(Episode $episode, $destination) : void {
+        $slug = $episode->getSlug();
+
+        $xml = '<?xml version="1.0" encoding="utf-8"?>';
+        $xml .= "<islandora_compound_object title='{$slug}'>";
+        $xml .= "<child content='{$slug}/episode'/>";
+
+        $images = array_merge($episode->getImages(), $episode->getSeason()->getImages(), $episode->getPodcast()->getImages());
+        foreach ($images as $n => $image) {
+            $xml .= "<child content='{$slug}/img_{$n}'/>";
+        }
+
+        $xml .= "<child content='{$slug}/transcript'/>";
+        $xml .= '</islandora_compound_object>';
+
+        $doc = new DOMDocument();
+        $doc->preserveWhiteSpace = false;
+        $doc->formatOutput = true;
+        $doc->loadXML($xml);
+        $doc->save($destination);
     }
 
     /**
