@@ -3,9 +3,9 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
          backupGlobals="false"
-         colors="false"
-         stopOnError="false"
-         stopOnFailure="false"
+         colors="true"
+         stopOnError="true"
+         stopOnFailure="true"
          bootstrap="tests/bootstrap.php">
     <php>
         <ini name="error_reporting" value="-1" />
