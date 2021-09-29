@@ -4,18 +4,18 @@
         xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-7.xsd"
         version="3.7">
     <titleInfo>
-        <title>{{ episode.podcast.title }} {{ episode.slug }}</title>
+        <title>{{ object.podcast.title }} {{ object.slug }}</title>
     </titleInfo>
-    {% if episode.alternativeTitle %}
+    {% if object.alternativeTitle %}
     <titleInfo type='alternative'>
-        <title>{{ episode.alternativeTitle }}</title>
-        <partNumber>{{ episode.slug }}</partNumber>
-        <partName>{{ episode.podcast.title }}</partName>
-        <partNumber>{{ episode.season.title }}</partNumber>
+        <title>{{ object.alternativeTitle }}</title>
+        <partNumber>{{ object.slug }}</partNumber>
+        <partName>{{ object.podcast.title }}</partName>
+        <partNumber>{{ object.season.title }}</partNumber>
     </titleInfo>
     {% endif %}
 
-    {% set contributions = episode.podcast.contributions|merge(episode.season.contributions) %}
+    {% set contributions = object.podcast.contributions|merge(object.season.contributions) %}
     {% for contribution in contributions %}
         {% set role = contribution.contributorRole %}
         {% set person = contribution.person %}
@@ -29,7 +29,7 @@
         </name>
     {% endfor %}
 
-    {% for contribution in episode.contributions %}
+    {% for contribution in object.contributions %}
         {% set role = contribution.contributorRole %}
         {% set person = contribution.person %}
         <name>
@@ -44,49 +44,49 @@
     {% endfor %}
 
     <originInfo>
-        <dateIssued>{{ episode.date|date('Y-m-d') }}</dateIssued>
+        <dateIssued>{{ object.date|date('Y-m-d') }}</dateIssued>
         <issuance>serial</issuance>
-        {% if episode.season.publisher %}
-            <publisher>{{ episode.season.publisher.name }}</publisher>
-        {% elseif episode.podcast.publisher %}
-            <publisher>{{ episode.podcast.publisher.name }}</publisher>
+        {% if object.season.publisher %}
+            <publisher>{{ object.season.publisher.name }}</publisher>
+        {% elseif object.podcast.publisher %}
+            <publisher>{{ object.podcast.publisher.name }}</publisher>
         {% endif %}
     </originInfo>
 
-    {% if episode.languages|length > 0 %}
+    {% if object.languages|length > 0 %}
     <language>
-        {% for language in episode.languages %}
+        {% for language in object.languages %}
         <languageTerm type='text'>{{ language }}</languageTerm>
         {% endfor %}
     </language>
     {% endif %}
 
-    <abstract><![CDATA[{{ episode.abstract|raw('xml') }}]]></abstract>
+    <abstract><![CDATA[{{ object.abstract|raw('xml') }}]]></abstract>
 
-    {% for subject in episode.subjects %}
+    {% for subject in object.subjects %}
     <subject>
         <topic authority='lcsh' authorityURI="http://id.loc.gov/authorities/subjects">{{ subject }}</topic>
     </subject>
     {% endfor %}
 
-    {% for tag in episode.tags %}
+    {% for tag in object.tags %}
         <subject>
             <topic>{{ tag }}</topic>
         </subject>
     {% endfor %}
 
-    {% for category in episode.podcast.categories %}
+    {% for category in object.podcast.categories %}
         <subject>
             <topic authorityURI='https://help.apple.com/itc/podcasts_connect/#/itc9267a2f12'>{{ category }}</topic>
         </subject>
     {% endfor %}
 
-    <accessCondition type='use and reproduction'>{{ episode.podcast.copyright|raw|striptags }}</accessCondition>
+    <accessCondition type='use and reproduction'>{{ object.podcast.copyright|raw|striptags }}</accessCondition>
 
     <relatedItem type='series'>
         <titleInfo>
-            <title>{{ episode.podcast.title }}</title>
-            <partNumber>{{ episode.slug }}</partNumber>
+            <title>{{ object.podcast.title }}</title>
+            <partNumber>{{ object.slug }}</partNumber>
         </titleInfo>
     </relatedItem>
 </mods>
