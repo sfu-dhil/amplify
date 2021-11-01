@@ -33,12 +33,10 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         ImageContainerTrait::__construct as protected image_constructor;
 
     }
-
     use AudioContainerTrait {
         AudioContainerTrait::__construct as protected audio_constructor;
 
     }
-
     use PdfContainerTrait {
         PdfContainerTrait::__construct as protected pdf_constructor;
 
