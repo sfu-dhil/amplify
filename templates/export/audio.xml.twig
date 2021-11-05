@@ -4,7 +4,7 @@
         xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-7.xsd"
         version="3.7">
     <titleInfo>
-        <title>{{ object.podcast.title }} {{ object.slug }}: {{ object.title }} Audio</title>
+        <title>{{ object.podcast.title }} {{ object.slug }}: {{ object.title }}</title>
     </titleInfo>
 
     {% set contributions = object.podcast.contributions|merge(object.season.contributions) %}
@@ -37,6 +37,12 @@
 
     <typeOfResource>sound recording-non-musical</typeOfResource>
     <genre>Podcast</genre>
+
+    <physicalDescription>
+        <form authority="marcform">sound recording</form>
+        <extent unit='minutes'>{{ object.runTime }}</extent>
+        <digitalOrigin>born digital</digitalOrigin>
+    </physicalDescription>
 
     <originInfo>
         <dateIssued>{{ object.date|date('Y-m-d') }}</dateIssued>
