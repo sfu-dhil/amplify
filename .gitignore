@@ -16,7 +16,7 @@
 ###< symfony/phpunit-bridge ###
 
 # Editors
-.idea
+/.idea
 
 # Bundles
 /public/js/jquery.collection.js
@@ -25,14 +25,11 @@
 # Yarn packages.
 /public/yarn
 /config/deploy.yaml
-*.sql
+/*.sql
 /data
-src/.preload.php
+/src/.preload.php
 
-###> phpunit/phpunit ###
-/phpunit.xml
-.phpunit.result.cache
-###< phpunit/phpunit ###
-lib
-ps
-export
+# hacking and exporting
+/lib
+/ps
+/export
