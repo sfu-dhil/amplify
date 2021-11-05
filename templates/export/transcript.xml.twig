@@ -4,7 +4,7 @@
         xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-7.xsd"
         version="3.7">
     <titleInfo>
-        <title>{{ object.podcast.title }} {{ object.slug }} Transcript</title>
+        <title>{{ object.podcast.title }} {{ object.slug }}: {{ object.title }} Transcript</title>
     </titleInfo>
 
     {% set contributions = object.podcast.contributions|merge(object.season.contributions) %}

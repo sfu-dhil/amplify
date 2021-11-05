@@ -11,9 +11,11 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\Episode;
+use App\Entity\Podcast;
 use App\Repository\SeasonRepository;
 use DOMDocument;
 use Nines\MediaBundle\Service\AudioManager;
+use Nines\MediaBundle\Service\ImageManager;
 use Soundasleep\Html2Text;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -33,13 +35,14 @@ class ExportBatchCommand extends Command {
     protected static $defaultName = 'app:export:batch';
 
     protected static $defaultDescription = 'Export a season of a podcast for an islandora batch import.';
+    private ImageManager $imageManager;
 
     protected function configure() : void {
         $this->setDescription(self::$defaultDescription)->addArgument('seasonId', InputArgument::REQUIRED, 'Season database ID')->addArgument('directory', InputArgument::REQUIRED, 'Directory to export to');
     }
 
-    protected function generateMods($type, $object, $destination) : void {
-        $mods = $this->twig->render("export/{$type}.xml.twig", ['object' => $object]);
+    protected function generateMods($type, $object, $destination, $episode = null) : void {
+        $mods = $this->twig->render("export/{$type}.xml.twig", ['object' => $object, 'episode' => $episode]);
         $doc = new DOMDocument();
         $doc->preserveWhiteSpace = false;
         $doc->formatOutput = true;
@@ -100,7 +103,7 @@ class ExportBatchCommand extends Command {
                 foreach ($images as $n => $image) {
                     $subdir = "{$path}/img_{$n}";
                     $fs->mkdir($subdir, 0755);
-                    $this->generateMods('image', $image, "{$subdir}/MODS.xml");
+                    $this->generateMods('image', $image, "{$subdir}/MODS.xml", $episode);
                     $fs->copy($image->getFile()->getRealPath(), "{$subdir}/OBJ." . $image->getExtension());
                 }
             }
@@ -152,5 +155,13 @@ class ExportBatchCommand extends Command {
      */
     public function setAudioManager(AudioManager $audioManager) : void {
         $this->audioManager = $audioManager;
+    }
+
+    /**
+     * @param ImageManager $imageManager
+     * @required
+     */
+    public function setImageManager(ImageManager $imageManager) : void {
+        $this->imageManager = $imageManager;
     }
 }

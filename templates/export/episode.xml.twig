@@ -4,7 +4,7 @@
         xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-7.xsd"
         version="3.7">
     <titleInfo>
-        <title>{{ object.podcast.title }} {{ object.slug }}</title>
+        <title>{{ object.podcast.title }} {{ object.slug }}: {{ object.title }}</title>
     </titleInfo>
     {% if object.alternativeTitle %}
     <titleInfo type='alternative'>
@@ -42,6 +42,12 @@
             {% if person.bio %}<description>{{ person.bio(true) }}</description>{% endif %}
         </name>
     {% endfor %}
+
+    <physicalDescription>
+        <form authority="marcform">sound recording</form>
+        <extent unit='minutes'>{{ object.runTime }}</extent>
+        <digitalOrigin>born digital</digitalOrigin>
+    </physicalDescription>
 
     <originInfo>
         <dateIssued>{{ object.date|date('Y-m-d') }}</dateIssued>
