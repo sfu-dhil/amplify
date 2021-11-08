@@ -16,7 +16,7 @@
             {% if person.institution %}<affiliation>{{ person.institution}}</affiliation>{% endif %}
             <role>
                 {% if role.relatorTerm %}<roleTerm type='code' authority='marcrelator'>{{ role.relatorTerm }}</roleTerm>{% endif %}
-                <roleTerm type='marcrel'>{{ role.label }}</roleTerm>
+                <roleTerm  type="text" authority="marcrel">{{ role.label }}</roleTerm>
             </role>
         </name>
     {% endfor %}
@@ -29,7 +29,7 @@
             {% if person.institution %}<affiliation>{{ person.institution}}</affiliation>{% endif %}
             <role>
                 {% if role.relatorTerm %}<roleTerm type='code' authority='marcrelator'>{{ role.relatorTerm }}</roleTerm>{% endif %}
-                <roleTerm type='marcrel'>{{ role.label }}</roleTerm>
+                <roleTerm  type="text" authority="marcrel">{{ role.label }}</roleTerm>
             </role>
             {% if person.bio %}<description>{{ person.bio(true) }}</description>{% endif %}
         </name>
@@ -85,4 +85,3 @@
         </titleInfo>
     </relatedItem>
 </mods>
-
