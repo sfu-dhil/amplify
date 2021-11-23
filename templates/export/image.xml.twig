@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods xmlns="http://www.loc.gov/mods/v3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
+        version="3.5">
+    <titleInfo>
+        <title>{{ episode.podcast.title }} {{ episode.slug }}: {{ episode.title }}</title>
+    </titleInfo>
+
+    <typeOfResource>image</typeOfResource>
+    <genre>Podcast</genre>
+
+    <originInfo>
+        <dateIssued>{{ episode.date|date('Y-m-d') }}</dateIssued>
+        <issuance>serial</issuance>
+        {% if episode.season.publisher %}
+            <publisher>{{ episode.season.publisher.name }}</publisher>
+        {% elseif episode.podcast.publisher %}
+            <publisher>{{ episode.podcast.publisher.name }}</publisher>
+        {% endif %}
+    </originInfo>
+
+    <accessCondition type='use and reproduction'>{{ episode.podcast.copyright|raw|striptags }}</accessCondition>
+
+    <relatedItem type='series'>
+        <titleInfo>
+            <title>{{ episode.podcast.title }}</title>
+            <partNumber>{{ episode.slug }}</partNumber>
+        </titleInfo>
+    </relatedItem>
+    <identifier type='amplify'>episode:{{ object.id }}:image</identifier>
+</mods>
+

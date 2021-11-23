@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mods xmlns="http://www.loc.gov/mods/v3"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-7.xsd"
-        version="3.7">
+        xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
+        version="3.5">
     <titleInfo>
-        <title>{{ object.podcast.title }} {{ object.slug }} Transcript</title>
+        <title>{{ object.podcast.title }} {{ object.slug }}: {{ object.title }}</title>
     </titleInfo>
 
     {% set contributions = object.podcast.contributions|merge(object.season.contributions) %}
@@ -16,7 +16,7 @@
             {% if person.institution %}<affiliation>{{ person.institution}}</affiliation>{% endif %}
             <role>
                 {% if role.relatorTerm %}<roleTerm type='code' authority='marcrelator'>{{ role.relatorTerm }}</roleTerm>{% endif %}
-                <roleTerm type='marcrel'>{{ role.label }}</roleTerm>
+                <roleTerm  type="text" authority="marcrel">{{ role.label }}</roleTerm>
             </role>
         </name>
     {% endfor %}
@@ -29,13 +29,13 @@
             {% if person.institution %}<affiliation>{{ person.institution}}</affiliation>{% endif %}
             <role>
                 {% if role.relatorTerm %}<roleTerm type='code' authority='marcrelator'>{{ role.relatorTerm }}</roleTerm>{% endif %}
-                <roleTerm type='marcrel'>{{ role.label }}</roleTerm>
+                <roleTerm  type="text" authority="marcrel">{{ role.label }}</roleTerm>
             </role>
             {% if person.bio %}<description>{{ person.bio(true) }}</description>{% endif %}
         </name>
     {% endfor %}
 
-    <typeOfResource>text transcription</typeOfResource>
+    <typeOfResource>text</typeOfResource>
     <genre>Podcast</genre>
 
     <originInfo>
@@ -84,5 +84,6 @@
             <partNumber>{{ object.slug }}</partNumber>
         </titleInfo>
     </relatedItem>
-</mods>
 
+    <identifier type='amplify'>episode:{{ object.id }}:transcript</identifier>
+</mods>
