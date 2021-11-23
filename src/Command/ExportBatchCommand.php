@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\Episode;
-use App\Entity\Podcast;
 use App\Repository\SeasonRepository;
 use DOMDocument;
 use Nines\MediaBundle\Service\AudioManager;
@@ -32,10 +31,11 @@ class ExportBatchCommand extends Command {
 
     private AudioManager $audioManager;
 
+    private ImageManager $imageManager;
+
     protected static $defaultName = 'app:export:batch';
 
     protected static $defaultDescription = 'Export a season of a podcast for an islandora batch import.';
-    private ImageManager $imageManager;
 
     protected function configure() : void {
         $this->setDescription(self::$defaultDescription)->addArgument('seasonId', InputArgument::REQUIRED, 'Season database ID')->addArgument('directory', InputArgument::REQUIRED, 'Directory to export to');
@@ -158,7 +158,6 @@ class ExportBatchCommand extends Command {
     }
 
     /**
-     * @param ImageManager $imageManager
      * @required
      */
     public function setImageManager(ImageManager $imageManager) : void {
