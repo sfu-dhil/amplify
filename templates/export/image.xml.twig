@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mods xmlns="http://www.loc.gov/mods/v3"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-7.xsd"
-        version="3.7">
+        xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
+        version="3.5">
     <titleInfo>
         <title>{{ episode.podcast.title }} {{ episode.slug }}: {{ episode.title }}</title>
     </titleInfo>
@@ -28,5 +28,6 @@
             <partNumber>{{ episode.slug }}</partNumber>
         </titleInfo>
     </relatedItem>
+    <identifier type='amplify'>episode:{{ object.id }}:image</identifier>
 </mods>
 
