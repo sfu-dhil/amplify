@@ -78,7 +78,7 @@ class CategoryController extends AbstractController implements PaginatorAwareInt
         }
         $data = [];
 
-        foreach ($categoryRepository->typeaheadQuery($q) as $result) {
+        foreach ($categoryRepository->typeaheadQuery($q)->execute() as $result) {
             $data[] = [
                 'id' => $result->getId(),
                 'text' => (string) $result,

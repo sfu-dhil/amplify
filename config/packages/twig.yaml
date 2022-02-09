@@ -18,3 +18,4 @@ twig:
         piwik_url: '%dhil.piwik_url%'
         piwik_siteid: '%dhil.piwik_siteid%'
         piwik_domain: '%dhil.piwik_domain%'
+        linker: '@Nines\UtilBundle\Services\EntityLinker'

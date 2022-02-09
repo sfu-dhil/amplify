@@ -78,7 +78,7 @@ class LanguageController extends AbstractController implements PaginatorAwareInt
         }
         $data = [];
 
-        foreach ($languageRepository->typeaheadQuery($q) as $result) {
+        foreach ($languageRepository->typeaheadQuery($q)->execute() as $result) {
             $data[] = [
                 'id' => $result->getId(),
                 'text' => (string) $result,

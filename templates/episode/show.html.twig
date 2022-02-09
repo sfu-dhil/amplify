@@ -75,11 +75,11 @@
         </div>
         <div class='clearfix'></div>
     {% endif %}
-    {% embed '@NinesMedia/image/partial/list.html.twig' with {
-        'images': episode.images,
+    {% embed '@NinesMedia/image/ui/list.html.twig' with {
+        'container': episode,
+        'path_new': 'episode_new_image',
         'path_delete': 'episode_delete_image',
         'path_edit': 'episode_edit_image',
-        'entity_id': episode.id,
     } %}
     {% endembed %}
 
@@ -93,11 +93,11 @@
         </div>
         <div class='clearfix'></div>
     {% endif %}
-    {% embed '@NinesMedia/pdf/partial/list.html.twig' with {
-        'pdfs': episode.pdfs,
+    {% embed '@NinesMedia/pdf/ui/list.html.twig' with {
+        'container': episode,
+        'path_new': 'episode_new_pdf',
         'path_delete': 'episode_delete_pdf',
         'path_edit': 'episode_edit_pdf',
-        'entity_id': episode.id,
     } %}
     {% endembed %}
 {% endblock %}

@@ -12,63 +12,43 @@ namespace App\Repository;
 
 use App\Entity\Episode;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method null|Episode find($id, $lockMode = null, $lockVersion = null)
- * @method null|Episode findOneBy(array $criteria, array $orderBy = null)
  * @method Episode[] findAll()
  * @method Episode[] findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method null|Episode findOneBy(array $criteria, array $orderBy = null)
+ * @phpstan-extends ServiceEntityRepository<Episode>
  */
 class EpisodeRepository extends ServiceEntityRepository {
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Episode::class);
     }
 
-    /**
-     * @param mixed $q
-     *
-     * @return Query
-     */
-    public function indexQuery($q) {
-        $qb = $this->createQueryBuilder('episode')
+    public function indexQuery() : Query {
+        return $this->createQueryBuilder('episode')
             ->orderBy('episode.id')
+            ->getQuery()
         ;
-        if ($q) {
-            $qb->andWhere("json_search(episode.subjects, 'one', :q) is not null");
-            $qb->setParameter('q', $q);
-        }
+    }
+
+    public function typeaheadQuery(string $q) : Query {
+        $qb = $this->createQueryBuilder('episode');
+        $qb->andWhere('episode.title LIKE :q');
+        $qb->orderBy('episode.title', 'ASC');
+        $qb->setParameter('q', "{$q}%");
 
         return $qb->getQuery();
     }
 
-    /**
-     * @param string $q
-     *
-     * @return Collection|Episode[]
-     */
-    public function typeaheadQuery($q) {
+    public function searchQuery(string $q) : Query {
         $qb = $this->createQueryBuilder('episode');
         $qb->andWhere('episode.title LIKE :q');
         $qb->orderBy('episode.title', 'ASC');
         $qb->setParameter('q', "{$q}%");
 
-        return $qb->getQuery()->execute();
-    }
-
-    /**
-     * @param string $q
-     *
-     * @return Collection|Episode[]
-     */
-    public function searchQuery($q) {
-        $qb = $this->createQueryBuilder('episode');
-        $qb->andWhere('episode.title LIKE :q');
-        $qb->orderBy('episode.title', 'ASC');
-        $qb->setParameter('q', "{$q}%");
-
-        return $qb->getQuery()->execute();
+        return $qb->getQuery();
     }
 }

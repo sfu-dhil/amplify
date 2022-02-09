@@ -24,13 +24,19 @@
                     <a href='{{ path("contributor_role_show", {"id": contribution.contributorRole.id}) }}'>{{ contribution.contributorRole }}</a>
                 </td>
                 <td>
+                    {% if contribution.episode %}
                     <a href='{{ path("episode_show", {"id": contribution.episode.id}) }}'>{{ contribution.episode }}</a>
+                    {% endif %}
                 </td>
                 <td>
+                    {% if contribution.season %}
                     <a href='{{ path("season_show", {"id": contribution.season.id}) }}'>{{ contribution.season }}</a>
+                    {% endif %}
                 </td>
                 <td>
+                    {% if contribution.podcast %}
                     <a href='{{ path("podcast_show", {"id": contribution.podcast.id}) }}'>{{ contribution.podcast }}</a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}

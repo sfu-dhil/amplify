@@ -1,17 +1,13 @@
-nines_user:
-  resource: '@NinesUserBundle/Resources/config/routes.yaml'
+# config/routes.yaml
+nines_blog:
+  resource: '@NinesBlogBundle/config/routes.yaml'
 
 nines_editor:
-  type: annotation
-  prefix: /editor
-  resource: '@NinesEditorBundle/Controller'
+  resource: '@NinesEditorBundle/config/routes.yaml'
+  prefix: editor
 
 nines_media:
-  type: annotation
-  prefix: /media
-  resource: '@NinesMediaBundle/Controller'
+  resource: '@NinesMediaBundle/config/routes.yaml'
 
-nines_blog:
-  type: annotation
-  prefix: /blog
-  resource: '@NinesBlogBundle/Controller'
+nines_user:
+  resource: '@NinesUserBundle/config/routes.yaml'

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          backupGlobals="false"
          colors="true"
-         cacheResult="false"
-         bootstrap="tests/bootstrap.php">
+         bootstrap="tests/bootstrap.php"
+         cacheResult="true"
+         cacheResultFile="var/cache/test/phpunit.cache"
+         convertDeprecationsToExceptions="false">
   <!--
     This configuration is to run the tests and generate a coverage report at
     var/cache/test/coverage.
@@ -15,13 +17,16 @@
     php -d zend_extension=xdebug.so -d xdebug.mode=coverage vendor/bin/phpunit -c phpunit.coverage.xml
   -->
   <php>
-    <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled"/>
-    <ini name="error_reporting" value="-1"/>
+    <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled=1"/>
+    <ini name="display_errors" value="1" />
+    <ini name="error_reporting" value="-1" />
     <ini name="memory_limit" value="-1"/>
     <ini name="zend_extension" value="xdebug.so"/>
-    <server name="APP_ENV" value="test" force="true"/>
+    <server name="APP_ENV" value="test" force="true" />
     <server name="KERNEL_CLASS" value="App\Kernel"/>
-    <server name="SHELL_VERBOSITY" value="-1"/>
+    <server name="SHELL_VERBOSITY" value="-1" />
+    <server name="SYMFONY_PHPUNIT_REMOVE" value="" />
+    <server name="SYMFONY_PHPUNIT_VERSION" value="9.5" />
   </php>
 
   <coverage processUncoveredFiles="true" cacheDirectory="var/cache/test/coverage">
@@ -43,8 +48,13 @@
       <directory>tests</directory>
     </testsuite>
   </testsuites>
+
   <listeners>
     <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>
     <listener class="Symfony\Bridge\PhpUnit\CoverageListener" />
   </listeners>
+
+  <extensions>
+    <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
+  </extensions>
 </phpunit>

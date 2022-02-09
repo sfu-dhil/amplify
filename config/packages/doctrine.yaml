@@ -17,7 +17,3 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
-        dql:
-            string_functions:
-                match: Nines\UtilBundle\Extensions\Doctrine\MySQL\MatchAgainst
-                json_search: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonSearch

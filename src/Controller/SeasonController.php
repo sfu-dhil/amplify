@@ -82,7 +82,7 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
         }
         $data = [];
 
-        foreach ($seasonRepository->typeaheadQuery($q) as $result) {
+        foreach ($seasonRepository->typeaheadQuery($q)->execute() as $result) {
             $data[] = [
                 'id' => $result->getId(),
                 'text' => (string) $result,

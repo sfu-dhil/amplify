@@ -78,7 +78,7 @@ class PersonController extends AbstractController implements PaginatorAwareInter
         }
         $data = [];
 
-        foreach ($personRepository->typeaheadQuery($q) as $result) {
+        foreach ($personRepository->typeaheadQuery($q)->execute() as $result) {
             $data[] = [
                 'id' => $result->getId(),
                 'text' => (string) $result,
