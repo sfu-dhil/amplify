@@ -23,7 +23,7 @@ TWIGCS := ./vendor/bin/twigcs
 .PHONY:
 
 # Silence output slightly
-.SILENT:
+# .SILENT:
 
 # Useful URLs
 PROJECT := amplify
@@ -40,6 +40,10 @@ open: ## Open the project home page in a browser
 clean.git: ## Force clean the git metadata
 	$(GIT) reflog expire --expire=now --all
 	$(GIT) gc --aggressive --prune=now --quiet
+
+clean: ## Remove dev data, cache, and logs
+	rm -rf var/cache/dev/* data/dev/*
+	rm -f var/log/dev-*.log
 
 ## -- Composer targets
 
@@ -80,10 +84,9 @@ sass.watch:
 
 ## Database cleaning
 
-reset: cc.purge ## Drop the database and recreate it with fixtures
+reset: clean cc.purge ## Drop the database and recreate it with fixtures
 	$(CONSOLE) doctrine:cache:clear-metadata --quiet
-	$(CONSOLE) doctrine:database:drop --if-exists --force --quiet
-	$(CONSOLE) doctrine:database:create --quiet
+	$(CONSOLE) doctrine:schema:drop --force --quiet
 	$(CONSOLE) doctrine:schema:create --quiet
 	$(CONSOLE) doctrine:schema:validate --quiet
 	$(CONSOLE) doctrine:fixtures:load --quiet --no-interaction --group=dev
@@ -113,14 +116,15 @@ mailhog.stop: ## Stop the email catcher
 
 ## -- Test targets
 
+test.db: ## Create the test database if it does not already exist.
+	$(CONSOLE) --env=test doctrine:database:create --quiet
+
 test.clean: ## Clean up any test files
 	rm -rf var/cache/test/* data/test/*
 	rm -f var/log/test-*.log
 
 test.reset: ## Create a test database and load the fixtures in it
-	$(CONSOLE) --env=test doctrine:cache:clear-metadata --quiet
-	$(CONSOLE) --env=test doctrine:database:drop --if-exists --force --quiet
-	$(CONSOLE) --env=test doctrine:database:create --quiet
+	$(CONSOLE) --env=test doctrine:schema:drop --force --quiet
 	$(CONSOLE) --env=test doctrine:schema:create --quiet
 	$(CONSOLE) --env=test doctrine:schema:validate --quiet
 	$(CONSOLE) --env=test doctrine:fixtures:load --quiet --no-interaction --group=test

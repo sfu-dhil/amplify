@@ -13,6 +13,7 @@ namespace App\Controller;
 use App\Entity\Episode;
 use App\Form\EpisodeType;
 use App\Repository\EpisodeRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\MediaBundle\Controller\AudioControllerTrait;
 use Nines\MediaBundle\Controller\ImageControllerTrait;
@@ -212,8 +213,8 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      *
      * @return array|RedirectResponse
      */
-    public function newAudio(Request $request, Episode $episode) {
-        return $this->newAudioAction($request, $episode, 'episode_show');
+    public function newAudio(Request $request, EntityManagerInterface $em, Episode $episode) {
+        return $this->newAudioAction($request, $em, $episode, 'episode_show');
     }
 
     /**
@@ -224,8 +225,8 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      *
      * @return array|RedirectResponse
      */
-    public function editAudio(Request $request, Episode $episode, Audio $audio, AudioManager $fileUploader) {
-        return $this->editAudioAction($request, $episode, $audio, 'episode_show');
+    public function editAudio(Request $request, EntityManagerInterface $em, Episode $episode, Audio $audio, AudioManager $fileUploader) {
+        return $this->editAudioAction($request, $em, $episode, $audio, 'episode_show');
     }
 
     /**
@@ -235,8 +236,8 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      *
      * @return RedirectResponse
      */
-    public function deleteAudio(Request $request, Episode $episode, Audio $audio) {
-        return $this->deleteAudioAction($request, $episode, $audio, 'episode_index');
+    public function deleteAudio(Request $request, EntityManagerInterface $em, Episode $episode, Audio $audio) {
+        return $this->deleteAudioAction($request, $em, $episode, $audio, 'episode_show');
     }
 
     /**
@@ -245,8 +246,8 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      *
      * @Template("episode/new_image.html.twig")
      */
-    public function newImage(Request $request, Episode $episode) {
-        return $this->newImageAction($request, $episode, 'episode_show');
+    public function newImage(Request $request, EntityManagerInterface $em, Episode $episode) {
+        return $this->newImageAction($request, $em, $episode, 'episode_show');
     }
 
     /**
@@ -256,8 +257,8 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      *
      * @Template("episode/edit_image.html.twig")
      */
-    public function editImage(Request $request, Episode $episode, Image $image) {
-        return $this->editImageAction($request, $episode, $image, 'episode_show');
+    public function editImage(Request $request, EntityManagerInterface $em, Episode $episode, Image $image) {
+        return $this->editImageAction($request, $em, $episode, $image, 'episode_show');
     }
 
     /**
@@ -265,8 +266,8 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @ParamConverter("image", options={"id": "image_id"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      */
-    public function deleteImage(Request $request, Episode $episode, Image $image) {
-        return $this->deleteImageAction($request, $episode, $image, 'episode_show');
+    public function deleteImage(Request $request, EntityManagerInterface $em, Episode $episode, Image $image) {
+        return $this->deleteImageAction($request, $em, $episode, $image, 'episode_show');
     }
 
     /**
@@ -275,8 +276,8 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      *
      * @Template("episode/new_pdf.html.twig")
      */
-    public function newPdf(Request $request, Episode $episode) {
-        return $this->newPdfAction($request, $episode, 'episode_show');
+    public function newPdf(Request $request, EntityManagerInterface $em, Episode $episode) {
+        return $this->newPdfAction($request, $em, $episode, 'episode_show');
     }
 
     /**
@@ -286,8 +287,8 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      *
      * @Template("episode/edit_pdf.html.twig")
      */
-    public function editPdf(Request $request, Episode $episode, Pdf $pdf) {
-        return $this->editPdfAction($request, $episode, $pdf, 'episode_show');
+    public function editPdf(Request $request, EntityManagerInterface $em, Episode $episode, Pdf $pdf) {
+        return $this->editPdfAction($request, $em, $episode, $pdf, 'episode_show');
     }
 
     /**
@@ -295,7 +296,7 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @ParamConverter("pdf", options={"id": "pdf_id"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      */
-    public function deletePdf(Request $request, Episode $episode, Pdf $pdf) {
-        return $this->deletePdfAction($request, $episode, $pdf, 'episode_show');
+    public function deletePdf(Request $request, EntityManagerInterface $em, Episode $episode, Pdf $pdf) {
+        return $this->deletePdfAction($request, $em, $episode, $pdf, 'episode_show');
     }
 }

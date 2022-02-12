@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use App\Repository\EpisodeRepository;
+use Nines\MediaBundle\Repository\AudioRepository;
+use Nines\MediaBundle\Service\AudioManager;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\TestCase\ControllerTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,7 +60,7 @@ class EpisodeTest extends ControllerTestCase {
         $this->login(UserFixtures::ADMIN);
         $crawler = $this->client->request('GET', '/episode/1');
         $this->assertResponseIsSuccessful();
-        $this->assertSame(1, $crawler->selectLink('Edit')->count());
+        $this->assertSame(2, $crawler->selectLink('Edit')->count());
     }
 
     public function testAnonTypeahead() : void {
@@ -250,9 +252,9 @@ class EpisodeTest extends ControllerTestCase {
         $preCount = count($repo->findAll());
 
         $this->login(UserFixtures::ADMIN);
-        $crawler = $this->client->request('GET', '/episode/1');
+        $crawler = $this->client->request('GET', '/episode/4');
         $this->assertResponseIsSuccessful();
-        $form = $crawler->selectButton('Delete')->form();
+        $form = $crawler->filter('form[action="/episode/4"]')->form();
         $this->client->submit($form);
 
         $this->assertResponseRedirects('/episode/', Response::HTTP_FOUND);
@@ -262,5 +264,120 @@ class EpisodeTest extends ControllerTestCase {
         $this->em->clear();
         $postCount = count($repo->findAll());
         $this->assertSame($preCount - 1, $postCount);
+    }
+
+    public function testAnonNewAudio() : void {
+        $crawler = $this->client->request('GET', '/episode/1/new_audio');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+    }
+
+    public function testUserNewAudio() : void {
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('GET', '/episode/1/new_audio');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminNewAudio() : void {
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/1/new_audio');
+        $this->assertResponseIsSuccessful();
+
+        $manager = self::$container->get(AudioManager::class);
+        $manager->setCopy(true);
+
+        $form = $crawler->selectButton('Create')->form([
+            'audio[public]' => 1,
+            'audio[description]' => 'Description',
+            'audio[license]' => 'License',
+        ]);
+        $form['audio[file]']->upload(dirname(__FILE__, 2) . '/data/audio/443027__pramonette__thunder-long.mp3');
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/episode/1');
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+
+        $manager->setCopy(false);
+    }
+
+    public function testAnonEditAudio() : void {
+        $crawler = $this->client->request('GET', '/episode/1/edit_audio/1');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+    }
+
+    public function testUserEditAudio() : void {
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('GET', '/episode/1/edit_audio/1');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminEditAudio() : void {
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/1/edit_audio/1');
+        $this->assertResponseIsSuccessful();
+
+        $manager = self::$container->get(AudioManager::class);
+        $manager->setCopy(true);
+
+        $form = $crawler->selectButton('Update')->form([
+            'audio[public]' => 0,
+            'audio[description]' => 'Updated Description',
+            'audio[license]' => 'Updated License',
+        ]);
+        $form['audio[newFile]']->upload(dirname(__FILE__, 2) . '/data/audio/443027__pramonette__thunder-long.mp3');
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/episode/1');
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+
+        $manager->setCopy(false);
+    }
+
+    public function testAnonDeleteAudio() : void {
+        $crawler = $this->client->request('DELETE', '/episode/1/delete_audio/1');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+    }
+
+    public function testUserDeleteAudio() : void {
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('DELETE', '/episode/1/delete_audio/1');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminDeleteAudio() : void {
+        $repo = self::$container->get(AudioRepository::class);
+        $preCount = count($repo->findAll());
+
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/4');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form.delete-form[action="/episode/4/delete_audio/4"]')->form();
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/episode/4');
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+
+        $this->em->clear();
+        $postCount = count($repo->findAll());
+        $this->assertSame($preCount - 1, $postCount);
+    }
+
+    public function testAdminDeleteWrongAudio() : void {
+        $repo = self::$container->get(AudioRepository::class);
+        $preCount = count($repo->findAll());
+
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/4');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form.delete-form[action="/episode/4/delete_audio/4"]')->form();
+        $form->getNode()->setAttribute('action', '/episode/3/delete_audio/4');
+
+        $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $this->em->clear();
+        $postCount = count($repo->findAll());
+        $this->assertSame($preCount, $postCount);
     }
 }
