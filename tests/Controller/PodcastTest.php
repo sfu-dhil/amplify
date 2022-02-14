@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use App\Repository\PodcastRepository;
+use Nines\MediaBundle\Repository\ImageRepository;
+use Nines\MediaBundle\Service\ImageManager;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\TestCase\ControllerTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -253,5 +255,143 @@ class PodcastTest extends ControllerTestCase {
         $this->em->clear();
         $postCount = count($repo->findAll());
         $this->assertSame($preCount - 1, $postCount);
+    }
+
+    public function testAnonNewImage() : void {
+        $crawler = $this->client->request('GET', '/podcast/1/new_image');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+    }
+
+    public function testUserNewImage() : void {
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('GET', '/podcast/1/new_image');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminNewImage() : void {
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/podcast/1/new_image');
+        $this->assertResponseIsSuccessful();
+
+        $manager = self::$container->get(ImageManager::class);
+        $manager->setCopy(true);
+
+        $form = $crawler->selectButton('Create')->form([
+            'image[public]' => 1,
+            'image[description]' => 'Description',
+            'image[license]' => 'License',
+        ]);
+        $form['image[file]']->upload(dirname(__FILE__, 2) . '/data/image/28213926366_4430448ff7_c.jpg');
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/podcast/1');
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+
+        $manager->setCopy(false);
+    }
+
+    public function testAnonEditImage() : void {
+        $crawler = $this->client->request('GET', '/podcast/1/edit_image/1');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+    }
+
+    public function testUserEditImage() : void {
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('GET', '/podcast/1/edit_image/1');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminEditImage() : void {
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/podcast/1/edit_image/1');
+        $this->assertResponseIsSuccessful();
+
+        $manager = self::$container->get(ImageManager::class);
+        $manager->setCopy(true);
+
+        $form = $crawler->selectButton('Update')->form([
+            'image[public]' => 0,
+            'image[description]' => 'Updated Description',
+            'image[license]' => 'Updated License',
+        ]);
+        $form['image[newFile]']->upload(dirname(__FILE__, 2) . '/data/image/3632486652_b432f7b283_c.jpg');
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/podcast/1');
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+
+        $manager->setCopy(false);
+    }
+
+    public function testAnonDeleteImage() : void {
+        $crawler = $this->client->request('DELETE', '/podcast/1/delete_image/1');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+    }
+
+    public function testUserDeleteImage() : void {
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('DELETE', '/podcast/1/delete_image/1');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminDeleteImage() : void {
+        $repo = self::$container->get(ImageRepository::class);
+        $preCount = count($repo->findAll());
+
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/podcast/4');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form.delete-form[action="/podcast/4/delete_image/4"]')->form();
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/podcast/4');
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+
+        $this->em->clear();
+        $postCount = count($repo->findAll());
+        $this->assertSame($preCount - 1, $postCount);
+    }
+
+    public function testAdminDeleteWrongImage() : void {
+        $repo = self::$container->get(ImageRepository::class);
+        $preCount = count($repo->findAll());
+
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/podcast/4');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form.delete-form[action="/podcast/4/delete_image/4"]')->form();
+        $form->getNode()->setAttribute('action', '/podcast/3/delete_image/4');
+
+        $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $this->em->clear();
+        $postCount = count($repo->findAll());
+        $this->assertSame($preCount, $postCount);
+    }
+
+    public function testAdminDeleteImageWrongToken() : void {
+        $repo = self::$container->get(ImageRepository::class);
+        $preCount = count($repo->findAll());
+
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/podcast/4');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form.delete-form[action="/podcast/4/delete_image/4"]')->form([
+            '_token' => 'abc123',
+        ]);
+
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/podcast/4');
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('div.alert-warning', 'Invalid security token.');
+
+        $this->em->clear();
+        $postCount = count($repo->findAll());
+        $this->assertSame($preCount, $postCount);
     }
 }

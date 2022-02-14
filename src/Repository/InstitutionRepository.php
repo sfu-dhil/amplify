@@ -14,7 +14,6 @@ use App\Entity\Institution;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
-use Nines\UtilBundle\Repository\TermRepository;
 
 /**
  * @method null|Institution find($id, $lockMode = null, $lockVersion = null)

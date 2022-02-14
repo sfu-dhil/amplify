@@ -13,6 +13,7 @@ namespace App\Controller;
 use App\Entity\Season;
 use App\Form\SeasonType;
 use App\Repository\SeasonRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\MediaBundle\Controller\ImageControllerTrait;
 use Nines\MediaBundle\Entity\Image;
@@ -203,8 +204,8 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
      *
      * @Template("season/new_image.html.twig")
      */
-    public function newImage(Request $request, Season $season) {
-        return $this->newImageAction($request, $season, 'season_show');
+    public function newImage(Request $request, EntityManagerInterface $em, Season $season) {
+        return $this->newImageAction($request, $em, $season, 'season_show');
     }
 
     /**
@@ -214,8 +215,8 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
      *
      * @Template("season/edit_image.html.twig")
      */
-    public function editImage(Request $request, Season $season, Image $image) {
-        return $this->editImageAction($request, $season, $image, 'season_show');
+    public function editImage(Request $request, EntityManagerInterface $em, Season $season, Image $image) {
+        return $this->editImageAction($request, $em, $season, $image, 'season_show');
     }
 
     /**
@@ -223,7 +224,7 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
      * @ParamConverter("image", options={"id": "image_id"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      */
-    public function deleteImage(Request $request, Season $season, Image $image) {
-        return $this->deleteImageAction($request, $season, $image, 'season_show');
+    public function deleteImage(Request $request, EntityManagerInterface $em, Season $season, Image $image) {
+        return $this->deleteImageAction($request, $em, $season, $image, 'season_show');
     }
 }
