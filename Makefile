@@ -9,6 +9,8 @@ PHP := $(PFX)/bin/php
 BREW := $(PFX)/bin/brew
 GIT := $(PFX)/bin/git
 SOLR := $(PFX)/bin/solr
+PV := $(PFX)/bin/pv
+MYSQL := $(PFX)/bin/mysql
 
 # Aliases
 CONSOLE := $(PHP) bin/console
@@ -26,14 +28,13 @@ TWIGCS := ./vendor/bin/twigcs
 # Silence output slightly
 # .SILENT:
 
-# Useful URLs
+DB := dhil_amplify
+DB_TEST := $(DB)_test
 PROJECT := amplify
 PROJECT_TEST := $(PROJECT)_test
 
+# Useful URLs
 LOCAL := http://localhost/$(PROJECT)/public
-
-SOLR := http://localhost:8983/solr/\#/$(PROJECT)/core-overview
-SOLR_TEST := http://localhost:8983/solr/\#/$(PROJECT_TEST)/core-overview
 
 ## -- Help
 help: ## Outputs this help screen
@@ -97,9 +98,15 @@ db: ## Create the database if it does not already exist
 	$(CONSOLE) --env=dev doctrine:schema:create --quiet
 	$(CONSOLE) --env=dev doctrine:schema:validate --quiet
 
-reset: cc.purge solr.clear ## Drop the database and recreate it with fixtures
+reset: cc.purge ## Drop the database and recreate it with fixtures
 	$(CONSOLE) doctrine:cache:clear-metadata --quiet
 	$(CONSOLE) --env=dev doctrine:fixtures:load --quiet --no-interaction --group=dev --purger=fk_purger
+
+reload: cc.purge
+	$(CONSOLE) --env=dev doctrine:database:drop --if-exists --force --quiet
+	$(CONSOLE) --env=dev doctrine:database:create --quiet
+	$(PV) $(PROJECT)-schema.sql | $(MYSQL) $(DB)
+	$(PV) $(PROJECT)-data.sql | $(MYSQL) $(DB)
 
 ## -- Container debug targets
 
