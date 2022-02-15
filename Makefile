@@ -8,6 +8,7 @@ SASS := $(PFX)/bin/sass
 PHP := $(PFX)/bin/php
 BREW := $(PFX)/bin/brew
 GIT := $(PFX)/bin/git
+SOLR := $(PFX)/bin/solr
 
 # Aliases
 CONSOLE := $(PHP) bin/console
@@ -27,7 +28,12 @@ TWIGCS := ./vendor/bin/twigcs
 
 # Useful URLs
 PROJECT := amplify
-LOCAL := http://localhost/dhil/$(PROJECT)/public/
+PROJECT_TEST := $(PROJECT)_test
+
+LOCAL := http://localhost/$(PROJECT)/public
+
+SOLR := http://localhost:8983/solr/\#/$(PROJECT)/core-overview
+SOLR_TEST := http://localhost:8983/solr/\#/$(PROJECT_TEST)/core-overview
 
 ## -- Help
 help: ## Outputs this help screen
@@ -41,7 +47,7 @@ clean.git: ## Force clean the git metadata
 	$(GIT) reflog expire --expire=now --all
 	$(GIT) gc --aggressive --prune=now --quiet
 
-clean: ## Remove dev data, cache, and logs
+clean: ## Clean up any dev files
 	rm -rf var/cache/dev/* data/dev/*
 	rm -f var/log/dev-*.log
 
@@ -74,27 +80,31 @@ assets: ## Link assets into /public
 yarn: ## Install yarn assets
 	$(YARN) install
 
-yarn.upgrade:
+yarn.upgrade: ## Upgrade the yarn assets
 	$(YARN) upgrade
 
-sass:
+sass: ## Recompile the SASS assets
 	$(SASS) public/scss:public/css
 
-sass.watch:
+sass.watch: ## Start the SASS watcher
+	$(SASS) --watch public/scss:public/css
 
 ## Database cleaning
 
-reset: clean cc.purge ## Drop the database and recreate it with fixtures
+db: ## Create the database if it does not already exist
+	$(CONSOLE) --env=dev doctrine:database:create --if-not-exists --quiet
+	$(CONSOLE) --env=dev doctrine:schema:drop --force --quiet
+	$(CONSOLE) --env=dev doctrine:schema:create --quiet
+	$(CONSOLE) --env=dev doctrine:schema:validate --quiet
+
+reset: cc.purge solr.clear ## Drop the database and recreate it with fixtures
 	$(CONSOLE) doctrine:cache:clear-metadata --quiet
-	$(CONSOLE) doctrine:schema:drop --force --quiet
-	$(CONSOLE) doctrine:schema:create --quiet
-	$(CONSOLE) doctrine:schema:validate --quiet
-	$(CONSOLE) doctrine:fixtures:load --quiet --no-interaction --group=dev
+	$(CONSOLE) --env=dev doctrine:fixtures:load --quiet --no-interaction --group=dev --purger=fk_purger
 
 ## -- Container debug targets
 
 dump.params: ## List all of the nines container parameters
-	$(CONSOLE) debug:container --parameters | grep -i '^\s*nines'
+	$(CONSOLE) debug:container --parameters | grep '^\s*nines'
 
 dump.env: ## Show all environment variables in the container
 	$(CONSOLE) debug:container --env-vars
@@ -104,6 +114,23 @@ dump.autowire: ## Show autowireable services
 
 dump.twig: ## Show all twig configuration
 	$(CONSOLE) debug:twig
+
+## -- Solr search and indexing targets
+
+solr.setup: ## Create the SOLR core for indexing
+	-solr create -c nines_demo
+
+solr.delete: ## Remove the SOLR core
+	-solr delete -c nines_demo
+
+solr.clear: ## Clear the content from the SOLR core
+	$(CONSOLE) nines:solr:clear
+
+solr.index: ## Index the content in to the SOLR core
+	$(CONSOLE) nines:solr:index --clear
+
+solr.open: ## Open the local SOLR core in a web browser
+	open $(SOLR)
 
 ## -- Useful development services
 
@@ -116,18 +143,34 @@ mailhog.stop: ## Stop the email catcher
 
 ## -- Test targets
 
-test.db: ## Create the test database if it does not already exist.
-	$(CONSOLE) --env=test doctrine:database:create --quiet
+test.solr.setup: ## Create a test SOLR core
+	-solr create -c $(PROJECT_TEST)
+
+test.solr.delete: ## Delete the stest SOLR core
+	-solr delete -c $(PROJECT_TEST)
+
+test.solr.clear: ## Clear the content from the test SOLR core
+	$(CONSOLE) --env=test nines:solr:clear
+
+test.solr.index: ## Index the content into the test SOLR core
+	$(CONSOLE) --env=test nines:solr:index --clear
+
+test.solr.open: ## Open the test SOLR core in a web browser
+	open $(SOLR)
 
 test.clean: ## Clean up any test files
 	rm -rf var/cache/test/* data/test/*
 	rm -f var/log/test-*.log
 
-test.reset: ## Create a test database and load the fixtures in it
+test.db: ## Create the test database if it does not already exist
+	$(CONSOLE) --env=test doctrine:database:create --if-not-exists --quiet
 	$(CONSOLE) --env=test doctrine:schema:drop --force --quiet
 	$(CONSOLE) --env=test doctrine:schema:create --quiet
 	$(CONSOLE) --env=test doctrine:schema:validate --quiet
-	$(CONSOLE) --env=test doctrine:fixtures:load --quiet --no-interaction --group=test
+
+test.reset: ## Create a test database and load the fixtures in it
+	$(CONSOLE) --env=test doctrine:cache:clear-metadata --quiet
+	$(CONSOLE) --env=test doctrine:fixtures:load --quiet --no-interaction --group=dev --purger=fk_purger
 
 test.run:
 	$(PHPUNIT) $(path)
