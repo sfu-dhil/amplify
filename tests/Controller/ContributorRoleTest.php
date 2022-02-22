@@ -10,97 +10,61 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
-use App\DataFixtures\ContributorRoleFixtures;
 use App\Repository\ContributorRoleRepository;
 use Nines\UserBundle\DataFixtures\UserFixtures;
-use Nines\UtilBundle\Tests\ControllerBaseCase;
+use Nines\UtilBundle\TestCase\ControllerTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class ContributorRoleTest extends ControllerBaseCase {
+class ContributorRoleTest extends ControllerTestCase {
     // Change this to HTTP_OK when the site is public.
     private const ANON_RESPONSE_CODE = Response::HTTP_FOUND;
 
     private const TYPEAHEAD_QUERY = 'label';
 
-    protected function fixtures() : array {
-        return [
-            ContributorRoleFixtures::class,
-            UserFixtures::class,
-        ];
-    }
-
-    /**
-     * @group anon
-     * @group index
-     */
     public function testAnonIndex() : void {
         $crawler = $this->client->request('GET', '/contributor_role/');
-        $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
         $this->assertSame(0, $crawler->selectLink('New')->count());
     }
 
-    /**
-     * @group user
-     * @group index
-     */
     public function testUserIndex() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/contributor_role/');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
         $this->assertSame(0, $crawler->selectLink('New')->count());
     }
 
-    /**
-     * @group admin
-     * @group index
-     */
     public function testAdminIndex() : void {
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $crawler = $this->client->request('GET', '/contributor_role/');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
         $this->assertSame(1, $crawler->selectLink('New')->count());
     }
 
-    /**
-     * @group anon
-     * @group show
-     */
     public function testAnonShow() : void {
         $crawler = $this->client->request('GET', '/contributor_role/1');
-        $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
         $this->assertSame(0, $crawler->selectLink('Edit')->count());
     }
 
-    /**
-     * @group user
-     * @group show
-     */
     public function testUserShow() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/contributor_role/1');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
         $this->assertSame(0, $crawler->selectLink('Edit')->count());
     }
 
-    /**
-     * @group admin
-     * @group show
-     */
     public function testAdminShow() : void {
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $crawler = $this->client->request('GET', '/contributor_role/1');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
         $this->assertSame(1, $crawler->selectLink('Edit')->count());
     }
 
-    /**
-     * @group anon
-     * @group typeahead
-     */
     public function testAnonTypeahead() : void {
         $this->client->request('GET', '/contributor_role/typeahead?q=' . self::TYPEAHEAD_QUERY);
         $response = $this->client->getResponse();
-        $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
         if (self::ANON_RESPONSE_CODE === Response::HTTP_FOUND) {
             // If authentication is required stop here.
             return;
@@ -110,42 +74,29 @@ class ContributorRoleTest extends ControllerBaseCase {
         $this->assertCount(4, $json);
     }
 
-    /**
-     * @group user
-     * @group typeahead
-     */
     public function testUserTypeahead() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $this->client->request('GET', '/contributor_role/typeahead?q=' . self::TYPEAHEAD_QUERY);
         $response = $this->client->getResponse();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
         $this->assertSame('application/json', $response->headers->get('content-type'));
         $json = json_decode($response->getContent());
         $this->assertCount(4, $json);
     }
 
-    /**
-     * @group admin
-     * @group typeahead
-     */
     public function testAdminTypeahead() : void {
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $this->client->request('GET', '/contributor_role/typeahead?q=' . self::TYPEAHEAD_QUERY);
         $response = $this->client->getResponse();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
         $this->assertSame('application/json', $response->headers->get('content-type'));
         $json = json_decode($response->getContent());
         $this->assertCount(4, $json);
     }
 
     public function testAnonSearch() : void {
-        $repo = $this->createMock(ContributorRoleRepository::class);
-        $repo->method('searchQuery')->willReturn([$this->getReference('contributorrole.1')]);
-        $this->client->disableReboot();
-        $this->client->getContainer()->set('test.' . ContributorRoleRepository::class, $repo);
-
         $crawler = $this->client->request('GET', '/contributor_role/search');
-        $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
         if (self::ANON_RESPONSE_CODE === Response::HTTP_FOUND) {
             // If authentication is required stop here.
             return;
@@ -160,14 +111,9 @@ class ContributorRoleTest extends ControllerBaseCase {
     }
 
     public function testUserSearch() : void {
-        $repo = $this->createMock(ContributorRoleRepository::class);
-        $repo->method('searchQuery')->willReturn([$this->getReference('contributorrole.1')]);
-        $this->client->disableReboot();
-        $this->client->getContainer()->set('test.' . ContributorRoleRepository::class, $repo);
-
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/contributor_role/search');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('btn-search')->form([
             'q' => 'contributorRole',
@@ -178,14 +124,9 @@ class ContributorRoleTest extends ControllerBaseCase {
     }
 
     public function testAdminSearch() : void {
-        $repo = $this->createMock(ContributorRoleRepository::class);
-        $repo->method('searchQuery')->willReturn([$this->getReference('contributorrole.1')]);
-        $this->client->disableReboot();
-        $this->client->getContainer()->set('test.' . ContributorRoleRepository::class, $repo);
-
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $crawler = $this->client->request('GET', '/contributor_role/search');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('btn-search')->form([
             'q' => 'contributorRole',
@@ -195,151 +136,106 @@ class ContributorRoleTest extends ControllerBaseCase {
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @group anon
-     * @group edit
-     */
     public function testAnonEdit() : void {
         $crawler = $this->client->request('GET', '/contributor_role/1/edit');
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
-    /**
-     * @group user
-     * @group edit
-     */
     public function testUserEdit() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/contributor_role/1/edit');
         $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @group admin
-     * @group edit
-     */
     public function testAdminEdit() : void {
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $formCrawler = $this->client->request('GET', '/contributor_role/1/edit');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
 
         $form = $formCrawler->selectButton('Save')->form([
             'contributor_role[label]' => 'Updated Label',
-            'contributor_role[description]' => 'Updated Description',
+            'contributor_role[description]' => '<p>Updated Text</p>',
+            'contributor_role[relatorTerm]' => 'abc',
         ]);
 
         $this->client->submit($form);
-        $this->assertTrue($this->client->getResponse()->isRedirect('/contributor_role/1'));
+        $this->assertResponseRedirects('/contributor_role/1', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Label")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Description")')->count());
+        $this->assertResponseIsSuccessful();
     }
 
-    /**
-     * @group anon
-     * @group new
-     */
     public function testAnonNew() : void {
         $crawler = $this->client->request('GET', '/contributor_role/new');
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
-    /**
-     * @group anon
-     * @group new
-     */
     public function testAnonNewPopup() : void {
         $crawler = $this->client->request('GET', '/contributor_role/new_popup');
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
-    /**
-     * @group user
-     * @group new
-     */
     public function testUserNew() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/contributor_role/new');
         $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @group user
-     * @group new
-     */
     public function testUserNewPopup() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/contributor_role/new_popup');
         $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @group admin
-     * @group new
-     */
     public function testAdminNew() : void {
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $formCrawler = $this->client->request('GET', '/contributor_role/new');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
 
         $form = $formCrawler->selectButton('Save')->form([
-            'contributor_role[label]' => 'New Label',
-            'contributor_role[description]' => 'New Description',
+            'contributor_role[label]' => 'Updated Label',
+            'contributor_role[description]' => '<p>Updated Text</p>',
+            'contributor_role[relatorTerm]' => 'abc',
         ]);
 
         $this->client->submit($form);
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/contributor_role/5', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Label")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Description")')->count());
+        $this->assertResponseIsSuccessful();
     }
 
-    /**
-     * @group admin
-     * @group new
-     */
     public function testAdminNewPopup() : void {
-        $this->login('user.admin');
-        $formCrawler = $this->client->request('GET', '/contributor_role/new_popup');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->login(UserFixtures::ADMIN);
+        $formCrawler = $this->client->request('GET', '/contributor_role/new');
+        $this->assertResponseIsSuccessful();
 
         $form = $formCrawler->selectButton('Save')->form([
-            'contributor_role[label]' => 'New Label',
-            'contributor_role[description]' => 'New Description',
+            'contributor_role[label]' => 'Updated Label',
+            'contributor_role[description]' => '<p>Updated Text</p>',
+            'contributor_role[relatorTerm]' => 'abc',
         ]);
 
         $this->client->submit($form);
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/contributor_role/6', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Label")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Description")')->count());
+        $this->assertResponseIsSuccessful();
     }
 
-    /**
-     * @group admin
-     * @group delete
-     */
     public function testAdminDelete() : void {
+        /** @var ContributorRoleRepository $repo */
         $repo = self::$container->get(ContributorRoleRepository::class);
         $preCount = count($repo->findAll());
 
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $crawler = $this->client->request('GET', '/contributor_role/1');
+        $this->assertResponseIsSuccessful();
         $form = $crawler->selectButton('Delete')->form();
         $this->client->submit($form);
 
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/contributor_role/', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
 
-        $this->entityManager->clear();
+        $this->em->clear();
         $postCount = count($repo->findAll());
         $this->assertSame($preCount - 1, $postCount);
     }

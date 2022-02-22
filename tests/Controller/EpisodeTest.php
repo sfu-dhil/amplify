@@ -10,99 +10,67 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
-use App\DataFixtures\EpisodeFixtures;
-use App\Entity\Episode;
 use App\Repository\EpisodeRepository;
+use Nines\MediaBundle\Repository\AudioRepository;
+use Nines\MediaBundle\Repository\ImageRepository;
+use Nines\MediaBundle\Repository\PdfRepository;
+use Nines\MediaBundle\Service\AudioManager;
+use Nines\MediaBundle\Service\ImageManager;
+use Nines\MediaBundle\Service\PdfManager;
 use Nines\UserBundle\DataFixtures\UserFixtures;
-use Nines\UtilBundle\Tests\ControllerBaseCase;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Nines\UtilBundle\TestCase\ControllerTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class EpisodeTest extends ControllerBaseCase {
+class EpisodeTest extends ControllerTestCase {
     // Change this to HTTP_OK when the site is public.
     private const ANON_RESPONSE_CODE = Response::HTTP_FOUND;
 
     private const TYPEAHEAD_QUERY = 'title';
 
-    protected function fixtures() : array {
-        return [
-            EpisodeFixtures::class,
-            UserFixtures::class,
-        ];
-    }
-
-    /**
-     * @group anon
-     * @group index
-     */
     public function testAnonIndex() : void {
         $crawler = $this->client->request('GET', '/episode/');
-        $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
         $this->assertSame(0, $crawler->selectLink('New')->count());
     }
 
-    /**
-     * @group user
-     * @group index
-     */
     public function testUserIndex() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/episode/');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
         $this->assertSame(0, $crawler->selectLink('New')->count());
     }
 
-    /**
-     * @group admin
-     * @group index
-     */
     public function testAdminIndex() : void {
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $crawler = $this->client->request('GET', '/episode/');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
         $this->assertSame(1, $crawler->selectLink('New')->count());
     }
 
-    /**
-     * @group anon
-     * @group show
-     */
     public function testAnonShow() : void {
         $crawler = $this->client->request('GET', '/episode/1');
-        $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
         $this->assertSame(0, $crawler->selectLink('Edit')->count());
     }
 
-    /**
-     * @group user
-     * @group show
-     */
     public function testUserShow() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/episode/1');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
         $this->assertSame(0, $crawler->selectLink('Edit')->count());
     }
 
-    /**
-     * @group admin
-     * @group show
-     */
     public function testAdminShow() : void {
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $crawler = $this->client->request('GET', '/episode/1');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $crawler->selectLink('Edit')->count());
+        $this->assertResponseIsSuccessful();
+        $this->assertSame(2, $crawler->selectLink('Edit')->count());
     }
 
-    /**
-     * @group anon
-     * @group typeahead
-     */
     public function testAnonTypeahead() : void {
         $this->client->request('GET', '/episode/typeahead?q=' . self::TYPEAHEAD_QUERY);
         $response = $this->client->getResponse();
-        $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
         if (self::ANON_RESPONSE_CODE === Response::HTTP_FOUND) {
             // If authentication is required stop here.
             return;
@@ -112,42 +80,29 @@ class EpisodeTest extends ControllerBaseCase {
         $this->assertCount(4, $json);
     }
 
-    /**
-     * @group user
-     * @group typeahead
-     */
     public function testUserTypeahead() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $this->client->request('GET', '/episode/typeahead?q=' . self::TYPEAHEAD_QUERY);
         $response = $this->client->getResponse();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
         $this->assertSame('application/json', $response->headers->get('content-type'));
         $json = json_decode($response->getContent());
         $this->assertCount(4, $json);
     }
 
-    /**
-     * @group admin
-     * @group typeahead
-     */
     public function testAdminTypeahead() : void {
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $this->client->request('GET', '/episode/typeahead?q=' . self::TYPEAHEAD_QUERY);
         $response = $this->client->getResponse();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
         $this->assertSame('application/json', $response->headers->get('content-type'));
         $json = json_decode($response->getContent());
         $this->assertCount(4, $json);
     }
 
     public function testAnonSearch() : void {
-        $repo = $this->createMock(EpisodeRepository::class);
-        $repo->method('searchQuery')->willReturn([$this->getReference('episode.1')]);
-        $this->client->disableReboot();
-        $this->client->getContainer()->set('test.' . EpisodeRepository::class, $repo);
-
         $crawler = $this->client->request('GET', '/episode/search');
-        $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
         if (self::ANON_RESPONSE_CODE === Response::HTTP_FOUND) {
             // If authentication is required stop here.
             return;
@@ -162,14 +117,9 @@ class EpisodeTest extends ControllerBaseCase {
     }
 
     public function testUserSearch() : void {
-        $repo = $this->createMock(EpisodeRepository::class);
-        $repo->method('searchQuery')->willReturn([$this->getReference('episode.1')]);
-        $this->client->disableReboot();
-        $this->client->getContainer()->set('test.' . EpisodeRepository::class, $repo);
-
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/episode/search');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('btn-search')->form([
             'q' => 'episode',
@@ -180,14 +130,9 @@ class EpisodeTest extends ControllerBaseCase {
     }
 
     public function testAdminSearch() : void {
-        $repo = $this->createMock(EpisodeRepository::class);
-        $repo->method('searchQuery')->willReturn([$this->getReference('episode.1')]);
-        $this->client->disableReboot();
-        $this->client->getContainer()->set('test.' . EpisodeRepository::class, $repo);
-
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $crawler = $this->client->request('GET', '/episode/search');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('btn-search')->form([
             'q' => 'episode',
@@ -197,460 +142,545 @@ class EpisodeTest extends ControllerBaseCase {
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @group anon
-     * @group edit
-     */
     public function testAnonEdit() : void {
         $crawler = $this->client->request('GET', '/episode/1/edit');
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
-    /**
-     * @group user
-     * @group edit
-     */
     public function testUserEdit() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/episode/1/edit');
         $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @group admin
-     * @group edit
-     */
     public function testAdminEdit() : void {
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $formCrawler = $this->client->request('GET', '/episode/1/edit');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
 
         $form = $formCrawler->selectButton('Save')->form([
-            'episode[number]' => 12,
-            'episode[podcast]' => 2,
-            'episode[date]' => '2020-09-09',
-            'episode[runTime]' => '00:20:12',
+            'episode[number]' => 10,
+            'episode[date]' => '2020-01-01',
+            'episode[runTime]' => '00:09:20',
             'episode[title]' => 'Updated Title',
             'episode[alternativeTitle]' => 'Updated AlternativeTitle',
-            'episode[bibliography]' => 'Updated Bibliography',
-            'episode[copyright]' => 'Updated Copyright',
-            'episode[transcript]' => 'Updated Transcript',
-            'episode[abstract]' => 'Updated Abstract',
+            'episode[bibliography]' => '<p>Updated Text</p>',
+            'episode[copyright]' => '<p>Updated Text</p>',
+            'episode[transcript]' => '<p>Updated Text</p>',
+            'episode[abstract]' => '<p>Updated Text</p>',
         ]);
+        $form['episode[season]']->disableValidation()->setValue(2);
+        $form['episode[podcast]']->disableValidation()->setValue(2);
 
         $this->client->submit($form);
-        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
+        $this->assertResponseRedirects('/episode/1', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("00:20:12")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Title")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated AlternativeTitle")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Bibliography")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Copyright")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Transcript")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Abstract")')->count());
+        $this->assertResponseIsSuccessful();
     }
 
-    /**
-     * @group anon
-     * @group new
-     */
     public function testAnonNew() : void {
         $crawler = $this->client->request('GET', '/episode/new');
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
-    /**
-     * @group anon
-     * @group new
-     */
     public function testAnonNewPopup() : void {
         $crawler = $this->client->request('GET', '/episode/new_popup');
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
-    /**
-     * @group user
-     * @group new
-     */
     public function testUserNew() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/episode/new');
         $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @group user
-     * @group new
-     */
     public function testUserNewPopup() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/episode/new_popup');
         $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @group admin
-     * @group new
-     */
     public function testAdminNew() : void {
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $formCrawler = $this->client->request('GET', '/episode/new');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
 
         $form = $formCrawler->selectButton('Save')->form([
-            'episode[number]' => 12,
-            'episode[podcast]' => $this->getReference('podcast.1')->getId(),
-            'episode[date]' => '2020-09-09',
-            'episode[runTime]' => '00:12:34',
-            'episode[title]' => 'New Title',
-            'episode[alternativeTitle]' => 'New AlternativeTitle',
-            'episode[bibliography]' => 'New Bibliography',
-            'episode[copyright]' => 'New Copyright',
-            'episode[transcript]' => 'New Transcript',
-            'episode[abstract]' => 'New Abstract',
+            'episode[number]' => 10,
+            'episode[date]' => '2020-01-01',
+            'episode[runTime]' => '00:09:20',
+            'episode[title]' => 'Updated Title',
+            'episode[alternativeTitle]' => 'Updated AlternativeTitle',
+            'episode[bibliography]' => '<p>Updated Text</p>',
+            'episode[copyright]' => '<p>Updated Text</p>',
+            'episode[transcript]' => '<p>Updated Text</p>',
+            'episode[abstract]' => '<p>Updated Text</p>',
         ]);
+        $form['episode[season]']->disableValidation()->setValue(2);
+        $form['episode[podcast]']->disableValidation()->setValue(2);
 
         $this->client->submit($form);
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/episode/5', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("00:12:34")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Title")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New AlternativeTitle")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Bibliography")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Copyright")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Transcript")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Abstract")')->count());
+        $this->assertResponseIsSuccessful();
     }
 
-    /**
-     * @group admin
-     * @group new
-     */
     public function testAdminNewPopup() : void {
-        $this->login('user.admin');
-        $formCrawler = $this->client->request('GET', '/episode/new_popup');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->login(UserFixtures::ADMIN);
+        $formCrawler = $this->client->request('GET', '/episode/new');
+        $this->assertResponseIsSuccessful();
 
         $form = $formCrawler->selectButton('Save')->form([
-            'episode[number]' => 12,
-            'episode[podcast]' => $this->getReference('podcast.1')->getId(),
-            'episode[date]' => '2020-09-09',
-            'episode[runTime]' => '00:12:23',
-            'episode[title]' => 'New Title',
-            'episode[alternativeTitle]' => 'New AlternativeTitle',
-            'episode[bibliography]' => 'New Bibliography',
-            'episode[copyright]' => 'New Copyright',
-            'episode[transcript]' => 'New Transcript',
-            'episode[abstract]' => 'New Abstract',
+            'episode[number]' => 10,
+            'episode[date]' => '2020-01-01',
+            'episode[runTime]' => '00:09:20',
+            'episode[title]' => 'Updated Title',
+            'episode[alternativeTitle]' => 'Updated AlternativeTitle',
+            'episode[bibliography]' => '<p>Updated Text</p>',
+            'episode[copyright]' => '<p>Updated Text</p>',
+            'episode[transcript]' => '<p>Updated Text</p>',
+            'episode[abstract]' => '<p>Updated Text</p>',
         ]);
+        $form['episode[season]']->disableValidation()->setValue(2);
+        $form['episode[podcast]']->disableValidation()->setValue(2);
 
         $this->client->submit($form);
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/episode/6', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("00:12:23")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Title")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New AlternativeTitle")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Bibliography")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Copyright")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Transcript")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Abstract")')->count());
+        $this->assertResponseIsSuccessful();
     }
 
-    /**
-     * @group admin
-     * @group delete
-     */
     public function testAdminDelete() : void {
+        /** @var EpisodeRepository $repo */
         $repo = self::$container->get(EpisodeRepository::class);
         $preCount = count($repo->findAll());
 
-        $this->login('user.admin');
-        $crawler = $this->client->request('GET', '/episode/1');
-        $form = $crawler->selectButton('Delete')->form();
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/3');
+        $this->assertResponseIsSuccessful();
+        $form = $crawler->filter('form[action="/episode/3"]')->form();
         $this->client->submit($form);
 
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/episode/', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
 
-        $this->entityManager->clear();
+        $this->em->clear();
         $postCount = count($repo->findAll());
         $this->assertSame($preCount - 1, $postCount);
     }
 
     public function testAnonNewAudio() : void {
-        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->request('GET', '/episode/1/new_audio');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
     public function testUserNewAudio() : void {
-        $this->login('user.user');
-        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
-        $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('GET', '/episode/1/new_audio');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminNewAudio() : void {
-        $this->login('user.admin');
-        $upload = new UploadedFile(__DIR__ . '/../data/534023__fission9__thunderclap.mp3', 'thunder.mp3');
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/1/new_audio');
+        $this->assertResponseIsSuccessful();
 
-        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $form = $formCrawler->selectButton('Create')->form([
-            'audio[file]' => $upload,
+        $manager = self::$container->get(AudioManager::class);
+        $manager->setCopy(true);
+
+        $form = $crawler->selectButton('Create')->form([
             'audio[public]' => 1,
+            'audio[description]' => 'Description',
+            'audio[license]' => 'License',
         ]);
+        $form['audio[file]']->upload(dirname(__FILE__, 2) . '/data/audio/443027__pramonette__thunder-long.mp3');
         $this->client->submit($form);
-
-        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
+        $this->assertResponseRedirects('/episode/1');
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(1, $responseCrawler->filter('figcaption:contains("Listen to the podcast episode")')->count());
+        $this->assertResponseIsSuccessful();
 
-        $this->entityManager->clear();
-        /** @var Episode $episode */
-        $episode = $this->entityManager->find(Episode::class, 1);
+        $manager->setCopy(false);
     }
 
     public function testAnonEditAudio() : void {
-        $this->login('user.admin');
-        $upload = new UploadedFile(__DIR__ . '/../data/534023__fission9__thunderclap.mp3', 'thunder.mp3');
-
-        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $form = $formCrawler->selectButton('Create')->form([
-            'audio[file]' => $upload,
-            'audio[public]' => 1,
-        ]);
-        $this->client->submit($form);
-        $this->client->getCookieJar()->clear();
-
-        $formCrawler = $this->client->request('GET', '/episode/1/edit_audio/1');
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->request('GET', '/episode/1/edit_audio/1');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
     public function testUserEditAudio() : void {
-        $this->login('user.admin');
-        $upload = new UploadedFile(__DIR__ . '/../data/534023__fission9__thunderclap.mp3', 'thunder.mp3');
-
-        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $form = $formCrawler->selectButton('Create')->form([
-            'audio[file]' => $upload,
-            'audio[public]' => 1,
-        ]);
-        $this->client->submit($form);
-        $this->client->getCookieJar()->clear();
-
-        $this->login('user.user');
-        $formCrawler = $this->client->request('GET', '/episode/1/edit_audio/1');
-        $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('GET', '/episode/1/edit_audio/1');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @group x4
-     */
     public function testAdminEditAudio() : void {
-        $this->login('user.admin');
-        $upload = new UploadedFile(__DIR__ . '/../data/534023__fission9__thunderclap.mp3', 'thunder.mp3');
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/1/edit_audio/1');
+        $this->assertResponseIsSuccessful();
 
-        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $form = $formCrawler->selectButton('Create')->form([
-            'audio[file]' => $upload,
-            'audio[public]' => 1,
+        $manager = self::$container->get(AudioManager::class);
+        $manager->setCopy(true);
+
+        $form = $crawler->selectButton('Update')->form([
+            'audio[public]' => 0,
+            'audio[description]' => 'Updated Description',
+            'audio[license]' => 'Updated License',
         ]);
+        $form['audio[newFile]']->upload(dirname(__FILE__, 2) . '/data/audio/443027__pramonette__thunder-long.mp3');
         $this->client->submit($form);
-
-        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
+        $this->assertResponseRedirects('/episode/1');
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(1, $responseCrawler->filter('figcaption:contains("Listen to the podcast episode")')->count());
+        $this->assertResponseIsSuccessful();
 
-        $this->entityManager->clear();
-        $episode = $this->entityManager->find(Episode::class, 1);
-
-        $formCrawler = $this->client->request('GET', '/episode/1/edit_audio/1');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $form = $formCrawler->selectButton('Update')->form([
-            'audio[newFile]' => $upload,
-            'audio[public]' => 1,
-        ]);
-        $this->client->submit($form);
-        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
-        $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(1, $responseCrawler->filter('figcaption:contains("Listen to the podcast episode")')->count());
+        $manager->setCopy(false);
     }
 
     public function testAnonDeleteAudio() : void {
-        $this->login('user.admin');
-        $upload = new UploadedFile(__DIR__ . '/../data/534023__fission9__thunderclap.mp3', 'thunder.mp3');
-
-        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $form = $formCrawler->selectButton('Create')->form([
-            'audio[file]' => $upload,
-            'audio[public]' => 1,
-        ]);
-        $this->client->submit($form);
-        $this->client->getCookieJar()->clear();
-
-        $formCrawler = $this->client->request('DELETE', '/episode/1/delete_audio/1');
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->request('DELETE', '/episode/1/delete_audio/1');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
     public function testUserDeleteAudio() : void {
-        $this->login('user.admin');
-        $upload = new UploadedFile(__DIR__ . '/../data/534023__fission9__thunderclap.mp3', 'thunder.mp3');
-
-        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $form = $formCrawler->selectButton('Create')->form([
-            'audio[file]' => $upload,
-            'audio[public]' => 1,
-        ]);
-        $this->client->submit($form);
-        $this->client->getCookieJar()->clear();
-
-        $this->login('user.user');
-        $formCrawler = $this->client->request('DELETE', '/episode/1/delete_audio/1');
-        $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('DELETE', '/episode/1/delete_audio/1');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminDeleteAudio() : void {
-        $this->login('user.admin');
-        $upload = new UploadedFile(__DIR__ . '/../data/534023__fission9__thunderclap.mp3', 'thunder.mp3');
+        $repo = self::$container->get(AudioRepository::class);
+        $preCount = count($repo->findAll());
 
-        $formCrawler = $this->client->request('GET', '/episode/1/new_audio');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $form = $formCrawler->selectButton('Create')->form([
-            'audio[file]' => $upload,
-            'audio[public]' => 1,
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/4');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form.delete-form[action="/episode/4/delete_audio/4"]')->form();
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/episode/4');
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+
+        $this->em->clear();
+        $postCount = count($repo->findAll());
+        $this->assertSame($preCount - 1, $postCount);
+    }
+
+    public function testAdminDeleteWrongAudio() : void {
+        $repo = self::$container->get(AudioRepository::class);
+        $preCount = count($repo->findAll());
+
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/4');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form.delete-form[action="/episode/4/delete_audio/4"]')->form();
+        $form->getNode()->setAttribute('action', '/episode/3/delete_audio/4');
+
+        $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $this->em->clear();
+        $postCount = count($repo->findAll());
+        $this->assertSame($preCount, $postCount);
+    }
+
+    public function testAdminDeleteAudioWrongToken() : void {
+        $repo = self::$container->get(AudioRepository::class);
+        $preCount = count($repo->findAll());
+
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/4');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form.delete-form[action="/episode/4/delete_audio/4"]')->form([
+            '_token' => 'abc123',
         ]);
+
         $this->client->submit($form);
-
-        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
+        $this->assertResponseRedirects('/episode/4');
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(1, $responseCrawler->filter('figcaption:contains("Listen to the podcast episode")')->count());
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('div.alert-warning', 'Invalid security token.');
 
-        $this->entityManager->clear();
-        $episode = $this->entityManager->find(Episode::class, 1);
-
-        $formCrawler = $this->client->request('GET', '/episode/1');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $form = $formCrawler->selectButton('btn-delete-audio')->form();
-        $this->client->submit($form);
-
-        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/'));
-        $responseCrawler = $this->client->followRedirect();
-
-        $this->entityManager->clear();
-        $episode = $this->entityManager->find(Episode::class, 1);
-        $this->assertEmpty($episode->getAudios());
+        $this->em->clear();
+        $postCount = count($repo->findAll());
+        $this->assertSame($preCount, $postCount);
     }
 
     public function testAnonNewImage() : void {
-        $formCrawler = $this->client->request('GET', '/episode/1/new_image');
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->request('GET', '/episode/1/new_image');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
     public function testUserNewImage() : void {
-        $this->login('user.user');
-        $formCrawler = $this->client->request('GET', '/episode/1/new_image');
-        $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('GET', '/episode/1/new_image');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminNewImage() : void {
-        $this->login('user.admin');
-        $upload = new UploadedFile(__DIR__ . '/../data/35597651312_a188de382c_c.jpg', 'chicken.jpg');
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/1/new_image');
+        $this->assertResponseIsSuccessful();
 
-        $formCrawler = $this->client->request('GET', '/episode/1/new_image');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $form = $formCrawler->selectButton('Create')->form([
-            'image[file]' => $upload,
+        $manager = self::$container->get(ImageManager::class);
+        $manager->setCopy(true);
+
+        $form = $crawler->selectButton('Create')->form([
             'image[public]' => 1,
+            'image[description]' => 'Description',
+            'image[license]' => 'License',
         ]);
+        $form['image[file]']->upload(dirname(__FILE__, 2) . '/data/image/28213926366_4430448ff7_c.jpg');
         $this->client->submit($form);
-
-        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
+        $this->assertResponseRedirects('/episode/1');
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(2, $responseCrawler->filter('div:contains("The new image has been saved")')->count());
+        $this->assertResponseIsSuccessful();
 
-        $this->entityManager->clear();
-        $episode = $this->entityManager->find(Episode::class, 1);
+        $manager->setCopy(false);
     }
 
     public function testAnonEditImage() : void {
-        $formCrawler = $this->client->request('GET', '/episode/1/edit_image/1');
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->request('GET', '/episode/1/edit_image/9');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
     public function testUserEditImage() : void {
-        $this->login('user.admin');
-        $upload = new UploadedFile(__DIR__ . '/../data/35597651312_a188de382c_c.jpg', 'chicken.jpg');
-
-        $formCrawler = $this->client->request('GET', '/episode/1/new_image');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $form = $formCrawler->selectButton('Create')->form([
-            'image[file]' => $upload,
-            'image[public]' => 1,
-        ]);
-        $this->client->submit($form);
-
-        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
-        $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(2, $responseCrawler->filter('div:contains("The new image has been saved")')->count());
-
-        $this->entityManager->clear();
-        $episode = $this->entityManager->find(Episode::class, 1);
-
-        $this->login('user.user');
-        $formCrawler = $this->client->request('GET', '/episode/1/edit_image/1');
-        $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('GET', '/episode/1/edit_image/9');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminEditImage() : void {
-        $this->login('user.admin');
-        $upload = new UploadedFile(__DIR__ . '/../data/24708385605_c5387e7743_c.jpg', 'cat.jpg');
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/1/edit_image/9');
+        $this->assertResponseIsSuccessful();
 
-        $formCrawler = $this->client->request('GET', '/episode/1/new_image');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $form = $formCrawler->selectButton('Create')->form([
-            'image[file]' => $upload,
-            'image[public]' => 1,
+        $manager = self::$container->get(ImageManager::class);
+        $manager->setCopy(true);
+
+        $form = $crawler->selectButton('Update')->form([
+            'image[public]' => 0,
+            'image[description]' => 'Updated Description',
+            'image[license]' => 'Updated License',
         ]);
+        $form['image[newFile]']->upload(dirname(__FILE__, 2) . '/data/image/3632486652_b432f7b283_c.jpg');
         $this->client->submit($form);
-
-        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
+        $this->assertResponseRedirects('/episode/1');
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(2, $responseCrawler->filter('div:contains("The new image has been saved")')->count());
+        $this->assertResponseIsSuccessful();
 
-        $this->entityManager->clear();
-        $episode = $this->entityManager->find(Episode::class, 1);
+        $manager->setCopy(false);
+    }
 
-        $upload = new UploadedFile(__DIR__ . '/../data/32024919067_c2c18aa1c5_c.jpg', 'dog.jpg');
-        $formCrawler = $this->client->request('GET', '/episode/1/edit_image/1');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $form = $formCrawler->selectButton('Update')->form([
-            'image[newFile]' => $upload,
-            'image[public]' => 1,
+    public function testAnonDeleteImage() : void {
+        $crawler = $this->client->request('DELETE', '/episode/1/delete_image/12');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+    }
+
+    public function testUserDeleteImage() : void {
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('DELETE', '/episode/1/delete_image/12');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminDeleteImage() : void {
+        $repo = self::$container->get(ImageRepository::class);
+        $preCount = count($repo->findAll());
+
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/4');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form.delete-form[action="/episode/4/delete_image/12"]')->form();
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/episode/4');
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+
+        $this->em->clear();
+        $postCount = count($repo->findAll());
+        $this->assertSame($preCount - 1, $postCount);
+    }
+
+    public function testAdminDeleteWrongImage() : void {
+        $repo = self::$container->get(ImageRepository::class);
+        $preCount = count($repo->findAll());
+
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/4');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form.delete-form[action="/episode/4/delete_image/12"]')->form();
+        $form->getNode()->setAttribute('action', '/episode/3/delete_image/12');
+
+        $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $this->em->clear();
+        $postCount = count($repo->findAll());
+        $this->assertSame($preCount, $postCount);
+    }
+
+    public function testAdminDeleteImageWrongToken() : void {
+        $repo = self::$container->get(ImageRepository::class);
+        $preCount = count($repo->findAll());
+
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/4');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form.delete-form[action="/episode/4/delete_image/12"]')->form([
+            '_token' => 'abc123',
         ]);
+
         $this->client->submit($form);
-
-        $this->assertTrue($this->client->getResponse()->isRedirect('/episode/1'));
+        $this->assertResponseRedirects('/episode/4');
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(2, $responseCrawler->filter('div:contains("The image has been updated")')->count());
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('div.alert-warning', 'Invalid security token.');
 
-        $this->entityManager->clear();
-        $episode = $this->entityManager->find(Episode::class, 1);
+        $this->em->clear();
+        $postCount = count($repo->findAll());
+        $this->assertSame($preCount, $postCount);
+    }
+
+    public function testAnonNewPdf() : void {
+        $crawler = $this->client->request('GET', '/episode/1/new_pdf');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+    }
+
+    public function testUserNewPdf() : void {
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('GET', '/episode/1/new_pdf');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminNewPdf() : void {
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/1/new_pdf');
+        $this->assertResponseIsSuccessful();
+
+        $manager = self::$container->get(PdfManager::class);
+        $manager->setCopy(true);
+
+        $form = $crawler->selectButton('Create')->form([
+            'pdf[public]' => 1,
+            'pdf[description]' => 'Description',
+            'pdf[license]' => 'License',
+        ]);
+        $form['pdf[file]']->upload(dirname(__FILE__, 2) . '/data/pdf/holmes_2.pdf');
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/episode/1');
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+
+        $manager->setCopy(false);
+    }
+
+    public function testAnonEditPdf() : void {
+        $crawler = $this->client->request('GET', '/episode/1/edit_pdf/1');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+    }
+
+    public function testUserEditPdf() : void {
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('GET', '/episode/1/edit_pdf/1');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminEditPdf() : void {
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/1/edit_pdf/1');
+        $this->assertResponseIsSuccessful();
+
+        $manager = self::$container->get(PdfManager::class);
+        $manager->setCopy(true);
+
+        $form = $crawler->selectButton('Update')->form([
+            'pdf[public]' => 0,
+            'pdf[description]' => 'Updated Description',
+            'pdf[license]' => 'Updated License',
+        ]);
+        $form['pdf[newFile]']->upload(dirname(__FILE__, 2) . '/data/pdf/holmes_2.pdf');
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/episode/1');
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+
+        $manager->setCopy(false);
+    }
+
+    public function testAnonDeletePdf() : void {
+        $crawler = $this->client->request('DELETE', '/episode/1/delete_pdf/1');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+    }
+
+    public function testUserDeletePdf() : void {
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('DELETE', '/episode/1/delete_pdf/1');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminDeletePdf() : void {
+        $repo = self::$container->get(PdfRepository::class);
+        $preCount = count($repo->findAll());
+
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/4');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form.delete-form[action="/episode/4/delete_pdf/4"]')->form();
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/episode/4');
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+
+        $this->em->clear();
+        $postCount = count($repo->findAll());
+        $this->assertSame($preCount - 1, $postCount);
+    }
+
+    public function testAdminDeleteWrongPdf() : void {
+        $repo = self::$container->get(PdfRepository::class);
+        $preCount = count($repo->findAll());
+
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/4');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form.delete-form[action="/episode/4/delete_pdf/4"]')->form();
+        $form->getNode()->setAttribute('action', '/episode/3/delete_pdf/4');
+
+        $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $this->em->clear();
+        $postCount = count($repo->findAll());
+        $this->assertSame($preCount, $postCount);
+    }
+
+    public function testAdminDeletePdfWrongToken() : void {
+        $repo = self::$container->get(PdfRepository::class);
+        $preCount = count($repo->findAll());
+
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/episode/4');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form.delete-form[action="/episode/4/delete_pdf/4"]')->form([
+            '_token' => 'abc123',
+        ]);
+
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/episode/4');
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('div.alert-warning', 'Invalid security token.');
+
+        $this->em->clear();
+        $postCount = count($repo->findAll());
+        $this->assertSame($preCount, $postCount);
     }
 }

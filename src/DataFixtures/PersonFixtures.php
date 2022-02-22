@@ -12,11 +12,16 @@ namespace App\DataFixtures;
 
 use App\Entity\Person;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Nines\MediaBundle\Entity\Link;
 
-class PersonFixtures extends Fixture implements DependentFixtureInterface {
+class PersonFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface {
+    public static function getGroups() : array {
+        return ['dev', 'test'];
+    }
+
     /**
      * {@inheritdoc}
      */

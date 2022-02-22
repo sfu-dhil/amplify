@@ -10,99 +10,63 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
-use App\DataFixtures\SeasonFixtures;
-use App\Entity\Season;
 use App\Repository\SeasonRepository;
+use Nines\MediaBundle\Repository\ImageRepository;
+use Nines\MediaBundle\Service\ImageManager;
 use Nines\UserBundle\DataFixtures\UserFixtures;
-use Nines\UtilBundle\Tests\ControllerBaseCase;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Nines\UtilBundle\TestCase\ControllerTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class SeasonTest extends ControllerBaseCase {
+class SeasonTest extends ControllerTestCase {
     // Change this to HTTP_OK when the site is public.
     private const ANON_RESPONSE_CODE = Response::HTTP_FOUND;
 
     private const TYPEAHEAD_QUERY = 'title';
 
-    protected function fixtures() : array {
-        return [
-            SeasonFixtures::class,
-            UserFixtures::class,
-        ];
-    }
-
-    /**
-     * @group anon
-     * @group index
-     */
     public function testAnonIndex() : void {
         $crawler = $this->client->request('GET', '/season/');
-        $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
         $this->assertSame(0, $crawler->selectLink('New')->count());
     }
 
-    /**
-     * @group user
-     * @group index
-     */
     public function testUserIndex() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/season/');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
         $this->assertSame(0, $crawler->selectLink('New')->count());
     }
 
-    /**
-     * @group admin
-     * @group index
-     */
     public function testAdminIndex() : void {
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $crawler = $this->client->request('GET', '/season/');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
         $this->assertSame(1, $crawler->selectLink('New')->count());
     }
 
-    /**
-     * @group anon
-     * @group show
-     */
     public function testAnonShow() : void {
         $crawler = $this->client->request('GET', '/season/1');
-        $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
         $this->assertSame(0, $crawler->selectLink('Edit')->count());
     }
 
-    /**
-     * @group user
-     * @group show
-     */
     public function testUserShow() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/season/1');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
         $this->assertSame(0, $crawler->selectLink('Edit')->count());
     }
 
-    /**
-     * @group admin
-     * @group show
-     */
     public function testAdminShow() : void {
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $crawler = $this->client->request('GET', '/season/1');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
         $this->assertSame(1, $crawler->selectLink('Edit')->count());
     }
 
-    /**
-     * @group anon
-     * @group typeahead
-     */
     public function testAnonTypeahead() : void {
         $this->client->request('GET', '/season/typeahead?q=' . self::TYPEAHEAD_QUERY);
         $response = $this->client->getResponse();
-        $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
         if (self::ANON_RESPONSE_CODE === Response::HTTP_FOUND) {
             // If authentication is required stop here.
             return;
@@ -112,42 +76,29 @@ class SeasonTest extends ControllerBaseCase {
         $this->assertCount(4, $json);
     }
 
-    /**
-     * @group user
-     * @group typeahead
-     */
     public function testUserTypeahead() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $this->client->request('GET', '/season/typeahead?q=' . self::TYPEAHEAD_QUERY);
         $response = $this->client->getResponse();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
         $this->assertSame('application/json', $response->headers->get('content-type'));
         $json = json_decode($response->getContent());
         $this->assertCount(4, $json);
     }
 
-    /**
-     * @group admin
-     * @group typeahead
-     */
     public function testAdminTypeahead() : void {
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $this->client->request('GET', '/season/typeahead?q=' . self::TYPEAHEAD_QUERY);
         $response = $this->client->getResponse();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
         $this->assertSame('application/json', $response->headers->get('content-type'));
         $json = json_decode($response->getContent());
         $this->assertCount(4, $json);
     }
 
     public function testAnonSearch() : void {
-        $repo = $this->createMock(SeasonRepository::class);
-        $repo->method('searchQuery')->willReturn([$this->getReference('season.1')]);
-        $this->client->disableReboot();
-        $this->client->getContainer()->set('test.' . SeasonRepository::class, $repo);
-
         $crawler = $this->client->request('GET', '/season/search');
-        $this->assertSame(self::ANON_RESPONSE_CODE, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
         if (self::ANON_RESPONSE_CODE === Response::HTTP_FOUND) {
             // If authentication is required stop here.
             return;
@@ -162,14 +113,9 @@ class SeasonTest extends ControllerBaseCase {
     }
 
     public function testUserSearch() : void {
-        $repo = $this->createMock(SeasonRepository::class);
-        $repo->method('searchQuery')->willReturn([$this->getReference('season.1')]);
-        $this->client->disableReboot();
-        $this->client->getContainer()->set('test.' . SeasonRepository::class, $repo);
-
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/season/search');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('btn-search')->form([
             'q' => 'season',
@@ -180,14 +126,9 @@ class SeasonTest extends ControllerBaseCase {
     }
 
     public function testAdminSearch() : void {
-        $repo = $this->createMock(SeasonRepository::class);
-        $repo->method('searchQuery')->willReturn([$this->getReference('season.1')]);
-        $this->client->disableReboot();
-        $this->client->getContainer()->set('test.' . SeasonRepository::class, $repo);
-
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $crawler = $this->client->request('GET', '/season/search');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('btn-search')->form([
             'q' => 'season',
@@ -197,282 +138,257 @@ class SeasonTest extends ControllerBaseCase {
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @group anon
-     * @group edit
-     */
     public function testAnonEdit() : void {
         $crawler = $this->client->request('GET', '/season/1/edit');
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
-    /**
-     * @group user
-     * @group edit
-     */
     public function testUserEdit() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/season/1/edit');
         $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @group admin
-     * @group edit
-     */
     public function testAdminEdit() : void {
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $formCrawler = $this->client->request('GET', '/season/1/edit');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
 
         $form = $formCrawler->selectButton('Save')->form([
-            'season[number]' => 12,
+            'season[number]' => 10,
+            'season[preserved]' => 1,
             'season[title]' => 'Updated Title',
             'season[alternativeTitle]' => 'Updated AlternativeTitle',
-            'season[description]' => 'Updated Description',
-            'season[podcast]' => 1,
+            'season[description]' => '<p>Updated Text</p>',
         ]);
+        $form['season[podcast]']->disableValidation()->setValue(2);
+        $form['season[publisher]']->disableValidation()->setValue(2);
 
         $this->client->submit($form);
-        $this->assertTrue($this->client->getResponse()->isRedirect('/season/1'));
+        $this->assertResponseRedirects('/season/1', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Title")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated AlternativeTitle")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("Updated Description")')->count());
+        $this->assertResponseIsSuccessful();
     }
 
-    /**
-     * @group anon
-     * @group new
-     */
     public function testAnonNew() : void {
         $crawler = $this->client->request('GET', '/season/new');
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
-    /**
-     * @group anon
-     * @group new
-     */
     public function testAnonNewPopup() : void {
         $crawler = $this->client->request('GET', '/season/new_popup');
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
-    /**
-     * @group user
-     * @group new
-     */
     public function testUserNew() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/season/new');
         $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @group user
-     * @group new
-     */
     public function testUserNewPopup() : void {
-        $this->login('user.user');
+        $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/season/new_popup');
         $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @group admin
-     * @group new
-     */
     public function testAdminNew() : void {
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $formCrawler = $this->client->request('GET', '/season/new');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
 
         $form = $formCrawler->selectButton('Save')->form([
-            'season[number]' => '14',
-            'season[title]' => 'New Title',
-            'season[alternativeTitle]' => 'New AlternativeTitle',
-            'season[description]' => 'New Description',
-            'season[podcast]' => 1,
+            'season[number]' => 10,
+            'season[preserved]' => 1,
+            'season[title]' => 'Updated Title',
+            'season[alternativeTitle]' => 'Updated AlternativeTitle',
+            'season[description]' => '<p>Updated Text</p>',
         ]);
+        $form['season[podcast]']->disableValidation()->setValue(2);
+        $form['season[publisher]']->disableValidation()->setValue(2);
 
         $this->client->submit($form);
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/season/5', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Title")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New AlternativeTitle")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Description")')->count());
+        $this->assertResponseIsSuccessful();
     }
 
-    /**
-     * @group admin
-     * @group new
-     */
     public function testAdminNewPopup() : void {
-        $this->login('user.admin');
-        $formCrawler = $this->client->request('GET', '/season/new_popup');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->login(UserFixtures::ADMIN);
+        $formCrawler = $this->client->request('GET', '/season/new');
+        $this->assertResponseIsSuccessful();
 
         $form = $formCrawler->selectButton('Save')->form([
-            'season[number]' => '15',
-            'season[title]' => 'New Title',
-            'season[alternativeTitle]' => 'New AlternativeTitle',
-            'season[description]' => 'New Description',
-            'season[podcast]' => 1,
+            'season[number]' => 10,
+            'season[preserved]' => 1,
+            'season[title]' => 'Updated Title',
+            'season[alternativeTitle]' => 'Updated AlternativeTitle',
+            'season[description]' => '<p>Updated Text</p>',
         ]);
+        $form['season[podcast]']->disableValidation()->setValue(2);
+        $form['season[publisher]']->disableValidation()->setValue(2);
 
         $this->client->submit($form);
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/season/6', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Title")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New AlternativeTitle")')->count());
-        $this->assertSame(1, $responseCrawler->filter('td:contains("New Description")')->count());
+        $this->assertResponseIsSuccessful();
     }
 
-    /**
-     * @group admin
-     * @group delete
-     */
     public function testAdminDelete() : void {
+        /** @var SeasonRepository $repo */
         $repo = self::$container->get(SeasonRepository::class);
         $preCount = count($repo->findAll());
 
-        $this->login('user.admin');
+        $this->login(UserFixtures::ADMIN);
         $crawler = $this->client->request('GET', '/season/1');
+        $this->assertResponseIsSuccessful();
         $form = $crawler->selectButton('Delete')->form();
         $this->client->submit($form);
 
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $this->assertResponseRedirects('/season/', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
 
-        $this->entityManager->clear();
+        $this->em->clear();
         $postCount = count($repo->findAll());
         $this->assertSame($preCount - 1, $postCount);
     }
 
     public function testAnonNewImage() : void {
-        $formCrawler = $this->client->request('GET', '/season/1/new_image');
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->request('GET', '/season/1/new_image');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
     public function testUserNewImage() : void {
-        $this->login('user.user');
-        $formCrawler = $this->client->request('GET', '/season/1/new_image');
-        $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('GET', '/season/1/new_image');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminNewImage() : void {
-        $this->login('user.admin');
-        $upload = new UploadedFile(__DIR__ . '/../data/35597651312_a188de382c_c.jpg', 'chicken.jpg');
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/season/1/new_image');
+        $this->assertResponseIsSuccessful();
 
-        $formCrawler = $this->client->request('GET', '/season/1/new_image');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $form = $formCrawler->selectButton('Create')->form([
-            'image[file]' => $upload,
+        $manager = self::$container->get(ImageManager::class);
+        $manager->setCopy(true);
+
+        $form = $crawler->selectButton('Create')->form([
             'image[public]' => 1,
+            'image[description]' => 'Description',
+            'image[license]' => 'License',
         ]);
+        $form['image[file]']->upload(dirname(__FILE__, 2) . '/data/image/28213926366_4430448ff7_c.jpg');
         $this->client->submit($form);
-
-        $this->assertTrue($this->client->getResponse()->isRedirect('/season/1'));
+        $this->assertResponseRedirects('/season/1');
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(2, $responseCrawler->filter('div:contains("The new image has been saved")')->count());
+        $this->assertResponseIsSuccessful();
 
-        $this->entityManager->clear();
-        $season = $this->entityManager->find(Season::class, 1);
-
-        foreach ($season->getImages() as $image) {
-            $this->cleanUp($image->getFile());
-            $this->cleanUp($image->getThumbFile());
-        }
+        $manager->setCopy(false);
     }
 
     public function testAnonEditImage() : void {
-        $formCrawler = $this->client->request('GET', '/season/1/edit_image/1');
-        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
-        $this->assertTrue($this->client->getResponse()->isRedirect());
+        $crawler = $this->client->request('GET', '/season/1/edit_image/5');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
     public function testUserEditImage() : void {
-        $this->login('user.admin');
-        $upload = new UploadedFile(__DIR__ . '/../data/35597651312_a188de382c_c.jpg', 'chicken.jpg');
-
-        $formCrawler = $this->client->request('GET', '/season/1/new_image');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $form = $formCrawler->selectButton('Create')->form([
-            'image[file]' => $upload,
-            'image[public]' => 1,
-        ]);
-        $this->client->submit($form);
-
-        $this->assertTrue($this->client->getResponse()->isRedirect('/season/1'));
-        $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(2, $responseCrawler->filter('div:contains("The new image has been saved")')->count());
-
-        $this->entityManager->clear();
-        $season = $this->entityManager->find(Season::class, 1);
-
-        foreach ($season->getImages() as $image) {
-            $this->cleanUp($image->getFile());
-            $this->cleanUp($image->getThumbFile());
-        }
-
-        $this->login('user.user');
-        $formCrawler = $this->client->request('GET', '/season/1/edit_image/1');
-        $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('GET', '/season/1/edit_image/5');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminEditImage() : void {
-        $this->login('user.admin');
-        $upload = new UploadedFile(__DIR__ . '/../data/24708385605_c5387e7743_c.jpg', 'cat.jpg');
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/season/1/edit_image/5');
+        $this->assertResponseIsSuccessful();
 
-        $formCrawler = $this->client->request('GET', '/season/1/new_image');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $form = $formCrawler->selectButton('Create')->form([
-            'image[file]' => $upload,
-            'image[public]' => 1,
+        $manager = self::$container->get(ImageManager::class);
+        $manager->setCopy(true);
+
+        $form = $crawler->selectButton('Update')->form([
+            'image[public]' => 0,
+            'image[description]' => 'Updated Description',
+            'image[license]' => 'Updated License',
         ]);
+        $form['image[newFile]']->upload(dirname(__FILE__, 2) . '/data/image/3632486652_b432f7b283_c.jpg');
         $this->client->submit($form);
-
-        $this->assertTrue($this->client->getResponse()->isRedirect('/season/1'));
+        $this->assertResponseRedirects('/season/1');
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(2, $responseCrawler->filter('div:contains("The new image has been saved")')->count());
+        $this->assertResponseIsSuccessful();
 
-        $this->entityManager->clear();
-        $season = $this->entityManager->find(Season::class, 1);
+        $manager->setCopy(false);
+    }
 
-        foreach ($season->getImages() as $image) {
-            $this->cleanUp($image->getFile());
-            $this->cleanUp($image->getThumbFile());
-        }
+    public function testAnonDeleteImage() : void {
+        $crawler = $this->client->request('DELETE', '/season/1/delete_image/5');
+        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+    }
 
-        $upload = new UploadedFile(__DIR__ . '/../data/32024919067_c2c18aa1c5_c.jpg', 'dog.jpg');
-        $formCrawler = $this->client->request('GET', '/season/1/edit_image/1');
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $form = $formCrawler->selectButton('Update')->form([
-            'image[newFile]' => $upload,
-            'image[public]' => 1,
+    public function testUserDeleteImage() : void {
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('DELETE', '/season/1/delete_image/5');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminDeleteImage() : void {
+        $repo = self::$container->get(ImageRepository::class);
+        $preCount = count($repo->findAll());
+
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/season/4');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form.delete-form[action="/season/4/delete_image/8"]')->form();
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/season/4');
+        $responseCrawler = $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+
+        $this->em->clear();
+        $postCount = count($repo->findAll());
+        $this->assertSame($preCount - 1, $postCount);
+    }
+
+    public function testAdminDeleteWrongImage() : void {
+        $repo = self::$container->get(ImageRepository::class);
+        $preCount = count($repo->findAll());
+
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/season/4');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form.delete-form[action="/season/4/delete_image/8"]')->form();
+        $form->getNode()->setAttribute('action', '/season/3/delete_image/8');
+
+        $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $this->em->clear();
+        $postCount = count($repo->findAll());
+        $this->assertSame($preCount, $postCount);
+    }
+
+    public function testAdminDeleteImageWrongToken() : void {
+        $repo = self::$container->get(ImageRepository::class);
+        $preCount = count($repo->findAll());
+
+        $this->login(UserFixtures::ADMIN);
+        $crawler = $this->client->request('GET', '/season/4');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form.delete-form[action="/season/4/delete_image/8"]')->form([
+            '_token' => 'abc123',
         ]);
+
         $this->client->submit($form);
-
-        $this->assertTrue($this->client->getResponse()->isRedirect('/season/1'));
+        $this->assertResponseRedirects('/season/4');
         $responseCrawler = $this->client->followRedirect();
-        $this->assertSame(2, $responseCrawler->filter('div:contains("The image has been updated")')->count());
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('div.alert-warning', 'Invalid security token.');
 
-        $this->entityManager->clear();
-        $season = $this->entityManager->find(Season::class, 1);
-
-        foreach ($season->getImages() as $image) {
-            $this->cleanUp($image->getFile());
-            $this->cleanUp($image->getThumbFile());
-        }
+        $this->em->clear();
+        $postCount = count($repo->findAll());
+        $this->assertSame($preCount, $postCount);
     }
 }

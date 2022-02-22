@@ -12,10 +12,15 @@ namespace App\DataFixtures;
 
 use App\Entity\Contribution;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class ContributionFixtures extends Fixture implements DependentFixtureInterface {
+class ContributionFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface {
+    public static function getGroups() : array {
+        return ['dev', 'test'];
+    }
+
     /**
      * {@inheritdoc}
      */

@@ -78,7 +78,7 @@ class ContributorRoleController extends AbstractController implements PaginatorA
         }
         $data = [];
 
-        foreach ($contributorRoleRepository->typeaheadQuery($q) as $result) {
+        foreach ($contributorRoleRepository->typeaheadQuery($q)->execute() as $result) {
             $data[] = [
                 'id' => $result->getId(),
                 'text' => (string) $result,

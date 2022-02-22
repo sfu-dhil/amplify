@@ -13,6 +13,7 @@
     branch: main
     shared_files:
         - .env.local
+        - .env.test.local
     shared_dirs:
         - var/log
         - var/sessions

@@ -12,9 +12,14 @@ namespace App\DataFixtures;
 
 use App\Entity\Institution;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class InstitutionFixtures extends Fixture {
+class InstitutionFixtures extends Fixture implements FixtureGroupInterface {
+    public static function getGroups() : array {
+        return ['dev', 'test'];
+    }
+
     /**
      * {@inheritdoc}
      */

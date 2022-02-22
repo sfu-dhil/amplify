@@ -1,5 +1,5 @@
 doctrine:
   dbal:
-    driver: pdo_sqlite
-    path: "%kernel.cache_dir%/test.db"
-    url: null
+    url: '%env(resolve:DATABASE_URL)%'
+#        # "TEST_TOKEN" is typically set by ParaTest
+#        dbname_suffix: '_test%env(default::TEST_TOKEN)%'

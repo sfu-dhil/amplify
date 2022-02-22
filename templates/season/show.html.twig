@@ -38,11 +38,11 @@
         </div>
         <div class='clearfix'></div>
     {% endif %}
-    {% embed '@NinesMedia/image/partial/list.html.twig' with {
-        'images': season.images,
+    {% embed '@NinesMedia/image/ui/list.html.twig' with {
+        'container': season,
+        'path_add': 'season_add_image',
         'path_delete': 'season_delete_image',
         'path_edit': 'season_edit_image',
-        'entity_id': season.id,
     } %}
     {% endembed %}
 
