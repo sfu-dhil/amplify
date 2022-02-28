@@ -4,5 +4,5 @@
 	branch = main
 [submodule "etc"]
 	path = etc
-	url = git@github.com:ubermichael/symake
+	url = https://github.com/ubermichael/symake.git
 	branch = main
