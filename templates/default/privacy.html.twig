@@ -23,7 +23,7 @@
         are not required to provide this information to use the website. Personally identifiable information may
         include, but is not limited to email address and first name and last name.</p>
     <h2>User Analytics</h2>
-    <p>This website uses Piwik to collect anonymous usage statistics. The usage information is limited to:</p>
+    <p>This website uses matomo to collect anonymous usage statistics. The usage information is limited to:</p>
     <ul>
         <li>The date and time of your visit to the website</li>
         <li>A record of the pages in the website that you visited</li>
@@ -61,8 +61,8 @@
             <h3 class="panel-title">Analytics Settings</h3>
         </div>
         <div class="panel-body">
-            {% if piwik_enabled %}
-                <iframe style="border: 0; height: auto; width: 100%;" src="{{ piwik_url }}/index.php?module=CoreAdminHome&action=optOut&language=en">
+            {% if matomo_enabled %}
+                <iframe style="border: 0; height: auto; width: 100%;" src="{{ matomo_url }}/index.php?module=CoreAdminHome&action=optOut&language=en">
                 </iframe>
             {% else %}
                 <p>Tracking is not enabled for this website.</p>

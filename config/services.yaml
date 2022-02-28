@@ -14,10 +14,10 @@ parameters:
     asset.request_context.base_path: '%env(string:ROUTE_BASE)%'
     asset.request_context.secure: auto
 
-    dhil.piwik_enabled: '%env(bool:PIWIK_ENABLED)%'
-    dhil.piwik_url:
-    dhil.piwik_siteid:
-    dhil.piwik_domain:
+    dhil.matomo_enabled: '%env(bool:MATOMO_ENABLED)%'
+    dhil.matomo_url:
+    dhil.matomo_siteid:
+    dhil.matomo_domain:
 
     nines.editor.upload_dir: '%kernel.project_dir%/public/images/blog'
 
