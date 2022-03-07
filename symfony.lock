@@ -26,6 +26,12 @@
             "config/packages/test/dama_doctrine_test_bundle.yaml"
         ]
     },
+    "deployer/deployer": {
+        "version": "v6.8.0"
+    },
+    "deployer/phar-update": {
+        "version": "v2.2.0"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -250,6 +256,9 @@
             "phpunit.xml.dist",
             "tests/bootstrap.php"
         ]
+    },
+    "pimple/pimple": {
+        "version": "v3.5.0"
     },
     "psr/cache": {
         "version": "1.0.1"
