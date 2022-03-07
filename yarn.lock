@@ -8,9 +8,9 @@ bootstrap3@^3.3.5:
   integrity sha1-SWpO9sCHIU+paDgZbWDeZF6CWRo=
 
 jquery-ui-dist@^1.12.1:
-  version "1.13.0"
-  resolved "https://registry.yarnpkg.com/jquery-ui-dist/-/jquery-ui-dist-1.13.0.tgz#d6e9b88275605c08c5a806781b1967ecf921a248"
-  integrity sha512-fgpGOW098swRvTLglH3RLyAjW/8Ecxd35fO7Z1WtBidhZgnPDvTJzZ+XFybAFzv3zZiEESI8TkK6oYXbzu/rKw==
+  version "1.13.1"
+  resolved "https://registry.yarnpkg.com/jquery-ui-dist/-/jquery-ui-dist-1.13.1.tgz#47dcc1bf9cec141221ece59b2c8eaabad846ec0e"
+  integrity sha512-Y711Pu4BRVrAlL58KSxX4ail74jaCJZaZcdNDLava+MgZeNwmVWmyYiK7KxyoJu1MB73eSunjJvYDbOuNrOA7w==
   dependencies:
     jquery ">=1.8.0 <4.0.0"
 
@@ -50,6 +50,6 @@ symfony-collection@^2.1.30:
     jquery-ui ">=1.0"
 
 tinymce@^5.1.5:
-  version "5.10.2"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.10.2.tgz#cf1ff01025909be26c64348509e6de8e70d58e1d"
-  integrity sha512-5QhnZ6c8F28fYucLLc00MM37fZoAZ4g7QCYzwIl38i5TwJR5xGqzOv6YMideyLM4tytCzLCRwJoQen2LI66p5A==
+  version "5.10.3"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.10.3.tgz#9485cf00159fd70c4948cb5e9dd49bce2a775899"
+  integrity sha512-O59ssHNnujWvSk5Gt8hIGrdNCMKVWVQv9F8siAgLTRgTh0t3NDHrP1UlLtCxArUi9DPWZvlBeUz8D5fJTu7vnA==
