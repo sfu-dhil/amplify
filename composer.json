@@ -17,6 +17,8 @@
         "doctrine/doctrine-bundle": "^2.3",
         "doctrine/doctrine-migrations-bundle": "3.0.*",
         "doctrine/orm": "^2.7",
+        "knplabs/knp-menu-bundle": "^3.2",
+        "knplabs/knp-paginator-bundle": "^5.8",
         "league/csv": "^9.6",
         "ninsuo/symfony-collection": "^2.1",
         "phpdocumentor/reflection-docblock": "^5.2",
