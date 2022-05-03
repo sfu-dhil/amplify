@@ -14,6 +14,7 @@ use App\Entity\Episode;
 use App\Form\EpisodeType;
 use App\Repository\EpisodeRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\MediaBundle\Controller\AudioControllerTrait;
 use Nines\MediaBundle\Controller\ImageControllerTrait;
@@ -47,7 +48,7 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @Template("episode/index.html.twig")
      */
     public function index(Request $request, EpisodeRepository $episodeRepository) : array {
-        $query = $episodeRepository->indexQuery($request->query->get('q'));
+        $query = $episodeRepository->indexQuery();
         $pageSize = $this->getParameter('page_size');
         $page = $request->query->getint('page', 1);
 
@@ -211,6 +212,8 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @Template("episode/new_audio.html.twig")
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
+     * @throws Exception
+     *
      * @return array|RedirectResponse
      */
     public function newAudio(Request $request, EntityManagerInterface $em, Episode $episode) {
@@ -223,6 +226,8 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @ParamConverter("audio", options={"id": "audio_id"})
      *
+     * @throws Exception
+     *
      * @return array|RedirectResponse
      */
     public function editAudio(Request $request, EntityManagerInterface $em, Episode $episode, Audio $audio, AudioManager $fileUploader) {
@@ -234,6 +239,8 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @ParamConverter("audio", options={"id": "audio_id"})
      *
+     * @throws Exception
+     *
      * @return RedirectResponse
      */
     public function deleteAudio(Request $request, EntityManagerInterface $em, Episode $episode, Audio $audio) {
@@ -244,6 +251,9 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @Route("/{id}/new_image", name="episode_new_image", methods={"GET", "POST"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
+     * @throws Exception
+     *
+     * @return array<string,mixed>|RedirectResponse
      * @Template("episode/new_image.html.twig")
      */
     public function newImage(Request $request, EntityManagerInterface $em, Episode $episode) {
@@ -255,6 +265,9 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @IsGranted("ROLE_CONTENT_ADMIN")
      * @ParamConverter("image", options={"id": "image_id"})
      *
+     * @throws Exception
+     *
+     * @return array<string,mixed>|RedirectResponse
      * @Template("episode/edit_image.html.twig")
      */
     public function editImage(Request $request, EntityManagerInterface $em, Episode $episode, Image $image) {
@@ -265,6 +278,8 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @Route("/{id}/delete_image/{image_id}", name="episode_delete_image", methods={"DELETE"})
      * @ParamConverter("image", options={"id": "image_id"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
+     *
+     * @return RedirectResponse
      */
     public function deleteImage(Request $request, EntityManagerInterface $em, Episode $episode, Image $image) {
         return $this->deleteImageAction($request, $em, $episode, $image, 'episode_show');
@@ -275,6 +290,8 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @Template("episode/new_pdf.html.twig")
+     *
+     * @return array<string,mixed>|RedirectResponse
      */
     public function newPdf(Request $request, EntityManagerInterface $em, Episode $episode) {
         return $this->newPdfAction($request, $em, $episode, 'episode_show');
@@ -286,6 +303,8 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @ParamConverter("pdf", options={"id": "pdf_id"})
      *
      * @Template("episode/edit_pdf.html.twig")
+     *
+     * @return array<string,mixed>|RedirectResponse
      */
     public function editPdf(Request $request, EntityManagerInterface $em, Episode $episode, Pdf $pdf) {
         return $this->editPdfAction($request, $em, $episode, $pdf, 'episode_show');
@@ -295,6 +314,8 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
      * @Route("/{id}/delete_pdf/{pdf_id}", name="episode_delete_pdf", methods={"DELETE"})
      * @ParamConverter("pdf", options={"id": "pdf_id"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
+     *
+     * @return RedirectResponse
      */
     public function deletePdf(Request $request, EntityManagerInterface $em, Episode $episode, Pdf $pdf) {
         return $this->deletePdfAction($request, $em, $episode, $pdf, 'episode_show');

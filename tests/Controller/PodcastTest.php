@@ -163,7 +163,7 @@ class PodcastTest extends ControllerTestCase {
             'podcast[website]' => 'https://example.com',
             'podcast[rss]' => 'https://example.com',
         ]);
-        $form['podcast[publisher]']->disableValidation()->setValue(2);
+        $this->overrideField($form, 'podcast[publisher]', 2);
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/podcast/1', Response::HTTP_FOUND);
@@ -207,7 +207,7 @@ class PodcastTest extends ControllerTestCase {
             'podcast[website]' => 'https://example.com',
             'podcast[rss]' => 'https://example.com',
         ]);
-        $form['podcast[publisher]']->disableValidation()->setValue(2);
+        $this->overrideField($form, 'podcast[publisher]', 2);
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/podcast/5', Response::HTTP_FOUND);
@@ -229,7 +229,7 @@ class PodcastTest extends ControllerTestCase {
             'podcast[website]' => 'https://example.com',
             'podcast[rss]' => 'https://example.com',
         ]);
-        $form['podcast[publisher]']->disableValidation()->setValue(2);
+        $this->overrideField($form, 'podcast[publisher]', 2);
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/podcast/6', Response::HTTP_FOUND);

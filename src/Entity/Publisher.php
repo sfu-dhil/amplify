@@ -51,13 +51,13 @@ class Publisher extends AbstractEntity {
     private $contact;
 
     /**
-     * @var Collection|Podcast[]
+     * @var Collection<int,Podcast>
      * @ORM\OneToMany(targetEntity="Podcast", mappedBy="publisher")
      */
     private $podcasts;
 
     /**
-     * @var Collection|Season[]
+     * @var Collection<int,Season>
      * @ORM\OneToMany(targetEntity="Season", mappedBy="publisher")
      */
     private $seasons;
@@ -126,7 +126,7 @@ class Publisher extends AbstractEntity {
     }
 
     /**
-     * @return Collection|Podcast[]
+     * @return Collection<int,Podcast>
      */
     public function getPodcasts() : Collection {
         return $this->podcasts;
@@ -154,7 +154,7 @@ class Publisher extends AbstractEntity {
     }
 
     /**
-     * @return Collection|Season[]
+     * @return Collection<int,Season>
      */
     public function getSeasons() : Collection {
         return $this->seasons;

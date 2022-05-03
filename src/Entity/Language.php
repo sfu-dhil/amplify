@@ -21,7 +21,7 @@ use Nines\UtilBundle\Entity\AbstractTerm;
  */
 class Language extends AbstractTerm {
     /**
-     * @var Collection|Episode[]
+     * @var Collection<int,Episode>
      * @ORM\ManyToMany(targetEntity="App\Entity\Episode", mappedBy="languages")
      */
     private $episodes;
@@ -32,7 +32,7 @@ class Language extends AbstractTerm {
     }
 
     /**
-     * @return Collection|Episode[]
+     * @return Collection<int,Episode>
      */
     public function getEpisodes() : Collection {
         return $this->episodes;

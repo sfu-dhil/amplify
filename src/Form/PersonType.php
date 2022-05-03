@@ -25,7 +25,7 @@ use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
  * Person form.
  */
 class PersonType extends AbstractType {
-    private LinkableMapper $mapper;
+    private ?LinkableMapper $mapper = null;
 
     /**
      * Add form fields to $builder.

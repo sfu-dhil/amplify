@@ -169,8 +169,8 @@ class EpisodeTest extends ControllerTestCase {
             'episode[transcript]' => '<p>Updated Text</p>',
             'episode[abstract]' => '<p>Updated Text</p>',
         ]);
-        $form['episode[season]']->disableValidation()->setValue(2);
-        $form['episode[podcast]']->disableValidation()->setValue(2);
+        $this->overrideField($form, 'episode[season]', 2);
+        $this->overrideField($form, 'episode[podcast]', 2);
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/episode/1', Response::HTTP_FOUND);
@@ -216,8 +216,8 @@ class EpisodeTest extends ControllerTestCase {
             'episode[transcript]' => '<p>Updated Text</p>',
             'episode[abstract]' => '<p>Updated Text</p>',
         ]);
-        $form['episode[season]']->disableValidation()->setValue(2);
-        $form['episode[podcast]']->disableValidation()->setValue(2);
+        $this->overrideField($form, 'episode[season]', 2);
+        $this->overrideField($form, 'episode[podcast]', 2);
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/episode/5', Response::HTTP_FOUND);
@@ -241,8 +241,8 @@ class EpisodeTest extends ControllerTestCase {
             'episode[transcript]' => '<p>Updated Text</p>',
             'episode[abstract]' => '<p>Updated Text</p>',
         ]);
-        $form['episode[season]']->disableValidation()->setValue(2);
-        $form['episode[podcast]']->disableValidation()->setValue(2);
+        $this->overrideField($form, 'episode[season]', 2);
+        $this->overrideField($form, 'episode[podcast]', 2);
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/episode/6', Response::HTTP_FOUND);

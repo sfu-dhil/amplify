@@ -16,7 +16,7 @@ use Nines\UtilBundle\TestCase\ServiceTestCase;
 class ContributorRoleRepositoryTest extends ServiceTestCase {
     private const TYPEAHEAD_QUERY = 'label';
 
-    private ContributorRoleRepository $repo;
+    private ?ContributorRoleRepository $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(ContributorRoleRepository::class, $this->repo);

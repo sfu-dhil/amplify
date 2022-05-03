@@ -16,7 +16,7 @@ use Nines\UtilBundle\TestCase\ServiceTestCase;
 class PublisherRepositoryTest extends ServiceTestCase {
     private const TYPEAHEAD_QUERY = 'name';
 
-    private PublisherRepository $repo;
+    private ?PublisherRepository $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(PublisherRepository::class, $this->repo);

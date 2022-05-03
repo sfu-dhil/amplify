@@ -14,7 +14,7 @@ use App\Repository\ContributionRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class ContributionRepositoryTest extends ServiceTestCase {
-    private ContributionRepository $repo;
+    private ?ContributionRepository $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(ContributionRepository::class, $this->repo);

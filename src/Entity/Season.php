@@ -73,13 +73,13 @@ class Season extends AbstractEntity implements ImageContainerInterface {
     private $publisher;
 
     /**
-     * @var Collection|Contribution[]
+     * @var Collection<int,Contribution>
      * @ORM\OneToMany(targetEntity="Contribution", mappedBy="season")
      */
     private $contributions;
 
     /**
-     * @var Collection|Episode[]
+     * @var Collection<int,Episode>
      * @ORM\OneToMany(targetEntity="Episode", mappedBy="season")
      * @ORM\OrderBy({"date": "ASC", "number": "ASC", "title": "ASC"})
      */
@@ -169,7 +169,7 @@ class Season extends AbstractEntity implements ImageContainerInterface {
     }
 
     /**
-     * @return Collection|Contribution[]
+     * @return Collection<int,Contribution>
      */
     public function getContributions() : Collection {
         return $this->contributions;
@@ -197,7 +197,7 @@ class Season extends AbstractEntity implements ImageContainerInterface {
     }
 
     /**
-     * @return Collection|Episode[]
+     * @return Collection<int,Episode>
      */
     public function getEpisodes() : Collection {
         return $this->episodes;
