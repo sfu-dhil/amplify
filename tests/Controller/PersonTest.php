@@ -158,7 +158,7 @@ class PersonTest extends ControllerTestCase {
             'person[location]' => 'Updated Location',
             'person[bio]' => '<p>Updated Text</p>',
         ]);
-        $form['person[institution]']->disableValidation()->setValue(2);
+        $this->overrideField($form, 'person[institution]', 2);
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/person/1', Response::HTTP_FOUND);
@@ -199,7 +199,7 @@ class PersonTest extends ControllerTestCase {
             'person[location]' => 'Updated Location',
             'person[bio]' => '<p>Updated Text</p>',
         ]);
-        $form['person[institution]']->disableValidation()->setValue(2);
+        $this->overrideField($form, 'person[institution]', 2);
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/person/5', Response::HTTP_FOUND);
@@ -218,7 +218,7 @@ class PersonTest extends ControllerTestCase {
             'person[location]' => 'Updated Location',
             'person[bio]' => '<p>Updated Text</p>',
         ]);
-        $form['person[institution]']->disableValidation()->setValue(2);
+        $this->overrideField($form, 'person[institution]', 2);
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/person/6', Response::HTTP_FOUND);

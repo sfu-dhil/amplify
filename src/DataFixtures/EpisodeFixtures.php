@@ -49,11 +49,11 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
         'holmes_5.pdf',
     ];
 
-    private AudioManager $audioManager;
+    private ?AudioManager $audioManager = null;
 
-    private ImageManager $imageManager;
+    private ?ImageManager $imageManager = null;
 
-    private PdfManager $pdfManager;
+    private ?PdfManager $pdfManager = null;
 
     public static function getGroups() : array {
         return ['dev', 'test'];

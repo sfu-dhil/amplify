@@ -91,25 +91,25 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     private $publisher;
 
     /**
-     * @var Collection|Contribution[]
+     * @var Collection<int,Contribution>
      * @ORM\OneToMany(targetEntity="Contribution", mappedBy="podcast")
      */
     private $contributions;
 
     /**
-     * @var Collection|Season[]
+     * @var Collection<int,Season>
      * @ORM\OneToMany(targetEntity="Season", mappedBy="podcast")
      */
     private $seasons;
 
     /**
-     * @var Collection|Episode[]
+     * @var Collection<int,Episode>
      * @ORM\OneToMany(targetEntity="Episode", mappedBy="podcast")
      */
     private $episodes;
 
     /**
-     * @var Category[]|Collection
+     * @var Collection<int,Category>
      * @ORM\ManyToMany(targetEntity="App\Entity\Category", inversedBy="podcasts")
      */
     private $categories;
@@ -201,10 +201,16 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
+    /**
+     * @return string[]
+     */
     public function getTags() : ?array {
         return $this->tags;
     }
 
+    /**
+     * @param string[] $tags
+     */
     public function setTags(array $tags) : self {
         $this->tags = $tags;
 
@@ -222,7 +228,7 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     }
 
     /**
-     * @return Collection|Contribution[]
+     * @return Collection<int,Contribution>
      */
     public function getContributions() : Collection {
         return $this->contributions;
@@ -250,7 +256,7 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     }
 
     /**
-     * @return Collection|Season[]
+     * @return Collection<int,Season>
      */
     public function getSeasons() : Collection {
         return $this->seasons;
@@ -278,7 +284,7 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     }
 
     /**
-     * @return Collection|Episode[]
+     * @return Collection<int,Episode>
      */
     public function getEpisodes() : Collection {
         return $this->episodes;
@@ -306,7 +312,7 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     }
 
     /**
-     * @return Category[]|Collection
+     * @return Collection<int,Category>
      */
     public function getCategories() : Collection {
         return $this->categories;

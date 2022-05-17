@@ -161,8 +161,8 @@ class SeasonTest extends ControllerTestCase {
             'season[alternativeTitle]' => 'Updated AlternativeTitle',
             'season[description]' => '<p>Updated Text</p>',
         ]);
-        $form['season[podcast]']->disableValidation()->setValue(2);
-        $form['season[publisher]']->disableValidation()->setValue(2);
+        $this->overrideField($form, 'season[podcast]', 2);
+        $this->overrideField($form, 'season[publisher]', 2);
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/season/1', Response::HTTP_FOUND);
@@ -204,8 +204,8 @@ class SeasonTest extends ControllerTestCase {
             'season[alternativeTitle]' => 'Updated AlternativeTitle',
             'season[description]' => '<p>Updated Text</p>',
         ]);
-        $form['season[podcast]']->disableValidation()->setValue(2);
-        $form['season[publisher]']->disableValidation()->setValue(2);
+        $this->overrideField($form, 'season[podcast]', 2);
+        $this->overrideField($form, 'season[publisher]', 2);
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/season/5', Response::HTTP_FOUND);
@@ -225,8 +225,8 @@ class SeasonTest extends ControllerTestCase {
             'season[alternativeTitle]' => 'Updated AlternativeTitle',
             'season[description]' => '<p>Updated Text</p>',
         ]);
-        $form['season[podcast]']->disableValidation()->setValue(2);
-        $form['season[publisher]']->disableValidation()->setValue(2);
+        $this->overrideField($form, 'season[podcast]', 2);
+        $this->overrideField($form, 'season[publisher]', 2);
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/season/6', Response::HTTP_FOUND);

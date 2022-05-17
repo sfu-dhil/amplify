@@ -21,7 +21,7 @@ use Nines\UtilBundle\Entity\AbstractTerm;
  */
 class Category extends AbstractTerm {
     /**
-     * @var Collection|Podcast[]
+     * @var Collection<int,Podcast>
      * @ORM\ManyToMany(targetEntity="Podcast", mappedBy="categories")
      */
     private $podcasts;
@@ -32,7 +32,7 @@ class Category extends AbstractTerm {
     }
 
     /**
-     * @return Collection|Podcast[]
+     * @return Collection<int,Podcast>
      */
     public function getPodcasts() : Collection {
         return $this->podcasts;

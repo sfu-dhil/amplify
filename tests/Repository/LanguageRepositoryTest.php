@@ -16,7 +16,7 @@ use Nines\UtilBundle\TestCase\ServiceTestCase;
 class LanguageRepositoryTest extends ServiceTestCase {
     private const TYPEAHEAD_QUERY = 'label';
 
-    private LanguageRepository $repo;
+    private ?LanguageRepository $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(LanguageRepository::class, $this->repo);

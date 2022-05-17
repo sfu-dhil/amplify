@@ -36,7 +36,7 @@ class Institution extends AbstractEntity {
     private $name;
 
     /**
-     * @var Collection|Person[]
+     * @var Collection<int,Person>
      * @ORM\OneToMany(targetEntity="App\Entity\Person", mappedBy="institution")
      */
     private $people;
@@ -74,7 +74,7 @@ class Institution extends AbstractEntity {
     }
 
     /**
-     * @return Collection|Person[]
+     * @return Collection<int,Person>
      */
     public function getPeople() : Collection {
         return $this->people;

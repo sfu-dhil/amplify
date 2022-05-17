@@ -44,7 +44,7 @@ class Builder implements ContainerAwareInterface {
         $this->tokenStorage = $tokenStorage;
     }
 
-    private function hasRole($role) {
+    private function hasRole(string $role) : bool {
         if ( ! $this->tokenStorage->getToken()) {
             return false;
         }
@@ -54,6 +54,8 @@ class Builder implements ContainerAwareInterface {
 
     /**
      * Build a menu for navigation.
+     *
+     * @param array<string,mixed> $options
      *
      * @return ItemInterface
      */

@@ -27,7 +27,7 @@ class ContributorRole extends AbstractTerm {
     private $relatorTerm;
 
     /**
-     * @var Collection|Contribution[]
+     * @var Collection<int,Contribution>
      * @ORM\OneToMany(targetEntity="Contribution", mappedBy="contributorRole")
      */
     private $contributions;
@@ -38,7 +38,7 @@ class ContributorRole extends AbstractTerm {
     }
 
     /**
-     * @return Collection|Contribution[]
+     * @return Collection<int,Contribution>
      */
     public function getContributions() : Collection {
         return $this->contributions;

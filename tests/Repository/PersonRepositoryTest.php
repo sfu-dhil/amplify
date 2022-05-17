@@ -16,7 +16,7 @@ use Nines\UtilBundle\TestCase\ServiceTestCase;
 class PersonRepositoryTest extends ServiceTestCase {
     private const TYPEAHEAD_QUERY = 'fullname';
 
-    private PersonRepository $repo;
+    private ?PersonRepository $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(PersonRepository::class, $this->repo);

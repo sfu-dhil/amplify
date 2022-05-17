@@ -14,6 +14,7 @@ use App\Entity\Podcast;
 use App\Form\PodcastType;
 use App\Repository\PodcastRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\MediaBundle\Controller\ImageControllerTrait;
 use Nines\MediaBundle\Entity\Image;
@@ -203,6 +204,10 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
      * @Template("podcast/new_image.html.twig")
+     *
+     * @throws Exception
+     *
+     * @return array<string,mixed>|RedirectResponse
      */
     public function newImage(Request $request, EntityManagerInterface $em, Podcast $podcast) {
         return $this->newImageAction($request, $em, $podcast, 'podcast_show');
@@ -213,6 +218,9 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
      * @ParamConverter("image", options={"id": "image_id"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
+     * @throws Exception
+     *
+     * @return array<string,mixed>|RedirectResponse
      * @Template("podcast/edit_image.html.twig")
      */
     public function editImage(Request $request, EntityManagerInterface $em, Podcast $podcast, Image $image) {
@@ -223,6 +231,8 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
      * @Route("/{id}/delete_image/{image_id}", name="podcast_delete_image", methods={"DELETE"})
      * @ParamConverter("image", options={"id": "image_id"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
+     *
+     * @return RedirectResponse
      */
     public function deleteImage(Request $request, EntityManagerInterface $em, Podcast $podcast, Image $image) {
         return $this->deleteImageAction($request, $em, $podcast, $image, 'podcast_show');

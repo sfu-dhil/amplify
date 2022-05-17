@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\EpisodeRepository;
-use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -55,7 +54,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     private $preserved;
 
     /**
-     * @var DateTime
+     * @var DateTimeInterface
      * @ORM\Column(type="date")
      */
     private $date;
@@ -81,7 +80,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     private $alternativeTitle;
 
     /**
-     * @var Collection|Language[]
+     * @var Collection<int,Language>
      * @ORM\ManyToMany(targetEntity="App\Entity\Language", inversedBy="episodes", cascade={"remove"})
      */
     private $languages;
@@ -117,7 +116,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     private $abstract;
 
     /**
-     * @var array
+     * @var string[]
      * @ORM\Column(type="json")
      */
     private $subjects;
@@ -137,7 +136,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     private $podcast;
 
     /**
-     * @var Collection|Contribution[]
+     * @var Collection<int,Contribution>
      * @ORM\OneToMany(targetEntity="Contribution", mappedBy="episode", cascade={"remove"})
      */
     private $contributions;
@@ -220,10 +219,16 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this;
     }
 
+    /**
+     * @return string[]
+     */
     public function getTags() : ?array {
         return $this->tags;
     }
 
+    /**
+     * @param string[] $tags
+     */
     public function setTags(array $tags) : self {
         $this->tags = $tags;
 
@@ -290,11 +295,14 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this;
     }
 
+    /**
+     * @return string[]
+     */
     public function getSubjects() : array {
         return $this->subjects;
     }
 
-    public function addSubject($subject) : self {
+    public function addSubject(string $subject) : self {
         if ( ! in_array($subject, $this->subjects, true)) {
             $this->subjects[] = $subject;
         }
@@ -302,7 +310,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this;
     }
 
-    public function removeSubject($subject) : self {
+    public function removeSubject(string $subject) : self {
         if (false !== ($key = array_search($subject, $this->subjects, true))) {
             array_splice($this->subjects, $key, 1);
         }
@@ -311,7 +319,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     }
 
     /**
-     * @return Collection|Contribution[]
+     * @return Collection<int,Contribution>
      */
     public function getContributions() : Collection {
         return $this->contributions;
@@ -369,7 +377,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     }
 
     /**
-     * @return Collection|Language[]
+     * @return Collection<int,Language>
      */
     public function getLanguages() : Collection {
         return $this->languages;

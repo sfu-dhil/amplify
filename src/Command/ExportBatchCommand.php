@@ -13,9 +13,10 @@ namespace App\Command;
 use App\Entity\Episode;
 use App\Repository\SeasonRepository;
 use DOMDocument;
-use Nines\MediaBundle\Service\AudioManager;
-use Nines\MediaBundle\Service\ImageManager;
+use Nines\MediaBundle\Entity\Image;
+use Nines\MediaBundle\Entity\Pdf;
 use Soundasleep\Html2Text;
+use Soundasleep\Html2TextException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,25 +24,32 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class ExportBatchCommand extends Command {
-    private SeasonRepository $repository;
+    private ?SeasonRepository $repository = null;
 
-    private Environment $twig;
-
-    private AudioManager $audioManager;
-
-    private ImageManager $imageManager;
+    private ?Environment $twig = null;
 
     protected static $defaultName = 'app:export:batch';
 
-    protected static $defaultDescription = 'Export a season of a podcast for an islandora batch import.';
+    protected static string $defaultDescription = 'Export a season of a podcast for an islandora batch import.';
 
     protected function configure() : void {
         $this->setDescription(self::$defaultDescription)->addArgument('seasonId', InputArgument::REQUIRED, 'Season database ID')->addArgument('directory', InputArgument::REQUIRED, 'Directory to export to');
     }
 
-    protected function generateMods($type, $object, $destination, $episode = null) : void {
+    /**
+     * @param Episode|Image|Pdf $object
+     * @param ?Episode $episode
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    protected function generateMods(string $type, $object, string $destination, ?Episode $episode = null) : void {
         $mods = $this->twig->render("export/{$type}.xml.twig", ['object' => $object, 'episode' => $episode]);
         $doc = new DOMDocument();
         $doc->preserveWhiteSpace = false;
@@ -50,6 +58,12 @@ class ExportBatchCommand extends Command {
         $doc->save($destination);
     }
 
+    /**
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws SyntaxError
+     * @throws Html2TextException
+     */
     protected function execute(InputInterface $input, OutputInterface $output) : int {
         $io = new SymfonyStyle($input, $output);
         $season = $this->repository->find($input->getArgument('seasonId'));
@@ -83,9 +97,9 @@ class ExportBatchCommand extends Command {
             }
             $mp3 = $episode->getAudio('audio/mpeg');
 
-            $fs->copy($obj->getFile(), "{$path}/episode/OBJ." . $obj->getExtension());
+            $fs->copy($obj->getFile()->getRealPath(), "{$path}/episode/OBJ." . $obj->getExtension());
             if ($mp3 && $mp3 !== $obj) {
-                $fs->copy($mp3->getFile(), "{$path}/episode/PROXY_MP3." . $obj->getExtension());
+                $fs->copy($mp3->getFile()->getRealPath(), "{$path}/episode/PROXY_MP3." . $obj->getExtension());
             }
 
             if ($episode->getTranscript()) {
@@ -94,7 +108,7 @@ class ExportBatchCommand extends Command {
                 $text = Html2Text::convert($episode->getTranscript());
                 $fs->dumpFile("{$path}/transcript/FULL_TEXT.txt", wordwrap($text));
                 if (count($episode->getPdfs())) {
-                    $fs->copy($episode->getPdfs()[0]->getFile(), "{$path}/transcript/OBJ.pdf");
+                    $fs->copy($episode->getPdfs()[0]->getFile()->getRealPath(), "{$path}/transcript/OBJ.pdf");
                 }
             }
 
@@ -114,7 +128,7 @@ class ExportBatchCommand extends Command {
         return 0;
     }
 
-    public function generateStructure(Episode $episode, $destination) : void {
+    public function generateStructure(Episode $episode, string $destination) : void {
         $slug = $episode->getSlug();
 
         $xml = '<?xml version="1.0" encoding="utf-8"?>';
@@ -148,19 +162,5 @@ class ExportBatchCommand extends Command {
      */
     public function setTwig(Environment $twig) : void {
         $this->twig = $twig;
-    }
-
-    /**
-     * @required
-     */
-    public function setAudioManager(AudioManager $audioManager) : void {
-        $this->audioManager = $audioManager;
-    }
-
-    /**
-     * @required
-     */
-    public function setImageManager(ImageManager $imageManager) : void {
-        $this->imageManager = $imageManager;
     }
 }
