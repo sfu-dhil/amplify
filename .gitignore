@@ -41,3 +41,9 @@
 
 # Code coverage and QA reports
 public/dev
+
+# Mac DS_Store
+.DS_Store
+
+# Local design files
+design
