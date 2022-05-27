@@ -5,7 +5,7 @@
 bootstrap3@^3.3.5:
   version "3.3.5"
   resolved "https://registry.yarnpkg.com/bootstrap3/-/bootstrap3-3.3.5.tgz#496a4ef6c087214fa96838196d60de645e82591a"
-  integrity sha1-SWpO9sCHIU+paDgZbWDeZF6CWRo=
+  integrity sha512-KoChQrvYQQv44JrkjEiSy/90CYp5/4QDF2DZZysD/mPYlZGc+z0QN1aLDUiXhl1KIjWNu5UdJ3w8NhrKZnJOUw==
 
 jquery-ui-dist@^1.12.1:
   version "1.13.1"
@@ -27,9 +27,9 @@ jquery@>=1.7, "jquery@>=1.8.0 <4.0.0", jquery@^3.4.1:
   integrity sha512-JVzAR/AjBvVt2BmYhxRCSYysDsPcssdmTFnzyLEts9qNwmjmu4JTAMYubEfwVOSwpQ1I1sKKFcxhZCI2buerfw==
 
 pdfobject@^2.2.5:
-  version "2.2.7"
-  resolved "https://registry.yarnpkg.com/pdfobject/-/pdfobject-2.2.7.tgz#487ec2ab425c9385f2d80eea5890d632f503cac2"
-  integrity sha512-9ptX0XNCtpYz0hNWz6j/1O4rvJkcPR2rct3UDBhs8ZEosOO67dCEAu4VpBvVJ64SMh8Mrn9pWWODnyLjgFQYgg==
+  version "2.2.8"
+  resolved "https://registry.yarnpkg.com/pdfobject/-/pdfobject-2.2.8.tgz#956c8ce254883cdbc7c3cbee3d74d5a017f98d0b"
+  integrity sha512-dB/soWNMLtVGHfXERXnAtsKm0XwC6lyGVYegQcZxL4rw07rNOKvawc9kddBzlGr7TbiBZuGf4Drb3kyRbTf/QA==
 
 select2-bootstrap-css@^1.4.6:
   version "1.4.6"
@@ -50,6 +50,6 @@ symfony-collection@^2.1.30:
     jquery-ui ">=1.0"
 
 tinymce@^5.1.5:
-  version "5.10.4"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.10.4.tgz#24ee843c7648ade708605dec15d8dad07809f7db"
-  integrity sha512-L0ivAhGu7bEo6cUBrCzhtKlkIQqG2sTcL+uu7soMSxrECQIC5VwUnzp9HCEf+fRl36q6zavLV48lf8jelj+gXA==
+  version "5.10.5"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.10.5.tgz#02aef6a67e915f1559e51fa8fb007270d9666778"
+  integrity sha512-nFKtLhmoRtExBxUfv06JlkbQWux5D+d115vxSRAqUmccZdrtpFvOIYwZmikvulLdM9pfEpvO0B+RQ2qFV/+R7w==
