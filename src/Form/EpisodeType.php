@@ -89,8 +89,8 @@ class EpisodeType extends AbstractType {
                 'class' => 'tinymce',
             ],
         ]);
-        $builder->add('abstract', TextareaType::class, [
-            'label' => 'Abstract',
+        $builder->add('description', TextareaType::class, [
+            'label' => 'Description',
             'required' => true,
             'attr' => [
                 'help_block' => '',

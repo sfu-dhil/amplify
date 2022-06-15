@@ -101,7 +101,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
      * @var string
      * @ORM\Column(type="text")
      */
-    private $abstract;
+    private $description;
 
     /**
      * @var string[]
@@ -226,12 +226,12 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this;
     }
 
-    public function getAbstract() : ?string {
-        return $this->abstract;
+    public function getDescription() : ?string {
+        return $this->description;
     }
 
-    public function setAbstract(string $abstract) : self {
-        $this->abstract = $abstract;
+    public function setDescription(string $description) : self {
+        $this->description = $description;
 
         return $this;
     }
