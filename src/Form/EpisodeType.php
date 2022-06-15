@@ -83,7 +83,7 @@ class EpisodeType extends AbstractType {
         ]);
         $builder->add('transcript', TextareaType::class, [
             'label' => 'Transcript',
-            'required' => true,
+            'required' => false,
             'attr' => [
                 'help_block' => '',
                 'class' => 'tinymce',
@@ -91,7 +91,7 @@ class EpisodeType extends AbstractType {
         ]);
         $builder->add('description', TextareaType::class, [
             'label' => 'Description',
-            'required' => true,
+            'required' => false,
             'attr' => [
                 'help_block' => '',
                 'class' => 'tinymce',

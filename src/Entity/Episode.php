@@ -87,13 +87,13 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
 
     /**
      * @var string
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     private $bibliography;
 
     /**
      * @var string
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     private $transcript;
 
