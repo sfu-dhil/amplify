@@ -64,12 +64,6 @@
     </subject>
     {% endfor %}
 
-    {% for tag in object.tags %}
-        <subject>
-            <topic>{{ tag }}</topic>
-        </subject>
-    {% endfor %}
-
     {% for category in object.podcast.categories %}
         <subject>
             <topic authorityURI='https://help.apple.com/itc/podcasts_connect/#/itc9267a2f12'>{{ category }}</topic>

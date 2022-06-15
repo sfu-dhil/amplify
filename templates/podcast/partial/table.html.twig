@@ -3,7 +3,6 @@
         <tr>
             <th>Title</th>
             <th>Website</th>
-            <th>Tags</th>
         </tr>
     </thead>
     <tbody>
@@ -16,11 +15,6 @@
                 </td>
                 <td>
                     {{ podcast.website|raw }}
-                </td>
-                <td>
-                    {% if podcast.tags %}
-                        {{ podcast.tags|join(', ') }}
-                    {% endif %}
                 </td>
             </tr>
         {% endfor %}

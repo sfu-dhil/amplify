@@ -37,12 +37,6 @@
             </td>
         </tr>
         <tr>
-            <th>Tags</th>
-            <td>
-                {% if episode.tags %}{{ episode.tags|join(', ') }}{% endif %}
-            </td>
-        </tr>
-        <tr>
             <th>Bibliography</th>
             <td>
                 {{ episode.bibliography|raw }}

@@ -78,12 +78,6 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     private $rss;
 
     /**
-     * @var array|string[]
-     * @ORM\Column(type="array")
-     */
-    private $tags;
-
-    /**
      * @var Publisher
      * @ORM\ManyToOne(targetEntity="Publisher", inversedBy="podcasts")
      */
@@ -116,7 +110,6 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     public function __construct() {
         parent::__construct();
         $this->trait_constructor();
-        $this->tags = [];
         $this->contributions = new ArrayCollection();
         $this->seasons = new ArrayCollection();
         $this->episodes = new ArrayCollection();
@@ -196,22 +189,6 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
 
     public function setRss(string $rss) : self {
         $this->rss = $rss;
-
-        return $this;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getTags() : ?array {
-        return $this->tags;
-    }
-
-    /**
-     * @param string[] $tags
-     */
-    public function setTags(array $tags) : self {
-        $this->tags = $tags;
 
         return $this;
     }

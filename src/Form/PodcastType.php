@@ -87,23 +87,6 @@ class PodcastType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-        $builder->add('tags', CollectionType::class, [
-            'label' => 'Tags',
-            'required' => true,
-            'allow_add' => true,
-            'allow_delete' => true,
-            'delete_empty' => true,
-            'entry_type' => TextType::class,
-            'entry_options' => [
-                'label' => false,
-            ],
-            'by_reference' => false,
-            'attr' => [
-                'class' => 'collection collection-simple',
-                'help_block' => '',
-            ],
-        ]);
-
         $builder->add('publisher', Select2EntityType::class, [
             'label' => 'Publisher',
             'class' => Publisher::class,

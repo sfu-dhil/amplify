@@ -86,12 +86,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     private $languages;
 
     /**
-     * @var array|string[]
-     * @ORM\Column(type="array")
-     */
-    private $tags;
-
-    /**
      * @var string
      * @ORM\Column(type="text")
      */
@@ -148,7 +142,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         $this->pdf_constructor();
 
         $this->preserved = false;
-        $this->tags = [];
         $this->languages = new ArrayCollection();
         $this->subjects = [];
         $this->contributions = new ArrayCollection();
@@ -215,22 +208,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
 
     public function setSubTitle(?string $subTitle) : self {
         $this->subTitle = $subTitle;
-
-        return $this;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getTags() : ?array {
-        return $this->tags;
-    }
-
-    /**
-     * @param string[] $tags
-     */
-    public function setTags(array $tags) : self {
-        $this->tags = $tags;
 
         return $this;
     }
