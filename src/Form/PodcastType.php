@@ -69,7 +69,7 @@ class PodcastType extends AbstractType {
             'label' => 'Copyright',
             'required' => true,
             'attr' => [
-                'help_block' => '',
+                'help_block' => 'Suggested text: "Rights remain with the creators."',
                 'class' => 'tinymce',
             ],
         ]);
