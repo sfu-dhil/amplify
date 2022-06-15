@@ -81,14 +81,6 @@ class EpisodeType extends AbstractType {
                 'class' => 'tinymce',
             ],
         ]);
-        $builder->add('copyright', TextareaType::class, [
-            'label' => 'Copyright',
-            'required' => true,
-            'attr' => [
-                'help_block' => '',
-                'class' => 'tinymce',
-            ],
-        ]);
         $builder->add('transcript', TextareaType::class, [
             'label' => 'Transcript',
             'required' => true,

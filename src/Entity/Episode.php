@@ -95,12 +95,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
      * @var string
      * @ORM\Column(type="text")
      */
-    private $copyright;
-
-    /**
-     * @var string
-     * @ORM\Column(type="text")
-     */
     private $transcript;
 
     /**
@@ -218,16 +212,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
 
     public function setBibliography(string $bibliography) : self {
         $this->bibliography = $bibliography;
-
-        return $this;
-    }
-
-    public function getCopyright() : ?string {
-        return $this->copyright;
-    }
-
-    public function setCopyright(string $copyright) : self {
-        $this->copyright = $copyright;
 
         return $this;
     }

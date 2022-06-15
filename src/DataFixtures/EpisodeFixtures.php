@@ -75,7 +75,6 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $fixture->setTitle('Title ' . $i);
             $fixture->setSubTitle('SubTitle ' . $i);
             $fixture->setBibliography("<p>This is paragraph {$i}</p>");
-            $fixture->setCopyright("<p>This is paragraph {$i}</p>");
             $fixture->setTranscript("<p>This is paragraph {$i}</p>");
             $fixture->setAbstract("<p>This is paragraph {$i}</p>");
             $fixture->setSeason($this->getReference('season.1'));

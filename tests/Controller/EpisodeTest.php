@@ -165,7 +165,6 @@ class EpisodeTest extends ControllerTestCase {
             'episode[title]' => 'Updated Title',
             'episode[subTitle]' => 'Updated subTitle',
             'episode[bibliography]' => '<p>Updated Text</p>',
-            'episode[copyright]' => '<p>Updated Text</p>',
             'episode[transcript]' => '<p>Updated Text</p>',
             'episode[abstract]' => '<p>Updated Text</p>',
         ]);
@@ -212,7 +211,6 @@ class EpisodeTest extends ControllerTestCase {
             'episode[title]' => 'Updated Title',
             'episode[subTitle]' => 'Updated subTitle',
             'episode[bibliography]' => '<p>Updated Text</p>',
-            'episode[copyright]' => '<p>Updated Text</p>',
             'episode[transcript]' => '<p>Updated Text</p>',
             'episode[abstract]' => '<p>Updated Text</p>',
         ]);
@@ -237,7 +235,6 @@ class EpisodeTest extends ControllerTestCase {
             'episode[title]' => 'Updated Title',
             'episode[subTitle]' => 'Updated subTitle',
             'episode[bibliography]' => '<p>Updated Text</p>',
-            'episode[copyright]' => '<p>Updated Text</p>',
             'episode[transcript]' => '<p>Updated Text</p>',
             'episode[abstract]' => '<p>Updated Text</p>',
         ]);
