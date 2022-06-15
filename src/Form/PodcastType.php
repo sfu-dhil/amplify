@@ -37,7 +37,7 @@ class PodcastType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-        $builder->add('alternativeTitle', TextType::class, [
+        $builder->add('subTitle', TextType::class, [
             'label' => 'Alternative Title',
             'required' => false,
             'attr' => [

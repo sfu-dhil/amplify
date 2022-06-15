@@ -73,7 +73,7 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $fixture->setDate(new DateTimeImmutable("2020-{$i}-{$i}"));
             $fixture->setRunTime("00:{$i}5:00");
             $fixture->setTitle('Title ' . $i);
-            $fixture->setAlternativeTitle('AlternativeTitle ' . $i);
+            $fixture->setSubTitle('SubTitle ' . $i);
             $fixture->setTags(['Tags ' . $i]);
             $fixture->setBibliography("<p>This is paragraph {$i}</p>");
             $fixture->setCopyright("<p>This is paragraph {$i}</p>");

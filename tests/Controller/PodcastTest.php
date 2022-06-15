@@ -156,7 +156,7 @@ class PodcastTest extends ControllerTestCase {
 
         $form = $formCrawler->selectButton('Save')->form([
             'podcast[title]' => 'Updated Title',
-            'podcast[alternativeTitle]' => 'Updated AlternativeTitle',
+            'podcast[subTitle]' => 'Updated subTitle',
             'podcast[explicit]' => 1,
             'podcast[description]' => '<p>Updated Text</p>',
             'podcast[copyright]' => '<p>Updated Text</p>',
@@ -200,7 +200,7 @@ class PodcastTest extends ControllerTestCase {
 
         $form = $formCrawler->selectButton('Save')->form([
             'podcast[title]' => 'Updated Title',
-            'podcast[alternativeTitle]' => 'Updated AlternativeTitle',
+            'podcast[subTitle]' => 'Updated subTitle',
             'podcast[explicit]' => 1,
             'podcast[description]' => '<p>Updated Text</p>',
             'podcast[copyright]' => '<p>Updated Text</p>',
@@ -222,7 +222,7 @@ class PodcastTest extends ControllerTestCase {
 
         $form = $formCrawler->selectButton('Save')->form([
             'podcast[title]' => 'Updated Title',
-            'podcast[alternativeTitle]' => 'Updated AlternativeTitle',
+            'podcast[subTitle]' => 'Updated subTitle',
             'podcast[explicit]' => 1,
             'podcast[description]' => '<p>Updated Text</p>',
             'podcast[copyright]' => '<p>Updated Text</p>',

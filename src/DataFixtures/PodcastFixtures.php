@@ -42,7 +42,7 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface, Fixt
         for ($i = 0; $i < 4; $i++) {
             $fixture = new Podcast();
             $fixture->setTitle('Title ' . $i);
-            $fixture->setAlternativeTitle('AlternativeTitle ' . $i);
+            $fixture->setSubTitle('SubTitle ' . $i);
             $fixture->setExplicit(0 === $i % 2);
             $fixture->setDescription("<p>This is paragraph {$i}</p>");
             $fixture->setCopyright("<p>This is paragraph {$i}</p>");

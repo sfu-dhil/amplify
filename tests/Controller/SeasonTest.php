@@ -158,7 +158,7 @@ class SeasonTest extends ControllerTestCase {
             'season[number]' => 10,
             'season[preserved]' => 1,
             'season[title]' => 'Updated Title',
-            'season[alternativeTitle]' => 'Updated AlternativeTitle',
+            'season[subTitle]' => 'Updated subTitle',
             'season[description]' => '<p>Updated Text</p>',
         ]);
         $this->overrideField($form, 'season[podcast]', 2);
@@ -201,7 +201,7 @@ class SeasonTest extends ControllerTestCase {
             'season[number]' => 10,
             'season[preserved]' => 1,
             'season[title]' => 'Updated Title',
-            'season[alternativeTitle]' => 'Updated AlternativeTitle',
+            'season[subTitle]' => 'Updated subTitle',
             'season[description]' => '<p>Updated Text</p>',
         ]);
         $this->overrideField($form, 'season[podcast]', 2);
@@ -222,7 +222,7 @@ class SeasonTest extends ControllerTestCase {
             'season[number]' => 10,
             'season[preserved]' => 1,
             'season[title]' => 'Updated Title',
-            'season[alternativeTitle]' => 'Updated AlternativeTitle',
+            'season[subTitle]' => 'Updated subTitle',
             'season[description]' => '<p>Updated Text</p>',
         ]);
         $this->overrideField($form, 'season[podcast]', 2);

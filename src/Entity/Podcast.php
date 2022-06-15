@@ -25,7 +25,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Podcast extends AbstractEntity implements ImageContainerInterface {
     use ImageContainerTrait {
         ImageContainerTrait::__construct as protected trait_constructor;
-
     }
 
     /**
@@ -38,7 +37,7 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
      * @var string
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $alternativeTitle;
+    private $subTitle;
 
     /**
      * @var bool
@@ -141,12 +140,12 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
-    public function getAlternativeTitle() : ?string {
-        return $this->alternativeTitle;
+    public function getSubTitle() : ?string {
+        return $this->subTitle;
     }
 
-    public function setAlternativeTitle(?string $alternativeTitle) : self {
-        $this->alternativeTitle = $alternativeTitle;
+    public function setSubTitle(?string $subTitle) : self {
+        $this->subTitle = $subTitle;
 
         return $this;
     }

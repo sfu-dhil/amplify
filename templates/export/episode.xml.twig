@@ -6,9 +6,9 @@
     <titleInfo>
         <title>{{ object.podcast.title }} {{ object.slug }}: {{ object.title }}</title>
     </titleInfo>
-    {% if object.alternativeTitle %}
+    {% if object.subTitle %}
     <titleInfo type='alternative'>
-        <title>{{ object.alternativeTitle }}</title>
+        <title>{{ object.subTitle }}</title>
         <partNumber>{{ object.slug }}</partNumber>
         <partName>{{ object.podcast.title }}</partName>
         <partNumber>{{ object.season.title }}</partNumber>
@@ -100,4 +100,3 @@
     </relatedItem>
     <identifier type='amplify'>episode:{{ object.id }}:episode</identifier>
 </mods>
-
