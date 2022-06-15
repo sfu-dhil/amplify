@@ -104,6 +104,12 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     private $description;
 
     /**
+     * @var string
+     * @ORM\Column(type="text")
+     */
+    private $permissions;
+
+    /**
      * @var string[]
      * @ORM\Column(type="json")
      */
@@ -348,6 +354,18 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
 
     public function setLanguage(?Language $language) : self {
         $this->language = $language;
+
+        return $this;
+    }
+
+    public function getPermissions(): ?string
+    {
+        return $this->permissions;
+    }
+
+    public function setPermissions(string $permissions): self
+    {
+        $this->permissions = $permissions;
 
         return $this;
     }

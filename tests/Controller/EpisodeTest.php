@@ -167,6 +167,7 @@ class EpisodeTest extends ControllerTestCase {
             'episode[bibliography]' => '<p>Updated Text</p>',
             'episode[transcript]' => '<p>Updated Text</p>',
             'episode[description]' => '<p>Updated Text</p>',
+            'episode[permissions]' => '<p>Updated Text</p>',
         ]);
         $this->overrideField($form, 'episode[season]', 2);
         $this->overrideField($form, 'episode[podcast]', 2);
@@ -213,6 +214,7 @@ class EpisodeTest extends ControllerTestCase {
             'episode[bibliography]' => '<p>Updated Text</p>',
             'episode[transcript]' => '<p>Updated Text</p>',
             'episode[description]' => '<p>Updated Text</p>',
+            'episode[permissions]' => '<p>Updated Text</p>',
         ]);
         $this->overrideField($form, 'episode[season]', 2);
         $this->overrideField($form, 'episode[podcast]', 2);
@@ -237,6 +239,7 @@ class EpisodeTest extends ControllerTestCase {
             'episode[bibliography]' => '<p>Updated Text</p>',
             'episode[transcript]' => '<p>Updated Text</p>',
             'episode[description]' => '<p>Updated Text</p>',
+            'episode[permissions]' => '<p>Updated Text</p>',
         ]);
         $this->overrideField($form, 'episode[season]', 2);
         $this->overrideField($form, 'episode[podcast]', 2);

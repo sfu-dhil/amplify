@@ -109,6 +109,14 @@ class EpisodeType extends AbstractType {
                 'class' => 'tinymce',
             ],
         ]);
+        $builder->add('permissions', TextareaType::class, [
+            'label' => 'Permissions',
+            'required' => false,
+            'attr' => [
+                'help_block' => '',
+                'class' => 'tinymce',
+            ],
+        ]);
         $builder->add('subjects', CollectionType::class, [
             'label' => 'Subject',
             'required' => false,
