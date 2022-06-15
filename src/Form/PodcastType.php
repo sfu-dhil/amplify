@@ -85,6 +85,14 @@ class PodcastType extends AbstractType {
                 'class' => 'tinymce',
             ],
         ]);
+        $builder->add('license', TextareaType::class, [
+            'label' => 'License',
+            'required' => true,
+            'attr' => [
+                'help_block' => 'Optional. See <a href="https://creativecommons.org/about/cclicenses/">CreativeCommons.org</a> for suggestions',
+                'class' => 'tinymce',
+            ],
+        ]);
         $builder->add('website', UrlType::class, [
             'label' => 'Website',
             'required' => true,

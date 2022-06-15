@@ -160,6 +160,7 @@ class PodcastTest extends ControllerTestCase {
             'podcast[explicit]' => 1,
             'podcast[description]' => '<p>Updated Text</p>',
             'podcast[copyright]' => '<p>Updated Text</p>',
+            'podcast[license]' => '<p>Updated Text</p>',
             'podcast[website]' => 'https://example.com',
             'podcast[rss]' => 'https://example.com',
         ]);
@@ -204,6 +205,7 @@ class PodcastTest extends ControllerTestCase {
             'podcast[explicit]' => 1,
             'podcast[description]' => '<p>Updated Text</p>',
             'podcast[copyright]' => '<p>Updated Text</p>',
+            'podcast[license]' => '<p>Updated Text</p>',
             'podcast[website]' => 'https://example.com',
             'podcast[rss]' => 'https://example.com',
         ]);
@@ -226,6 +228,7 @@ class PodcastTest extends ControllerTestCase {
             'podcast[explicit]' => 1,
             'podcast[description]' => '<p>Updated Text</p>',
             'podcast[copyright]' => '<p>Updated Text</p>',
+            'podcast[license]' => '<p>Updated Text</p>',
             'podcast[website]' => 'https://example.com',
             'podcast[rss]' => 'https://example.com',
         ]);

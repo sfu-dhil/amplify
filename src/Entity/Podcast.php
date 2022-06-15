@@ -65,6 +65,12 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
 
     /**
      * @var string
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $license;
+
+    /**
+     * @var string
      * @ORM\Column(type="text")
      * @Assert\Url(
      *     normalizer="trim",
@@ -322,6 +328,18 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
 
     public function setLanguage(?Language $language) : self {
         $this->language = $language;
+
+        return $this;
+    }
+
+    public function getLicense(): ?string
+    {
+        return $this->license;
+    }
+
+    public function setLicense(?string $license): self
+    {
+        $this->license = $license;
 
         return $this;
     }
