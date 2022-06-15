@@ -124,6 +124,10 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
             $entityManager->flush();
             $this->addFlash('success', 'The new episode has been saved.');
 
+            if($episode->getPodcast()->getLanguage() && ! $episode->getLanguage()) {
+                $episode->setLanguage($episode->getPodcast()->getLanguage());
+            }
+
             return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
         }
 

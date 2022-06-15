@@ -22,7 +22,7 @@ use Nines\UtilBundle\Entity\AbstractTerm;
 class Language extends AbstractTerm {
     /**
      * @var Collection<int,Episode>
-     * @ORM\ManyToMany(targetEntity="App\Entity\Episode", mappedBy="languages")
+     * @ORM\OneToMany(targetEntity="App\Entity\Episode", mappedBy="language")
      */
     private $episodes;
 
@@ -32,7 +32,7 @@ class Language extends AbstractTerm {
     }
 
     /**
-     * @return Collection<int,Episode>
+     * @return Collection<int, Episode>
      */
     public function getEpisodes() : Collection {
         return $this->episodes;
@@ -41,16 +41,18 @@ class Language extends AbstractTerm {
     public function addEpisode(Episode $episode) : self {
         if ( ! $this->episodes->contains($episode)) {
             $this->episodes[] = $episode;
-            $episode->addLanguage($this);
+            $episode->setLanguage($this);
         }
 
         return $this;
     }
 
     public function removeEpisode(Episode $episode) : self {
-        if ($this->episodes->contains($episode)) {
-            $this->episodes->removeElement($episode);
-            $episode->removeLanguage($this);
+        if ($this->episodes->removeElement($episode)) {
+            // set the owning side to null (unless already changed)
+            if ($episode->getLanguage() === $this) {
+                $episode->setLanguage(null);
+            }
         }
 
         return $this;

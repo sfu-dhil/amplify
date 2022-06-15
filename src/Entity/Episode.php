@@ -80,10 +80,10 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     private $subTitle;
 
     /**
-     * @var Collection<int,Language>
-     * @ORM\ManyToMany(targetEntity="App\Entity\Language", inversedBy="episodes", cascade={"remove"})
+     * @var Language
+     * @ORM\ManyToOne(targetEntity="App\Entity\Language", inversedBy="episodes")
      */
-    private $languages;
+    private $language;
 
     /**
      * @var string
@@ -136,7 +136,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         $this->pdf_constructor();
 
         $this->preserved = false;
-        $this->languages = new ArrayCollection();
         $this->subjects = [];
         $this->contributions = new ArrayCollection();
     }
@@ -256,6 +255,12 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this;
     }
 
+    public function setSubjects(array $subjects) : self {
+        $this->subjects = $subjects;
+
+        return $this;
+    }
+
     /**
      * @return string[]
      */
@@ -337,25 +342,12 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         $this->preserved = false;
     }
 
-    /**
-     * @return Collection<int,Language>
-     */
-    public function getLanguages() : Collection {
-        return $this->languages;
+    public function getLanguage() : ?Language {
+        return $this->language;
     }
 
-    public function addLanguage(Language $language) : self {
-        if ( ! $this->languages->contains($language)) {
-            $this->languages[] = $language;
-        }
-
-        return $this;
-    }
-
-    public function removeLanguage(Language $language) : self {
-        if ($this->languages->contains($language)) {
-            $this->languages->removeElement($language);
-        }
+    public function setLanguage(?Language $language) : self {
+        $this->language = $language;
 
         return $this;
     }

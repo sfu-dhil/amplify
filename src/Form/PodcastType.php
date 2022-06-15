@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Language;
 use App\Entity\Podcast;
 use App\Entity\Publisher;
 use Symfony\Component\Form\AbstractType;
@@ -63,6 +64,17 @@ class PodcastType extends AbstractType {
             'attr' => [
                 'help_block' => '',
                 'class' => 'tinymce',
+            ],
+        ]);
+        $builder->add('language', Select2EntityType::class, [
+            'label' => 'Primary Language',
+            'class' => Language::class,
+            'remote_route' => 'language_typeahead',
+            'allow_clear' => true,
+            'attr' => [
+                'help_block' => '',
+                'add_path' => 'language_new_popup',
+                'add_label' => 'Add Language',
             ],
         ]);
         $builder->add('copyright', TextareaType::class, [

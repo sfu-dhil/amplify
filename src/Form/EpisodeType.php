@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Episode;
+use App\Entity\Language;
 use App\Entity\Podcast;
 use App\Entity\Season;
 use Symfony\Component\Form\AbstractType;
@@ -71,6 +72,17 @@ class EpisodeType extends AbstractType {
             'required' => false,
             'attr' => [
                 'help_block' => '',
+            ],
+        ]);
+        $builder->add('language', Select2EntityType::class, [
+            'label' => 'Primary Language',
+            'class' => Language::class,
+            'remote_route' => 'language_typeahead',
+            'allow_clear' => true,
+            'attr' => [
+                'help_block' => '',
+                'add_path' => 'language_new_popup',
+                'add_label' => 'Add Language',
             ],
         ]);
         $builder->add('bibliography', TextareaType::class, [

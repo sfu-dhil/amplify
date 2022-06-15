@@ -52,6 +52,12 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     private $description;
 
     /**
+     * @var Language
+     * @ORM\ManyToOne(targetEntity="App\Entity\Language")
+     */
+    private $language;
+
+    /**
      * @var string
      * @ORM\Column(type="text")
      */
@@ -306,6 +312,16 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         if ($this->categories->contains($category)) {
             $this->categories->removeElement($category);
         }
+
+        return $this;
+    }
+
+    public function getLanguage() : ?Language {
+        return $this->language;
+    }
+
+    public function setLanguage(?Language $language) : self {
+        $this->language = $language;
 
         return $this;
     }

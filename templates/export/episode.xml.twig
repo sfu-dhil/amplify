@@ -62,13 +62,12 @@
         {% endif %}
     </originInfo>
 
-    {% if object.languages|length > 0 %}
-    <language>
-        {% for language in object.languages %}
-        <languageTerm type='text'>{{ language }}</languageTerm>
-        {% endfor %}
-    </language>
+    {% if object.language %}
+        <language>
+            <languageTerm type='text'>{{ language }}</languageTerm>
+        </language>
     {% endif %}
+
 
     <abstract><![CDATA[{{ object.description|raw('xml') }}]]></abstract>
 

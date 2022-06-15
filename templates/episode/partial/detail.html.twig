@@ -69,18 +69,12 @@
             </td>
         </tr>
         <tr>
-            <th>Language</th>
+            <th>Primary Language</th>
             <td>
-                {% if episode.languages|length > 0 %}
-                    <ul>
-                        {% for language in episode.languages %}
-                            <li>
-                                <a href='{{ path("language_show", {"id":language.id }) }}'>
-                                    {{ language }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
+                {% if episode.language %}
+                    <a href='{{ path("language_show", {"id": episode.language.id }) }}'>
+                        {{ episode.language }}
+                    </a>
                 {% endif %}
             </td>
         </tr>

@@ -54,11 +54,9 @@
         {% endif %}
     </originInfo>
 
-    {% if object.languages|length > 0 %}
+    {% if object.language %}
     <language>
-        {% for language in object.languages %}
         <languageTerm type='text'>{{ language }}</languageTerm>
-        {% endfor %}
     </language>
     {% endif %}
 
