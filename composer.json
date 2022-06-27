@@ -23,7 +23,6 @@
         "phpdocumentor/reflection-docblock": "^5.2",
         "scienta/doctrine-json-functions": "^4.1",
         "sensio/framework-extra-bundle": "^6.2",
-        "soundasleep/html2text": "^1.1",
         "symfony/asset": "4.4.*",
         "symfony/console": "4.4.*",
         "symfony/dotenv": "4.4.*",

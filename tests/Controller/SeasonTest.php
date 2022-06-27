@@ -288,19 +288,19 @@ class SeasonTest extends ControllerTestCase {
     }
 
     public function testAnonEditImage() : void {
-        $crawler = $this->client->request('GET', '/season/1/edit_image/5');
+        $crawler = $this->client->request('GET', '/season/1/edit_image/10');
         $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
     public function testUserEditImage() : void {
         $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/season/1/edit_image/5');
+        $crawler = $this->client->request('GET', '/season/1/edit_image/10');
         $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminEditImage() : void {
         $this->login(UserFixtures::ADMIN);
-        $crawler = $this->client->request('GET', '/season/1/edit_image/5');
+        $crawler = $this->client->request('GET', '/season/1/edit_image/10');
         $this->assertResponseIsSuccessful();
 
         $manager = self::$container->get(ImageManager::class);
@@ -321,13 +321,13 @@ class SeasonTest extends ControllerTestCase {
     }
 
     public function testAnonDeleteImage() : void {
-        $crawler = $this->client->request('DELETE', '/season/1/delete_image/5');
+        $crawler = $this->client->request('DELETE', '/season/1/delete_image/10');
         $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
     public function testUserDeleteImage() : void {
         $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('DELETE', '/season/1/delete_image/5');
+        $crawler = $this->client->request('DELETE', '/season/1/delete_image/10');
         $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
@@ -339,7 +339,7 @@ class SeasonTest extends ControllerTestCase {
         $crawler = $this->client->request('GET', '/season/4');
         $this->assertResponseIsSuccessful();
 
-        $form = $crawler->filter('form.delete-form[action="/season/4/delete_image/8"]')->form();
+        $form = $crawler->filter('form.delete-form[action="/season/4/delete_image/13"]')->form();
         $this->client->submit($form);
         $this->assertResponseRedirects('/season/4');
         $responseCrawler = $this->client->followRedirect();
@@ -350,25 +350,6 @@ class SeasonTest extends ControllerTestCase {
         $this->assertSame($preCount - 1, $postCount);
     }
 
-    public function testAdminDeleteWrongImage() : void {
-        $repo = self::$container->get(ImageRepository::class);
-        $preCount = count($repo->findAll());
-
-        $this->login(UserFixtures::ADMIN);
-        $crawler = $this->client->request('GET', '/season/4');
-        $this->assertResponseIsSuccessful();
-
-        $form = $crawler->filter('form.delete-form[action="/season/4/delete_image/8"]')->form();
-        $form->getNode()->setAttribute('action', '/season/3/delete_image/8');
-
-        $this->client->submit($form);
-        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
-
-        $this->em->clear();
-        $postCount = count($repo->findAll());
-        $this->assertSame($preCount, $postCount);
-    }
-
     public function testAdminDeleteImageWrongToken() : void {
         $repo = self::$container->get(ImageRepository::class);
         $preCount = count($repo->findAll());
@@ -377,7 +358,7 @@ class SeasonTest extends ControllerTestCase {
         $crawler = $this->client->request('GET', '/season/4');
         $this->assertResponseIsSuccessful();
 
-        $form = $crawler->filter('form.delete-form[action="/season/4/delete_image/8"]')->form([
+        $form = $crawler->filter('form.delete-form[action="/season/4/delete_image/13"]')->form([
             '_token' => 'abc123',
         ]);
 
