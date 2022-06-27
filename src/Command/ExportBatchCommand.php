@@ -51,11 +51,7 @@ class ExportBatchCommand extends Command {
      */
     protected function generateMods(string $type, $object, string $destination, ?Episode $episode = null) : void {
         $mods = $this->twig->render("export/{$type}.xml.twig", ['object' => $object, 'episode' => $episode]);
-        $doc = new DOMDocument();
-        $doc->preserveWhiteSpace = false;
-        $doc->formatOutput = true;
-        $doc->loadXML($mods);
-        $doc->save($destination);
+        file_put_contents($destination, $mods);
     }
 
     /**
@@ -88,8 +84,8 @@ class ExportBatchCommand extends Command {
             $fs->mkdir($path, 0755);
             $this->generateMods('episode', $episode, "{$path}/MODS.xml");
 
-            $fs->mkdir("{$path}/episode", 0755);
-            $this->generateMods('audio', $episode, "{$path}/episode/MODS.xml");
+            $fs->mkdir("{$path}/audio", 0755);
+            $this->generateMods('audio', $episode, "{$path}/audio/MODS.xml");
 
             $obj = $episode->getAudio('audio/x-wav');
             if ( ! $obj) {
@@ -97,9 +93,9 @@ class ExportBatchCommand extends Command {
             }
             $mp3 = $episode->getAudio('audio/mpeg');
 
-            $fs->copy($obj->getFile()->getRealPath(), "{$path}/episode/OBJ." . $obj->getExtension());
+            $fs->copy($obj->getFile()->getRealPath(), "{$path}/audio/OBJ." . $obj->getExtension());
             if ($mp3 && $mp3 !== $obj) {
-                $fs->copy($mp3->getFile()->getRealPath(), "{$path}/episode/PROXY_MP3." . $obj->getExtension());
+                $fs->copy($mp3->getFile()->getRealPath(), "{$path}/audio/PROXY_MP3." . $obj->getExtension());
             }
 
             if ($episode->getTranscript()) {
@@ -114,6 +110,7 @@ class ExportBatchCommand extends Command {
 
             $images = array_merge($episode->getImages(), $episode->getSeason()->getImages(), $episode->getPodcast()->getImages());
             if (count($images)) {
+                $fs->copy($images[0]->getFile()->getRealPath(), "{$path}/TN." . $images[0]->getfile()->getExtension());
                 foreach ($images as $n => $image) {
                     $subdir = "{$path}/img_{$n}";
                     $fs->mkdir($subdir, 0755);
@@ -133,7 +130,7 @@ class ExportBatchCommand extends Command {
 
         $xml = '<?xml version="1.0" encoding="utf-8"?>';
         $xml .= "<islandora_compound_object title='{$slug}'>";
-        $xml .= "<child content='{$slug}/episode'/>";
+        $xml .= "<child content='{$slug}/audio'/>";
 
         $images = array_merge($episode->getImages(), $episode->getSeason()->getImages(), $episode->getPodcast()->getImages());
         foreach ($images as $n => $image) {

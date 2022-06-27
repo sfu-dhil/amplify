@@ -64,12 +64,11 @@
 
     {% if object.language %}
         <language>
-            <languageTerm type='text'>{{ language }}</languageTerm>
+            <languageTerm type='text'>{{ object.language }}</languageTerm>
         </language>
     {% endif %}
 
-
-    <abstract><![CDATA[{{ object.description|raw('xml') }}]]></abstract>
+    <abstract>{{ object.description|html2txt }}</abstract>
 
     {% for subject in object.subjects %}
     <subject>
@@ -83,7 +82,9 @@
         </subject>
     {% endfor %}
 
-    <accessCondition type='use and reproduction'>{{ object.podcast.copyright|raw|striptags }}</accessCondition>
+    <accessCondition type='use and reproduction'>
+        {{ object.podcast.copyright|raw|striptags }}
+    </accessCondition>
 
     <relatedItem type='series'>
         <titleInfo>
