@@ -50,7 +50,10 @@ class ExportBatchCommand extends Command {
      * @throws SyntaxError
      */
     protected function generateMods(string $type, $object, string $destination, ?Episode $episode = null) : void {
-        $mods = $this->twig->render("export/{$type}.xml.twig", ['object' => $object, 'episode' => $episode]);
+        $mods = $this->twig->render("export/{$type}.xml.twig", [
+            'object' => $object,
+            'episode' => $episode
+        ]);
         file_put_contents($destination, $mods);
     }
 
