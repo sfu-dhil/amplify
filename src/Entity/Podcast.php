@@ -59,7 +59,7 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
 
     /**
      * @var string
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=false)
      */
     private $copyright;
 

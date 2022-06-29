@@ -87,7 +87,7 @@ class EpisodeType extends AbstractType {
         ]);
         $builder->add('bibliography', TextareaType::class, [
             'label' => 'Bibliography',
-            'required' => true,
+            'required' => false,
             'attr' => [
                 'help_block' => '',
                 'class' => 'tinymce',
@@ -103,7 +103,7 @@ class EpisodeType extends AbstractType {
         ]);
         $builder->add('description', TextareaType::class, [
             'label' => 'Description',
-            'required' => false,
+            'required' => true,
             'attr' => [
                 'help_block' => '',
                 'class' => 'tinymce',
@@ -122,6 +122,7 @@ class EpisodeType extends AbstractType {
             'required' => false,
             'allow_add' => true,
             'allow_delete' => true,
+            'delete_empty' => true,
             'entry_type' => TextType::class,
             'entry_options' => [
                 'label' => false,
