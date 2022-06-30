@@ -4,9 +4,8 @@
         xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
         version="3.5">
     <titleInfo>
-        <title>{{ object.podcast.title }} {{ object.slug }}: Transcript</title>
+        <title>{{ episode.podcast.title }} {{ episode.slug }}: Image</title>
     </titleInfo>
     <typeOfResource>text</typeOfResource>
-    <genre>Podcast</genre>
-    <identifier type='amplify'>episode:{{ object.id }}:transcript</identifier>
+    <identifier type='amplify'>episode:{{ episode.id }}:transcript:{{ object.id }}</identifier>
 </mods>

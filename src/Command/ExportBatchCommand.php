@@ -13,6 +13,7 @@ namespace App\Command;
 use App\Entity\Episode;
 use App\Repository\SeasonRepository;
 use DOMDocument;
+use Nines\MediaBundle\Entity\Audio;
 use Nines\MediaBundle\Entity\Image;
 use Nines\MediaBundle\Entity\Pdf;
 use Soundasleep\Html2Text;
@@ -21,7 +22,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -38,21 +38,22 @@ class ExportBatchCommand extends Command {
     protected static string $defaultDescription = 'Export a season of a podcast for an islandora batch import.';
 
     protected function configure() : void {
-        $this->setDescription(self::$defaultDescription)->addArgument('seasonId', InputArgument::REQUIRED, 'Season database ID')->addArgument('directory', InputArgument::REQUIRED, 'Directory to export to');
+        $this->setDescription(self::$defaultDescription);
+        $this->addArgument('seasonId', InputArgument::REQUIRED, 'Season database ID');
+        $this->addArgument('directory', InputArgument::REQUIRED, 'Directory to export to');
     }
 
     /**
-     * @param Episode|Image|Pdf $object
-     * @param ?Episode $episode
+     * @param Audio|Episode|Image|Pdf $object
      *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    protected function generateMods(string $type, $object, string $destination, ?Episode $episode = null) : void {
+    protected function generateMods(string $type, $object, string $destination, Episode $episode) : void {
         $mods = $this->twig->render("export/{$type}.xml.twig", [
             'object' => $object,
-            'episode' => $episode
+            'episode' => $episode,
         ]);
         file_put_contents($destination, $mods);
     }
@@ -64,13 +65,13 @@ class ExportBatchCommand extends Command {
      * @throws Html2TextException
      */
     protected function execute(InputInterface $input, OutputInterface $output) : int {
-        $io = new SymfonyStyle($input, $output);
         $season = $this->repository->find($input->getArgument('seasonId'));
         if ( ! $season) {
-            $io->writeln('Cannot find season ' . $input->getArgument('seasonId'));
+            $output->writeln('Cannot find season ' . $input->getArgument('seasonId'));
 
             return 1;
         }
+
         $dir = $input->getArgument('directory');
         $fs = new Filesystem();
 
@@ -85,10 +86,7 @@ class ExportBatchCommand extends Command {
             $path = "{$dir}/{$slug}";
 
             $fs->mkdir($path, 0755);
-            $this->generateMods('episode', $episode, "{$path}/MODS.xml");
-
-            $fs->mkdir("{$path}/audio", 0755);
-            $this->generateMods('audio', $episode, "{$path}/audio/MODS.xml");
+            $this->generateMods('parent', $episode, "{$path}/MODS.xml", $episode);
 
             $obj = $episode->getAudio('audio/x-wav');
             if ( ! $obj) {
@@ -96,24 +94,35 @@ class ExportBatchCommand extends Command {
             }
             $mp3 = $episode->getAudio('audio/mpeg');
 
+            $fs->mkdir("{$path}/audio", 0755);
+            $this->generateMods('audio', $obj, "{$path}/audio/MODS.xml", $episode);
+
             $fs->copy($obj->getFile()->getRealPath(), "{$path}/audio/OBJ." . $obj->getExtension());
             if ($mp3 && $mp3 !== $obj) {
                 $fs->copy($mp3->getFile()->getRealPath(), "{$path}/audio/PROXY_MP3." . $obj->getExtension());
             }
 
-            if ($episode->getTranscript()) {
+            if (count($episode->getPdfs()) > 0) {
+                $pdf = $episode->getPdfs()[0];
                 $fs->mkdir("{$path}/transcript", 0755);
-                $this->generateMods('transcript', $episode, "{$path}/transcript/MODS.xml");
-                $text = Html2Text::convert($episode->getTranscript());
-                $fs->dumpFile("{$path}/transcript/FULL_TEXT.txt", wordwrap($text));
-                if (count($episode->getPdfs())) {
-                    $fs->copy($episode->getPdfs()[0]->getFile()->getRealPath(), "{$path}/transcript/OBJ.pdf");
+                $this->generateMods('transcript', $pdf, "{$path}/transcript/MODS.xml", $episode);
+                $fs->copy($pdf->getFile()->getRealPath(), "{$path}/transcript/OBJ.pdf");
+                if ($episode->getTranscript()) {
+                    $text = Html2Text::convert($episode->getTranscript());
+                    $fs->dumpFile("{$path}/transcript/FULL_TEXT.txt", wordwrap($text));
+                }
+                foreach (array_slice($episode->getPdfs(), 1) as $n => $extra) {
+                    $fs->mkdir("{$path}/transcript_{$n}", 0755);
+                    $this->generateMods('transcript', $extra, "{$path}/transcript_{$n}/MODS.xml", $episode);
+                    $fs->copy($pdf->getFile()->getRealPath(), "{$path}/transcript_{$n}/OBJ.pdf");
                 }
             }
 
             $images = array_merge($episode->getImages(), $episode->getSeason()->getImages(), $episode->getPodcast()->getImages());
             if (count($images)) {
-                $fs->copy($images[0]->getFile()->getRealPath(), "{$path}/TN." . $images[0]->getfile()->getExtension());
+                $tn = $images[0];
+                $fs->copy($tn->getFile()->getRealPath(), "{$path}/TN." . $tn->getfile()->getExtension());
+
                 foreach ($images as $n => $image) {
                     $subdir = "{$path}/img_{$n}";
                     $fs->mkdir($subdir, 0755);
@@ -140,7 +149,10 @@ class ExportBatchCommand extends Command {
             $xml .= "<child content='{$slug}/img_{$n}'/>";
         }
 
-        $xml .= "<child content='{$slug}/transcript'/>";
+        foreach($episode->getPdfs() as $n => $pdf) {
+            $dir = "transcript" . ($n > 0 ? "_{$n}" : "");
+            $xml .= "<child content='{$slug}/{$dir}'/>";
+        }
         $xml .= '</islandora_compound_object>';
 
         $doc = new DOMDocument();

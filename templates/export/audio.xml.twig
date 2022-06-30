@@ -4,87 +4,105 @@
         xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
         version="3.5">
     <titleInfo>
-        <title>{{ object.podcast.title }} {{ object.slug }}: {{ object.title }}</title>
+        <title>{{ episode.podcast.title }} {{ episode.slug }}: {{ episode.title }}</title>
+        <partNumber>{{ episode.slug }}</partNumber>
+        <partName>{{ episode.podcast.title }}</partName>
+        <partNumber>{{ episode.season.title }}</partNumber>
     </titleInfo>
-    {% if object.subTitle %}
+    {% if episode.subTitle %}
         <titleInfo type='alternative'>
-            <title>{{ object.subTitle }}</title>
-            <partNumber>{{ object.slug }}</partNumber>
-            <partName>{{ object.podcast.title }}</partName>
-            <partNumber>{{ object.season.title }}</partNumber>
+            <title>{{ episode.subTitle }}</title>
         </titleInfo>
     {% endif %}
 
-    {% set contributions = object.podcast.contributions|merge(object.season.contributions) %}
+    {% set contributions = episode.podcast.contributions|merge(episode.season.contributions) %}
     {% for contribution in contributions %}
         {% set role = contribution.contributorRole %}
         {% set person = contribution.person %}
         <name>
             <namePart>{{ person.fullName }}</namePart>
-            {% if person.institution %}<affiliation>{{ person.institution}}</affiliation>{% endif %}
+            {% if person.institution %}
+                <affiliation>{{ person.institution }}</affiliation>{% endif %}
             <role>
-                {% if role.relatorTerm %}<roleTerm type='code' authority='marcrelator'>{{ role.relatorTerm }}</roleTerm>{% endif %}
-                <roleTerm  type="text" authority="marcrel">{{ role.label }}</roleTerm>
+                {% if role.relatorTerm %}
+                    <roleTerm type='code' authority='marcrelator'>{{ role.relatorTerm }}</roleTerm>{% endif %}
+                <roleTerm type="text" authority="marcrel">{{ role.label }}</roleTerm>
             </role>
         </name>
     {% endfor %}
 
-    {% for contribution in object.contributions %}
+    {% for contribution in episode.contributions %}
         {% set role = contribution.contributorRole %}
         {% set person = contribution.person %}
         <name>
             <namePart>{{ person.fullName }}</namePart>
-            {% if person.institution %}<affiliation>{{ person.institution}}</affiliation>{% endif %}
+            {% if person.institution %}
+                <affiliation>{{ person.institution }}</affiliation>{% endif %}
             <role>
-                {% if role.relatorTerm %}<roleTerm type='code' authority='marcrelator'>{{ role.relatorTerm }}</roleTerm>{% endif %}
-                <roleTerm  type="text" authority="marcrel">{{ role.label }}</roleTerm>
+                {% if role.relatorTerm %}
+                    <roleTerm type='code' authority='marcrelator'>{{ role.relatorTerm }}</roleTerm>{% endif %}
+                <roleTerm type="text" authority="marcrel">{{ role.label }}</roleTerm>
             </role>
-            {% if person.bio %}<description>{{ person.bio(true) }}</description>{% endif %}
+            {% if person.bio %}
+                <description>{{ person.bio(true) }}</description>{% endif %}
         </name>
     {% endfor %}
 
     <typeOfResource>sound recording-nonmusical</typeOfResource>
-    <genre>Podcast</genre>
 
     <physicalDescription>
         <form authority="marcform">sound recording</form>
-        <extent unit='minutes'>{{ object.runTime }}</extent>
+        <extent unit='minutes'>{{ episode.runTime }}</extent>
         <digitalOrigin>born digital</digitalOrigin>
     </physicalDescription>
 
     <originInfo>
-        <dateIssued>{{ object.date|date('Y-m-d') }}</dateIssued>
+        <dateIssued>{{ episode.date|date('Y-m-d') }}</dateIssued>
         <issuance>serial</issuance>
-        {% if object.season.publisher %}
-            <publisher>{{ object.season.publisher.name }}</publisher>
-        {% elseif object.podcast.publisher %}
-            <publisher>{{ object.podcast.publisher.name }}</publisher>
+        {% if episode.season.publisher %}
+            <publisher>{{ episode.season.publisher.name }}</publisher>
+        {% elseif episode.podcast.publisher %}
+            <publisher>{{ episode.podcast.publisher.name }}</publisher>
         {% endif %}
     </originInfo>
 
-    {% if object.language %}
+    {% if episode.language %}
         <language>
-            <languageTerm authority="iso639-2b" type="code" displayLabel='{{ object.language }}'>{{ object.language.name }}</languageTerm>
+            <languageTerm authority="iso639-2b" type="code" displayLabel='{{ episode.language }}'>{{ episode.language.name }}</languageTerm>
         </language>
     {% endif %}
 
-    <abstract>{{ object.description|html2txt|raw }}</abstract>
+    <abstract>
+        {{ episode.description|html2txt|raw('xml') }}
+        {% if episode.permissions %}
+            &#10;&#10;{{ episode.permissions|html2txt|raw('xml') }}
+        {% endif %}
+        {% if episode.bibliography %}
+            &#10;&#10;{{ episode.bibliography|html2txt|raw('xml') }}
+        {% endif %}
+        {% if episode.podcast.copyright %}
+            &#10;&#10;{{ episode.podcast.copyright|html2txt|raw('xml') }}
+        {% endif %}
+        {% if episode.podcast.license %}
+            &#10;&#10;{{ episode.podcast.license|html2txt|raw('xml') }}
+        {% endif %}
+    </abstract>
 
-    {% for subject in object.subjects %}
+    {% for subject in episode.subjects %}
         <subject>
             <topic authority='lcsh' authorityURI="http://id.loc.gov/authorities/subjects">{{ subject }}</topic>
         </subject>
     {% endfor %}
 
-    {% for category in object.podcast.categories %}
+    {% for category in episode.podcast.categories %}
         <subject>
             <topic authorityURI='https://help.apple.com/itc/podcasts_connect/#/itc9267a2f12'>{{ category }}</topic>
         </subject>
     {% endfor %}
 
     <accessCondition type='use and reproduction'>
-        {{ object.podcast.copyright|raw|striptags }}
+        {{ episode.podcast.copyright|raw|striptags }}
     </accessCondition>
 
-    <identifier type='amplify'>episode:{{ object.id }}:audio</identifier>
+    <identifier type='amplify'>episode:{{ episode.id }}:audio</identifier>
 </mods>
