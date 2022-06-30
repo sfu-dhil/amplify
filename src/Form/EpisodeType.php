@@ -80,7 +80,7 @@ class EpisodeType extends AbstractType {
             'remote_route' => 'language_typeahead',
             'allow_clear' => true,
             'attr' => [
-                'help_block' => '',
+                'help_block' => 'Leave this field blank to use the podcast primary language',
                 'add_path' => 'language_new_popup',
                 'add_label' => 'Add Language',
             ],

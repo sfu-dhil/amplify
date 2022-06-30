@@ -114,6 +114,9 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if( ! $episode->getLanguage()) {
+                $episode->setLanguage($episode->getPodcast()->getLanguage());
+            }
             $entityManager = $this->getDoctrine()->getManager();
 
             foreach ($episode->getContributions() as $contribution) {
@@ -173,6 +176,9 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if( ! $episode->getLanguage()) {
+                $episode->setLanguage($episode->getPodcast()->getLanguage());
+            }
             $entityManager = $this->getDoctrine()->getManager();
 
             foreach ($episode->getContributions() as $contribution) {

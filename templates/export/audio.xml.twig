@@ -64,7 +64,7 @@
 
     {% if object.language %}
         <language>
-            <languageTerm type='text'>{{ object.language }}</languageTerm>
+            <languageTerm authority="iso639-2b" type="code" displayLabel='{{ object.language }}'>{{ object.language.name }}</languageTerm>
         </language>
     {% endif %}
 
