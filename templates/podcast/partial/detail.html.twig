@@ -9,8 +9,12 @@
         <tr>
             <th>Alternative Title</th>
             <td>
-                {{ podcast.alternativeTitle }}
+                {{ podcast.subTitle }}
             </td>
+        </tr>
+        <tr>
+            <th>Primary Language</th>
+            <td>{{ podcast.language }}</td>
         </tr>
         <tr>
             <th>Explicit</th>
@@ -31,6 +35,12 @@
             </td>
         </tr>
         <tr>
+            <th>License</th>
+            <td>
+                {{ podcast.license|raw }}
+            </td>
+        </tr>
+        <tr>
             <th>Website</th>
             <td>
                 {{ podcast.website|raw }}
@@ -42,13 +52,6 @@
                 {{ podcast.rss }}
             </td>
         </tr>
-        <tr>
-            <th>Tags</th>
-            <td>
-                {% if podcast.tags %}{{ podcast.tags|join(', ') }}{% endif %}
-            </td>
-        </tr>
-
         <tr>
             <th>Publisher</th>
             <td>
@@ -129,5 +132,3 @@
         </tr>
     </tbody>
 </table>
-
-

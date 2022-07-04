@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -42,13 +42,13 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface, Fixt
         for ($i = 0; $i < 4; $i++) {
             $fixture = new Podcast();
             $fixture->setTitle('Title ' . $i);
-            $fixture->setAlternativeTitle('AlternativeTitle ' . $i);
+            $fixture->setSubTitle('SubTitle ' . $i);
             $fixture->setExplicit(0 === $i % 2);
             $fixture->setDescription("<p>This is paragraph {$i}</p>");
             $fixture->setCopyright("<p>This is paragraph {$i}</p>");
+            $fixture->setLicense("<p>This is license {$i}</p>");
             $fixture->setWebsite("<p>This is paragraph {$i}</p>");
             $fixture->setRss('Rss ' . $i);
-            $fixture->setTags(['Tags ' . $i]);
             $fixture->setPublisher($this->getReference('publisher.1'));
             $em->persist($fixture);
             $em->flush();

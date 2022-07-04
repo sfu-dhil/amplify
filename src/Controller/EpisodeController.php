@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -114,6 +114,9 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if( ! $episode->getLanguage()) {
+                $episode->setLanguage($episode->getPodcast()->getLanguage());
+            }
             $entityManager = $this->getDoctrine()->getManager();
 
             foreach ($episode->getContributions() as $contribution) {
@@ -123,6 +126,10 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
             $entityManager->persist($episode);
             $entityManager->flush();
             $this->addFlash('success', 'The new episode has been saved.');
+
+            if($episode->getPodcast()->getLanguage() && ! $episode->getLanguage()) {
+                $episode->setLanguage($episode->getPodcast()->getLanguage());
+            }
 
             return $this->redirectToRoute('episode_show', ['id' => $episode->getId()]);
         }
@@ -169,6 +176,9 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if( ! $episode->getLanguage()) {
+                $episode->setLanguage($episode->getPodcast()->getLanguage());
+            }
             $entityManager = $this->getDoctrine()->getManager();
 
             foreach ($episode->getContributions() as $contribution) {

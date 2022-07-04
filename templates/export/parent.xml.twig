@@ -4,18 +4,18 @@
         xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
         version="3.5">
     <titleInfo>
-        <title>{{ object.podcast.title }} {{ object.slug }}: {{ object.title }}</title>
+        <title>{{ episode.podcast.title }} {{ episode.slug }}: {{ episode.title }}</title>
+        <partNumber>{{ episode.slug }}</partNumber>
+        <partName>{{ episode.podcast.title }}</partName>
+        <partNumber>{{ episode.season.title }}</partNumber>
     </titleInfo>
-    {% if object.alternativeTitle %}
+    {% if episode.subTitle %}
     <titleInfo type='alternative'>
-        <title>{{ object.alternativeTitle }}</title>
-        <partNumber>{{ object.slug }}</partNumber>
-        <partName>{{ object.podcast.title }}</partName>
-        <partNumber>{{ object.season.title }}</partNumber>
+        <title>{{ episode.subTitle }}</title>
     </titleInfo>
     {% endif %}
 
-    {% set contributions = object.podcast.contributions|merge(object.season.contributions) %}
+    {% set contributions = episode.podcast.contributions|merge(episode.season.contributions) %}
     {% for contribution in contributions %}
         {% set role = contribution.contributorRole %}
         {% set person = contribution.person %}
@@ -29,7 +29,7 @@
         </name>
     {% endfor %}
 
-    {% for contribution in object.contributions %}
+    {% for contribution in episode.contributions %}
         {% set role = contribution.contributorRole %}
         {% set person = contribution.person %}
         <name>
@@ -48,56 +48,49 @@
 
     <physicalDescription>
         <form authority="marcform">sound recording</form>
-        <extent unit='minutes'>{{ object.runTime }}</extent>
+        <extent unit='minutes'>{{ episode.runTime }}</extent>
         <digitalOrigin>born digital</digitalOrigin>
     </physicalDescription>
 
     <originInfo>
-        <dateIssued>{{ object.date|date('Y-m-d') }}</dateIssued>
+        <dateIssued>{{ episode.date|date('Y-m-d') }}</dateIssued>
         <issuance>serial</issuance>
-        {% if object.season.publisher %}
-            <publisher>{{ object.season.publisher.name }}</publisher>
-        {% elseif object.podcast.publisher %}
-            <publisher>{{ object.podcast.publisher.name }}</publisher>
+        {% if episode.season.publisher %}
+            <publisher>{{ episode.season.publisher.name }}</publisher>
+        {% elseif episode.podcast.publisher %}
+            <publisher>{{ episode.podcast.publisher.name }}</publisher>
         {% endif %}
     </originInfo>
 
-    {% if object.languages|length > 0 %}
-    <language>
-        {% for language in object.languages %}
-        <languageTerm type='text'>{{ language }}</languageTerm>
-        {% endfor %}
-    </language>
+    {% if episode.language %}
+        <language>
+            <languageTerm type='text'>{{ episode.language }}</languageTerm>
+        </language>
     {% endif %}
 
-    <abstract><![CDATA[{{ object.abstract|raw('xml') }}]]></abstract>
+    <abstract>{{ episode.description|html2txt }}</abstract>
 
-    {% for subject in object.subjects %}
+    {% for subject in episode.subjects %}
     <subject>
         <topic authority='lcsh' authorityURI="http://id.loc.gov/authorities/subjects">{{ subject }}</topic>
     </subject>
     {% endfor %}
 
-    {% for tag in object.tags %}
-        <subject>
-            <topic>{{ tag }}</topic>
-        </subject>
-    {% endfor %}
-
-    {% for category in object.podcast.categories %}
+    {% for category in episode.podcast.categories %}
         <subject>
             <topic authorityURI='https://help.apple.com/itc/podcasts_connect/#/itc9267a2f12'>{{ category }}</topic>
         </subject>
     {% endfor %}
 
-    <accessCondition type='use and reproduction'>{{ object.podcast.copyright|raw|striptags }}</accessCondition>
+    <accessCondition type='use and reproduction'>
+        {{ episode.podcast.copyright|raw|striptags }}
+    </accessCondition>
 
     <relatedItem type='series'>
         <titleInfo>
-            <title>{{ object.podcast.title }}</title>
-            <partNumber>{{ object.slug }}</partNumber>
+            <title>{{ episode.podcast.title }}</title>
+            <partNumber>{{ episode.slug }}</partNumber>
         </titleInfo>
     </relatedItem>
-    <identifier type='amplify'>episode:{{ object.id }}:episode</identifier>
+    <identifier type='amplify'>episode:{{ episode.id }}:episode</identifier>
 </mods>
-

@@ -3,13 +3,14 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
 
 namespace App\Form;
 
+use App\Entity\Language;
 use App\Entity\Podcast;
 use App\Entity\Publisher;
 use Symfony\Component\Form\AbstractType;
@@ -37,8 +38,8 @@ class PodcastType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-        $builder->add('alternativeTitle', TextType::class, [
-            'label' => 'Alternative Title',
+        $builder->add('subTitle', TextType::class, [
+            'label' => 'Subtitle',
             'required' => false,
             'attr' => [
                 'help_block' => '',
@@ -65,11 +66,30 @@ class PodcastType extends AbstractType {
                 'class' => 'tinymce',
             ],
         ]);
+        $builder->add('language', Select2EntityType::class, [
+            'label' => 'Primary Language',
+            'class' => Language::class,
+            'remote_route' => 'language_typeahead',
+            'allow_clear' => true,
+            'attr' => [
+                'help_block' => '',
+                'add_path' => 'language_new_popup',
+                'add_label' => 'Add Language',
+            ],
+        ]);
         $builder->add('copyright', TextareaType::class, [
             'label' => 'Copyright',
             'required' => true,
             'attr' => [
-                'help_block' => '',
+                'help_block' => 'Suggested text: "Rights remain with the creators."',
+                'class' => 'tinymce',
+            ],
+        ]);
+        $builder->add('license', TextareaType::class, [
+            'label' => 'License',
+            'required' => true,
+            'attr' => [
+                'help_block' => 'Optional. See <a href="https://creativecommons.org/about/cclicenses/">CreativeCommons.org</a> for suggestions',
                 'class' => 'tinymce',
             ],
         ]);
@@ -87,23 +107,6 @@ class PodcastType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-        $builder->add('tags', CollectionType::class, [
-            'label' => 'Tags',
-            'required' => true,
-            'allow_add' => true,
-            'allow_delete' => true,
-            'delete_empty' => true,
-            'entry_type' => TextType::class,
-            'entry_options' => [
-                'label' => false,
-            ],
-            'by_reference' => false,
-            'attr' => [
-                'class' => 'collection collection-simple',
-                'help_block' => '',
-            ],
-        ]);
-
         $builder->add('publisher', Select2EntityType::class, [
             'label' => 'Publisher',
             'class' => Publisher::class,

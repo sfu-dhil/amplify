@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -25,7 +25,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Podcast extends AbstractEntity implements ImageContainerInterface {
     use ImageContainerTrait {
         ImageContainerTrait::__construct as protected trait_constructor;
-
     }
 
     /**
@@ -38,7 +37,7 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
      * @var string
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $alternativeTitle;
+    private $subTitle;
 
     /**
      * @var bool
@@ -53,10 +52,22 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     private $description;
 
     /**
+     * @var Language
+     * @ORM\ManyToOne(targetEntity="App\Entity\Language")
+     */
+    private $language;
+
+    /**
      * @var string
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=false)
      */
     private $copyright;
+
+    /**
+     * @var string
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $license;
 
     /**
      * @var string
@@ -77,12 +88,6 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
      * )
      */
     private $rss;
-
-    /**
-     * @var array|string[]
-     * @ORM\Column(type="array")
-     */
-    private $tags;
 
     /**
      * @var Publisher
@@ -117,7 +122,6 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     public function __construct() {
         parent::__construct();
         $this->trait_constructor();
-        $this->tags = [];
         $this->contributions = new ArrayCollection();
         $this->seasons = new ArrayCollection();
         $this->episodes = new ArrayCollection();
@@ -141,12 +145,12 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
-    public function getAlternativeTitle() : ?string {
-        return $this->alternativeTitle;
+    public function getSubTitle() : ?string {
+        return $this->subTitle;
     }
 
-    public function setAlternativeTitle(?string $alternativeTitle) : self {
-        $this->alternativeTitle = $alternativeTitle;
+    public function setSubTitle(?string $subTitle) : self {
+        $this->subTitle = $subTitle;
 
         return $this;
     }
@@ -197,22 +201,6 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
 
     public function setRss(string $rss) : self {
         $this->rss = $rss;
-
-        return $this;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getTags() : ?array {
-        return $this->tags;
-    }
-
-    /**
-     * @param string[] $tags
-     */
-    public function setTags(array $tags) : self {
-        $this->tags = $tags;
 
         return $this;
     }
@@ -330,6 +318,28 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         if ($this->categories->contains($category)) {
             $this->categories->removeElement($category);
         }
+
+        return $this;
+    }
+
+    public function getLanguage() : ?Language {
+        return $this->language;
+    }
+
+    public function setLanguage(?Language $language) : self {
+        $this->language = $language;
+
+        return $this;
+    }
+
+    public function getLicense(): ?string
+    {
+        return $this->license;
+    }
+
+    public function setLicense(?string $license): self
+    {
+        $this->license = $license;
 
         return $this;
     }

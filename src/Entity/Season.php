@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -50,7 +50,7 @@ class Season extends AbstractEntity implements ImageContainerInterface {
      * @var string
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $alternativeTitle;
+    private $subTitle;
 
     /**
      * @var string
@@ -120,12 +120,12 @@ class Season extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
-    public function getAlternativeTitle() : ?string {
-        return $this->alternativeTitle;
+    public function getSubTitle() : ?string {
+        return $this->subTitle;
     }
 
-    public function setAlternativeTitle(?string $alternativeTitle) : self {
-        $this->alternativeTitle = $alternativeTitle;
+    public function setSubTitle(?string $subTitle) : self {
+        $this->subTitle = $subTitle;
 
         return $this;
     }

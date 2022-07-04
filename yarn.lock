@@ -34,7 +34,7 @@ pdfobject@^2.2.5:
 select2-bootstrap-css@^1.4.6:
   version "1.4.6"
   resolved "https://registry.yarnpkg.com/select2-bootstrap-css/-/select2-bootstrap-css-1.4.6.tgz#5cfb68246f5299ca1858e01efd788804c734997e"
-  integrity sha1-XPtoJG9SmcoYWOAe/XiIBMc0mX4=
+  integrity sha512-BBsisfivUYjwhj3QdWNS15sBqC/DHoszRC4B3GIzJwMNO1pT1uVvwDm5u2TLXi7oj/3S4vIeQ6yAuMa86d7c9A==
 
 select2@^4.0.12:
   version "4.0.13"

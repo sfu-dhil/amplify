@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -51,7 +51,7 @@ class SeasonFixtures extends Fixture implements DependentFixtureInterface, Fixtu
             $fixture->setNumber($i);
             $fixture->setPreserved(0 === $i % 2);
             $fixture->setTitle('Title ' . $i);
-            $fixture->setAlternativeTitle('AlternativeTitle ' . $i);
+            $fixture->setSubTitle('SubTitle ' . $i);
             $fixture->setDescription("<p>This is paragraph {$i}</p>");
             $fixture->setPodcast($this->getReference('podcast.1'));
             $fixture->setPublisher($this->getReference('publisher.1'));

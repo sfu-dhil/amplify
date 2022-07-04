@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -77,35 +77,23 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
      * @var string
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $alternativeTitle;
+    private $subTitle;
 
     /**
-     * @var Collection<int,Language>
-     * @ORM\ManyToMany(targetEntity="App\Entity\Language", inversedBy="episodes", cascade={"remove"})
+     * @var Language
+     * @ORM\ManyToOne(targetEntity="App\Entity\Language", inversedBy="episodes")
      */
-    private $languages;
-
-    /**
-     * @var array|string[]
-     * @ORM\Column(type="array")
-     */
-    private $tags;
+    private $language;
 
     /**
      * @var string
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     private $bibliography;
 
     /**
      * @var string
-     * @ORM\Column(type="text")
-     */
-    private $copyright;
-
-    /**
-     * @var string
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     private $transcript;
 
@@ -113,7 +101,13 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
      * @var string
      * @ORM\Column(type="text")
      */
-    private $abstract;
+    private $description;
+
+    /**
+     * @var string
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $permissions;
 
     /**
      * @var string[]
@@ -148,8 +142,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         $this->pdf_constructor();
 
         $this->preserved = false;
-        $this->tags = [];
-        $this->languages = new ArrayCollection();
         $this->subjects = [];
         $this->contributions = new ArrayCollection();
     }
@@ -209,28 +201,12 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this;
     }
 
-    public function getAlternativeTitle() : ?string {
-        return $this->alternativeTitle;
+    public function getSubTitle() : ?string {
+        return $this->subTitle;
     }
 
-    public function setAlternativeTitle(?string $alternativeTitle) : self {
-        $this->alternativeTitle = $alternativeTitle;
-
-        return $this;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getTags() : ?array {
-        return $this->tags;
-    }
-
-    /**
-     * @param string[] $tags
-     */
-    public function setTags(array $tags) : self {
-        $this->tags = $tags;
+    public function setSubTitle(?string $subTitle) : self {
+        $this->subTitle = $subTitle;
 
         return $this;
     }
@@ -245,16 +221,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this;
     }
 
-    public function getCopyright() : ?string {
-        return $this->copyright;
-    }
-
-    public function setCopyright(string $copyright) : self {
-        $this->copyright = $copyright;
-
-        return $this;
-    }
-
     public function getTranscript() : ?string {
         return $this->transcript;
     }
@@ -265,12 +231,12 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this;
     }
 
-    public function getAbstract() : ?string {
-        return $this->abstract;
+    public function getDescription() : ?string {
+        return $this->description;
     }
 
-    public function setAbstract(string $abstract) : self {
-        $this->abstract = $abstract;
+    public function setDescription(string $description) : self {
+        $this->description = $description;
 
         return $this;
     }
@@ -291,6 +257,12 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
 
     public function setPodcast(?Podcast $podcast) : self {
         $this->podcast = $podcast;
+
+        return $this;
+    }
+
+    public function setSubjects(array $subjects) : self {
+        $this->subjects = $subjects;
 
         return $this;
     }
@@ -376,25 +348,24 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         $this->preserved = false;
     }
 
-    /**
-     * @return Collection<int,Language>
-     */
-    public function getLanguages() : Collection {
-        return $this->languages;
+    public function getLanguage() : ?Language {
+        return $this->language;
     }
 
-    public function addLanguage(Language $language) : self {
-        if ( ! $this->languages->contains($language)) {
-            $this->languages[] = $language;
-        }
+    public function setLanguage(?Language $language) : self {
+        $this->language = $language;
 
         return $this;
     }
 
-    public function removeLanguage(Language $language) : self {
-        if ($this->languages->contains($language)) {
-            $this->languages->removeElement($language);
-        }
+    public function getPermissions(): ?string
+    {
+        return $this->permissions;
+    }
+
+    public function setPermissions(string $permissions): self
+    {
+        $this->permissions = $permissions;
 
         return $this;
     }

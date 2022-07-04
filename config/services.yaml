@@ -23,8 +23,6 @@ parameters:
 
     page_size: 25
 
-    amplify.audio.dir: '%env(string:AMPLIFY_AUDIO_DIR)%'
-    amplify.image.dir: '%env(string:AMPLIFY_IMAGE_DIR)%'
     amplify.thumb.height: 400
     amplify.thumb.width: 600
 
@@ -51,8 +49,3 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: main}
             - { name: knp_menu.menu_builder, method: footerMenu, alias: footer}
-
-    App\Services\Thumbnailer:
-        calls:
-            - [ setHeight, [ '%amplify.thumb.height%' ] ]
-            - [ setWidth, [ '%amplify.thumb.width%' ] ]

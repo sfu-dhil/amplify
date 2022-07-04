@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -73,12 +73,11 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $fixture->setDate(new DateTimeImmutable("2020-{$i}-{$i}"));
             $fixture->setRunTime("00:{$i}5:00");
             $fixture->setTitle('Title ' . $i);
-            $fixture->setAlternativeTitle('AlternativeTitle ' . $i);
-            $fixture->setTags(['Tags ' . $i]);
+            $fixture->setSubTitle('SubTitle ' . $i);
             $fixture->setBibliography("<p>This is paragraph {$i}</p>");
-            $fixture->setCopyright("<p>This is paragraph {$i}</p>");
             $fixture->setTranscript("<p>This is paragraph {$i}</p>");
-            $fixture->setAbstract("<p>This is paragraph {$i}</p>");
+            $fixture->setDescription("<p>This is paragraph {$i}</p>");
+            $fixture->setPermissions("<p>This is paragraph {$i}</p>");
             $fixture->setSeason($this->getReference('season.1'));
             $fixture->setPodcast($this->getReference('podcast.1'));
             $fixture->addSubject('Subject ' . $i);

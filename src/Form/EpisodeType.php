@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Episode;
+use App\Entity\Language;
 use App\Entity\Podcast;
 use App\Entity\Season;
 use Symfony\Component\Form\AbstractType;
@@ -66,40 +67,27 @@ class EpisodeType extends AbstractType {
                 'help_block' => '',
             ],
         ]);
-        $builder->add('alternativeTitle', TextType::class, [
+        $builder->add('subTitle', TextType::class, [
             'label' => 'Alternative Title',
             'required' => false,
             'attr' => [
                 'help_block' => '',
             ],
         ]);
-        $builder->add('tags', CollectionType::class, [
-            'label' => 'Tags',
-            'required' => true,
-            'allow_add' => true,
-            'allow_delete' => true,
-            'delete_empty' => true,
-            'entry_type' => TextType::class,
-            'entry_options' => [
-                'label' => false,
-            ],
-            'by_reference' => false,
+        $builder->add('language', Select2EntityType::class, [
+            'label' => 'Primary Language',
+            'class' => Language::class,
+            'remote_route' => 'language_typeahead',
+            'allow_clear' => true,
             'attr' => [
-                'class' => 'collection collection-simple',
-                'help_block' => '',
+                'help_block' => 'Leave this field blank to use the podcast primary language',
+                'add_path' => 'language_new_popup',
+                'add_label' => 'Add Language',
             ],
         ]);
         $builder->add('bibliography', TextareaType::class, [
             'label' => 'Bibliography',
-            'required' => true,
-            'attr' => [
-                'help_block' => '',
-                'class' => 'tinymce',
-            ],
-        ]);
-        $builder->add('copyright', TextareaType::class, [
-            'label' => 'Copyright',
-            'required' => true,
+            'required' => false,
             'attr' => [
                 'help_block' => '',
                 'class' => 'tinymce',
@@ -107,15 +95,23 @@ class EpisodeType extends AbstractType {
         ]);
         $builder->add('transcript', TextareaType::class, [
             'label' => 'Transcript',
+            'required' => false,
+            'attr' => [
+                'help_block' => '',
+                'class' => 'tinymce',
+            ],
+        ]);
+        $builder->add('description', TextareaType::class, [
+            'label' => 'Description',
             'required' => true,
             'attr' => [
                 'help_block' => '',
                 'class' => 'tinymce',
             ],
         ]);
-        $builder->add('abstract', TextareaType::class, [
-            'label' => 'Abstract',
-            'required' => true,
+        $builder->add('permissions', TextareaType::class, [
+            'label' => 'Permissions',
+            'required' => false,
             'attr' => [
                 'help_block' => '',
                 'class' => 'tinymce',
@@ -126,6 +122,7 @@ class EpisodeType extends AbstractType {
             'required' => false,
             'allow_add' => true,
             'allow_delete' => true,
+            'delete_empty' => true,
             'entry_type' => TextType::class,
             'entry_options' => [
                 'label' => false,

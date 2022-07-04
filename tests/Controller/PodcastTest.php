@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -156,10 +156,11 @@ class PodcastTest extends ControllerTestCase {
 
         $form = $formCrawler->selectButton('Save')->form([
             'podcast[title]' => 'Updated Title',
-            'podcast[alternativeTitle]' => 'Updated AlternativeTitle',
+            'podcast[subTitle]' => 'Updated subTitle',
             'podcast[explicit]' => 1,
             'podcast[description]' => '<p>Updated Text</p>',
             'podcast[copyright]' => '<p>Updated Text</p>',
+            'podcast[license]' => '<p>Updated Text</p>',
             'podcast[website]' => 'https://example.com',
             'podcast[rss]' => 'https://example.com',
         ]);
@@ -200,10 +201,11 @@ class PodcastTest extends ControllerTestCase {
 
         $form = $formCrawler->selectButton('Save')->form([
             'podcast[title]' => 'Updated Title',
-            'podcast[alternativeTitle]' => 'Updated AlternativeTitle',
+            'podcast[subTitle]' => 'Updated subTitle',
             'podcast[explicit]' => 1,
             'podcast[description]' => '<p>Updated Text</p>',
             'podcast[copyright]' => '<p>Updated Text</p>',
+            'podcast[license]' => '<p>Updated Text</p>',
             'podcast[website]' => 'https://example.com',
             'podcast[rss]' => 'https://example.com',
         ]);
@@ -222,10 +224,11 @@ class PodcastTest extends ControllerTestCase {
 
         $form = $formCrawler->selectButton('Save')->form([
             'podcast[title]' => 'Updated Title',
-            'podcast[alternativeTitle]' => 'Updated AlternativeTitle',
+            'podcast[subTitle]' => 'Updated subTitle',
             'podcast[explicit]' => 1,
             'podcast[description]' => '<p>Updated Text</p>',
             'podcast[copyright]' => '<p>Updated Text</p>',
+            'podcast[license]' => '<p>Updated Text</p>',
             'podcast[website]' => 'https://example.com',
             'podcast[rss]' => 'https://example.com',
         ]);
@@ -291,19 +294,19 @@ class PodcastTest extends ControllerTestCase {
     }
 
     public function testAnonEditImage() : void {
-        $crawler = $this->client->request('GET', '/podcast/1/edit_image/1');
+        $crawler = $this->client->request('GET', '/podcast/1/edit_image/6');
         $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
     public function testUserEditImage() : void {
         $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/podcast/1/edit_image/1');
+        $crawler = $this->client->request('GET', '/podcast/1/edit_image/6');
         $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminEditImage() : void {
         $this->login(UserFixtures::ADMIN);
-        $crawler = $this->client->request('GET', '/podcast/1/edit_image/1');
+        $crawler = $this->client->request('GET', '/podcast/1/edit_image/6');
         $this->assertResponseIsSuccessful();
 
         $manager = self::$container->get(ImageManager::class);
@@ -324,13 +327,13 @@ class PodcastTest extends ControllerTestCase {
     }
 
     public function testAnonDeleteImage() : void {
-        $crawler = $this->client->request('DELETE', '/podcast/1/delete_image/1');
+        $crawler = $this->client->request('DELETE', '/podcast/1/delete_image/6');
         $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
     }
 
     public function testUserDeleteImage() : void {
         $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('DELETE', '/podcast/1/delete_image/1');
+        $crawler = $this->client->request('DELETE', '/podcast/1/delete_image/6');
         $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
@@ -342,7 +345,7 @@ class PodcastTest extends ControllerTestCase {
         $crawler = $this->client->request('GET', '/podcast/4');
         $this->assertResponseIsSuccessful();
 
-        $form = $crawler->filter('form.delete-form[action="/podcast/4/delete_image/4"]')->form();
+        $form = $crawler->filter('form.delete-form[action="/podcast/4/delete_image/9"]')->form();
         $this->client->submit($form);
         $this->assertResponseRedirects('/podcast/4');
         $responseCrawler = $this->client->followRedirect();
@@ -353,25 +356,6 @@ class PodcastTest extends ControllerTestCase {
         $this->assertSame($preCount - 1, $postCount);
     }
 
-    public function testAdminDeleteWrongImage() : void {
-        $repo = self::$container->get(ImageRepository::class);
-        $preCount = count($repo->findAll());
-
-        $this->login(UserFixtures::ADMIN);
-        $crawler = $this->client->request('GET', '/podcast/4');
-        $this->assertResponseIsSuccessful();
-
-        $form = $crawler->filter('form.delete-form[action="/podcast/4/delete_image/4"]')->form();
-        $form->getNode()->setAttribute('action', '/podcast/3/delete_image/4');
-
-        $this->client->submit($form);
-        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
-
-        $this->em->clear();
-        $postCount = count($repo->findAll());
-        $this->assertSame($preCount, $postCount);
-    }
-
     public function testAdminDeleteImageWrongToken() : void {
         $repo = self::$container->get(ImageRepository::class);
         $preCount = count($repo->findAll());
@@ -380,7 +364,7 @@ class PodcastTest extends ControllerTestCase {
         $crawler = $this->client->request('GET', '/podcast/4');
         $this->assertResponseIsSuccessful();
 
-        $form = $crawler->filter('form.delete-form[action="/podcast/4/delete_image/4"]')->form([
+        $form = $crawler->filter('form.delete-form[action="/podcast/4/delete_image/9"]')->form([
             '_token' => 'abc123',
         ]);
 
