@@ -215,7 +215,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this->bibliography;
     }
 
-    public function setBibliography(string $bibliography) : self {
+    public function setBibliography(?string $bibliography) : self {
         $this->bibliography = $bibliography;
 
         return $this;
@@ -363,7 +363,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this->permissions;
     }
 
-    public function setPermissions(string $permissions): self
+    public function setPermissions(?string $permissions): self
     {
         $this->permissions = $permissions;
 
