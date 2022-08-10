@@ -68,7 +68,21 @@
         </language>
     {% endif %}
 
-    <abstract>{{ episode.description|html2txt }}</abstract>
+    <abstract>
+        {{ episode.description|html2txt|raw('xml') }}
+        {% if episode.permissions %}
+            &#10;&#10;{{ episode.permissions|html2txt|raw('xml') }}
+        {% endif %}
+        {% if episode.bibliography %}
+            &#10;&#10;{{ episode.bibliography|html2txt|raw('xml') }}
+        {% endif %}
+        {% if episode.podcast.copyright %}
+            &#10;&#10;{{ episode.podcast.copyright|html2txt|raw('xml') }}
+        {% endif %}
+        {% if episode.podcast.license %}
+            &#10;&#10;{{ episode.podcast.license|html2txt|raw('xml') }}
+        {% endif %}
+    </abstract>
 
     {% for subject in episode.subjects %}
     <subject>
