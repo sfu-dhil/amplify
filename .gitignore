@@ -34,6 +34,10 @@
 /data
 /src/.preload.php
 
+# Local makefile
+
+Makefile.local
+
 # hacking and exporting
 /lib
 /ps
