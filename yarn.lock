@@ -8,9 +8,9 @@ bootstrap3@^3.3.5:
   integrity sha512-KoChQrvYQQv44JrkjEiSy/90CYp5/4QDF2DZZysD/mPYlZGc+z0QN1aLDUiXhl1KIjWNu5UdJ3w8NhrKZnJOUw==
 
 jquery-ui-dist@^1.12.1:
-  version "1.13.1"
-  resolved "https://registry.yarnpkg.com/jquery-ui-dist/-/jquery-ui-dist-1.13.1.tgz#47dcc1bf9cec141221ece59b2c8eaabad846ec0e"
-  integrity sha512-Y711Pu4BRVrAlL58KSxX4ail74jaCJZaZcdNDLava+MgZeNwmVWmyYiK7KxyoJu1MB73eSunjJvYDbOuNrOA7w==
+  version "1.13.2"
+  resolved "https://registry.yarnpkg.com/jquery-ui-dist/-/jquery-ui-dist-1.13.2.tgz#899fbb3c6210de19ace10657cf844a3b97f3be70"
+  integrity sha512-oVDRd1NLtTbBwpRKAYdIRgpWVDzeBhfy7Gu0RmY6JEaZtmBq6kDn1pm5SgDiAotrnDS+RoTRXO6xvcNTxA9tOA==
   dependencies:
     jquery ">=1.8.0 <4.0.0"
 
