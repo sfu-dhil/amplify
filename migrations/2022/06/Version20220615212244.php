@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -16,19 +16,18 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210823224821 extends AbstractMigration {
+final class Version20220615212244 extends AbstractMigration {
     public function getDescription() : string {
         return '';
     }
 
     public function up(Schema $schema) : void {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP TABLE IF EXISTS citation');
-        $this->addSql('INSERT INTO link(entity,url, created, updated) select concat(\'App\\\\Entity\\\\Person:\', id), regexp_replace(links, "^[^\\"]*\\"|\\"[^\\"]*$", ""), now(), now() from person;');
-        $this->addSql('ALTER TABLE person DROP IF EXISTS links');
+        $this->addSql('ALTER TABLE episode DROP copyright');
     }
 
     public function down(Schema $schema) : void {
-        $this->throwIrreversibleMigrationException();
+        // this down() migration is auto-generated, please modify it to your needs
+        $this->addSql('ALTER TABLE episode ADD copyright LONGTEXT CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`');
     }
 }

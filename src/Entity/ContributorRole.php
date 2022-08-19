@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -27,7 +27,7 @@ class ContributorRole extends AbstractTerm {
     private $relatorTerm;
 
     /**
-     * @var Collection|Contribution[]
+     * @var Collection<int,Contribution>
      * @ORM\OneToMany(targetEntity="Contribution", mappedBy="contributorRole")
      */
     private $contributions;
@@ -38,7 +38,7 @@ class ContributorRole extends AbstractTerm {
     }
 
     /**
-     * @return Collection|Contribution[]
+     * @return Collection<int,Contribution>
      */
     public function getContributions() : Collection {
         return $this->contributions;

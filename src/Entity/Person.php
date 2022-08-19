@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -58,7 +58,7 @@ class Person extends AbstractEntity implements LinkableInterface {
     private $institution;
 
     /**
-     * @var Collection|Contribution[]
+     * @var Collection<int,Contribution>
      * @ORM\OneToMany(targetEntity="Contribution", mappedBy="person", cascade={"remove"})
      */
     private $contributions;
@@ -106,7 +106,7 @@ class Person extends AbstractEntity implements LinkableInterface {
         return $this;
     }
 
-    public function getBio($asText = false) : ?string {
+    public function getBio(bool $asText = false) : ?string {
         if ($asText) {
             $s = $this->bio;
             $s = strip_tags($s);
@@ -128,7 +128,7 @@ class Person extends AbstractEntity implements LinkableInterface {
     }
 
     /**
-     * @return Collection|Contribution[]
+     * @return Collection<int,Contribution>
      */
     public function getContributions() : Collection {
         return $this->contributions;

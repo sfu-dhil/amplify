@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -14,7 +14,7 @@ use App\Repository\ContributionRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class ContributionRepositoryTest extends ServiceTestCase {
-    private ContributionRepository $repo;
+    private ?ContributionRepository $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(ContributionRepository::class, $this->repo);

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -36,7 +36,7 @@ class Institution extends AbstractEntity {
     private $name;
 
     /**
-     * @var Collection|Person[]
+     * @var Collection<int,Person>
      * @ORM\OneToMany(targetEntity="App\Entity\Person", mappedBy="institution")
      */
     private $people;
@@ -74,7 +74,7 @@ class Institution extends AbstractEntity {
     }
 
     /**
-     * @return Collection|Person[]
+     * @return Collection<int,Person>
      */
     public function getPeople() : Collection {
         return $this->people;

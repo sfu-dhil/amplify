@@ -4,86 +4,8 @@
         xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
         version="3.5">
     <titleInfo>
-        <title>{{ object.podcast.title }} {{ object.slug }}: {{ object.title }}</title>
+        <title>{{ episode.podcast.title }} {{ episode.slug }}: Transcript</title>
     </titleInfo>
-
-    {% set contributions = object.podcast.contributions|merge(object.season.contributions) %}
-    {% for contribution in contributions %}
-        {% set role = contribution.contributorRole %}
-        {% set person = contribution.person %}
-        <name>
-            <namePart>{{ person.fullName }}</namePart>
-            {% if person.institution %}<affiliation>{{ person.institution}}</affiliation>{% endif %}
-            <role>
-                {% if role.relatorTerm %}<roleTerm type='code' authority='marcrelator'>{{ role.relatorTerm }}</roleTerm>{% endif %}
-                <roleTerm  type="text" authority="marcrel">{{ role.label }}</roleTerm>
-            </role>
-        </name>
-    {% endfor %}
-
-    {% for contribution in object.contributions %}
-        {% set role = contribution.contributorRole %}
-        {% set person = contribution.person %}
-        <name>
-            <namePart>{{ person.fullName }}</namePart>
-            {% if person.institution %}<affiliation>{{ person.institution}}</affiliation>{% endif %}
-            <role>
-                {% if role.relatorTerm %}<roleTerm type='code' authority='marcrelator'>{{ role.relatorTerm }}</roleTerm>{% endif %}
-                <roleTerm  type="text" authority="marcrel">{{ role.label }}</roleTerm>
-            </role>
-            {% if person.bio %}<description>{{ person.bio(true) }}</description>{% endif %}
-        </name>
-    {% endfor %}
-
     <typeOfResource>text</typeOfResource>
-    <genre>Podcast</genre>
-
-    <originInfo>
-        <dateIssued>{{ object.date|date('Y-m-d') }}</dateIssued>
-        <issuance>serial</issuance>
-        {% if object.season.publisher %}
-            <publisher>{{ object.season.publisher.name }}</publisher>
-        {% elseif object.podcast.publisher %}
-            <publisher>{{ object.podcast.publisher.name }}</publisher>
-        {% endif %}
-    </originInfo>
-
-    {% if object.languages|length > 0 %}
-    <language>
-        {% for language in object.languages %}
-        <languageTerm type='text'>{{ language }}</languageTerm>
-        {% endfor %}
-    </language>
-    {% endif %}
-
-    <abstract><![CDATA[{{ object.abstract|raw('xml') }}]]></abstract>
-
-    {% for subject in object.subjects %}
-    <subject>
-        <topic authority='lcsh' authorityURI="http://id.loc.gov/authorities/subjects">{{ subject }}</topic>
-    </subject>
-    {% endfor %}
-
-    {% for tag in object.tags %}
-        <subject>
-            <topic>{{ tag }}</topic>
-        </subject>
-    {% endfor %}
-
-    {% for category in object.podcast.categories %}
-        <subject>
-            <topic authorityURI='https://help.apple.com/itc/podcasts_connect/#/itc9267a2f12'>{{ category }}</topic>
-        </subject>
-    {% endfor %}
-
-    <accessCondition type='use and reproduction'>{{ object.podcast.copyright|raw|striptags }}</accessCondition>
-
-    <relatedItem type='series'>
-        <titleInfo>
-            <title>{{ object.podcast.title }}</title>
-            <partNumber>{{ object.slug }}</partNumber>
-        </titleInfo>
-    </relatedItem>
-
-    <identifier type='amplify'>episode:{{ object.id }}:transcript</identifier>
+    <identifier type='amplify'>episode:{{ episode.id }}:transcript:{{ object.id }}</identifier>
 </mods>

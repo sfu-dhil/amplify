@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -144,7 +144,7 @@ class CategoryTest extends ControllerTestCase {
     public function testUserEdit() : void {
         $this->login(UserFixtures::USER);
         $crawler = $this->client->request('GET', '/category/1/edit');
-        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 
     public function testAdminEdit() : void {

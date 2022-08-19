@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -14,6 +14,7 @@ use App\Entity\Season;
 use App\Form\SeasonType;
 use App\Repository\SeasonRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\MediaBundle\Controller\ImageControllerTrait;
 use Nines\MediaBundle\Entity\Image;
@@ -202,6 +203,9 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
      * @Route("/{id}/new_image", name="season_new_image", methods={"GET", "POST"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
+     * @throws Exception
+     *
+     * @return array<string,mixed>|RedirectResponse
      * @Template("season/new_image.html.twig")
      */
     public function newImage(Request $request, EntityManagerInterface $em, Season $season) {
@@ -213,6 +217,10 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
      * @ParamConverter("image", options={"id": "image_id"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
      *
+     * @throws Exception
+     *
+     * @return array<string,mixed>|RedirectResponse
+     *
      * @Template("season/edit_image.html.twig")
      */
     public function editImage(Request $request, EntityManagerInterface $em, Season $season, Image $image) {
@@ -223,6 +231,8 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
      * @Route("/{id}/delete_image/{image_id}", name="season_delete_image", methods={"DELETE"})
      * @ParamConverter("image", options={"id": "image_id"})
      * @IsGranted("ROLE_CONTENT_ADMIN")
+     *
+     * @return RedirectResponse
      */
     public function deleteImage(Request $request, EntityManagerInterface $em, Season $season, Image $image) {
         return $this->deleteImageAction($request, $em, $season, $image, 'season_show');

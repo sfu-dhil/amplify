@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * (c) 2021 Michael Joyce <mjoyce@sfu.ca>
+ * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
  * This source file is subject to the GPL v2, bundled
  * with this source code in the file LICENSE.
  */
@@ -44,7 +44,7 @@ class Builder implements ContainerAwareInterface {
         $this->tokenStorage = $tokenStorage;
     }
 
-    private function hasRole($role) {
+    private function hasRole(string $role) : bool {
         if ( ! $this->tokenStorage->getToken()) {
             return false;
         }
@@ -54,6 +54,8 @@ class Builder implements ContainerAwareInterface {
 
     /**
      * Build a menu for navigation.
+     *
+     * @param array<string,mixed> $options
      *
      * @return ItemInterface
      */
