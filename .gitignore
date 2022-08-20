@@ -34,6 +34,10 @@
 /data
 /src/.preload.php
 
+# Local makefile
+
+Makefile.local
+
 # hacking and exporting
 /lib
 /ps
@@ -41,4 +45,10 @@
 
 # Code coverage and QA reports
 public/dev
+
+# Mac DS_Store
+.DS_Store
+
+# Local design files
+design
 amplify.xpr
