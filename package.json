@@ -11,6 +11,6 @@
     "select2": "^4.0.12",
     "select2-bootstrap-css": "^1.4.6",
     "symfony-collection": "^2.1.30",
-    "tinymce": "^5.1.5"
+    "tinymce": "^5.10.7"
   }
 }
