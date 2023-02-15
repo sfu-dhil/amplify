@@ -50,7 +50,7 @@
         "twig/intl-extra": "^3.0",
         "twig/string-extra": "^3.0",
         "twig/twig": "^2.12|^3.0",
-        "ubermichael/nines": "dev-4.x-up"
+        "sfu-dhil/nines": "dev-4.x-up"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^6.7",
@@ -72,8 +72,8 @@
     },
     "repositories": [
         {
-            "type": "github",
-            "url": "https://github.com/ubermichael/nines-bundles.git"
+            "type": "git",
+            "url": "https://github.com/sfu-dhil/nines-bundles.git"
         }
     ],
     "config": {

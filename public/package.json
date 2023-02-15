@@ -7,7 +7,6 @@
     "bootstrap3": "^3.3.5",
     "jquery": "^3.4.1",
     "jquery-ui-dist": "^1.12.1",
-    "pdfobject": "^2.2.5",
     "select2": "^4.0.12",
     "select2-bootstrap-css": "^1.4.6",
     "symfony-collection": "^2.1.30",

@@ -2,6 +2,7 @@ nines_util:
     trim_length: 50
     sender: 'donotreply@%router.request_context.host%'
     routing:
+        - { class: App\Entity\Person, route: person_show }
         - { class: App\Entity\Episode, route: episode_show }
         - { class: App\Entity\Podcast, route: podcast_show }
         - { class: App\Entity\Season, route: season_show }
