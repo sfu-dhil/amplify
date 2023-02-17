@@ -13,6 +13,7 @@ namespace App\Entity;
 use App\Repository\SeasonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\MediaBundle\Entity\ImageContainerInterface;
 use Nines\MediaBundle\Entity\ImageContainerTrait;
@@ -85,12 +86,20 @@ class Season extends AbstractEntity implements ImageContainerInterface {
      */
     private $episodes;
 
+    /**
+     * @var Collection<int,Export>
+     * @ORM\OneToMany(targetEntity="Export", mappedBy="season", orphanRemoval=true)
+     * @ORM\OrderBy({"created": "DESC", "id": "DESC"})
+     */
+    private $exports;
+
     public function __construct() {
         parent::__construct();
         $this->trait_constructor();
         $this->preserved = false;
         $this->contributions = new ArrayCollection();
         $this->episodes = new ArrayCollection();
+        $this->exports = new ArrayCollection();
     }
 
     /**
@@ -222,6 +231,46 @@ class Season extends AbstractEntity implements ImageContainerInterface {
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Export>
+     */
+    public function getExports(): Collection {
+        return $this->exports;
+    }
+
+    public function addExport(Export $export): self {
+        if (!$this->exports->contains($export)) {
+            $this->exports[] = $export;
+            $export->setSeason($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExport(Export $export): self {
+        if ($this->exports->removeElement($export)) {
+            // set the owning side to null (unless already changed)
+            if ($export->getSeason() === $this) {
+                $export->setSeason(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Export>
+     */
+    public function getActiveExports() : Collection {
+        $expressionBuilder = Criteria::expr();
+        $expression = $expressionBuilder->in('status', Export::getActiveStatuses());
+        return $this->exports->matching(new Criteria($expression));
+    }
+
+    public function hasActiveExport() : ?bool {
+        return !$this->getActiveExports()->isEmpty();
     }
 
     public function getPreserved() : ?bool {

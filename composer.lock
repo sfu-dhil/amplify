@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a0fbccd0622ca68e740ba5a9e48b213c",
+    "content-hash": "0eb7693ee092857a9f86758148bef10c",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -5716,6 +5716,94 @@
                 }
             ],
             "time": "2022-07-20T09:59:04+00:00"
+        },
+        {
+            "name": "symfony/messenger",
+            "version": "v4.4.49",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/messenger.git",
+                "reference": "03818ffc4bdf22466b7fdfbced0a031e373dd253"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/messenger/zipball/03818ffc4bdf22466b7fdfbced0a031e373dd253",
+                "reference": "03818ffc4bdf22466b7fdfbced0a031e373dd253",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.3",
+                "psr/log": "^1|^2|^3",
+                "symfony/polyfill-php80": "^1.16"
+            },
+            "conflict": {
+                "doctrine/dbal": "<2.7",
+                "doctrine/persistence": "<1.3",
+                "symfony/event-dispatcher": "<4.3",
+                "symfony/framework-bundle": "<4.4",
+                "symfony/http-kernel": "<4.4"
+            },
+            "require-dev": {
+                "doctrine/dbal": "^2.7|^3.0",
+                "doctrine/persistence": "^1.3|^2|^3",
+                "psr/cache": "^1.0|^2.0|^3.0",
+                "symfony/console": "^3.4|^4.0|^5.0",
+                "symfony/dependency-injection": "^3.4.19|^4.1.8|^5.0",
+                "symfony/event-dispatcher": "^4.3|^5.0",
+                "symfony/http-kernel": "^4.4",
+                "symfony/process": "^3.4|^4.0|^5.0",
+                "symfony/property-access": "^3.4|^4.0|^5.0",
+                "symfony/serializer": "^3.4|^4.0|^5.0",
+                "symfony/service-contracts": "^1.1|^2",
+                "symfony/stopwatch": "^3.4|^4.0|^5.0",
+                "symfony/validator": "^3.4|^4.0|^5.0"
+            },
+            "suggest": {
+                "enqueue/messenger-adapter": "For using the php-enqueue library as a transport."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Messenger\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Samuel Roze",
+                    "email": "samuel.roze@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Helps applications send and receive messages to/from other applications or via message queues",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/messenger/tree/v4.4.49"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2022-11-14T10:08:49+00:00"
         },
         {
             "name": "symfony/mime",
@@ -12374,6 +12462,131 @@
                 }
             ],
             "time": "2021-07-28T10:34:58+00:00"
+        },
+        {
+            "name": "zenstruck/assert",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zenstruck/assert.git",
+                "reference": "a1c6501c975339ded3bcf8092a17277f6e21ac82"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zenstruck/assert/zipball/a1c6501c975339ded3bcf8092a17277f6e21ac82",
+                "reference": "a1c6501c975339ded3bcf8092a17277f6e21ac82",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.5",
+                "symfony/polyfill-php73": "^1.8",
+                "symfony/polyfill-php80": "^1.15",
+                "symfony/polyfill-php81": "^1.23"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.4",
+                "symfony/phpunit-bridge": "^5.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Zenstruck\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kevin Bond",
+                    "email": "kevinbond@gmail.com"
+                }
+            ],
+            "description": "Standalone, lightweight, framework agnostic, test assertion library.",
+            "homepage": "https://github.com/zenstruck/assert",
+            "keywords": [
+                "assertion",
+                "phpunit",
+                "test"
+            ],
+            "support": {
+                "issues": "https://github.com/zenstruck/assert/issues",
+                "source": "https://github.com/zenstruck/assert/tree/v1.2.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/kbond",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-07-12T12:30:27+00:00"
+        },
+        {
+            "name": "zenstruck/messenger-test",
+            "version": "v1.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zenstruck/messenger-test.git",
+                "reference": "56f667c79482275b2bdb020cbc14dc6522ed0ab2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zenstruck/messenger-test/zipball/56f667c79482275b2bdb020cbc14dc6522ed0ab2",
+                "reference": "56f667c79482275b2bdb020cbc14dc6522ed0ab2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4",
+                "symfony/framework-bundle": "^4.4|^5.0|^6.0",
+                "symfony/messenger": "^4.4|^5.0|^6.0",
+                "zenstruck/assert": "^1.0"
+            },
+            "conflict": {
+                "symfony/framework-bundle": "5.4.5|6.0.5"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.4",
+                "phpunit/phpunit": "^9.5.0",
+                "symfony/browser-kit": "^4.4|^5.0|^6.0",
+                "symfony/phpunit-bridge": "^5.3",
+                "symfony/yaml": "^4.4|^5.0|^6.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Zenstruck\\Messenger\\Test\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kevin Bond",
+                    "email": "kevinbond@gmail.com"
+                }
+            ],
+            "description": "Assertions and helpers for testing your symfony/messenger queues.",
+            "homepage": "https://github.com/zenstruck/messenger-test",
+            "keywords": [
+                "Messenger",
+                "queue",
+                "symfony",
+                "test"
+            ],
+            "support": {
+                "issues": "https://github.com/zenstruck/messenger-test/issues",
+                "source": "https://github.com/zenstruck/messenger-test/tree/v1.5.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/kbond",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-09-23T13:26:08+00:00"
         }
     ],
     "aliases": [],

@@ -17,8 +17,12 @@ services:
       MARIADB_DATABASE: amplify
       MARIADB_USER: amplify
       MARIADB_PASSWORD: password
+    healthcheck:
+      test: ["CMD-SHELL", "mysql amplify -u amplify -ppassword -e 'SELECT 1;'  || exit 1"]
+      interval: 2s
+      retries: 120
 
-  app:
+  app: &app
     container_name: amplify_app
     # image: dhil/amplify
     build:
@@ -38,8 +42,25 @@ services:
       # use the container's node_modules & vendor folders (don't override)
       - /var/www/html/public/node_modules
       - /var/www/html/vendor
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost/health.php || exit 1"]
+      interval: 2s
+      retries: 120
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
+  worker:
+    <<: *app
+    container_name: amplify_worker
+    command: php bin/console messenger:consume async -vv
+    ports: []
+    healthcheck: {}
+    depends_on:
+      db:
+        condition: service_healthy
+      app:
+        condition: service_healthy
 
   mail:
     container_name: amplify_mail

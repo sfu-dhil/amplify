@@ -1,0 +1,5 @@
+framework:
+    messenger:
+        transports:
+            async: test://
+            failed: test://
