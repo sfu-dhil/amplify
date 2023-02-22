@@ -10,7 +10,7 @@
         <partNumber>{{ episode.season.title }}</partNumber>
     </titleInfo>
     {% if episode.subTitle %}
-    <titleInfo type='alternative'>
+    <titleInfo type="alternative">
         <title>{{ episode.subTitle }}</title>
     </titleInfo>
     {% endif %}
@@ -21,9 +21,13 @@
         {% set person = contribution.person %}
         <name>
             <namePart>{{ person.fullName }}</namePart>
-            {% if person.institution %}<affiliation>{{ person.institution}}</affiliation>{% endif %}
+            {% if person.institution %}
+                <affiliation>{{ person.institution}}</affiliation>
+            {% endif %}
             <role>
-                {% if role.relatorTerm %}<roleTerm type='code' authority='marcrelator'>{{ role.relatorTerm }}</roleTerm>{% endif %}
+                {% if role.relatorTerm %}
+                    <roleTerm type='code' authority='marcrelator'>{{ role.relatorTerm }}</roleTerm>
+                {% endif %}
                 <roleTerm  type="text" authority="marcrel">{{ role.label }}</roleTerm>
             </role>
         </name>
@@ -34,12 +38,18 @@
         {% set person = contribution.person %}
         <name>
             <namePart>{{ person.fullName }}</namePart>
-            {% if person.institution %}<affiliation>{{ person.institution}}</affiliation>{% endif %}
+            {% if person.institution %}
+                <affiliation>{{ person.institution}}</affiliation>
+            {% endif %}
             <role>
-                {% if role.relatorTerm %}<roleTerm type='code' authority='marcrelator'>{{ role.relatorTerm }}</roleTerm>{% endif %}
+                {% if role.relatorTerm %}
+                    <roleTerm type="code" authority="marcrelator">{{ role.relatorTerm }}</roleTerm>
+                {% endif %}
                 <roleTerm  type="text" authority="marcrel">{{ role.label }}</roleTerm>
             </role>
-            {% if person.bio %}<description>{{ person.bio(true) }}</description>{% endif %}
+            {% if person.bio %}
+                <description>{{ person.bio(true) }}</description>
+            {% endif %}
         </name>
     {% endfor %}
 
@@ -48,7 +58,7 @@
 
     <physicalDescription>
         <form authority="marcform">sound recording</form>
-        <extent unit='minutes'>{{ episode.runTime }}</extent>
+        <extent unit="minutes">{{ episode.runTime }}</extent>
         <digitalOrigin>born digital</digitalOrigin>
     </physicalDescription>
 
@@ -84,27 +94,29 @@
         {% endif %}
     </abstract>
 
-    {% for subject in episode.subjects %}
-    <subject>
-        <topic authority='lcsh' authorityURI="http://id.loc.gov/authorities/subjects">{{ subject }}</topic>
-    </subject>
-    {% endfor %}
-
-    {% for category in episode.podcast.categories %}
-        <subject>
-            <topic authorityURI='https://help.apple.com/itc/podcasts_connect/#/itc9267a2f12'>{{ category }}</topic>
+    {% if episode.subjects|length > 0 %}
+        <subject authority="lcsh" authorityURI="http://id.loc.gov/authorities/subjects">
+            {% for subject in episode.subjects %}
+            <topic >{{ subject }}</topic>
+            {% endfor %}
         </subject>
-    {% endfor %}
+    {% endif %}
 
-    <accessCondition type='use and reproduction'>
+    {% if episode.podcast.categories %}
+        <subject authorityURI="https://help.apple.com/itc/podcasts_connect/#/itc9267a2f12">
+            {% for category in episode.podcast.categories %}
+                <topic>{{ category }}</topic>
+            {% endfor %}
+        </subject>
+    {% endif %}
+    <accessCondition type="use and reproduction">
         {{ episode.podcast.copyright|raw|striptags }}
     </accessCondition>
-
-    <relatedItem type='series'>
+    <relatedItem type="series">
         <titleInfo>
             <title>{{ episode.podcast.title }}</title>
             <partNumber>{{ episode.slug }}</partNumber>
         </titleInfo>
     </relatedItem>
-    <identifier type='amplify'>episode:{{ episode.id }}:episode</identifier>
+    <identifier type="amplify">episode:{{ episode.id }}:episode</identifier>
 </mods>

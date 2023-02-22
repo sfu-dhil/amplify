@@ -19,11 +19,12 @@
         "knplabs/knp-menu-bundle": "^3.2",
         "knplabs/knp-paginator-bundle": "^5.8",
         "league/csv": "^9.6",
+        "lukaswhite/podcast-feed-parser": "dev-main#7ebe0032e23e1202624c5853017835e81fe03d3c",
         "ninsuo/symfony-collection": "^2.1",
         "phpdocumentor/reflection-docblock": "^5.2",
         "scienta/doctrine-json-functions": "^4.1",
         "sensio/framework-extra-bundle": "^6.2",
-        "sfu-dhil/nines": "dev-4.x-up",
+        "sfu-dhil/nines": "dev-4.x-up#33efcc5851363c95be6f7bf5ae4af4c2467e662c",
         "symfony/asset": "4.4.*",
         "symfony/console": "4.4.*",
         "symfony/dotenv": "4.4.*",
@@ -76,6 +77,10 @@
         {
             "type": "git",
             "url": "https://github.com/sfu-dhil/nines-bundles.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/sfu-dhil/podcast-feed-parser.git"
         }
     ],
     "config": {

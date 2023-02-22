@@ -42,6 +42,12 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     }
 
     /**
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $guid;
+
+    /**
      * @var int
      * @ORM\Column(type="integer")
      */
@@ -151,6 +157,16 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
      */
     public function __toString() : string {
         return $this->title;
+    }
+
+    public function getGuid() : ?string {
+        return $this->guid;
+    }
+
+    public function setGuid(string $guid) : self {
+        $this->guid = $guid;
+
+        return $this;
     }
 
     public function getNumber() : ?int {

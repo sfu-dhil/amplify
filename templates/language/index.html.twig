@@ -23,11 +23,34 @@
         </div>
     </div>
 
-    {% embed '@NinesUtil/term/partial/index.html.twig' with {
-        'terms': languages,
-        'path': 'language_show',
-    } %}
-    {% endembed %}
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Language Code</th>
+                <th>Label</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for langauge in languages %}
+                <tr>
+                    <td>
+                        <a href="{{ path('language_show', {'id': langauge.id}) }}">
+                            {{ langauge.name }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ path('language_show', {'id': langauge.id}) }}">
+                            {{ langauge.label }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ langauge.description|raw }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
     <div class="navigation">
         {{ knp_pagination_render(languages) }}

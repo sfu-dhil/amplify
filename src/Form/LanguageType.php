@@ -14,6 +14,7 @@ use App\Entity\Language;
 use Nines\UtilBundle\Form\TermType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 /**
  * Language form.
@@ -23,6 +24,12 @@ class LanguageType extends TermType {
      * Add form fields to $builder.
      */
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
+        $builder->add('name', TextType::class, [
+            'label' => 'Language Code',
+            'attr' => [
+                'help_block' => 'The language code.',
+            ],
+        ]);
         parent::buildForm($builder, $options);
     }
 

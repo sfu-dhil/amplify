@@ -20,6 +20,10 @@
 
     <testsuites>
         <testsuite name="default">
+            <!-- Order matters since db is not reset after every test -->
+            <directory>tests/Controller</directory>
+            <directory>tests/Repository</directory>
+            <directory>tests/Command</directory>
             <directory>tests</directory>
         </testsuite>
     </testsuites>
