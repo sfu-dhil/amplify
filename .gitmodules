@@ -1,8 +1,0 @@
-[submodule "deployment"]
-	path = deployment
-	url = https://github.com/ubermichael/deployment.git
-	branch = makefile
-[submodule "etc"]
-	path = etc
-	url = https://github.com/ubermichael/symake.git
-	branch = main

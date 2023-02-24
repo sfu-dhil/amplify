@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "49afeca536c34a4dc49e1c3a0a2f983d",
+    "content-hash": "a0fbccd0622ca68e740ba5a9e48b213c",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -3411,6 +3411,66 @@
                 "source": "https://github.com/sensiolabs/SensioFrameworkExtraBundle/tree/v6.2.6"
             },
             "time": "2022-01-14T11:51:13+00:00"
+        },
+        {
+            "name": "sfu-dhil/nines",
+            "version": "dev-4.x-up",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sfu-dhil/nines-bundles.git",
+                "reference": "6be7cdfb9e412427c480dbeda6978725b0f81d17"
+            },
+            "require": {
+                "doctrine/cache": "^2.1",
+                "doctrine/inflector": "^2.0",
+                "doctrine/persistence": "^2.5",
+                "egulias/email-validator": "^3.1",
+                "ext-imagick": "*",
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "^7.4",
+                "knplabs/knp-menu-bundle": "^3.2",
+                "knplabs/knp-paginator-bundle": "^5.8",
+                "minimalcode/search": "^1.0",
+                "nyholm/psr7": "^1.4",
+                "php": ">=7.4.0",
+                "sensio/framework-extra-bundle": "^5.1|^6.2",
+                "solarium/solarium": "^6.0",
+                "soundasleep/html2text": "^2.0",
+                "twig/string-extra": "^3.0"
+            },
+            "require-dev": {
+                "doctrine/doctrine-fixtures-bundle": "^3.4",
+                "liip/test-fixtures-bundle": "^1.0.0",
+                "symfony/browser-kit": "4.4.*",
+                "symfony/css-selector": "4.4.*",
+                "symfony/phpunit-bridge": "^5.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Nines\\BlogBundle\\": "BlogBundle",
+                    "Nines\\DublinCoreBundle\\": "DublinCoreBundle",
+                    "Nines\\EditorBundle\\": "EditorBundle",
+                    "Nines\\FeedbackBundle\\": "FeedbackBundle",
+                    "Nines\\MakerBundle\\": "MakerBundle",
+                    "Nines\\MediaBundle\\": "MediaBundle",
+                    "Nines\\SolrBundle\\": "SolrBundle",
+                    "Nines\\UserBundle\\": "UserBundle",
+                    "Nines\\UtilBundle\\": "UtilBundle"
+                }
+            },
+            "license": [
+                "gpl"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Joyce",
+                    "email": "ubermichael@gmail.com"
+                }
+            ],
+            "description": "Some useful bundles.",
+            "time": "2023-02-15T22:06:33+00:00"
         },
         {
             "name": "solarium/solarium",
@@ -8973,75 +9033,6 @@
             "time": "2022-09-28T08:42:51+00:00"
         },
         {
-            "name": "ubermichael/nines",
-            "version": "dev-4.x-up",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ubermichael/nines-bundles.git",
-                "reference": "7ca1e08f7e7c904e980a39f0f21226463fbba54d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ubermichael/nines-bundles/zipball/7ca1e08f7e7c904e980a39f0f21226463fbba54d",
-                "reference": "7ca1e08f7e7c904e980a39f0f21226463fbba54d",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/cache": "^2.1",
-                "doctrine/inflector": "^2.0",
-                "doctrine/persistence": "^2.5",
-                "egulias/email-validator": "^3.1",
-                "ext-imagick": "*",
-                "ext-json": "*",
-                "guzzlehttp/guzzle": "^7.4",
-                "knplabs/knp-menu-bundle": "^3.2",
-                "knplabs/knp-paginator-bundle": "^5.8",
-                "minimalcode/search": "^1.0",
-                "nyholm/psr7": "^1.4",
-                "php": ">=7.4.0",
-                "sensio/framework-extra-bundle": "^5.1|^6.2",
-                "solarium/solarium": "^6.0",
-                "soundasleep/html2text": "^2.0",
-                "twig/string-extra": "^3.0"
-            },
-            "require-dev": {
-                "doctrine/doctrine-fixtures-bundle": "^3.4",
-                "liip/test-fixtures-bundle": "^1.0.0",
-                "symfony/browser-kit": "4.4.*",
-                "symfony/css-selector": "4.4.*",
-                "symfony/phpunit-bridge": "^5.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Nines\\BlogBundle\\": "BlogBundle",
-                    "Nines\\DublinCoreBundle\\": "DublinCoreBundle",
-                    "Nines\\EditorBundle\\": "EditorBundle",
-                    "Nines\\FeedbackBundle\\": "FeedbackBundle",
-                    "Nines\\MakerBundle\\": "MakerBundle",
-                    "Nines\\MediaBundle\\": "MediaBundle",
-                    "Nines\\SolrBundle\\": "SolrBundle",
-                    "Nines\\UserBundle\\": "UserBundle",
-                    "Nines\\UtilBundle\\": "UtilBundle"
-                }
-            },
-            "license": [
-                "gpl"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Joyce",
-                    "email": "ubermichael@gmail.com"
-                }
-            ],
-            "description": "Some useful bundles.",
-            "support": {
-                "source": "https://github.com/ubermichael/nines-bundles/tree/4.x-up",
-                "issues": "https://github.com/ubermichael/nines-bundles/issues"
-            },
-            "time": "2022-06-30T19:32:28+00:00"
-        },
-        {
             "name": "webmozart/assert",
             "version": "1.11.0",
             "source": {
@@ -12388,7 +12379,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "ubermichael/nines": 20
+        "sfu-dhil/nines": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

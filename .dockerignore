@@ -51,3 +51,9 @@ public/dev
 # Local design files
 design
 amplify.xpr
+
+# Docker image specific
+**/.git
+/docs
+.gitignore
+/.github/

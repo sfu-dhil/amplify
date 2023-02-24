@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  db:
+    container_name: amplify_db
+    image: mariadb:10.10
+    ports:
+      - "13306:3306"
+    volumes:
+      - .data/mariadb:/var/lib/mysql
+      - ./docker/mariadb/custom.cnf:/etc/mysql/conf.d/custom.cnf
+      - ./docker/mariadb/init:/docker-entrypoint-initdb.d
+      # HACK: easy sql script running for setting up db
+      - ./amplify-data.sql:/amplify-data.sql
+      - ./amplify-schema.sql:/amplify-schema.sql
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: amplify
+      MARIADB_USER: amplify
+      MARIADB_PASSWORD: password
+
+  app:
+    container_name: amplify_app
+    # image: dhil/amplify
+    build:
+      context: .
+      target: amplify
+    ports:
+      - "8080:80"
+    volumes:
+      # code for development
+      - .:/var/www/html
+
+      # persist file uploads in .data
+      - .data/app/data:/var/www/html/data
+      - .data/app/blog_images:/var/www/html/public/images/blog
+      - .data/app/var:/var/www/html/var
+
+      # use the container's node_modules & vendor folders (don't override)
+      - /var/www/html/public/node_modules
+      - /var/www/html/vendor
+    depends_on:
+      - db
+
+  mail:
+    container_name: amplify_mail
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - "8025:8025"
