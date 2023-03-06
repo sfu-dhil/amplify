@@ -23,6 +23,7 @@
         "phpdocumentor/reflection-docblock": "^5.2",
         "scienta/doctrine-json-functions": "^4.1",
         "sensio/framework-extra-bundle": "^6.2",
+        "sfu-dhil/nines": "dev-4.x-up",
         "symfony/asset": "4.4.*",
         "symfony/console": "4.4.*",
         "symfony/dotenv": "4.4.*",
@@ -33,6 +34,7 @@
         "symfony/http-client": "4.4.*",
         "symfony/intl": "4.4.*",
         "symfony/mailer": "4.4.*",
+        "symfony/messenger": "4.4.*",
         "symfony/monolog-bundle": "^3.1",
         "symfony/process": "4.4.*",
         "symfony/property-access": "4.4.*",
@@ -49,8 +51,7 @@
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/intl-extra": "^3.0",
         "twig/string-extra": "^3.0",
-        "twig/twig": "^2.12|^3.0",
-        "sfu-dhil/nines": "dev-4.x-up"
+        "twig/twig": "^2.12|^3.0"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^6.7",
@@ -68,7 +69,8 @@
         "symfony/maker-bundle": "^1.36",
         "symfony/phpunit-bridge": "^6.0",
         "symfony/stopwatch": "4.4.*",
-        "symfony/web-profiler-bundle": "4.4.*"
+        "symfony/web-profiler-bundle": "4.4.*",
+        "zenstruck/messenger-test": "^1.5"
     },
     "repositories": [
         {

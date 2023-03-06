@@ -41,6 +41,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # default service settings
+COPY docker/app/docker-entrypoint.sh /docker-entrypoint.sh
 COPY docker/app/apache.conf /etc/apache2/sites-enabled/000-default.conf
 COPY docker/app/php.ini /usr/local/etc/php/conf.d/amplify.ini
 COPY docker/app/image-policy.xml /etc/ImageMagick-6/policy.xml
@@ -56,4 +57,4 @@ RUN composer install
 # copy webpacked js and libs
 COPY --from=amplify-prod-assets /app/node_modules /var/www/html/public/node_modules
 
-CMD apache2-foreground
+CMD ["/docker-entrypoint.sh"]

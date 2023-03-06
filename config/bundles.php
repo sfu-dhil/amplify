@@ -23,4 +23,5 @@ return [
     Nines\UserBundle\NinesUserBundle::class => ['all' => true],
     Nines\UtilBundle\NinesUtilBundle::class => ['all' => true],
     DAMA\DoctrineTestBundle\DAMADoctrineTestBundle::class => ['test' => true],
+    Zenstruck\Messenger\Test\ZenstruckMessengerTestBundle::class => ['test' => true],
 ];

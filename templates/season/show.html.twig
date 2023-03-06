@@ -46,4 +46,36 @@
     } %}
     {% endembed %}
 
+    {% if is_granted('ROLE_CONTENT_ADMIN') %}
+        <h2>Season Exports</h2>
+
+        <div class='btn-toolbar pull-right'>
+            <div class='btn-group'>
+                <a href="{{ path('export_new', {'seasonId': season.id }) }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus"></span> Export Season
+                </a>
+            </div>
+        </div>
+        <div class='clearfix'></div>
+
+        {% embed 'export/partial/table.html.twig' with {
+            'exports': season.exports,
+        } %}
+        {% endembed %}
+    {% endif %}
+
+{% endblock %}
+
+
+{% block javascripts %}
+    {% if is_granted('ROLE_CONTENT_ADMIN') and season.hasActiveExport %}
+        <script>
+            setTimeout(
+                () => {
+                    window.location.reload()
+                },
+                30 * 1000 // 30 seconds
+            )
+        </script>
+    {% endif %}
 {% endblock %}
