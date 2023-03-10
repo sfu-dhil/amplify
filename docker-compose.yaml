@@ -39,6 +39,11 @@ services:
       - .data/app/blog_images:/var/www/html/public/images/blog
       - .data/app/var:/var/www/html/var
 
+      # ignore local environment files. Allows you to run the app on your local machine as well via the local overrides
+      - ./docker/app/null:/var/www/html/.env.local
+      - ./docker/app/null:/var/www/html/.env.dev.local
+      - ./docker/app/null:/var/www/html/.env.test.local
+
       # use the container's node_modules & vendor folders (don't override)
       - /var/www/html/public/node_modules
       - /var/www/html/vendor

@@ -48,7 +48,7 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $fixture->setCopyright("<p>This is paragraph {$i}</p>");
             $fixture->setLicense("<p>This is license {$i}</p>");
             $fixture->setWebsite("<p>This is paragraph {$i}</p>");
-            $fixture->setRss('Rss ' . $i);
+            $fixture->setRss("https://rss.com/{$i}");
             $fixture->setPublisher($this->getReference('publisher.1'));
             $em->persist($fixture);
             $em->flush();

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0eb7693ee092857a9f86758148bef10c",
+    "content-hash": "766e93c8d4454c4c4375ef452052cfbb",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -2347,6 +2347,82 @@
             "time": "2022-01-04T00:13:07+00:00"
         },
         {
+            "name": "lukaswhite/itunes-categories",
+            "version": "0.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lukaswhite/lukaswhite-itunes-categories.git",
+                "reference": "2411ab59212e829b7ef26b0c3e091472f58a3323"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lukaswhite/lukaswhite-itunes-categories/zipball/2411ab59212e829b7ef26b0c3e091472f58a3323",
+                "reference": "2411ab59212e829b7ef26b0c3e091472f58a3323",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/php-code-coverage": "^9.2",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Lukaswhite\\ItunesCategories\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Lukas White",
+                    "email": "hello@lukaswhite.com"
+                }
+            ],
+            "description": "iTunes categories",
+            "support": {
+                "issues": "https://github.com/lukaswhite/lukaswhite-itunes-categories/issues",
+                "source": "https://github.com/lukaswhite/lukaswhite-itunes-categories/tree/0.0.2"
+            },
+            "time": "2022-07-26T13:51:31+00:00"
+        },
+        {
+            "name": "lukaswhite/podcast-feed-parser",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sfu-dhil/podcast-feed-parser.git",
+                "reference": "7ebe0032e23e1202624c5853017835e81fe03d3c"
+            },
+            "require": {
+                "lukaswhite/itunes-categories": "^0.0.2",
+                "simplepie/simplepie": "^1.5"
+            },
+            "require-dev": {
+                "phpunit/php-code-coverage": "^9.2",
+                "phpunit/phpunit": "^9.5"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Lukaswhite\\PodcastFeedParser\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Lukas White",
+                    "email": "hello@lukaswhite.com"
+                }
+            ],
+            "description": "A PHP library for parsing podcast feeds",
+            "time": "2023-03-06T23:26:45+00:00"
+        },
+        {
             "name": "minimalcode/search",
             "version": "1.0.1",
             "source": {
@@ -3418,7 +3494,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sfu-dhil/nines-bundles.git",
-                "reference": "6be7cdfb9e412427c480dbeda6978725b0f81d17"
+                "reference": "33efcc5851363c95be6f7bf5ae4af4c2467e662c"
             },
             "require": {
                 "doctrine/cache": "^2.1",
@@ -3470,7 +3546,83 @@
                 }
             ],
             "description": "Some useful bundles.",
-            "time": "2023-02-15T22:06:33+00:00"
+            "time": "2023-03-06T23:58:02+00:00"
+        },
+        {
+            "name": "simplepie/simplepie",
+            "version": "1.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/simplepie/simplepie.git",
+                "reference": "65b095d87bc00898d8fa7737bdbcda93a3fbcc55"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/simplepie/simplepie/zipball/65b095d87bc00898d8fa7737bdbcda93a3fbcc55",
+                "reference": "65b095d87bc00898d8fa7737bdbcda93a3fbcc55",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pcre": "*",
+                "ext-xml": "*",
+                "ext-xmlreader": "*",
+                "php": ">=7.2.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.19 || ^3.8",
+                "psr/simple-cache": "^1 || ^2 || ^3",
+                "yoast/phpunit-polyfills": "^1.0.1"
+            },
+            "suggest": {
+                "ext-curl": "",
+                "ext-iconv": "",
+                "ext-intl": "",
+                "ext-mbstring": "",
+                "mf2/mf2": "Microformat module that allows for parsing HTML for microformats"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "SimplePie": "library"
+                },
+                "psr-4": {
+                    "SimplePie\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Ryan Parman",
+                    "homepage": "http://ryanparman.com/",
+                    "role": "Creator, alumnus developer"
+                },
+                {
+                    "name": "Sam Sneddon",
+                    "homepage": "https://gsnedders.com/",
+                    "role": "Alumnus developer"
+                },
+                {
+                    "name": "Ryan McCue",
+                    "email": "me@ryanmccue.info",
+                    "homepage": "http://ryanmccue.info/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple Atom/RSS parsing library for PHP",
+            "homepage": "http://simplepie.org/",
+            "keywords": [
+                "atom",
+                "feeds",
+                "rss"
+            ],
+            "support": {
+                "issues": "https://github.com/simplepie/simplepie/issues",
+                "source": "https://github.com/simplepie/simplepie/tree/1.8.0"
+            },
+            "time": "2023-01-20T08:37:35+00:00"
         },
         {
             "name": "solarium/solarium",
@@ -12592,6 +12744,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "lukaswhite/podcast-feed-parser": 20,
         "sfu-dhil/nines": 20
     },
     "prefer-stable": false,

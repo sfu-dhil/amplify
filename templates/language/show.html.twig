@@ -24,10 +24,20 @@
         </div>
     {% endif %}
 
-    {% embed '@NinesUtil/term/partial/show.html.twig' with {
-        'term': language
-    } %}
-        {% block callback %}
+    <table class="table table-bordered table-condensed table-hover table-striped">
+        <tbody>
+            <tr>
+                <th>Langauge Code</th>
+                <td>{{ language.name }}</td>
+            </tr>
+            <tr>
+                <th>Label</th>
+                <td>{{ language.label }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ language.description|raw }}</td>
+            </tr>
             <tr>
                 <th>Episode</th>
                 <td>
@@ -44,7 +54,15 @@
                     {% endif %}
                 </td>
             </tr>
-        {% endblock %}
-    {% endembed %}
+            <tr>
+                <th>Created</th>
+                <td>{% if language.created %}{{ language.created|date }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Updated</th>
+                <td>{% if language.updated %}{{ language.updated|date }}{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
 
 {% endblock %}
