@@ -1,4 +1,4 @@
-FROM node:19.5 AS amplify-prod-assets
+FROM node:19.8 AS amplify-prod-assets
 WORKDIR /app
 
 RUN apt-get update \
@@ -14,7 +14,7 @@ RUN yarn --production \
     && yarn cache clean
 
 
-FROM php:7.4-apache AS amplify
+FROM php:8.2-apache AS amplify
 WORKDIR /var/www/html
 ENV COMPOSER_ALLOW_SUPERUSER=1
 

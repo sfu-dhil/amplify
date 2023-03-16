@@ -2,10 +2,15 @@
 # yarn lockfile v1
 
 
-bootstrap3@^3.3.5:
-  version "3.3.5"
-  resolved "https://registry.yarnpkg.com/bootstrap3/-/bootstrap3-3.3.5.tgz#496a4ef6c087214fa96838196d60de645e82591a"
-  integrity sha512-KoChQrvYQQv44JrkjEiSy/90CYp5/4QDF2DZZysD/mPYlZGc+z0QN1aLDUiXhl1KIjWNu5UdJ3w8NhrKZnJOUw==
+bootstrap-icons@^1.10.3:
+  version "1.10.3"
+  resolved "https://registry.yarnpkg.com/bootstrap-icons/-/bootstrap-icons-1.10.3.tgz#c587b078ca6743bef4653fe90434b4aebfba53b2"
+  integrity sha512-7Qvj0j0idEm/DdX9Q0CpxAnJYqBCFCiUI6qzSPYfERMcokVuV9Mdm/AJiVZI8+Gawe4h/l6zFcOzvV7oXCZArw==
+
+bootstrap@^5.2.3:
+  version "5.2.3"
+  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-5.2.3.tgz#54739f4414de121b9785c5da3c87b37ff008322b"
+  integrity sha512-cEKPM+fwb3cT8NzQZYEu4HilJ3anCrWqh3CHAok1p9jXqMPsPTBhU25fBckEJHJ/p+tTxTFTsFQGM+gaHpi3QQ==
 
 jquery-ui-dist@^1.12.1:
   version "1.13.2"
@@ -25,11 +30,6 @@ jquery@>=1.7, "jquery@>=1.8.0 <4.0.0", jquery@^3.4.1:
   version "3.6.3"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.6.3.tgz#23ed2ffed8a19e048814f13391a19afcdba160e6"
   integrity sha512-bZ5Sy3YzKo9Fyc8wH2iIQK4JImJ6R0GWI9kL1/k7Z91ZBNgkRXE6U0JfHIizZbort8ZunhSI3jw9I6253ahKfg==
-
-select2-bootstrap-css@^1.4.6:
-  version "1.4.6"
-  resolved "https://registry.yarnpkg.com/select2-bootstrap-css/-/select2-bootstrap-css-1.4.6.tgz#5cfb68246f5299ca1858e01efd788804c734997e"
-  integrity sha512-BBsisfivUYjwhj3QdWNS15sBqC/DHoszRC4B3GIzJwMNO1pT1uVvwDm5u2TLXi7oj/3S4vIeQ6yAuMa86d7c9A==
 
 select2@^4.0.12:
   version "4.0.13"

@@ -135,12 +135,6 @@ After you update a dependency make sure to rebuild the images
 
 First make sure the application and database are started with `docker compose up -d`
 
-### Setup Test Database
-
-If this is the very first time you are running tests, make sure the test database is setup correctly with
-
-    docker exec -it amplify_app make test.db
-
 ### Unit Tests
 
     docker exec -it amplify_app make test

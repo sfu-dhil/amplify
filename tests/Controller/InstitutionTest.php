@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Tests\Controller;
 
 use App\Repository\InstitutionRepository;
@@ -138,7 +132,7 @@ class InstitutionTest extends ControllerTestCase {
 
     public function testAnonEdit() : void {
         $crawler = $this->client->request('GET', '/institution/1/edit');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserEdit() : void {
@@ -165,12 +159,12 @@ class InstitutionTest extends ControllerTestCase {
 
     public function testAnonNew() : void {
         $crawler = $this->client->request('GET', '/institution/new');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testAnonNewPopup() : void {
         $crawler = $this->client->request('GET', '/institution/new_popup');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserNew() : void {
@@ -219,7 +213,7 @@ class InstitutionTest extends ControllerTestCase {
 
     public function testAdminDelete() : void {
         /** @var InstitutionRepository $repo */
-        $repo = self::$container->get(InstitutionRepository::class);
+        $repo = self::getContainer()->get(InstitutionRepository::class);
         $preCount = count($repo->findAll());
 
         $this->login(UserFixtures::ADMIN);

@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Command;
 
 use App\Entity\Episode;
@@ -18,6 +12,7 @@ use Nines\MediaBundle\Entity\Image;
 use Nines\MediaBundle\Entity\Pdf;
 use Soundasleep\Html2Text;
 use Soundasleep\Html2TextException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,17 +23,14 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
+#[AsCommand(name: 'app:export:batch')]
 class ExportBatchCommand extends Command {
     private ?SeasonRepository $repository = null;
 
     private ?Environment $twig = null;
 
-    protected static $defaultName = 'app:export:batch';
-
-    protected static string $defaultDescription = 'Export a season of a podcast for an islandora batch import.';
-
     protected function configure() : void {
-        $this->setDescription(self::$defaultDescription);
+        $this->setDescription('Export a season of a podcast for an islandora batch import.');
         $this->addArgument('seasonId', InputArgument::REQUIRED, 'Season database ID');
         $this->addArgument('directory', InputArgument::REQUIRED, 'Directory to export to');
     }
@@ -79,13 +71,13 @@ class ExportBatchCommand extends Command {
             $output->writeln("Warning: export directory {$dir} already exists.");
             $fs->remove($dir);
         }
-        $fs->mkdir($dir, 0755);
+        $fs->mkdir($dir, 0o755);
 
         foreach ($season->getEpisodes() as $episode) {
             $slug = $episode->getSlug();
             $path = "{$dir}/{$slug}";
 
-            $fs->mkdir($path, 0755);
+            $fs->mkdir($path, 0o755);
             $this->generateMods('parent', $episode, "{$path}/MODS.xml", $episode);
 
             $obj = $episode->getAudio('audio/x-wav');
@@ -94,7 +86,7 @@ class ExportBatchCommand extends Command {
             }
             $mp3 = $episode->getAudio('audio/mpeg');
 
-            $fs->mkdir("{$path}/audio", 0755);
+            $fs->mkdir("{$path}/audio", 0o755);
             $this->generateMods('audio', $obj, "{$path}/audio/MODS.xml", $episode);
 
             $fs->copy($obj->getFile()->getRealPath(), "{$path}/audio/OBJ." . $obj->getExtension());
@@ -104,7 +96,7 @@ class ExportBatchCommand extends Command {
 
             if (count($episode->getPdfs()) > 0) {
                 $pdf = $episode->getPdfs()[0];
-                $fs->mkdir("{$path}/transcript", 0755);
+                $fs->mkdir("{$path}/transcript", 0o755);
                 $this->generateMods('transcript', $pdf, "{$path}/transcript/MODS.xml", $episode);
                 $fs->copy($pdf->getFile()->getRealPath(), "{$path}/transcript/OBJ.pdf");
                 if ($episode->getTranscript()) {
@@ -112,7 +104,7 @@ class ExportBatchCommand extends Command {
                     $fs->dumpFile("{$path}/transcript/FULL_TEXT.txt", wordwrap($text));
                 }
                 foreach (array_slice($episode->getPdfs(), 1) as $n => $extra) {
-                    $fs->mkdir("{$path}/transcript_{$n}", 0755);
+                    $fs->mkdir("{$path}/transcript_{$n}", 0o755);
                     $this->generateMods('transcript', $extra, "{$path}/transcript_{$n}/MODS.xml", $episode);
                     $fs->copy($pdf->getFile()->getRealPath(), "{$path}/transcript_{$n}/OBJ.pdf");
                 }
@@ -125,7 +117,7 @@ class ExportBatchCommand extends Command {
 
                 foreach ($images as $n => $image) {
                     $subdir = "{$path}/img_{$n}";
-                    $fs->mkdir($subdir, 0755);
+                    $fs->mkdir($subdir, 0o755);
                     $this->generateMods('image', $image, "{$subdir}/MODS.xml", $episode);
                     $fs->copy($image->getFile()->getRealPath(), "{$subdir}/OBJ." . $image->getExtension());
                 }
@@ -149,8 +141,8 @@ class ExportBatchCommand extends Command {
             $xml .= "<child content='{$slug}/img_{$n}'/>";
         }
 
-        foreach($episode->getPdfs() as $n => $pdf) {
-            $dir = "transcript" . ($n > 0 ? "_{$n}" : "");
+        foreach ($episode->getPdfs() as $n => $pdf) {
+            $dir = 'transcript' . ($n > 0 ? "_{$n}" : '');
             $xml .= "<child content='{$slug}/{$dir}'/>";
         }
         $xml .= '</islandora_compound_object>';
@@ -162,16 +154,12 @@ class ExportBatchCommand extends Command {
         $doc->save($destination);
     }
 
-    /**
-     * @required
-     */
+    #[\Symfony\Contracts\Service\Attribute\Required]
     public function setSeasonRepository(SeasonRepository $repository) : void {
         $this->repository = $repository;
     }
 
-    /**
-     * @required
-     */
+    #[\Symfony\Contracts\Service\Attribute\Required]
     public function setTwig(Environment $twig) : void {
         $this->twig = $twig;
     }

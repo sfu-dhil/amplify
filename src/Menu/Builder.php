@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Menu;
 
 use Knp\Menu\FactoryInterface;
@@ -62,66 +56,102 @@ class Builder implements ContainerAwareInterface {
     public function mainMenu(array $options) {
         $menu = $this->factory->createItem('root');
         $menu->setChildrenAttributes([
-            'class' => 'nav navbar-nav',
+            'class' => 'navbar-nav',
         ]);
 
         $browse = $menu->addChild('Browse', [
             'uri' => '#',
             'label' => 'Browse',
+            'attributes' => [
+                'class' => 'nav-item dropdown',
+            ],
+            'linkAttributes' => [
+                'class' => 'nav-link dropdown-toggle',
+                'role' => 'button',
+                'data-bs-toggle' => 'dropdown',
+                'id' => 'browse-dropdown',
+            ],
+            'childrenAttributes' => [
+                'class' => 'dropdown-menu',
+                'aria-labelledby' => 'browse-dropdown',
+            ],
         ]);
-        $browse->setAttribute('dropdown', true);
-        $browse->setLinkAttribute('class', 'dropdown-toggle');
-        $browse->setLinkAttribute('data-toggle', 'dropdown');
-        $browse->setChildrenAttribute('class', 'dropdown-menu');
 
         $browse->addChild('Contributor Roles', [
             'route' => 'contributor_role_index',
+            'linkAttributes' => [
+                'class' => 'dropdown-item',
+            ],
         ]);
         $browse->addChild('Episodes', [
             'route' => 'episode_index',
+            'linkAttributes' => [
+                'class' => 'dropdown-item',
+            ],
         ]);
         $browse->addChild('People', [
             'route' => 'person_index',
+            'linkAttributes' => [
+                'class' => 'dropdown-item',
+            ],
         ]);
         $browse->addChild('Institutions', [
             'route' => 'institution_index',
+            'linkAttributes' => [
+                'class' => 'dropdown-item',
+            ],
         ]);
         $browse->addChild('Podcasts', [
             'route' => 'podcast_index',
+            'linkAttributes' => [
+                'class' => 'dropdown-item',
+            ],
         ]);
         $browse->addChild('Publishers', [
             'route' => 'publisher_index',
+            'linkAttributes' => [
+                'class' => 'dropdown-item',
+            ],
         ]);
         $browse->addChild('Seasons', [
             'route' => 'season_index',
+            'linkAttributes' => [
+                'class' => 'dropdown-item',
+            ],
         ]);
-
         if ($this->hasRole('ROLE_CONTENT_ADMIN')) {
             $divider = $browse->addChild('divider_content', [
                 'label' => '',
-            ]);
-            $divider->setAttributes([
-                'role' => 'separator',
-                'class' => 'divider',
+                'attributes' => [
+                    'class' => 'dropdown-divider',
+                ],
             ]);
             $browse->addChild('Categories', [
                 'route' => 'category_index',
+                'linkAttributes' => [
+                    'class' => 'dropdown-item',
+                ],
             ]);
             $browse->addChild('Languages', [
                 'route' => 'language_index',
+                'linkAttributes' => [
+                    'class' => 'dropdown-item',
+                ],
             ]);
         }
 
         if ($this->hasRole('ROLE_ADMIN')) {
             $divider = $browse->addChild('divider_admin', [
                 'label' => '',
-            ]);
-            $divider->setAttributes([
-                'role' => 'separator',
-                'class' => 'divider',
+                'attributes' => [
+                    'class' => 'dropdown-divider',
+                ],
             ]);
             $browse->addChild('Contributions', [
                 'route' => 'contribution_index',
+                'linkAttributes' => [
+                    'class' => 'dropdown-item',
+                ],
             ]);
         }
 

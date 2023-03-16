@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Tests\Controller;
 
 use App\Repository\PersonRepository;
@@ -138,7 +132,7 @@ class PersonTest extends ControllerTestCase {
 
     public function testAnonEdit() : void {
         $crawler = $this->client->request('GET', '/person/1/edit');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserEdit() : void {
@@ -158,7 +152,7 @@ class PersonTest extends ControllerTestCase {
             'person[location]' => 'Updated Location',
             'person[bio]' => '<p>Updated Text</p>',
         ]);
-        $this->overrideField($form, 'person[institution]', 2);
+        $this->overrideField($form, 'person[institution]', '2');
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/person/1', Response::HTTP_FOUND);
@@ -168,12 +162,12 @@ class PersonTest extends ControllerTestCase {
 
     public function testAnonNew() : void {
         $crawler = $this->client->request('GET', '/person/new');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testAnonNewPopup() : void {
         $crawler = $this->client->request('GET', '/person/new_popup');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserNew() : void {
@@ -199,7 +193,7 @@ class PersonTest extends ControllerTestCase {
             'person[location]' => 'Updated Location',
             'person[bio]' => '<p>Updated Text</p>',
         ]);
-        $this->overrideField($form, 'person[institution]', 2);
+        $this->overrideField($form, 'person[institution]', '2');
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/person/5', Response::HTTP_FOUND);
@@ -218,7 +212,7 @@ class PersonTest extends ControllerTestCase {
             'person[location]' => 'Updated Location',
             'person[bio]' => '<p>Updated Text</p>',
         ]);
-        $this->overrideField($form, 'person[institution]', 2);
+        $this->overrideField($form, 'person[institution]', '2');
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/person/6', Response::HTTP_FOUND);
@@ -228,7 +222,7 @@ class PersonTest extends ControllerTestCase {
 
     public function testAdminDelete() : void {
         /** @var PersonRepository $repo */
-        $repo = self::$container->get(PersonRepository::class);
+        $repo = self::getContainer()->get(PersonRepository::class);
         $preCount = count($repo->findAll());
 
         $this->login(UserFixtures::ADMIN);

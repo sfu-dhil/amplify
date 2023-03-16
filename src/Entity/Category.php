@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Entity;
 
 use App\Repository\CategoryRepository;
@@ -16,14 +10,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractTerm;
 
-/**
- * @ORM\Entity(repositoryClass=CategoryRepository::class)
- */
+#[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category extends AbstractTerm {
     /**
      * @var Collection<int,Podcast>
-     * @ORM\ManyToMany(targetEntity="Podcast", mappedBy="categories")
      */
+    #[ORM\ManyToMany(targetEntity: 'Podcast', mappedBy: 'categories')]
     private $podcasts;
 
     public function __construct() {

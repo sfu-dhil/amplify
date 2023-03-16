@@ -5,7 +5,7 @@ imports:
     - { resource: '../vendor/beberlei/doctrineextensions/config/mysql.yml' }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     router.request_context.scheme: '%env(string:ROUTE_PROTOCOL)%'
     router.request_context.host: '%env(string:ROUTE_HOST)%'

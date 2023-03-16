@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Tests\Controller;
 
 use App\Repository\PublisherRepository;
@@ -138,7 +132,7 @@ class PublisherTest extends ControllerTestCase {
 
     public function testAnonEdit() : void {
         $crawler = $this->client->request('GET', '/publisher/1/edit');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserEdit() : void {
@@ -168,12 +162,12 @@ class PublisherTest extends ControllerTestCase {
 
     public function testAnonNew() : void {
         $crawler = $this->client->request('GET', '/publisher/new');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testAnonNewPopup() : void {
         $crawler = $this->client->request('GET', '/publisher/new_popup');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserNew() : void {
@@ -228,7 +222,7 @@ class PublisherTest extends ControllerTestCase {
 
     public function testAdminDelete() : void {
         /** @var PublisherRepository $repo */
-        $repo = self::$container->get(PublisherRepository::class);
+        $repo = self::getContainer()->get(PublisherRepository::class);
         $preCount = count($repo->findAll());
 
         $this->login(UserFixtures::ADMIN);

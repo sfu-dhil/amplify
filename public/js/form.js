@@ -102,9 +102,8 @@
             allow_up: false,
             allow_down: false,
             max: 400,
-            add: '<a href="#" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span></a>',
-            remove: '<a href="#" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-minus"></span></a>',
-            add_at_the_end: false,
+            add: '<a href="#" class="btn btn-primary btn-sm"><span class="bi bi-plus"></span></a>',
+            remove: '<a href="#" class="btn btn-light btn-sm"><span class="bi bi-dash"></span></a>',
             after_add: attachOclcFast
         });
     }
@@ -115,9 +114,8 @@
             allow_up: false,
             allow_down: false,
             max: 400,
-            add: '<a href="#" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span></a>',
-            remove: '<a href="#" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-minus"></span></a>',
-            add_at_the_end: true,
+            add: '<a href="#" class="btn btn-primary btn-sm"><span class="bi bi-plus"></span></a>',
+            remove: '<a href="#" class="btn btn-light btn-sm"><span class="bi bi-dash"></span></a>',
             after_add: function(collection, element){
                 $(element).find('.select2entity').select2entity();
                 $(element).find('.select2-container').css('width', '100%');
@@ -144,7 +142,14 @@
         $("a.popup").click(formPopup);
         $("a").each(link);
         $("*[data-confirm]").each(confirm);
-        $('[data-toggle="popover"]').popover(); // add this line to enable boostrap popover
+        let popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+        popoverTriggerList.map(function (popoverTriggerEl) {
+          return new bootstrap.Popover(popoverTriggerEl)
+        }) // add this line to enable bootstrap popover
+        let alertList = document.querySelectorAll('.alert')
+        alertList.forEach(function (alert) {
+            new bootstrap.Alert(alert);
+        }); // add alert dismissal
         if (typeof $().collection === 'function') {
             simpleCollection();
             complexCollection();
@@ -152,7 +157,7 @@
         imageModals();
         // The autocomplete widget must be manually added for existing
         // elements.
-        $(".collection-simple .form-group").each(function(i,e){
+        $(".collection-simple .mb-3.row").each(function(i,e){
             attachOclcFast(null, e);
         });
     });

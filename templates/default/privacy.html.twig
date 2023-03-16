@@ -56,11 +56,11 @@
     </ul>
     <h2>Opt Out of Data Collection</h2>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Analytics Settings</h3>
+    <div class="card card-light">
+        <div class="card-header">
+            <h5 class="card-title">Analytics Settings</h5>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
             {% if matomo_enabled %}
                 <iframe style="border: 0; height: auto; width: 100%;" src="{{ matomo_url }}/index.php?module=CoreAdminHome&action=optOut&language=en">
                 </iframe>

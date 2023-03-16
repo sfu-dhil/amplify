@@ -31,3 +31,10 @@ framework:
             command_bus:
                 middleware:
                     - doctrine_close_connection
+
+when@test:
+   framework:
+       messenger:
+           transports:
+                async: test://
+                failed: test://

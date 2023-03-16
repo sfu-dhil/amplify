@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Form;
 
 use App\Entity\Institution;
@@ -27,16 +21,10 @@ class InstitutionType extends AbstractType {
         $builder->add('country', TextType::class, [
             'label' => 'Country',
             'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
         $builder->add('name', TextType::class, [
             'label' => 'Name',
             'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
     }
 

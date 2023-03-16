@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Tests\Controller;
 
 use App\Repository\EpisodeRepository;
@@ -144,7 +138,7 @@ class EpisodeTest extends ControllerTestCase {
 
     public function testAnonEdit() : void {
         $crawler = $this->client->request('GET', '/episode/1/edit');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserEdit() : void {
@@ -169,8 +163,8 @@ class EpisodeTest extends ControllerTestCase {
             'episode[description]' => '<p>Updated Text</p>',
             'episode[permissions]' => '<p>Updated Text</p>',
         ]);
-        $this->overrideField($form, 'episode[season]', 2);
-        $this->overrideField($form, 'episode[podcast]', 2);
+        $this->overrideField($form, 'episode[season]', '2');
+        $this->overrideField($form, 'episode[podcast]', '2');
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/episode/1', Response::HTTP_FOUND);
@@ -180,12 +174,12 @@ class EpisodeTest extends ControllerTestCase {
 
     public function testAnonNew() : void {
         $crawler = $this->client->request('GET', '/episode/new');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testAnonNewPopup() : void {
         $crawler = $this->client->request('GET', '/episode/new_popup');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserNew() : void {
@@ -216,8 +210,8 @@ class EpisodeTest extends ControllerTestCase {
             'episode[description]' => '<p>Updated Text</p>',
             'episode[permissions]' => '<p>Updated Text</p>',
         ]);
-        $this->overrideField($form, 'episode[season]', 2);
-        $this->overrideField($form, 'episode[podcast]', 2);
+        $this->overrideField($form, 'episode[season]', '2');
+        $this->overrideField($form, 'episode[podcast]', '2');
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/episode/5', Response::HTTP_FOUND);
@@ -241,8 +235,8 @@ class EpisodeTest extends ControllerTestCase {
             'episode[description]' => '<p>Updated Text</p>',
             'episode[permissions]' => '<p>Updated Text</p>',
         ]);
-        $this->overrideField($form, 'episode[season]', 2);
-        $this->overrideField($form, 'episode[podcast]', 2);
+        $this->overrideField($form, 'episode[season]', '2');
+        $this->overrideField($form, 'episode[podcast]', '2');
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/episode/6', Response::HTTP_FOUND);
@@ -252,7 +246,7 @@ class EpisodeTest extends ControllerTestCase {
 
     public function testAdminDelete() : void {
         /** @var EpisodeRepository $repo */
-        $repo = self::$container->get(EpisodeRepository::class);
+        $repo = self::getContainer()->get(EpisodeRepository::class);
         $preCount = count($repo->findAll());
 
         $this->login(UserFixtures::ADMIN);
@@ -272,7 +266,7 @@ class EpisodeTest extends ControllerTestCase {
 
     public function testAnonNewAudio() : void {
         $crawler = $this->client->request('GET', '/episode/1/new_audio');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserNewAudio() : void {
@@ -286,7 +280,7 @@ class EpisodeTest extends ControllerTestCase {
         $crawler = $this->client->request('GET', '/episode/1/new_audio');
         $this->assertResponseIsSuccessful();
 
-        $manager = self::$container->get(AudioManager::class);
+        $manager = self::getContainer()->get(AudioManager::class);
         $manager->setCopy(true);
 
         $form = $crawler->selectButton('Create')->form([
@@ -305,7 +299,7 @@ class EpisodeTest extends ControllerTestCase {
 
     public function testAnonEditAudio() : void {
         $crawler = $this->client->request('GET', '/episode/1/edit_audio/1');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserEditAudio() : void {
@@ -319,7 +313,7 @@ class EpisodeTest extends ControllerTestCase {
         $crawler = $this->client->request('GET', '/episode/1/edit_audio/6');
         $this->assertResponseIsSuccessful();
 
-        $manager = self::$container->get(AudioManager::class);
+        $manager = self::getContainer()->get(AudioManager::class);
         $manager->setCopy(true);
 
         $form = $crawler->selectButton('Update')->form([
@@ -338,7 +332,7 @@ class EpisodeTest extends ControllerTestCase {
 
     public function testAnonDeleteAudio() : void {
         $crawler = $this->client->request('DELETE', '/episode/1/delete_audio/6');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserDeleteAudio() : void {
@@ -348,7 +342,7 @@ class EpisodeTest extends ControllerTestCase {
     }
 
     public function testAdminDeleteAudio() : void {
-        $repo = self::$container->get(AudioRepository::class);
+        $repo = self::getContainer()->get(AudioRepository::class);
         $preCount = count($repo->findAll());
 
         $this->login(UserFixtures::ADMIN);
@@ -367,7 +361,7 @@ class EpisodeTest extends ControllerTestCase {
     }
 
     public function testAdminDeleteAudioWrongToken() : void {
-        $repo = self::$container->get(AudioRepository::class);
+        $repo = self::getContainer()->get(AudioRepository::class);
         $preCount = count($repo->findAll());
 
         $this->login(UserFixtures::ADMIN);
@@ -391,7 +385,7 @@ class EpisodeTest extends ControllerTestCase {
 
     public function testAnonNewImage() : void {
         $crawler = $this->client->request('GET', '/episode/1/new_image');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserNewImage() : void {
@@ -405,7 +399,7 @@ class EpisodeTest extends ControllerTestCase {
         $crawler = $this->client->request('GET', '/episode/1/new_image');
         $this->assertResponseIsSuccessful();
 
-        $manager = self::$container->get(ImageManager::class);
+        $manager = self::getContainer()->get(ImageManager::class);
         $manager->setCopy(true);
 
         $form = $crawler->selectButton('Create')->form([
@@ -424,7 +418,7 @@ class EpisodeTest extends ControllerTestCase {
 
     public function testAnonEditImage() : void {
         $crawler = $this->client->request('GET', '/episode/1/edit_image/14');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserEditImage() : void {
@@ -438,7 +432,7 @@ class EpisodeTest extends ControllerTestCase {
         $crawler = $this->client->request('GET', '/episode/1/edit_image/14');
         $this->assertResponseIsSuccessful();
 
-        $manager = self::$container->get(ImageManager::class);
+        $manager = self::getContainer()->get(ImageManager::class);
         $manager->setCopy(true);
 
         $form = $crawler->selectButton('Update')->form([
@@ -457,7 +451,7 @@ class EpisodeTest extends ControllerTestCase {
 
     public function testAnonDeleteImage() : void {
         $crawler = $this->client->request('DELETE', '/episode/1/delete_image/14');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserDeleteImage() : void {
@@ -467,7 +461,7 @@ class EpisodeTest extends ControllerTestCase {
     }
 
     public function testAdminDeleteImage() : void {
-        $repo = self::$container->get(ImageRepository::class);
+        $repo = self::getContainer()->get(ImageRepository::class);
         $preCount = count($repo->findAll());
 
         $this->login(UserFixtures::ADMIN);
@@ -486,7 +480,7 @@ class EpisodeTest extends ControllerTestCase {
     }
 
     public function testAdminDeleteImageWrongToken() : void {
-        $repo = self::$container->get(ImageRepository::class);
+        $repo = self::getContainer()->get(ImageRepository::class);
         $preCount = count($repo->findAll());
 
         $this->login(UserFixtures::ADMIN);
@@ -510,7 +504,7 @@ class EpisodeTest extends ControllerTestCase {
 
     public function testAnonNewPdf() : void {
         $crawler = $this->client->request('GET', '/episode/1/new_pdf');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserNewPdf() : void {
@@ -524,7 +518,7 @@ class EpisodeTest extends ControllerTestCase {
         $crawler = $this->client->request('GET', '/episode/1/new_pdf');
         $this->assertResponseIsSuccessful();
 
-        $manager = self::$container->get(PdfManager::class);
+        $manager = self::getContainer()->get(PdfManager::class);
         $manager->setCopy(true);
 
         $form = $crawler->selectButton('Create')->form([
@@ -543,7 +537,7 @@ class EpisodeTest extends ControllerTestCase {
 
     public function testAnonEditPdf() : void {
         $crawler = $this->client->request('GET', '/episode/1/edit_pdf/6');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserEditPdf() : void {
@@ -557,7 +551,7 @@ class EpisodeTest extends ControllerTestCase {
         $crawler = $this->client->request('GET', '/episode/1/edit_pdf/6');
         $this->assertResponseIsSuccessful();
 
-        $manager = self::$container->get(PdfManager::class);
+        $manager = self::getContainer()->get(PdfManager::class);
         $manager->setCopy(true);
 
         $form = $crawler->selectButton('Update')->form([
@@ -576,7 +570,7 @@ class EpisodeTest extends ControllerTestCase {
 
     public function testAnonDeletePdf() : void {
         $crawler = $this->client->request('DELETE', '/episode/1/delete_pdf/6');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserDeletePdf() : void {
@@ -586,7 +580,7 @@ class EpisodeTest extends ControllerTestCase {
     }
 
     public function testAdminDeletePdf() : void {
-        $repo = self::$container->get(PdfRepository::class);
+        $repo = self::getContainer()->get(PdfRepository::class);
         $preCount = count($repo->findAll());
 
         $this->login(UserFixtures::ADMIN);
@@ -605,7 +599,7 @@ class EpisodeTest extends ControllerTestCase {
     }
 
     public function testAdminDeletePdfWrongToken() : void {
-        $repo = self::$container->get(PdfRepository::class);
+        $repo = self::getContainer()->get(PdfRepository::class);
         $preCount = count($repo->findAll());
 
         $this->login(UserFixtures::ADMIN);

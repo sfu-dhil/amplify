@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Tests\Controller;
 
 use App\Repository\SeasonRepository;
@@ -140,7 +134,7 @@ class SeasonTest extends ControllerTestCase {
 
     public function testAnonEdit() : void {
         $crawler = $this->client->request('GET', '/season/1/edit');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserEdit() : void {
@@ -161,8 +155,8 @@ class SeasonTest extends ControllerTestCase {
             'season[subTitle]' => 'Updated subTitle',
             'season[description]' => '<p>Updated Text</p>',
         ]);
-        $this->overrideField($form, 'season[podcast]', 2);
-        $this->overrideField($form, 'season[publisher]', 2);
+        $this->overrideField($form, 'season[podcast]', '2');
+        $this->overrideField($form, 'season[publisher]', '2');
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/season/1', Response::HTTP_FOUND);
@@ -172,12 +166,12 @@ class SeasonTest extends ControllerTestCase {
 
     public function testAnonNew() : void {
         $crawler = $this->client->request('GET', '/season/new');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testAnonNewPopup() : void {
         $crawler = $this->client->request('GET', '/season/new_popup');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserNew() : void {
@@ -204,8 +198,8 @@ class SeasonTest extends ControllerTestCase {
             'season[subTitle]' => 'Updated subTitle',
             'season[description]' => '<p>Updated Text</p>',
         ]);
-        $this->overrideField($form, 'season[podcast]', 2);
-        $this->overrideField($form, 'season[publisher]', 2);
+        $this->overrideField($form, 'season[podcast]', '2');
+        $this->overrideField($form, 'season[publisher]', '2');
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/season/5', Response::HTTP_FOUND);
@@ -225,8 +219,8 @@ class SeasonTest extends ControllerTestCase {
             'season[subTitle]' => 'Updated subTitle',
             'season[description]' => '<p>Updated Text</p>',
         ]);
-        $this->overrideField($form, 'season[podcast]', 2);
-        $this->overrideField($form, 'season[publisher]', 2);
+        $this->overrideField($form, 'season[podcast]', '2');
+        $this->overrideField($form, 'season[publisher]', '2');
 
         $this->client->submit($form);
         $this->assertResponseRedirects('/season/6', Response::HTTP_FOUND);
@@ -236,7 +230,7 @@ class SeasonTest extends ControllerTestCase {
 
     public function testAdminDelete() : void {
         /** @var SeasonRepository $repo */
-        $repo = self::$container->get(SeasonRepository::class);
+        $repo = self::getContainer()->get(SeasonRepository::class);
         $preCount = count($repo->findAll());
 
         $this->login(UserFixtures::ADMIN);
@@ -256,7 +250,7 @@ class SeasonTest extends ControllerTestCase {
 
     public function testAnonNewImage() : void {
         $crawler = $this->client->request('GET', '/season/1/new_image');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserNewImage() : void {
@@ -270,7 +264,7 @@ class SeasonTest extends ControllerTestCase {
         $crawler = $this->client->request('GET', '/season/1/new_image');
         $this->assertResponseIsSuccessful();
 
-        $manager = self::$container->get(ImageManager::class);
+        $manager = self::getContainer()->get(ImageManager::class);
         $manager->setCopy(true);
 
         $form = $crawler->selectButton('Create')->form([
@@ -289,7 +283,7 @@ class SeasonTest extends ControllerTestCase {
 
     public function testAnonEditImage() : void {
         $crawler = $this->client->request('GET', '/season/1/edit_image/10');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserEditImage() : void {
@@ -303,7 +297,7 @@ class SeasonTest extends ControllerTestCase {
         $crawler = $this->client->request('GET', '/season/1/edit_image/10');
         $this->assertResponseIsSuccessful();
 
-        $manager = self::$container->get(ImageManager::class);
+        $manager = self::getContainer()->get(ImageManager::class);
         $manager->setCopy(true);
 
         $form = $crawler->selectButton('Update')->form([
@@ -322,7 +316,7 @@ class SeasonTest extends ControllerTestCase {
 
     public function testAnonDeleteImage() : void {
         $crawler = $this->client->request('DELETE', '/season/1/delete_image/10');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserDeleteImage() : void {
@@ -332,7 +326,7 @@ class SeasonTest extends ControllerTestCase {
     }
 
     public function testAdminDeleteImage() : void {
-        $repo = self::$container->get(ImageRepository::class);
+        $repo = self::getContainer()->get(ImageRepository::class);
         $preCount = count($repo->findAll());
 
         $this->login(UserFixtures::ADMIN);
@@ -351,7 +345,7 @@ class SeasonTest extends ControllerTestCase {
     }
 
     public function testAdminDeleteImageWrongToken() : void {
-        $repo = self::$container->get(ImageRepository::class);
+        $repo = self::getContainer()->get(ImageRepository::class);
         $preCount = count($repo->findAll());
 
         $this->login(UserFixtures::ADMIN);

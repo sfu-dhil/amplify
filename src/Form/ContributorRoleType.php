@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Form;
 
 use App\Entity\ContributorRole;
@@ -27,9 +21,8 @@ class ContributorRoleType extends TermType {
         $builder->add('relatorTerm', TextType::class, [
             'label' => 'MARC Relator Term',
             'required' => false,
-            'attr' => [
-                'help_block' => 'One of the three letter codes from <a href="https://www.loc.gov/marc/relators/relaterm.html">this list</a>',
-            ],
+            'help' => 'One of the three letter codes from <a href="https://www.loc.gov/marc/relators/relaterm.html">this list</a>',
+            'help_html' => true,
         ]);
         parent::buildForm($builder, $options);
     }

@@ -7,13 +7,13 @@
         <meta name="google" content="notranslate" />
         <title>{% block title %}Amplify Podcast Network{% endblock %}</title>
 
-        <link rel="stylesheet" href="{{ asset('node_modules/bootstrap3/dist/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('node_modules/bootstrap3/dist/css/bootstrap-theme.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('node_modules/bootstrap-icons/font/bootstrap-icons.css') }}">
 
         <link rel="stylesheet" href="{{ asset('css/base.css') }}">
 
         <link href="{{ asset('node_modules/select2/dist/css/select2.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('node_modules/select2-bootstrap-css/select2-bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('node_modules/select2-theme-bootstrap5/dist/select2-bootstrap.min.css') }}" rel="stylesheet">
         <link href='{{ asset('node_modules/jquery-ui-dist/jquery-ui.css') }}' rel='stylesheet'>
 
         <script src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
@@ -22,21 +22,18 @@
 
         <script src="{{ asset('bundles/tetranzselect2entity/js/select2entity.js') }}"></script>
         <script src="{{ asset('node_modules/symfony-collection/jquery.collection.js') }}"></script>
-        <script src="{{ asset('node_modules/bootstrap3/dist/js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ asset('js/form.js') }}"></script>
 
         {% block styles %}
         {% endblock %}
     </head>
     <body>
-        <nav class="navbar navbar-default navbar-fixed-top">
+        <nav class="navbar navbar-expand bg-light fixed-top">
             <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span>
-                        <span class="icon-bar"></span> <span class="icon-bar"></span>
-                    </button>
-                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
                 <div id="navbar" class="collapse navbar-collapse">
                     {{ knp_menu_render('nines_blog_pages') }}
                     {{ knp_menu_render('nines_blog_posts') }}
@@ -48,16 +45,15 @@
         <div class="container">
 
             {% if block('pageheader') is defined %}
-                <div class="page-header">
+                <div class="mb-4 border-bottom">
                     {{ block('pageheader') }}
                 </div>
             {% endif %}
 
             {% for type, messages in app.session.flashbag.all() %}
                 {% for message in messages %}
-                    <div class="alert alert-{{ type }}">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span></button>
+                    <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         {{ message }}
                     </div>
                 {% endfor %}

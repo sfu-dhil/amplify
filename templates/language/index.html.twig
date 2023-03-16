@@ -11,15 +11,15 @@
 
 {% block body %}
 
-    <div class='btn-toolbar pull-right'>
-        <div class='btn-group'>
+    <div class='btn-toolbar'>
+        <div class='btn-group ms-auto'>
             {% if is_granted('ROLE_CONTENT_ADMIN') %}
-                <a href="{{ path('language_new') }}" class="btn btn-default">
-                    <span class="glyphicon glyphicon-plus"></span> New </a>
+                <a href="{{ path('language_new') }}" class="btn btn-light">
+                    <span class="bi bi-plus"></span> New </a>
             {% endif %}
 
-            <a href="{{ path('language_search') }}" class="btn btn-default">
-                <span class="glyphicon glyphicon-search"></span> Search </a>
+            <a href="{{ path('language_search') }}" class="btn btn-light">
+                <span class="bi bi-search"></span> Search </a>
         </div>
     </div>
 

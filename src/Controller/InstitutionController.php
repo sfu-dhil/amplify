@@ -2,17 +2,12 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Controller;
 
 use App\Entity\Institution;
 use App\Form\InstitutionType;
 use App\Repository\InstitutionRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -23,17 +18,12 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/institution")
- */
+#[Route(path: '/institution')]
 class InstitutionController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
-    /**
-     * @Route("/", name="institution_index", methods={"GET"})
-     *
-     * @Template
-     */
+    #[Route(path: '/', name: 'institution_index', methods: ['GET'])]
+    #[Template]
     public function index(Request $request, InstitutionRepository $institutionRepository) : array {
         $query = $institutionRepository->indexQuery();
         $pageSize = $this->getParameter('page_size');
@@ -45,12 +35,10 @@ class InstitutionController extends AbstractController implements PaginatorAware
     }
 
     /**
-     * @Route("/search", name="institution_search", methods={"GET"})
-     *
-     * @Template
-     *
      * @return array
      */
+    #[Route(path: '/search', name: 'institution_search', methods: ['GET'])]
+    #[Template]
     public function search(Request $request, InstitutionRepository $institutionRepository) {
         $q = $request->query->get('q');
         if ($q) {
@@ -67,10 +55,9 @@ class InstitutionController extends AbstractController implements PaginatorAware
     }
 
     /**
-     * @Route("/typeahead", name="institution_typeahead", methods={"GET"})
-     *
      * @return JsonResponse
      */
+    #[Route(path: '/typeahead', name: 'institution_typeahead', methods: ['GET'])]
     public function typeahead(Request $request, InstitutionRepository $institutionRepository) {
         $q = $request->query->get('q');
         if ( ! $q) {
@@ -89,19 +76,17 @@ class InstitutionController extends AbstractController implements PaginatorAware
     }
 
     /**
-     * @Route("/new", name="institution_new", methods={"GET", "POST"})
-     * @Template
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
      * @return array|RedirectResponse
      */
-    public function new(Request $request) {
+    #[Route(path: '/new', name: 'institution_new', methods: ['GET', 'POST'])]
+    #[Template]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    public function new(EntityManagerInterface $entityManager, Request $request) {
         $institution = new Institution();
         $form = $this->createForm(InstitutionType::class, $institution);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($institution);
             $entityManager->flush();
             $this->addFlash('success', 'The new institution has been saved.');
@@ -116,22 +101,20 @@ class InstitutionController extends AbstractController implements PaginatorAware
     }
 
     /**
-     * @Route("/new_popup", name="institution_new_popup", methods={"GET", "POST"})
-     * @Template
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
      * @return array|RedirectResponse
      */
-    public function new_popup(Request $request) {
-        return $this->new($request);
+    #[Route(path: '/new_popup', name: 'institution_new_popup', methods: ['GET', 'POST'])]
+    #[Template]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    public function new_popup(EntityManagerInterface $entityManager, Request $request) {
+        return $this->new($entityManager, $request);
     }
 
     /**
-     * @Route("/{id}", name="institution_show", methods={"GET"})
-     * @Template
-     *
      * @return array
      */
+    #[Route(path: '/{id}', name: 'institution_show', methods: ['GET'])]
+    #[Template]
     public function show(Institution $institution) {
         return [
             'institution' => $institution,
@@ -139,19 +122,17 @@ class InstitutionController extends AbstractController implements PaginatorAware
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}/edit", name="institution_edit", methods={"GET", "POST"})
-     *
-     * @Template
-     *
      * @return array|RedirectResponse
      */
-    public function edit(Request $request, Institution $institution) {
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    #[Route(path: '/{id}/edit', name: 'institution_edit', methods: ['GET', 'POST'])]
+    #[Template]
+    public function edit(EntityManagerInterface $entityManager, Request $request, Institution $institution) {
         $form = $this->createForm(InstitutionType::class, $institution);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $entityManager->flush();
             $this->addFlash('success', 'The updated institution has been saved.');
 
             return $this->redirectToRoute('institution_show', ['id' => $institution->getId()]);
@@ -164,14 +145,12 @@ class InstitutionController extends AbstractController implements PaginatorAware
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}", name="institution_delete", methods={"DELETE"})
-     *
      * @return RedirectResponse
      */
-    public function delete(Request $request, Institution $institution) {
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    #[Route(path: '/{id}', name: 'institution_delete', methods: ['DELETE'])]
+    public function delete(EntityManagerInterface $entityManager, Request $request, Institution $institution) {
         if ($this->isCsrfTokenValid('delete' . $institution->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($institution);
             $entityManager->flush();
             $this->addFlash('success', 'The institution has been deleted.');

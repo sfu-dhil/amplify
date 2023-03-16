@@ -11,7 +11,7 @@ class ExportMessage {
         $this->exportId = $exportId;
     }
 
-    public function getExportId(): int {
+    public function getExportId() : int {
         return $this->exportId;
     }
 }

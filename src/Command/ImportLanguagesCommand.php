@@ -2,32 +2,24 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Command;
 
 use App\Entity\Language;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\Reader;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'app:import:languages')]
 class ImportLanguagesCommand extends Command {
     private EntityManagerInterface $em;
 
-    protected static $defaultName = 'app:import:languages';
-
-    protected static $defaultDescription = 'Add a short description for your command';
-
     protected function configure() : void {
         $this
-            ->setDescription(self::$defaultDescription)
+            ->setDescription('Add a short description for your command')
             ->addArgument('file', InputArgument::REQUIRED, 'CSV file with language codes and names to import')
         ;
     }
@@ -46,9 +38,7 @@ class ImportLanguagesCommand extends Command {
         return 0;
     }
 
-    /**
-     * @required
-     */
+    #[\Symfony\Contracts\Service\Attribute\Required]
     public function setEntityManager(EntityManagerInterface $em) : void {
         $this->em = $em;
     }

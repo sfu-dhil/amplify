@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Entity;
 
 use App\Repository\InstitutionRepository;
@@ -16,29 +10,26 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
-/**
- * @ORM\Entity(repositoryClass=InstitutionRepository::class)
- * @ORM\Table(uniqueConstraints={
- *     @ORM\UniqueConstraint(name="institutions_uniq", columns={"country", "name"})
- * })
- */
+#[ORM\Table]
+#[ORM\UniqueConstraint(name: 'institutions_uniq', columns: ['country', 'name'])]
+#[ORM\Entity(repositoryClass: InstitutionRepository::class)]
 class Institution extends AbstractEntity {
     /**
      * @var string
-     * @ORM\Column(type="string", length=40, nullable=false)
      */
+    #[ORM\Column(type: 'string', length: 40, nullable: false)]
     private $country;
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=100, nullable=false)
      */
+    #[ORM\Column(type: 'string', length: 100, nullable: false)]
     private $name;
 
     /**
      * @var Collection<int,Person>
-     * @ORM\OneToMany(targetEntity="App\Entity\Person", mappedBy="institution")
      */
+    #[ORM\OneToMany(targetEntity: 'App\Entity\Person', mappedBy: 'institution')]
     private $people;
 
     public function __construct() {

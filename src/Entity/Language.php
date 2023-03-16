@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Entity;
 
 use App\Repository\LanguageRepository;
@@ -16,14 +10,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractTerm;
 
-/**
- * @ORM\Entity(repositoryClass=LanguageRepository::class)
- */
+#[ORM\Entity(repositoryClass: LanguageRepository::class)]
 class Language extends AbstractTerm {
     /**
      * @var Collection<int,Episode>
-     * @ORM\OneToMany(targetEntity="App\Entity\Episode", mappedBy="language")
      */
+    #[ORM\OneToMany(targetEntity: 'App\Entity\Episode', mappedBy: 'language')]
     private $episodes;
 
     public function __construct() {

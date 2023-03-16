@@ -4,10 +4,12 @@ html {
     position: relative;
     min-height: 100%;
 }
+
 body {
     /* Margin bottom by footer height */
-    margin-bottom: 60px;
+    margin-bottom: 85px;
 }
+
 .footer {
     position: absolute;
     bottom: 0;
@@ -20,13 +22,6 @@ body {
 /* Move the content down, to make room for the nav bar. */
 body > .container {
     padding-top: 70px;
-}
-
-/* Drow down menu */
-a.dropdown-toggle::after {
-    content: "▾";
-    padding-left: 0.3em;
-    font-size: small;
 }
 
 /* Custom app styles */
@@ -42,32 +37,38 @@ label.required::after {
 }
 
 a[href ^= 'mailto:']::after {
-    content: "\2709";
-    position: relative;
-    top: 1px;
+    content: "\f32c";
     display: inline-block;
-    padding-left: 0.5ex;
-    font-family: 'Glyphicons Halflings';
+    font-family: bootstrap-icons !important;
     font-style: normal;
-    font-weight: 400;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
     line-height: 1;
+    vertical-align: -.125em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    padding-left: 0.5ex;
 }
 
 a[href ^= 'http://']::after,
 a[href ^= 'https://']::after {
-    content: "\e164";
-    position: relative;
-    top: 1px;
+    content: "\F1C5";
     display: inline-block;
-    padding-left: 0.5ex;
-    font-family: 'Glyphicons Halflings';
+    font-family: bootstrap-icons !important;
     font-style: normal;
-    font-weight: 400;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
     line-height: 1;
+    vertical-align: -.125em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    padding-left: 0.5ex;
+}
+
+.card {
+    margin-bottom: 20px;
 }
 
 tbody tr th {
@@ -86,14 +87,13 @@ input[type="month"].form-control {
     line-height: inherit;
 }
 
+div.collection span[class*="-collection-actions"] {
+    width: inherit !important;
+}
+
 div.collection-complex > div:not(:last-child) {
     padding-top: 15px;
     border: 1px solid rgba(128, 128, 128, 0.31);
-}
-
-/* Add some whitespace above the comments form. */
-div.panel-comments {
-    margin-top: 3em;
 }
 
 hr.divider {

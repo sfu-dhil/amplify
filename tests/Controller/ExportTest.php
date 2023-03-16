@@ -2,27 +2,21 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Tests\Controller;
 
+use App\Message\ExportMessage;
 use App\Repository\ExportRepository;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\TestCase\ControllerTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Zenstruck\Messenger\Test\InteractsWithMessenger;
-use App\Message\ExportMessage;
 
 class ExportTest extends ControllerTestCase {
     use InteractsWithMessenger;
 
     public function testAnonNew() : void {
         $crawler = $this->client->request('GET', '/season/3/export/new');
-        $this->assertResponseRedirects('/login', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserNew() : void {
@@ -33,7 +27,7 @@ class ExportTest extends ControllerTestCase {
 
     public function testAdminNew() : void {
         /** @var ExportRepository $repo */
-        $repo = self::$container->get(ExportRepository::class);
+        $repo = self::getContainer()->get(ExportRepository::class);
         $preCount = count($repo->findAll());
         $this->messenger('async')->queue()->assertEmpty();
 
@@ -55,7 +49,7 @@ class ExportTest extends ControllerTestCase {
 
     public function testAdminDelete() : void {
         /** @var ExportRepository $repo */
-        $repo = self::$container->get(ExportRepository::class);
+        $repo = self::getContainer()->get(ExportRepository::class);
         $preCount = count($repo->findAll());
 
         $this->login(UserFixtures::ADMIN);

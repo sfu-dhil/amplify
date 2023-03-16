@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Controller;
 
 use App\Entity\Podcast;
@@ -28,18 +22,13 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/podcast")
- */
+#[Route(path: '/podcast')]
 class PodcastController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
     use ImageControllerTrait;
 
-    /**
-     * @Route("/", name="podcast_index", methods={"GET"})
-     *
-     * @Template("podcast/index.html.twig")
-     */
+    #[Route(path: '/', name: 'podcast_index', methods: ['GET'])]
+    #[Template('podcast/index.html.twig')]
     public function index(Request $request, PodcastRepository $podcastRepository) : array {
         $query = $podcastRepository->indexQuery();
         $pageSize = $this->getParameter('page_size');
@@ -51,12 +40,10 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
     }
 
     /**
-     * @Route("/search", name="podcast_search", methods={"GET"})
-     *
-     * @Template("podcast/search.html.twig")
-     *
      * @return array
      */
+    #[Route(path: '/search', name: 'podcast_search', methods: ['GET'])]
+    #[Template('podcast/search.html.twig')]
     public function search(Request $request, PodcastRepository $podcastRepository) {
         $q = $request->query->get('q');
         if ($q) {
@@ -73,10 +60,9 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
     }
 
     /**
-     * @Route("/typeahead", name="podcast_typeahead", methods={"GET"})
-     *
      * @return JsonResponse
      */
+    #[Route(path: '/typeahead', name: 'podcast_typeahead', methods: ['GET'])]
     public function typeahead(Request $request, PodcastRepository $podcastRepository) {
         $q = $request->query->get('q');
         if ( ! $q) {
@@ -95,20 +81,17 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
     }
 
     /**
-     * @Route("/new", name="podcast_new", methods={"GET", "POST"})
-     * @Template("podcast/new.html.twig")
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
      * @return array|RedirectResponse
      */
-    public function new(Request $request) {
+    #[Route(path: '/new', name: 'podcast_new', methods: ['GET', 'POST'])]
+    #[Template('podcast/new.html.twig')]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    public function new(EntityManagerInterface $entityManager, Request $request) {
         $podcast = new Podcast();
         $form = $this->createForm(PodcastType::class, $podcast);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-
             foreach ($podcast->getContributions() as $contribution) {
                 $contribution->setPodcast($podcast);
                 $entityManager->persist($contribution);
@@ -127,22 +110,20 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
     }
 
     /**
-     * @Route("/new_popup", name="podcast_new_popup", methods={"GET", "POST"})
-     * @Template("podcast/new_popup.html.twig")
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
      * @return array|RedirectResponse
      */
-    public function new_popup(Request $request) {
-        return $this->new($request);
+    #[Route(path: '/new_popup', name: 'podcast_new_popup', methods: ['GET', 'POST'])]
+    #[Template('podcast/new_popup.html.twig')]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    public function new_popup(EntityManagerInterface $entityManager, Request $request) {
+        return $this->new($entityManager, $request);
     }
 
     /**
-     * @Route("/{id}", name="podcast_show", methods={"GET"})
-     * @Template("podcast/show.html.twig")
-     *
      * @return array
      */
+    #[Route(path: '/{id}', name: 'podcast_show', methods: ['GET'])]
+    #[Template('podcast/show.html.twig')]
     public function show(Podcast $podcast) {
         return [
             'podcast' => $podcast,
@@ -150,27 +131,23 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}/edit", name="podcast_edit", methods={"GET", "POST"})
-     *
-     * @Template("podcast/edit.html.twig")
-     *
      * @return array|RedirectResponse
      */
-    public function edit(Request $request, Podcast $podcast) {
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    #[Route(path: '/{id}/edit', name: 'podcast_edit', methods: ['GET', 'POST'])]
+    #[Template('podcast/edit.html.twig')]
+    public function edit(EntityManagerInterface $entityManager, Request $request, Podcast $podcast) {
         $form = $this->createForm(PodcastType::class, $podcast);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-
             foreach ($podcast->getContributions() as $contribution) {
                 $contribution->setPodcast($podcast);
                 if ( ! $entityManager->contains($contribution)) {
                     $entityManager->persist($contribution);
                 }
             }
-            $this->getDoctrine()->getManager()->flush();
+            $entityManager->flush();
             $this->addFlash('success', 'The updated podcast has been saved.');
 
             return $this->redirectToRoute('podcast_show', ['id' => $podcast->getId()]);
@@ -183,14 +160,12 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}", name="podcast_delete", methods={"DELETE"})
-     *
      * @return RedirectResponse
      */
-    public function delete(Request $request, Podcast $podcast) {
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    #[Route(path: '/{id}', name: 'podcast_delete', methods: ['DELETE'])]
+    public function delete(EntityManagerInterface $entityManager, Request $request, Podcast $podcast) {
         if ($this->isCsrfTokenValid('delete' . $podcast->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($podcast);
             $entityManager->flush();
             $this->addFlash('success', 'The podcast has been deleted.');
@@ -200,40 +175,36 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
     }
 
     /**
-     * @Route("/{id}/new_image", name="podcast_new_image", methods={"GET", "POST"})
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
-     * @Template("podcast/new_image.html.twig")
-     *
      * @throws Exception
      *
      * @return array<string,mixed>|RedirectResponse
      */
+    #[Route(path: '/{id}/new_image', name: 'podcast_new_image', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    #[Template('podcast/new_image.html.twig')]
     public function newImage(Request $request, EntityManagerInterface $em, Podcast $podcast) {
         return $this->newImageAction($request, $em, $podcast, 'podcast_show');
     }
 
     /**
-     * @Route("/{id}/edit_image/{image_id}", name="podcast_edit_image", methods={"GET", "POST"})
-     * @ParamConverter("image", options={"id": "image_id"})
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
      * @throws Exception
      *
      * @return array<string,mixed>|RedirectResponse
-     * @Template("podcast/edit_image.html.twig")
      */
+    #[Route(path: '/{id}/edit_image/{image_id}', name: 'podcast_edit_image', methods: ['GET', 'POST'])]
+    #[ParamConverter('image', options: ['id' => 'image_id'])]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    #[Template('podcast/edit_image.html.twig')]
     public function editImage(Request $request, EntityManagerInterface $em, Podcast $podcast, Image $image) {
         return $this->editImageAction($request, $em, $podcast, $image, 'podcast_show');
     }
 
     /**
-     * @Route("/{id}/delete_image/{image_id}", name="podcast_delete_image", methods={"DELETE"})
-     * @ParamConverter("image", options={"id": "image_id"})
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
      * @return RedirectResponse
      */
+    #[Route(path: '/{id}/delete_image/{image_id}', name: 'podcast_delete_image', methods: ['DELETE'])]
+    #[ParamConverter('image', options: ['id' => 'image_id'])]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
     public function deleteImage(Request $request, EntityManagerInterface $em, Podcast $podcast, Image $image) {
         return $this->deleteImageAction($request, $em, $podcast, $image, 'podcast_show');
     }

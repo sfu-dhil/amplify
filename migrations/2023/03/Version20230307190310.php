@@ -10,15 +10,12 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20230307190310 extends AbstractMigration
-{
-    public function getDescription(): string
-    {
+final class Version20230307190310 extends AbstractMigration {
+    public function getDescription() : string {
         return '';
     }
 
-    public function up(Schema $schema): void
-    {
+    public function up(Schema $schema) : void {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE episode ADD guid VARCHAR(255) DEFAULT NULL');
         $this->addSql('ALTER TABLE nines_media_audio ADD checksum VARCHAR(32) DEFAULT NULL');
@@ -29,8 +26,7 @@ final class Version20230307190310 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_9286B706DE6FDF9A ON nines_media_pdf (checksum)');
     }
 
-    public function down(Schema $schema): void
-    {
+    public function down(Schema $schema) : void {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE episode DROP guid');
         $this->addSql('DROP INDEX IDX_9D15F751DE6FDF9A ON nines_media_audio');

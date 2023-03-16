@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Form;
 
 use App\Entity\Language;
@@ -34,16 +28,10 @@ class PodcastType extends AbstractType {
         $builder->add('title', TextType::class, [
             'label' => 'Title',
             'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
         $builder->add('subTitle', TextType::class, [
             'label' => 'Subtitle',
             'required' => false,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
         $builder->add('explicit', ChoiceType::class, [
             'label' => 'Explicit',
@@ -54,15 +42,11 @@ class PodcastType extends AbstractType {
                 'No' => false,
             ],
             'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
         $builder->add('description', TextareaType::class, [
             'label' => 'Description',
             'required' => true,
             'attr' => [
-                'help_block' => '',
                 'class' => 'tinymce',
             ],
         ]);
@@ -72,7 +56,6 @@ class PodcastType extends AbstractType {
             'remote_route' => 'language_typeahead',
             'allow_clear' => true,
             'attr' => [
-                'help_block' => '',
                 'add_path' => 'language_new_popup',
                 'add_label' => 'Add Language',
             ],
@@ -80,32 +63,27 @@ class PodcastType extends AbstractType {
         $builder->add('copyright', TextareaType::class, [
             'label' => 'Copyright',
             'required' => true,
+            'help' => 'Suggested text: "Rights remain with the creators."',
             'attr' => [
-                'help_block' => 'Suggested text: "Rights remain with the creators."',
                 'class' => 'tinymce',
             ],
         ]);
         $builder->add('license', TextareaType::class, [
             'label' => 'License',
             'required' => true,
+            'help' => 'Optional. See <a href="https://creativecommons.org/about/cclicenses/">CreativeCommons.org</a> for suggestions',
+            'help_html' => true,
             'attr' => [
-                'help_block' => 'Optional. See <a href="https://creativecommons.org/about/cclicenses/">CreativeCommons.org</a> for suggestions',
                 'class' => 'tinymce',
             ],
         ]);
         $builder->add('website', UrlType::class, [
             'label' => 'Website',
             'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
         $builder->add('rss', UrlType::class, [
             'label' => 'Rss',
             'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
         $builder->add('publisher', Select2EntityType::class, [
             'label' => 'Publisher',
@@ -113,7 +91,6 @@ class PodcastType extends AbstractType {
             'remote_route' => 'publisher_typeahead',
             'allow_clear' => true,
             'attr' => [
-                'help_block' => '',
                 'add_path' => 'publisher_new_popup',
                 'add_label' => 'Add Publisher',
             ],
@@ -131,7 +108,6 @@ class PodcastType extends AbstractType {
             'by_reference' => false,
             'attr' => [
                 'class' => 'collection collection-complex',
-                'help_block' => '',
             ],
         ]);
     }
