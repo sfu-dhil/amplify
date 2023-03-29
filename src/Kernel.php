@@ -3,11 +3,9 @@
 namespace App;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
-use Symfony\Component\Config\Loader\LoaderInterface;
-use Symfony\Component\Config\Resource\FileResource;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
-use Symfony\Component\Routing\RouteCollectionBuilder;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 class Kernel extends BaseKernel
 {
@@ -30,25 +28,22 @@ class Kernel extends BaseKernel
         return \dirname(__DIR__);
     }
 
-    protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void
+    protected function configureContainer(ContainerConfigurator $containerConfigurator): void
     {
-        $container->addResource(new FileResource($this->getProjectDir().'/config/bundles.php'));
-        $container->setParameter('container.dumper.inline_class_loader', \PHP_VERSION_ID < 70400 || $this->debug);
-        $container->setParameter('container.dumper.inline_factories', true);
-        $confDir = $this->getProjectDir().'/config';
+        $parametersConfigurator = $containerConfigurator->parameters();
+        $parametersConfigurator->set('container.dumper.inline_class_loader', $this->debug);
+        $parametersConfigurator->set('container.dumper.inline_factories', true);
 
-        $loader->load($confDir.'/{packages}/*'.self::CONFIG_EXTS, 'glob');
-        $loader->load($confDir.'/{packages}/'.$this->environment.'/*'.self::CONFIG_EXTS, 'glob');
-        $loader->load($confDir.'/{services}'.self::CONFIG_EXTS, 'glob');
-        $loader->load($confDir.'/{services}_'.$this->environment.self::CONFIG_EXTS, 'glob');
+        $confDir = $this->getProjectDir().'/config';
+        $containerConfigurator->import($confDir.'/{packages}/*'.self::CONFIG_EXTS, 'glob');
+        $containerConfigurator->import($confDir.'/{packages}/'.$this->environment.'/*'.self::CONFIG_EXTS, 'glob');
+        $containerConfigurator->import($confDir.'/{services}'.self::CONFIG_EXTS, 'glob');
+        $containerConfigurator->import($confDir.'/{services}_'.$this->environment.self::CONFIG_EXTS, 'glob');
+
     }
 
-    protected function configureRoutes(RouteCollectionBuilder $routes): void
+    private function getBundlesPath(): string
     {
-        $confDir = $this->getProjectDir().'/config';
-
-        $routes->import($confDir.'/{routes}/'.$this->environment.'/*'.self::CONFIG_EXTS, '/', 'glob');
-        $routes->import($confDir.'/{routes}/*'.self::CONFIG_EXTS, '/', 'glob');
-        $routes->import($confDir.'/{routes}'.self::CONFIG_EXTS, '/', 'glob');
+        return $this->getProjectDir().'/config/bundles.php';
     }
 }

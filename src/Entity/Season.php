@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Entity;
 
 use App\Repository\SeasonRepository;
@@ -19,84 +13,80 @@ use Nines\MediaBundle\Entity\ImageContainerInterface;
 use Nines\MediaBundle\Entity\ImageContainerTrait;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
-/**
- * @ORM\Entity(repositoryClass=SeasonRepository::class)
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Entity(repositoryClass: SeasonRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Season extends AbstractEntity implements ImageContainerInterface {
     use ImageContainerTrait {
         ImageContainerTrait::__construct as protected trait_constructor;
-
     }
 
     /**
      * @var int
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $number;
 
     /**
      * @var bool
-     * @ORM\Column(type="boolean", nullable=false)
      */
-    private $preserved;
+    #[ORM\Column(type: 'boolean', nullable: false)]
+    private $preserved = false;
 
     /**
      * @var string
-     * @ORM\Column(type="string")
      */
+    #[ORM\Column(type: 'string')]
     private $title;
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=255, nullable=true)
      */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $subTitle;
 
     /**
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $description;
 
     /**
      * @var Podcast
-     * @ORM\ManyToOne(targetEntity="Podcast", inversedBy="seasons")
-     * @ORM\JoinColumn(nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: 'Podcast', inversedBy: 'seasons')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private $podcast;
 
     /**
      * @var Publisher
-     * @ORM\ManyToOne(targetEntity="Publisher", inversedBy="seasons")
-     * @ORM\JoinColumn(nullable=true)
      */
+    #[ORM\ManyToOne(targetEntity: 'Publisher', inversedBy: 'seasons')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private $publisher;
 
     /**
      * @var Collection<int,Contribution>
-     * @ORM\OneToMany(targetEntity="Contribution", mappedBy="season")
      */
+    #[ORM\OneToMany(targetEntity: 'Contribution', mappedBy: 'season')]
     private $contributions;
 
     /**
      * @var Collection<int,Episode>
-     * @ORM\OneToMany(targetEntity="Episode", mappedBy="season")
-     * @ORM\OrderBy({"date": "ASC", "number": "ASC", "title": "ASC"})
      */
+    #[ORM\OneToMany(targetEntity: 'Episode', mappedBy: 'season')]
+    #[ORM\OrderBy(['date' => 'ASC', 'number' => 'ASC', 'title' => 'ASC'])]
     private $episodes;
 
     /**
      * @var Collection<int,Export>
-     * @ORM\OneToMany(targetEntity="Export", mappedBy="season", orphanRemoval=true)
-     * @ORM\OrderBy({"created": "DESC", "id": "DESC"})
      */
+    #[ORM\OneToMany(targetEntity: 'Export', mappedBy: 'season', orphanRemoval: true)]
+    #[ORM\OrderBy(['created' => 'DESC', 'id' => 'DESC'])]
     private $exports;
 
     public function __construct() {
         parent::__construct();
         $this->trait_constructor();
-        $this->preserved = false;
         $this->contributions = new ArrayCollection();
         $this->episodes = new ArrayCollection();
         $this->exports = new ArrayCollection();
@@ -236,12 +226,12 @@ class Season extends AbstractEntity implements ImageContainerInterface {
     /**
      * @return Collection<int, Export>
      */
-    public function getExports(): Collection {
+    public function getExports() : Collection {
         return $this->exports;
     }
 
-    public function addExport(Export $export): self {
-        if (!$this->exports->contains($export)) {
+    public function addExport(Export $export) : self {
+        if ( ! $this->exports->contains($export)) {
             $this->exports[] = $export;
             $export->setSeason($this);
         }
@@ -249,7 +239,7 @@ class Season extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
-    public function removeExport(Export $export): self {
+    public function removeExport(Export $export) : self {
         if ($this->exports->removeElement($export)) {
             // set the owning side to null (unless already changed)
             if ($export->getSeason() === $this) {
@@ -266,11 +256,12 @@ class Season extends AbstractEntity implements ImageContainerInterface {
     public function getActiveExports() : Collection {
         $expressionBuilder = Criteria::expr();
         $expression = $expressionBuilder->in('status', Export::getActiveStatuses());
+
         return $this->exports->matching(new Criteria($expression));
     }
 
     public function hasActiveExport() : ?bool {
-        return !$this->getActiveExports()->isEmpty();
+        return ! $this->getActiveExports()->isEmpty();
     }
 
     public function getPreserved() : ?bool {
@@ -285,9 +276,8 @@ class Season extends AbstractEntity implements ImageContainerInterface {
 
     /**
      * Sets the updated timestamp.
-     *
-     * @ORM\PreUpdate
      */
+    #[ORM\PreUpdate]
     public function preUpdate() : void {
         parent::preUpdate();
         $this->preserved = false;

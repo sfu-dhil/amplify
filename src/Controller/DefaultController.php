@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Controller;
 
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
@@ -21,20 +15,17 @@ class DefaultController extends AbstractController implements PaginatorAwareInte
     use PaginatorTrait;
 
     /**
-     * @Route("/", name="homepage")
-     * @Template
-     *
      * @return array
      */
+    #[Route(path: '/', name: 'homepage')]
+    #[Template]
     public function indexAction(Request $request) {
         return [
         ];
     }
 
-    /**
-     * @Route("/privacy", name="privacy")
-     * @Template
-     */
+    #[Route(path: '/privacy', name: 'privacy')]
+    #[Template]
     public function privacyAction(Request $request) : void {
     }
 }

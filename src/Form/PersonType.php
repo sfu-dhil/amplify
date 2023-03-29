@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Form;
 
 use App\Entity\Institution;
@@ -34,29 +28,19 @@ class PersonType extends AbstractType {
         $builder->add('fullname', TextType::class, [
             'label' => 'Fullname',
             'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
         $builder->add('sortableName', TextType::class, [
             'label' => 'Sortable Name',
             'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
         $builder->add('location', TextType::class, [
             'label' => 'Location',
             'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
         $builder->add('bio', TextareaType::class, [
             'label' => 'Bio',
             'required' => true,
             'attr' => [
-                'help_block' => '',
                 'class' => 'tinymce',
             ],
         ]);
@@ -66,7 +50,6 @@ class PersonType extends AbstractType {
             'remote_route' => 'institution_typeahead',
             'allow_clear' => true,
             'attr' => [
-                'help_block' => '',
                 'add_path' => 'institution_new_popup',
                 'add_label' => 'Add Institution',
             ],
@@ -75,9 +58,7 @@ class PersonType extends AbstractType {
         $builder->setDataMapper($this->mapper);
     }
 
-    /**
-     * @required
-     */
+    #[\Symfony\Contracts\Service\Attribute\Required]
     public function setMapper(LinkableMapper $mapper) : void {
         $this->mapper = $mapper;
     }

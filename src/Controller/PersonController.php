@@ -2,17 +2,12 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Controller;
 
 use App\Entity\Person;
 use App\Form\PersonType;
 use App\Repository\PersonRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -23,17 +18,12 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/person")
- */
+#[Route(path: '/person')]
 class PersonController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
-    /**
-     * @Route("/", name="person_index", methods={"GET"})
-     *
-     * @Template
-     */
+    #[Route(path: '/', name: 'person_index', methods: ['GET'])]
+    #[Template]
     public function index(Request $request, PersonRepository $personRepository) : array {
         $query = $personRepository->indexQuery();
         $pageSize = $this->getParameter('page_size');
@@ -45,12 +35,10 @@ class PersonController extends AbstractController implements PaginatorAwareInter
     }
 
     /**
-     * @Route("/search", name="person_search", methods={"GET"})
-     *
-     * @Template
-     *
      * @return array
      */
+    #[Route(path: '/search', name: 'person_search', methods: ['GET'])]
+    #[Template]
     public function search(Request $request, PersonRepository $personRepository) {
         $q = $request->query->get('q');
         if ($q) {
@@ -67,10 +55,9 @@ class PersonController extends AbstractController implements PaginatorAwareInter
     }
 
     /**
-     * @Route("/typeahead", name="person_typeahead", methods={"GET"})
-     *
      * @return JsonResponse
      */
+    #[Route(path: '/typeahead', name: 'person_typeahead', methods: ['GET'])]
     public function typeahead(Request $request, PersonRepository $personRepository) {
         $q = $request->query->get('q');
         if ( ! $q) {
@@ -89,19 +76,17 @@ class PersonController extends AbstractController implements PaginatorAwareInter
     }
 
     /**
-     * @Route("/new", name="person_new", methods={"GET", "POST"})
-     * @Template
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
      * @return array|RedirectResponse
      */
-    public function new(Request $request) {
+    #[Route(path: '/new', name: 'person_new', methods: ['GET', 'POST'])]
+    #[Template]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    public function new(EntityManagerInterface $entityManager, Request $request) {
         $person = new Person();
         $form = $this->createForm(PersonType::class, $person);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($person);
             $entityManager->flush();
             $this->addFlash('success', 'The new person has been saved.');
@@ -116,22 +101,20 @@ class PersonController extends AbstractController implements PaginatorAwareInter
     }
 
     /**
-     * @Route("/new_popup", name="person_new_popup", methods={"GET", "POST"})
-     * @Template
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
      * @return array|RedirectResponse
      */
-    public function new_popup(Request $request) {
-        return $this->new($request);
+    #[Route(path: '/new_popup', name: 'person_new_popup', methods: ['GET', 'POST'])]
+    #[Template]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    public function new_popup(EntityManagerInterface $entityManager, Request $request) {
+        return $this->new($entityManager, $request);
     }
 
     /**
-     * @Route("/{id}", name="person_show", methods={"GET"})
-     * @Template
-     *
      * @return array
      */
+    #[Route(path: '/{id}', name: 'person_show', methods: ['GET'])]
+    #[Template]
     public function show(Person $person) {
         return [
             'person' => $person,
@@ -139,19 +122,17 @@ class PersonController extends AbstractController implements PaginatorAwareInter
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}/edit", name="person_edit", methods={"GET", "POST"})
-     *
-     * @Template
-     *
      * @return array|RedirectResponse
      */
-    public function edit(Request $request, Person $person) {
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    #[Route(path: '/{id}/edit', name: 'person_edit', methods: ['GET', 'POST'])]
+    #[Template]
+    public function edit(EntityManagerInterface $entityManager, Request $request, Person $person) {
         $form = $this->createForm(PersonType::class, $person);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $entityManager->flush();
             $this->addFlash('success', 'The updated person has been saved.');
 
             return $this->redirectToRoute('person_show', ['id' => $person->getId()]);
@@ -164,14 +145,12 @@ class PersonController extends AbstractController implements PaginatorAwareInter
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}", name="person_delete", methods={"DELETE"})
-     *
      * @return RedirectResponse
      */
-    public function delete(Request $request, Person $person) {
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    #[Route(path: '/{id}', name: 'person_delete', methods: ['DELETE'])]
+    public function delete(EntityManagerInterface $entityManager, Request $request, Person $person) {
         if ($this->isCsrfTokenValid('delete' . $person->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($person);
             $entityManager->flush();
             $this->addFlash('success', 'The person has been deleted.');

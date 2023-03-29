@@ -2,29 +2,23 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Command;
 
 use App\Entity\Institution;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\Reader;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'app:import:institutions')]
 class ImportInstitutionsCommand extends Command {
     /**
      * @var EntityManagerInterface
      */
     private $em;
-
-    protected static $defaultName = 'app:import:institutions';
 
     public function __construct(EntityManagerInterface $em) {
         $this->em = $em;

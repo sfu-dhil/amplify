@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Form;
 
 use App\Entity\Podcast;
@@ -33,9 +27,6 @@ class SeasonType extends AbstractType {
         $builder->add('number', null, [
             'label' => 'Number',
             'required' => false,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
         $builder->add('preserved', ChoiceType::class, [
             'label' => 'Preserved',
@@ -46,29 +37,19 @@ class SeasonType extends AbstractType {
                 'No' => false,
             ],
             'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
         $builder->add('title', TextType::class, [
             'label' => 'Title',
             'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
         $builder->add('subTitle', TextType::class, [
             'label' => 'Alternative Title',
             'required' => false,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
         $builder->add('description', TextareaType::class, [
             'label' => 'Description',
             'required' => true,
             'attr' => [
-                'help_block' => '',
                 'class' => 'tinymce',
             ],
         ]);
@@ -80,7 +61,6 @@ class SeasonType extends AbstractType {
             'allow_clear' => true,
             'required' => true,
             'attr' => [
-                'help_block' => '',
                 'add_path' => 'podcast_new_popup',
                 'add_label' => 'Add Podcast',
             ],
@@ -92,7 +72,6 @@ class SeasonType extends AbstractType {
             'remote_route' => 'publisher_typeahead',
             'allow_clear' => true,
             'attr' => [
-                'help_block' => '',
                 'add_path' => 'publisher_new_popup',
                 'add_label' => 'Add Publisher',
             ],
@@ -110,7 +89,6 @@ class SeasonType extends AbstractType {
             'by_reference' => false,
             'attr' => [
                 'class' => 'collection collection-complex',
-                'help_block' => '',
             ],
         ]);
     }

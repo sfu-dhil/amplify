@@ -1,0 +1,38 @@
+monolog:
+    channels:
+        - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
+
+when@dev:
+    monolog:
+        handlers:
+            main:
+                type: rotating_file
+                path: "%kernel.logs_dir%/%kernel.environment%.log"
+                # level: debug
+                level: warning
+                channels: ["!event", "!doctrine", "!console", "!translation"]
+                max_files: 1
+
+when@test:
+    monolog:
+        handlers:
+            main:
+                type: rotating_file
+                max_files: 1
+                path: "%kernel.logs_dir%/%kernel.environment%.log"
+                # level: debug
+                level: warning
+                channels: ['!event', '!doctrine', '!console', '!translation']
+            console:
+                type:   console
+                channels: ['!event', '!doctrine', '!console', '!translation']
+
+when@prod:
+    monolog:
+        handlers:
+            main:
+                type: rotating_file
+                path: "%kernel.logs_dir%/%kernel.environment%.log"
+                level: warning
+                channels: ["!event", "!doctrine", "!console", "!translation"]
+                max_files: 30

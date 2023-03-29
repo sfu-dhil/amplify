@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Entity;
 
 use App\Repository\ContributorRoleRepository;
@@ -16,20 +10,18 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractTerm;
 
-/**
- * @ORM\Entity(repositoryClass=ContributorRoleRepository::class)
- */
+#[ORM\Entity(repositoryClass: ContributorRoleRepository::class)]
 class ContributorRole extends AbstractTerm {
     /**
      * @var string
-     * @ORM\Column(type="string", length=10, nullable=true)
      */
+    #[ORM\Column(type: 'string', length: 10, nullable: true)]
     private $relatorTerm;
 
     /**
      * @var Collection<int,Contribution>
-     * @ORM\OneToMany(targetEntity="Contribution", mappedBy="contributorRole")
      */
+    #[ORM\OneToMany(targetEntity: 'Contribution', mappedBy: 'contributorRole')]
     private $contributions;
 
     public function __construct() {

@@ -3,11 +3,13 @@
 
 PHP ?= $(shell which php)
 CONSOLE := $(PHP) bin/console
-SYMFONY ?= ./vendor/bin/symfony
+SYMFONY ?= $(shell which symfony)
 PHPUNIT := ./vendor/bin/phpunit
 PHPCSF := ./vendor/bin/php-cs-fixer
 PHPSTAN := ./vendor/bin/phpstan
 TWIGCS := ./vendor/bin/twigcs
+
+CODE_DIRS := bin config migrations src templates tests
 
 ## -- Help
 help: ## Outputs this help screen
@@ -16,22 +18,18 @@ help: ## Outputs this help screen
 
 ## -- Tests
 
-test.db: ## Create the test database if it does not already exist
-	$(CONSOLE) --env=test doctrine:database:create --if-not-exists
-	$(CONSOLE) --env=test doctrine:schema:drop --force
-	$(CONSOLE) --env=test doctrine:schema:create
-	$(CONSOLE) --env=test doctrine:schema:validate
-
 test.reset: ## Create a test database and load the fixtures in it
 	rm -rf var/cache/test/* data/test/*
 	rm -f var/log/test-*.log
+	$(CONSOLE) --env=test doctrine:database:create  --quiet --if-not-exists
+	$(CONSOLE) --env=test doctrine:schema:drop  --quiet --force
+	$(CONSOLE) --env=test doctrine:schema:create  --quiet
+	$(CONSOLE) --env=test doctrine:schema:validate  --quiet
 	$(CONSOLE) --env=test doctrine:cache:clear-metadata --quiet
-	$(CONSOLE) --env=test doctrine:fixtures:load --quiet --no-interaction --group=dev --purger=fk_purger
+	$(CONSOLE) --env=test doctrine:fixtures:load --quiet --no-interaction --group=dev
 
 test.run: ## Directly run tests. Use optional path=/path/to/tests to limit target
 	$(PHPUNIT) $(path)
-
-test.ci: test.db test.reset test.run ## Run all tests for ci.
 
 test: test.reset test.run ## Run all tests. Use optional path=/path/to/tests to limit target
 
@@ -139,11 +137,11 @@ yamllint:
 	$(CONSOLE) lint:yaml templates
 
 stan: ## Run static analysis
-	$(PHPSTAN) --memory-limit=1G analyze $(path)
+	$(PHPSTAN) --memory-limit=1G analyze $(CODE_DIRS)
 
 stan.cc: ## Clear the static analysis cache
 	$(PHPSTAN) clear-result-cache
 
 stan.baseline: ## Generate a new phpstan baseline file
-	$(PHPSTAN) --memory-limit=1G analyze --generate-baseline $(path)
+	$(PHPSTAN) --memory-limit=1G analyze --generate-baseline $(CODE_DIRS)
 

@@ -2,17 +2,12 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Controller;
 
 use App\Entity\ContributorRole;
 use App\Form\ContributorRoleType;
 use App\Repository\ContributorRoleRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -23,17 +18,12 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/contributor_role")
- */
+#[Route(path: '/contributor_role')]
 class ContributorRoleController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
-    /**
-     * @Route("/", name="contributor_role_index", methods={"GET"})
-     *
-     * @Template
-     */
+    #[Route(path: '/', name: 'contributor_role_index', methods: ['GET'])]
+    #[Template]
     public function index(Request $request, ContributorRoleRepository $contributorRoleRepository) : array {
         $query = $contributorRoleRepository->indexQuery();
         $pageSize = $this->getParameter('page_size');
@@ -45,12 +35,10 @@ class ContributorRoleController extends AbstractController implements PaginatorA
     }
 
     /**
-     * @Route("/search", name="contributor_role_search", methods={"GET"})
-     *
-     * @Template
-     *
      * @return array
      */
+    #[Route(path: '/search', name: 'contributor_role_search', methods: ['GET'])]
+    #[Template]
     public function search(Request $request, ContributorRoleRepository $contributorRoleRepository) {
         $q = $request->query->get('q');
         if ($q) {
@@ -67,10 +55,9 @@ class ContributorRoleController extends AbstractController implements PaginatorA
     }
 
     /**
-     * @Route("/typeahead", name="contributor_role_typeahead", methods={"GET"})
-     *
      * @return JsonResponse
      */
+    #[Route(path: '/typeahead', name: 'contributor_role_typeahead', methods: ['GET'])]
     public function typeahead(Request $request, ContributorRoleRepository $contributorRoleRepository) {
         $q = $request->query->get('q');
         if ( ! $q) {
@@ -89,19 +76,17 @@ class ContributorRoleController extends AbstractController implements PaginatorA
     }
 
     /**
-     * @Route("/new", name="contributor_role_new", methods={"GET", "POST"})
-     * @Template
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
      * @return array|RedirectResponse
      */
-    public function new(Request $request) {
+    #[Route(path: '/new', name: 'contributor_role_new', methods: ['GET', 'POST'])]
+    #[Template]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    public function new(EntityManagerInterface $entityManager, Request $request) {
         $contributorRole = new ContributorRole();
         $form = $this->createForm(ContributorRoleType::class, $contributorRole);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($contributorRole);
             $entityManager->flush();
             $this->addFlash('success', 'The new contributorRole has been saved.');
@@ -116,22 +101,20 @@ class ContributorRoleController extends AbstractController implements PaginatorA
     }
 
     /**
-     * @Route("/new_popup", name="contributor_role_new_popup", methods={"GET", "POST"})
-     * @Template
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
      * @return array|RedirectResponse
      */
-    public function new_popup(Request $request) {
-        return $this->new($request);
+    #[Route(path: '/new_popup', name: 'contributor_role_new_popup', methods: ['GET', 'POST'])]
+    #[Template]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    public function new_popup(EntityManagerInterface $entityManager, Request $request) {
+        return $this->new($entityManager, $request);
     }
 
     /**
-     * @Route("/{id}", name="contributor_role_show", methods={"GET"})
-     * @Template
-     *
      * @return array
      */
+    #[Route(path: '/{id}', name: 'contributor_role_show', methods: ['GET'])]
+    #[Template]
     public function show(ContributorRole $contributorRole) {
         return [
             'contributor_role' => $contributorRole,
@@ -139,19 +122,17 @@ class ContributorRoleController extends AbstractController implements PaginatorA
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}/edit", name="contributor_role_edit", methods={"GET", "POST"})
-     *
-     * @Template
-     *
      * @return array|RedirectResponse
      */
-    public function edit(Request $request, ContributorRole $contributorRole) {
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    #[Route(path: '/{id}/edit', name: 'contributor_role_edit', methods: ['GET', 'POST'])]
+    #[Template]
+    public function edit(EntityManagerInterface $entityManager, Request $request, ContributorRole $contributorRole) {
         $form = $this->createForm(ContributorRoleType::class, $contributorRole);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $entityManager->flush();
             $this->addFlash('success', 'The updated contributorRole has been saved.');
 
             return $this->redirectToRoute('contributor_role_show', ['id' => $contributorRole->getId()]);
@@ -164,14 +145,12 @@ class ContributorRoleController extends AbstractController implements PaginatorA
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}", name="contributor_role_delete", methods={"DELETE"})
-     *
      * @return RedirectResponse
      */
-    public function delete(Request $request, ContributorRole $contributorRole) {
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    #[Route(path: '/{id}', name: 'contributor_role_delete', methods: ['DELETE'])]
+    public function delete(EntityManagerInterface $entityManager, Request $request, ContributorRole $contributorRole) {
         if ($this->isCsrfTokenValid('delete' . $contributorRole->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($contributorRole);
             $entityManager->flush();
             $this->addFlash('success', 'The contributorRole has been deleted.');

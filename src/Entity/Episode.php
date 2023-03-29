@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Entity;
 
 use App\Repository\EpisodeRepository;
@@ -24,121 +18,116 @@ use Nines\MediaBundle\Entity\PdfContainerInterface;
 use Nines\MediaBundle\Entity\PdfContainerTrait;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
-/**
- * @ORM\Entity(repositoryClass=EpisodeRepository::class)
- */
+#[ORM\Entity(repositoryClass: EpisodeRepository::class)]
 class Episode extends AbstractEntity implements ImageContainerInterface, AudioContainerInterface, PdfContainerInterface {
     use ImageContainerTrait {
         ImageContainerTrait::__construct as protected image_constructor;
-
     }
     use AudioContainerTrait {
         AudioContainerTrait::__construct as protected audio_constructor;
-
     }
     use PdfContainerTrait {
         PdfContainerTrait::__construct as protected pdf_constructor;
-
     }
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=255, nullable=true)
      */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $guid;
 
     /**
      * @var int
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: 'integer')]
     private $number;
 
     /**
      * @var bool
-     * @ORM\Column(type="boolean", nullable=false)
      */
-    private $preserved;
+    #[ORM\Column(type: 'boolean', nullable: false)]
+    private $preserved = false;
 
     /**
      * @var DateTimeInterface
-     * @ORM\Column(type="date")
      */
+    #[ORM\Column(type: 'date')]
     private $date;
 
     /**
      * Run time in seconds.
      *
      * @var string
-     * @ORM\Column(type="string", length=9, nullable=false)
      */
+    #[ORM\Column(type: 'string', length: 9, nullable: false)]
     private $runTime;
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=255, nullable=false)
      */
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private $title;
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=255, nullable=true)
      */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $subTitle;
 
     /**
      * @var Language
-     * @ORM\ManyToOne(targetEntity="App\Entity\Language", inversedBy="episodes")
      */
+    #[ORM\ManyToOne(targetEntity: 'App\Entity\Language', inversedBy: 'episodes')]
     private $language;
 
     /**
      * @var string
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $bibliography;
 
     /**
      * @var string
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $transcript;
 
     /**
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $description;
 
     /**
      * @var string
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $permissions;
 
     /**
      * @var string[]
-     * @ORM\Column(type="json")
      */
-    private $subjects;
+    #[ORM\Column(type: 'json')]
+    private $subjects = [];
 
     /**
      * @var null|Season
-     * @ORM\ManyToOne(targetEntity="Season", inversedBy="episodes")
-     * @ORM\JoinColumn(nullable=true)
      */
+    #[ORM\ManyToOne(targetEntity: 'Season', inversedBy: 'episodes')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private $season;
 
     /**
      * @var Podcast
-     * @ORM\ManyToOne(targetEntity="Podcast", inversedBy="episodes")
-     * @ORM\JoinColumn(nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: 'Podcast', inversedBy: 'episodes')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private $podcast;
 
     /**
      * @var Collection<int,Contribution>
-     * @ORM\OneToMany(targetEntity="Contribution", mappedBy="episode", cascade={"remove"})
      */
+    #[ORM\OneToMany(targetEntity: 'Contribution', mappedBy: 'episode', cascade: ['remove'])]
     private $contributions;
 
     public function __construct() {
@@ -146,9 +135,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         $this->image_constructor();
         $this->audio_constructor();
         $this->pdf_constructor();
-
-        $this->preserved = false;
-        $this->subjects = [];
         $this->contributions = new ArrayCollection();
     }
 
@@ -356,9 +342,8 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
 
     /**
      * Sets the updated timestamp.
-     *
-     * @ORM\PreUpdate
      */
+    #[ORM\PreUpdate]
     public function preUpdate() : void {
         parent::preUpdate();
         $this->preserved = false;
@@ -374,13 +359,11 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this;
     }
 
-    public function getPermissions(): ?string
-    {
+    public function getPermissions() : ?string {
         return $this->permissions;
     }
 
-    public function setPermissions(?string $permissions): self
-    {
+    public function setPermissions(?string $permissions) : self {
         $this->permissions = $permissions;
 
         return $this;

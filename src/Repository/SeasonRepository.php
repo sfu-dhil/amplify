@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Repository;
 
 use App\Entity\Season;
@@ -20,6 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Season[] findAll()
  * @method Season[] findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  * @method null|Season findOneBy(array $criteria, array $orderBy = null)
+ *
  * @phpstan-extends ServiceEntityRepository<Season>
  */
 class SeasonRepository extends ServiceEntityRepository {

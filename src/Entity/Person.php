@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Entity;
 
 use App\Repository\PersonRepository;
@@ -18,49 +12,46 @@ use Nines\MediaBundle\Entity\LinkableInterface;
 use Nines\MediaBundle\Entity\LinkableTrait;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
-/**
- * @ORM\Entity(repositoryClass=PersonRepository::class)
- */
+#[ORM\Entity(repositoryClass: PersonRepository::class)]
 class Person extends AbstractEntity implements LinkableInterface {
     use LinkableTrait {
         LinkableTrait::__construct as linkable_constructor;
-
     }
 
     /**
      * @var string
-     * @ORM\Column(type="string")
      */
+    #[ORM\Column(type: 'string')]
     private $fullname;
 
     /**
      * @var string
-     * @ORM\Column(type="string")
      */
+    #[ORM\Column(type: 'string')]
     private $sortableName;
 
     /**
      * @var string
-     * @ORM\Column(type="string")
      */
+    #[ORM\Column(type: 'string')]
     private $location;
 
     /**
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $bio;
 
     /**
      * @var Institution
-     * @ORM\ManyToOne(targetEntity="App\Entity\Institution", inversedBy="people")
      */
+    #[ORM\ManyToOne(targetEntity: 'App\Entity\Institution', inversedBy: 'people')]
     private $institution;
 
     /**
      * @var Collection<int,Contribution>
-     * @ORM\OneToMany(targetEntity="Contribution", mappedBy="person", cascade={"remove"})
      */
+    #[ORM\OneToMany(targetEntity: 'Contribution', mappedBy: 'person', cascade: ['remove'])]
     private $contributions;
 
     public function __construct() {

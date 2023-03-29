@@ -2,17 +2,12 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Controller;
 
 use App\Entity\Language;
 use App\Form\LanguageType;
 use App\Repository\LanguageRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -23,17 +18,12 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/language")
- */
+#[Route(path: '/language')]
 class LanguageController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
-    /**
-     * @Route("/", name="language_index", methods={"GET"})
-     *
-     * @Template
-     */
+    #[Route(path: '/', name: 'language_index', methods: ['GET'])]
+    #[Template]
     public function index(Request $request, LanguageRepository $languageRepository) : array {
         $query = $languageRepository->indexQuery();
         $pageSize = $this->getParameter('page_size');
@@ -45,12 +35,10 @@ class LanguageController extends AbstractController implements PaginatorAwareInt
     }
 
     /**
-     * @Route("/search", name="language_search", methods={"GET"})
-     *
-     * @Template
-     *
      * @return array
      */
+    #[Route(path: '/search', name: 'language_search', methods: ['GET'])]
+    #[Template]
     public function search(Request $request, LanguageRepository $languageRepository) {
         $q = $request->query->get('q');
         if ($q) {
@@ -67,10 +55,9 @@ class LanguageController extends AbstractController implements PaginatorAwareInt
     }
 
     /**
-     * @Route("/typeahead", name="language_typeahead", methods={"GET"})
-     *
      * @return JsonResponse
      */
+    #[Route(path: '/typeahead', name: 'language_typeahead', methods: ['GET'])]
     public function typeahead(Request $request, LanguageRepository $languageRepository) {
         $q = $request->query->get('q');
         if ( ! $q) {
@@ -89,19 +76,17 @@ class LanguageController extends AbstractController implements PaginatorAwareInt
     }
 
     /**
-     * @Route("/new", name="language_new", methods={"GET", "POST"})
-     * @Template
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
      * @return array|RedirectResponse
      */
-    public function new(Request $request) {
+    #[Route(path: '/new', name: 'language_new', methods: ['GET', 'POST'])]
+    #[Template]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    public function new(EntityManagerInterface $entityManager, Request $request) {
         $language = new Language();
         $form = $this->createForm(LanguageType::class, $language);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($language);
             $entityManager->flush();
             $this->addFlash('success', 'The new language has been saved.');
@@ -116,22 +101,20 @@ class LanguageController extends AbstractController implements PaginatorAwareInt
     }
 
     /**
-     * @Route("/new_popup", name="language_new_popup", methods={"GET", "POST"})
-     * @Template
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
      * @return array|RedirectResponse
      */
-    public function new_popup(Request $request) {
-        return $this->new($request);
+    #[Route(path: '/new_popup', name: 'language_new_popup', methods: ['GET', 'POST'])]
+    #[Template]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    public function new_popup(EntityManagerInterface $entityManager, Request $request) {
+        return $this->new($entityManager, $request);
     }
 
     /**
-     * @Route("/{id}", name="language_show", methods={"GET"})
-     * @Template
-     *
      * @return array
      */
+    #[Route(path: '/{id}', name: 'language_show', methods: ['GET'])]
+    #[Template]
     public function show(Language $language) {
         return [
             'language' => $language,
@@ -139,19 +122,17 @@ class LanguageController extends AbstractController implements PaginatorAwareInt
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}/edit", name="language_edit", methods={"GET", "POST"})
-     *
-     * @Template
-     *
      * @return array|RedirectResponse
      */
-    public function edit(Request $request, Language $language) {
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    #[Route(path: '/{id}/edit', name: 'language_edit', methods: ['GET', 'POST'])]
+    #[Template]
+    public function edit(EntityManagerInterface $entityManager, Request $request, Language $language) {
         $form = $this->createForm(LanguageType::class, $language);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $entityManager->flush();
             $this->addFlash('success', 'The updated language has been saved.');
 
             return $this->redirectToRoute('language_show', ['id' => $language->getId()]);
@@ -164,14 +145,12 @@ class LanguageController extends AbstractController implements PaginatorAwareInt
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}", name="language_delete", methods={"DELETE"})
-     *
      * @return RedirectResponse
      */
-    public function delete(Request $request, Language $language) {
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    #[Route(path: '/{id}', name: 'language_delete', methods: ['DELETE'])]
+    public function delete(EntityManagerInterface $entityManager, Request $request, Language $language) {
         if ($this->isCsrfTokenValid('delete' . $language->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($language);
             $entityManager->flush();
             $this->addFlash('success', 'The language has been deleted.');

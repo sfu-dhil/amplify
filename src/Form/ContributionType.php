@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Form;
 
 use App\Entity\Contribution;
@@ -32,7 +26,6 @@ class ContributionType extends AbstractType {
             'remote_route' => 'person_typeahead',
             'allow_clear' => true,
             'attr' => [
-                'help_block' => '',
                 'add_path' => 'person_new_popup',
                 'add_label' => 'Add Person',
             ],
@@ -44,7 +37,6 @@ class ContributionType extends AbstractType {
             'remote_route' => 'contributor_role_typeahead',
             'allow_clear' => true,
             'attr' => [
-                'help_block' => '',
                 'add_path' => 'contributor_role_new_popup',
                 'add_label' => 'Add ContributorRole',
             ],

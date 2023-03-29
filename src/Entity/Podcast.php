@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Entity;
 
 use App\Repository\PodcastRepository;
@@ -19,9 +13,7 @@ use Nines\MediaBundle\Entity\ImageContainerTrait;
 use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=PodcastRepository::class)
- */
+#[ORM\Entity(repositoryClass: PodcastRepository::class)]
 class Podcast extends AbstractEntity implements ImageContainerInterface {
     use ImageContainerTrait {
         ImageContainerTrait::__construct as protected trait_constructor;
@@ -29,94 +21,88 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
 
     /**
      * @var string
-     * @ORM\Column(type="string")
      */
+    #[ORM\Column(type: 'string')]
     private $title;
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=255, nullable=true)
      */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $subTitle;
 
     /**
      * @var bool
-     * @ORM\Column(type="boolean", nullable=false)
      */
+    #[ORM\Column(type: 'boolean', nullable: false)]
     private $explicit;
 
     /**
      * @var string
-     * @ORM\Column(type="text")
      */
+    #[ORM\Column(type: 'text')]
     private $description;
 
     /**
      * @var Language
-     * @ORM\ManyToOne(targetEntity="App\Entity\Language")
      */
+    #[ORM\ManyToOne(targetEntity: 'App\Entity\Language')]
     private $language;
 
     /**
      * @var string
-     * @ORM\Column(type="text", nullable=false)
      */
+    #[ORM\Column(type: 'text', nullable: false)]
     private $copyright;
 
     /**
      * @var string
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $license;
 
     /**
      * @var string
-     * @ORM\Column(type="text")
-     * @Assert\Url(
-     *     normalizer="trim",
-     *     protocols={"http", "https"}
-     * )
      */
+    #[ORM\Column(type: 'text')]
+    #[Assert\Url(normalizer: 'trim', protocols: ['http', 'https'])]
     private $website;
 
     /**
      * @var string
-     * @ORM\Column(type="string")
-     * @Assert\Url(
-     *     normalizer="trim",
-     *     protocols={"http", "https"}
-     * )
      */
+    #[ORM\Column(type: 'string')]
+    #[Assert\Url(normalizer: 'trim', protocols: ['http', 'https'])]
     private $rss;
 
     /**
      * @var Publisher
-     * @ORM\ManyToOne(targetEntity="Publisher", inversedBy="podcasts")
      */
+    #[ORM\ManyToOne(targetEntity: 'Publisher', inversedBy: 'podcasts')]
     private $publisher;
 
     /**
      * @var Collection<int,Contribution>
-     * @ORM\OneToMany(targetEntity="Contribution", mappedBy="podcast")
      */
+    #[ORM\OneToMany(targetEntity: 'Contribution', mappedBy: 'podcast')]
     private $contributions;
 
     /**
      * @var Collection<int,Season>
-     * @ORM\OneToMany(targetEntity="Season", mappedBy="podcast")
      */
+    #[ORM\OneToMany(targetEntity: 'Season', mappedBy: 'podcast')]
     private $seasons;
 
     /**
      * @var Collection<int,Episode>
-     * @ORM\OneToMany(targetEntity="Episode", mappedBy="podcast")
      */
+    #[ORM\OneToMany(targetEntity: 'Episode', mappedBy: 'podcast')]
     private $episodes;
 
     /**
      * @var Collection<int,Category>
-     * @ORM\ManyToMany(targetEntity="App\Entity\Category", inversedBy="podcasts")
      */
+    #[ORM\ManyToMany(targetEntity: 'App\Entity\Category', inversedBy: 'podcasts')]
     private $categories;
 
     public function __construct() {
@@ -332,13 +318,11 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
-    public function getLicense(): ?string
-    {
+    public function getLicense() : ?string {
         return $this->license;
     }
 
-    public function setLicense(?string $license): self
-    {
+    public function setLicense(?string $license) : self {
         $this->license = $license;
 
         return $this;

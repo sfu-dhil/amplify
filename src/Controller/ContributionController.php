@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Controller;
 
 use App\Entity\Contribution;
@@ -19,17 +13,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/contribution")
- */
+#[Route(path: '/contribution')]
 class ContributionController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
-    /**
-     * @Route("/", name="contribution_index", methods={"GET"})
-     *
-     * @Template
-     */
+    #[Route(path: '/', name: 'contribution_index', methods: ['GET'])]
+    #[Template]
     public function index(Request $request, ContributionRepository $contributionRepository) : array {
         $query = $contributionRepository->indexQuery();
         $pageSize = $this->getParameter('page_size');
@@ -41,11 +30,10 @@ class ContributionController extends AbstractController implements PaginatorAwar
     }
 
     /**
-     * @Route("/{id}", name="contribution_show", methods={"GET"})
-     * @Template
-     *
      * @return array
      */
+    #[Route(path: '/{id}', name: 'contribution_show', methods: ['GET'])]
+    #[Template]
     public function show(Contribution $contribution) {
         return [
             'contribution' => $contribution,

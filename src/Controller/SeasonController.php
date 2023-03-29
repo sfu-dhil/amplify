@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Controller;
 
 use App\Entity\Season;
@@ -28,18 +22,13 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/season")
- */
+#[Route(path: '/season')]
 class SeasonController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
     use ImageControllerTrait;
 
-    /**
-     * @Route("/", name="season_index", methods={"GET"})
-     *
-     * @Template("season/index.html.twig")
-     */
+    #[Route(path: '/', name: 'season_index', methods: ['GET'])]
+    #[Template('season/index.html.twig')]
     public function index(Request $request, SeasonRepository $seasonRepository) : array {
         $query = $seasonRepository->indexQuery();
         $pageSize = $this->getParameter('page_size');
@@ -51,12 +40,10 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
     }
 
     /**
-     * @Route("/search", name="season_search", methods={"GET"})
-     *
-     * @Template("season/search.html.twig")
-     *
      * @return array
      */
+    #[Route(path: '/search', name: 'season_search', methods: ['GET'])]
+    #[Template('season/search.html.twig')]
     public function search(Request $request, SeasonRepository $seasonRepository) {
         $q = $request->query->get('q');
         if ($q) {
@@ -73,10 +60,9 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
     }
 
     /**
-     * @Route("/typeahead", name="season_typeahead", methods={"GET"})
-     *
      * @return JsonResponse
      */
+    #[Route(path: '/typeahead', name: 'season_typeahead', methods: ['GET'])]
     public function typeahead(Request $request, SeasonRepository $seasonRepository) {
         $q = $request->query->get('q');
         if ( ! $q) {
@@ -95,20 +81,17 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
     }
 
     /**
-     * @Route("/new", name="season_new", methods={"GET", "POST"})
-     * @Template("season/new.html.twig")
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
      * @return array|RedirectResponse
      */
-    public function new(Request $request) {
+    #[Route(path: '/new', name: 'season_new', methods: ['GET', 'POST'])]
+    #[Template('season/new.html.twig')]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    public function new(EntityManagerInterface $entityManager, Request $request) {
         $season = new Season();
         $form = $this->createForm(SeasonType::class, $season);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-
             foreach ($season->getContributions() as $contribution) {
                 $contribution->setSeason($season);
                 $entityManager->persist($contribution);
@@ -127,22 +110,20 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
     }
 
     /**
-     * @Route("/new_popup", name="season_new_popup", methods={"GET", "POST"})
-     * @Template("season/new_popup.html.twig")
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
      * @return array|RedirectResponse
      */
-    public function new_popup(Request $request) {
-        return $this->new($request);
+    #[Route(path: '/new_popup', name: 'season_new_popup', methods: ['GET', 'POST'])]
+    #[Template('season/new_popup.html.twig')]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    public function new_popup(EntityManagerInterface $entityManager, Request $request) {
+        return $this->new($entityManager, $request);
     }
 
     /**
-     * @Route("/{id}", name="season_show", methods={"GET"})
-     * @Template("season/show.html.twig")
-     *
      * @return array
      */
+    #[Route(path: '/{id}', name: 'season_show', methods: ['GET'])]
+    #[Template('season/show.html.twig')]
     public function show(Season $season) {
         return [
             'season' => $season,
@@ -150,27 +131,23 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}/edit", name="season_edit", methods={"GET", "POST"})
-     *
-     * @Template("season/edit.html.twig")
-     *
      * @return array|RedirectResponse
      */
-    public function edit(Request $request, Season $season) {
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    #[Route(path: '/{id}/edit', name: 'season_edit', methods: ['GET', 'POST'])]
+    #[Template('season/edit.html.twig')]
+    public function edit(EntityManagerInterface $entityManager, Request $request, Season $season) {
         $form = $this->createForm(SeasonType::class, $season);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-
             foreach ($season->getContributions() as $contribution) {
                 $contribution->setSeason($season);
                 if ( ! $entityManager->contains($contribution)) {
                     $entityManager->persist($contribution);
                 }
             }
-            $this->getDoctrine()->getManager()->flush();
+            $entityManager->flush();
             $this->addFlash('success', 'The updated season has been saved.');
 
             return $this->redirectToRoute('season_show', ['id' => $season->getId()]);
@@ -183,14 +160,12 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
     }
 
     /**
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     * @Route("/{id}", name="season_delete", methods={"DELETE"})
-     *
      * @return RedirectResponse
      */
-    public function delete(Request $request, Season $season) {
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    #[Route(path: '/{id}', name: 'season_delete', methods: ['DELETE'])]
+    public function delete(EntityManagerInterface $entityManager, Request $request, Season $season) {
         if ($this->isCsrfTokenValid('delete' . $season->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($season);
             $entityManager->flush();
             $this->addFlash('success', 'The season has been deleted.');
@@ -200,40 +175,36 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
     }
 
     /**
-     * @Route("/{id}/new_image", name="season_new_image", methods={"GET", "POST"})
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
      * @throws Exception
      *
      * @return array<string,mixed>|RedirectResponse
-     * @Template("season/new_image.html.twig")
      */
+    #[Route(path: '/{id}/new_image', name: 'season_new_image', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    #[Template('season/new_image.html.twig')]
     public function newImage(Request $request, EntityManagerInterface $em, Season $season) {
         return $this->newImageAction($request, $em, $season, 'season_show');
     }
 
     /**
-     * @Route("/{id}/edit_image/{image_id}", name="season_edit_image", methods={"GET", "POST"})
-     * @ParamConverter("image", options={"id": "image_id"})
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
      * @throws Exception
      *
      * @return array<string,mixed>|RedirectResponse
-     *
-     * @Template("season/edit_image.html.twig")
      */
+    #[Route(path: '/{id}/edit_image/{image_id}', name: 'season_edit_image', methods: ['GET', 'POST'])]
+    #[ParamConverter('image', options: ['id' => 'image_id'])]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
+    #[Template('season/edit_image.html.twig')]
     public function editImage(Request $request, EntityManagerInterface $em, Season $season, Image $image) {
         return $this->editImageAction($request, $em, $season, $image, 'season_show');
     }
 
     /**
-     * @Route("/{id}/delete_image/{image_id}", name="season_delete_image", methods={"DELETE"})
-     * @ParamConverter("image", options={"id": "image_id"})
-     * @IsGranted("ROLE_CONTENT_ADMIN")
-     *
      * @return RedirectResponse
      */
+    #[Route(path: '/{id}/delete_image/{image_id}', name: 'season_delete_image', methods: ['DELETE'])]
+    #[ParamConverter('image', options: ['id' => 'image_id'])]
+    #[IsGranted('ROLE_CONTENT_ADMIN')]
     public function deleteImage(Request $request, EntityManagerInterface $em, Season $season, Image $image) {
         return $this->deleteImageAction($request, $em, $season, $image, 'season_show');
     }

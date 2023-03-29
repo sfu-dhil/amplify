@@ -1,30 +1,31 @@
 # config/packages/security.yaml
 security:
-    encoders:
-        Nines\UserBundle\Entity\User:
-            algorithm: auto
-
-    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     providers:
-        # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
             entity:
                 class: Nines\UserBundle\Entity\User
                 property: email
     firewalls:
         dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            pattern: ^/(_(profiler|wdt|error)|css|images|js)/
             security: false
         main:
-            anonymous: lazy
-            guard:
-                authenticators:
-                    - Nines\UserBundle\Security\LoginFormAuthenticator
+            lazy: true
+            provider: app_user_provider
+            form_login:
+                login_path: nines_user_security_login
+                check_path: nines_user_security_login
+                post_only: true
+                form_only: true
+                enable_csrf: true
+                username_parameter: email
+                password_parameter: password
             user_checker: Nines\UserBundle\Security\UserChecker
             logout:
                 path: nines_user_security_logout
                 target: homepage
-
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 604800 # 1 week
@@ -49,13 +50,13 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # Default controller stuff - open to the public
-        - { path: ^/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/privacy$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/$, roles: PUBLIC_ACCESS }
+        - { path: ^/privacy$, roles: PUBLIC_ACCESS }
 
         # user controller stuff - open to the public
-        - { path: ^/request$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/reset, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/request$, roles: PUBLIC_ACCESS }
+        - { path: ^/reset, roles: PUBLIC_ACCESS }
+        - { path: ^/login$, roles: PUBLIC_ACCESS }
 
         # Other controllers that should never be public
         - { path: ^/dublin_core/element, roles: ROLE_USER }
@@ -64,3 +65,16 @@ security:
 
         # Temporary to keep the rest of the site private.
         - { path: ^/, roles: ROLE_USER }
+
+when@test:
+    security:
+        password_hashers:
+            # By default, password hashers are resource intensive and take time. This is
+            # important to generate secure password hashes. In tests however, secure hashes
+            # are not important, waste resources and increase test times. The following
+            # reduces the work factor to the lowest possible values.
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4 # Lowest possible value for bcrypt
+                time_cost: 3 # Lowest possible value for argon
+                memory_cost: 10 # Lowest possible value for argon

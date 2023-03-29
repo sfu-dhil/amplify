@@ -2,23 +2,13 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\DataFixtures;
 
-use App\Entity\Season;
 use App\Entity\Export;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Nines\MediaBundle\Entity\Image;
-use Nines\MediaBundle\Service\ImageManager;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ExportFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface {
     public static function getGroups() : array {
@@ -31,13 +21,13 @@ class ExportFixtures extends Fixture implements DependentFixtureInterface, Fixtu
     public function load(ObjectManager $em) : void {
         for ($i = 0; $i < 4; $i++) {
             $fixture = new Export();
-            if ($i % 4 === 0) {
+            if (0 === $i % 4) {
                 $fixture->setPendingStatus();
-            } elseif ($i % 4 === 1) {
+            } elseif (1 === $i % 4) {
                 $fixture->setWorkingStatus();
-            } elseif ($i % 4 === 2) {
+            } elseif (2 === $i % 4) {
                 $fixture->setSuccessStatus();
-            } elseif ($i % 4 === 3) {
+            } elseif (3 === $i % 4) {
                 $fixture->setFailureStatus();
             }
             $fixture->setMessage("Message {$i}");

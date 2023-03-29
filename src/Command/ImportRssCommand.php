@@ -4,115 +4,232 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Entity\Podcast;
-use App\Entity\Season;
+use App\Entity\Category;
 use App\Entity\Episode;
 use App\Entity\Language;
-use App\Entity\Category;
-use App\Repository\PodcastRepository;
-use App\Repository\LanguageRepository;
+use App\Entity\Podcast;
+use App\Entity\Season;
 use App\Repository\CategoryRepository;
+use App\Repository\LanguageRepository;
+use App\Repository\PodcastRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\HttpClient\TraceableHttpClient;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Filesystem\Filesystem;
-use Nines\MediaBundle\Entity\Image;
+use Lukaswhite\PodcastFeedParser\Episode as RssEpisode;
+use Lukaswhite\PodcastFeedParser\Episodes as RssEpisodes;
+use Lukaswhite\PodcastFeedParser\Parser as RssParser;
+use Lukaswhite\PodcastFeedParser\Podcast as RssPodcast;
 use Nines\MediaBundle\Entity\Audio;
-use Nines\MediaBundle\Entity\Pdf;
-use Nines\MediaBundle\Entity\ImageContainerInterface;
 use Nines\MediaBundle\Entity\AudioContainerInterface;
+use Nines\MediaBundle\Entity\Image;
+use Nines\MediaBundle\Entity\ImageContainerInterface;
+use Nines\MediaBundle\Entity\Pdf;
 use Nines\MediaBundle\Entity\PdfContainerInterface;
 use Nines\MediaBundle\Service\AudioManager;
 use Nines\MediaBundle\Service\ImageManager;
 use Nines\MediaBundle\Service\PdfManager;
-use Lukaswhite\PodcastFeedParser\Parser as RssParser;
-use Lukaswhite\PodcastFeedParser\Podcast as RssPodcast;
-use Lukaswhite\PodcastFeedParser\Episodes as RssEpisodes;
-use Lukaswhite\PodcastFeedParser\Episode as RssEpisode;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpClient\TraceableHttpClient;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-use Symfony\Component\HttpClient\Exception\TransportExceptionInterface;
-
-class ImportRssCommand extends Command
-{
+#[AsCommand(name: 'app:import:rss')]
+class ImportRssCommand extends Command {
     private EntityManagerInterface $em;
+
     private TraceableHttpClient $client;
-    private ?OutputInterface $output;
+
+    private ?OutputInterface $output = null;
 
     private ?RssParser $parser;
-    private ?RssPodcast $rssPodcast;
-    private ?RssEpisodes $rssEpisodes;
+
+    private ?RssPodcast $rssPodcast = null;
+
+    private ?RssEpisodes $rssEpisodes = null;
 
     private ?PodcastRepository $podcastRepository = null;
+
     private ?LanguageRepository $languageRepository = null;
+
     private ?CategoryRepository $categoryRepository = null;
 
     private ?AudioManager $audioManager = null;
+
     private ?ImageManager $imageManager = null;
+
     private ?PdfManager $pdfManager = null;
 
     private Filesystem $filesystem;
-    private ?Podcast $podcast;
-    private array $seasons;
-    private array $episodes;
-    private array $mediaRequests;
-    protected static $defaultName = 'app:import:rss';
 
-    public function __construct(EntityManagerInterface $em, HttpClientInterface $client)
-    {
+    private ?Podcast $podcast = null;
+
+    private array $seasons = [];
+
+    private array $episodes = [];
+
+    private array $mediaRequests = [];
+
+    public function __construct(EntityManagerInterface $em, HttpClientInterface $client) {
         $this->em = $em;
         $this->client = $client;
-        $this->output = null;
 
         $this->parser = new RssParser();
-        $this->rssPodcast = null;
-        $this->rssEpisodes = null;
 
         $this->filesystem = new Filesystem();
-        $this->podcast = null;
-        $this->seasons = [];
-        $this->episodes  = [];
-        $this->mediaRequests  = [];
 
         parent::__construct(null);
     }
 
-    protected function configure(): void
-    {
+    private function cleanupTempFiles() : void {
+        $this->output->writeln('Cleaning up ' . sys_get_temp_dir());
+        $tempFiles = glob(sys_get_temp_dir() . "/import_podcast_{$this->podcast->getId()}_*");
+        $this->filesystem->remove($tempFiles);
+    }
+
+    private function addPodcastMediaFetchRequest(Podcast $podcast, string $url) : void {
+        // check if sourceUrl already exists for podcast
+        if ($podcast->hasImageBySourceUrl($url)) {
+            return;
+        }
+
+        if ( ! array_key_exists($url, $this->mediaRequests)) {
+            $this->mediaRequests[$url] = [];
+        }
+        // make sure podcast is unique for resource
+        if ( ! in_array($podcast, $this->mediaRequests[$url], true)) {
+            $this->mediaRequests[$url][] = $podcast;
+        }
+    }
+
+    private function addEpisodeMediaFetchRequest(Episode $episode, string $url) : void {
+        // check if sourceUrl already exists for episode
+        if ($episode->hasAudioBySourceUrl($url) || $episode->hasImageBySourceUrl($url) || $episode->hasPdfBySourceUrl($url)) {
+            return;
+        }
+
+        if ( ! array_key_exists($url, $this->mediaRequests)) {
+            $this->mediaRequests[$url] = [];
+        }
+        // make sure episode is unique for resource
+        if ( ! in_array($episode, $this->mediaRequests[$url], true)) {
+            $this->mediaRequests[$url][] = $episode;
+        }
+    }
+
+    private function addImageToEntity(ImageContainerInterface $entity, UploadedFile $upload, string $sourceUrl) : void {
+        $image = new Image();
+        $image->setFile($upload);
+        $image->setPublic(true);
+        $image->setEntity($entity);
+        $image->setDescription('');
+        $image->setSourceUrl($sourceUrl);
+        $image->prePersist();
+
+        $this->em->persist($image);
+        $entity->addImage($image);
+        $this->em->flush();
+    }
+
+    private function addAudioToEntity(AudioContainerInterface $entity, UploadedFile $upload, string $sourceUrl) : void {
+        $audio = new Audio();
+        $audio->setFile($upload);
+        $audio->setPublic(true);
+        $audio->setEntity($entity);
+        $audio->setDescription('');
+        $audio->setSourceUrl($sourceUrl);
+        $audio->prePersist();
+
+        $this->em->persist($audio);
+        $entity->addAudio($audio);
+        $this->em->flush();
+    }
+
+    private function addPdfToEntity(PdfContainerInterface $entity, UploadedFile $upload, string $sourceUrl) : void {
+        $pdf = new Pdf();
+        $pdf->setFile($upload);
+        $pdf->setPublic(true);
+        $pdf->setEntity($entity);
+        $pdf->setDescription('');
+        $pdf->setSourceUrl($sourceUrl);
+        $pdf->prePersist();
+
+        $this->em->persist($pdf);
+        $entity->addPdf($pdf);
+        $this->em->flush();
+    }
+
+    /**
+     * @param int $default default season number
+     */
+    private function getSeasonNumber(RssEpisode $rssEpisode, int $default) : int {
+        $seasonNumber = (int) $rssEpisode->getSeason();
+
+        return 0 === $seasonNumber ? $default : $seasonNumber;
+    }
+
+    /**
+     * @param int $default default episode number
+     */
+    private function getEpisodeNumber(RssEpisode $rssEpisode, int $default) : int {
+        $episodeNumber = (int) $rssEpisode->getEpisodeNumber();
+
+        return 0 === $episodeNumber ? $default : $episodeNumber;
+    }
+
+    /**
+     * @return Category
+     */
+    private function getCategory(string $name) {
+        $category = $this->categoryRepository->findOneBy([
+            'label' => $name,
+        ]);
+        if ( ! $category) {
+            $category = new Category();
+            $category->setLabel($name);
+            $this->em->persist($category);
+            $this->em->flush();
+        }
+
+        return $category;
+    }
+
+    protected function configure() : void {
         $this->setDescription('Import data');
         $this
             ->addArgument(
                 'podcastId',
                 InputArgument::REQUIRED,
                 'ID of podcast.'
-            );
+            )
+        ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
+    protected function execute(InputInterface $input, OutputInterface $output) : int {
         $this->output = $output;
         $this->podcast = $this->podcastRepository->find($input->getArgument('podcastId'));
 
-        if (! $this->podcast){
+        if ( ! $this->podcast) {
             $this->output->writeln('No podcast found');
+
             return 0;
         }
 
         $url = $this->podcast->getRss();
-        if (! $url){
+        if ( ! $url) {
             $this->output->writeln('No RSS url found');
+
             return 0;
         }
         $this->output->writeln("Fetching RSS feed from {$url}");
         $response = $this->client->request('GET', $url);
 
-        if ($response->getStatusCode() !== 200) {
+        if (200 !== $response->getStatusCode()) {
             $this->output->writeln("Could not read RSS url. Code {$response->getStatusCode()} Message: {$response->getContent()}");
+
             return 0;
         }
 
@@ -121,18 +238,18 @@ class ImportRssCommand extends Command
             if ($season->getNumber() > 0) {
                 $this->seasons[$season->getNumber()] = $season;
             }
-        };
-        $this->episodes  = [];
+        }
+        $this->episodes = [];
         foreach ($this->podcast->getEpisodes() as $episode) {
             if ($episode->getGuid()) {
                 $this->episodes[$episode->getGuid()] = $episode;
             }
-        };
+        }
 
         $this->rssPodcast = $this->parser->setContent($response->getContent())->run();
         $this->rssEpisodes = $this->rssPodcast->getEpisodes();
 
-        $this->output->writeln("Import Started");
+        $this->output->writeln('Import Started');
         $this->audioManager->setCopy(true);
         $this->imageManager->setCopy(true);
         $this->pdfManager->setCopy(true);
@@ -154,11 +271,10 @@ class ImportRssCommand extends Command
     /**
      * Update all retrievable Podcast fields
      * There aren't ways to update license and publisher
-     * contributor could only be updated with 1 owner, 1 author, and possibly 1 editor
-     * @return void
+     * contributor could only be updated with 1 owner, 1 author, and possibly 1 editor.
      */
-    public function processPodcast() {
-        $this->output->writeln("Processing Podcast");
+    public function processPodcast() : void {
+        $this->output->writeln('Processing Podcast');
 
         $title = $this->rssPodcast->getTitle();
         if ($title) {
@@ -172,7 +288,7 @@ class ImportRssCommand extends Command
 
         $explicit = $this->rssPodcast->getExplicit();
         if ($explicit) {
-            $this->podcast->setExplicit($explicit === 'yes');
+            $this->podcast->setExplicit('yes' === $explicit);
         }
 
         $description = $this->rssPodcast->getDescription();
@@ -209,9 +325,9 @@ class ImportRssCommand extends Command
         $languageCode = $this->rssPodcast->getLanguage();
         if ($languageCode) {
             $language = $this->languageRepository->findOneBy([
-                'name' => $languageCode
+                'name' => $languageCode,
             ]);
-            if (!$language) {
+            if ( ! $language) {
                 $language = new Language();
                 $language->setName($languageCode);
                 $language->setLabel($languageCode);
@@ -250,21 +366,19 @@ class ImportRssCommand extends Command
         // we can get author, owner at the podcast level but nothing else
     }
 
-
     /**
      * Create all missing seasons
      * Podcasts RSS feeds have limited Season information so at most we can generate missing seasons
-     * with extremely limited populated fields
-     * @return void
+     * with extremely limited populated fields.
      */
-    public function processSeasons() {
-        $this->output->writeln("Processing Seasons");
+    public function processSeasons() : void {
+        $this->output->writeln('Processing Seasons');
 
         foreach ($this->rssEpisodes as $rssEpisode) {
             $seasonNumber = $this->getSeasonNumber($rssEpisode, 1);
             $season = $this->seasons[$seasonNumber] ?? null;
 
-            if (is_null($season)) {
+            if (null === $season) {
                 $this->output->writeln("Generating stub for Season {$seasonNumber}");
                 $season = new Season();
                 $season->setNumber($seasonNumber);
@@ -283,19 +397,18 @@ class ImportRssCommand extends Command
     }
 
     /**
-     * Update/Create episodes
-     * @return void
+     * Update/Create episodes.
      */
-    public function processEpisodes() {
-        $this->output->writeln("Processing Episodes");
+    public function processEpisodes() : void {
+        $this->output->writeln('Processing Episodes');
         $totalEpisodes = count($this->rssEpisodes);
 
-        foreach ($this->rssEpisodes as $index=>$rssEpisode) {
+        foreach ($this->rssEpisodes as $index => $rssEpisode) {
             $guid = $rssEpisode->getGuid();
             $this->output->writeln("Processing Episode guid {$guid}");
             $episode = $this->episodes[$guid] ?? null;
 
-            if (is_null($episode) ) {
+            if (null === $episode) {
                 $episode = new Episode();
                 $episode->setGuid($guid);
                 $episode->setPreserved(false);
@@ -307,7 +420,7 @@ class ImportRssCommand extends Command
             $season = $this->seasons[$this->getSeasonNumber($rssEpisode, 1)];
             $episode->setSeason($season);
 
-            $episode->setNumber($this->getEpisodeNumber($rssEpisode, ($totalEpisodes - $index)));
+            $episode->setNumber($this->getEpisodeNumber($rssEpisode, $totalEpisodes - $index));
             $this->output->writeln("- Season {$episode->getSeason()->getNumber()} Episode {$episode->getNumber()}");
 
             $publishedDate = $rssEpisode->getPublishedDate();
@@ -317,7 +430,7 @@ class ImportRssCommand extends Command
 
             $duration = $rssEpisode->getDuration();
             if ($duration) {
-                $episode->setRunTime(gmdate('H:i:s', intval($duration)));
+                $episode->setRunTime(gmdate('H:i:s', (int) $duration));
             }
 
             $title = $rssEpisode->getTitle();
@@ -345,7 +458,7 @@ class ImportRssCommand extends Command
             // not part of RSS feed
 
             // default language to the podcast language if not already set
-            if (is_null($episode->getLanguage())) {
+            if (null === $episode->getLanguage()) {
                 $episode->setLanguage($this->podcast->getLanguage());
             }
 
@@ -368,27 +481,26 @@ class ImportRssCommand extends Command
     }
 
     /**
-     * download media for podcast & episodes concurrently
-     * @return void
+     * download media for podcast & episodes concurrently.
      */
-    public function processMedia() {
-        $this->output->writeln("Processing Media Files");
+    public function processMedia() : void {
+        $this->output->writeln('Processing Media Files');
 
         // download in batches of 100 files to prevent memory errors
         foreach (array_chunk($this->mediaRequests, 100, true) as $mediaRequestChunk) {
             $responses = [];
 
             // start batch of requests
-            foreach ($mediaRequestChunk as $url=>$entities) {
+            foreach ($mediaRequestChunk as $url => $entities) {
                 $filename = basename(parse_url($url, PHP_URL_PATH));
                 $tempFilePath = $this->filesystem->tempnam(sys_get_temp_dir(), "import_podcast_{$this->podcast->getId()}_") . "_{$filename}";
 
-                $responses []= $this->client->request('GET', $url, [
+                $responses[] = $this->client->request('GET', $url, [
                     'user_data' => [
                         'entities' => $entities,
                         'filename' => $filename,
                         'tempFilePath' => $tempFilePath,
-                    ]
+                    ],
                 ]);
             }
 
@@ -400,20 +512,22 @@ class ImportRssCommand extends Command
                         $response->cancel();
                         $url = $response->getInfo('url');
                         $this->output->writeln("Download client error {$response->getStatusCode()} {$url}");
+
                         continue;
                     }
                 } elseif ($chunk->isTimeout()) {
                     $this->output->writeln("Download Timeout {$url}");
                     $response->cancel();
+
                     continue;
                 }
 
                 // deconstruct the user_data
-                [
+                list(
                     'entities' => $entities,
                     'filename' => $filename,
                     'tempFilePath' => $tempFilePath,
-                ] = $response->getInfo('user_data');
+                ) = $response->getInfo('user_data');
                 $url = $response->getInfo('url');
 
                 $entitleList = '';
@@ -434,18 +548,18 @@ class ImportRssCommand extends Command
 
                         $mimetype = mime_content_type($tempFilePath);
                         $checksum = md5_file($tempFilePath);
-                        foreach ($entities as $index=>$entity) {
+                        foreach ($entities as $index => $entity) {
                             $upload = new UploadedFile($tempFilePath, $filename, $mimetype, null, true);
                             if ($entity instanceof Podcast) {
-                                if (strpos($mimetype, 'image/') === 0 && !$entity->hasImageByChecksum($checksum)) {
+                                if (str_starts_with($mimetype, 'image/') && ! $entity->hasImageByChecksum($checksum)) {
                                     $this->addImageToEntity($entity, $upload, $url);
                                 }
                             } elseif ($entity instanceof Episode) {
-                                if (strpos($mimetype, 'audio/') === 0 && !$entity->hasAudioByChecksum($checksum)) {
+                                if (str_starts_with($mimetype, 'audio/') && ! $entity->hasAudioByChecksum($checksum)) {
                                     $this->addAudioToEntity($entity, $upload, $url);
-                                } elseif (strpos($mimetype, 'image/') === 0 && !$entity->hasImageByChecksum($checksum)) {
+                                } elseif (str_starts_with($mimetype, 'image/') && ! $entity->hasImageByChecksum($checksum)) {
                                     $this->addImageToEntity($entity, $upload, $url);
-                                } elseif ($mimetype === 'application/pdf' && !$entity->hasPdfByChecksum($checksum)) {
+                                } elseif ('application/pdf' === $mimetype && ! $entity->hasPdfByChecksum($checksum)) {
                                     $this->addPdfToEntity($entity, $upload, $url);
                                 }
                             }
@@ -458,190 +572,32 @@ class ImportRssCommand extends Command
         }
     }
 
-    /**
-     * @return void
-     */
-    private function cleanupTempFiles() : void {
-        $this->output->writeln("Cleaning up ".sys_get_temp_dir());
-        $tempFiles = glob(sys_get_temp_dir()."/import_podcast_{$this->podcast->getId()}_*");
-        $this->filesystem->remove($tempFiles);
-    }
-
-    /**
-     * @param Podcast $podcast
-     * @param string $url
-     * @return void
-     */
-    private function addPodcastMediaFetchRequest(Podcast $podcast, string $url) : void {
-        // check if sourceUrl already exists for podcast
-        if ($podcast->hasImageBySourceUrl($url)) {
-            return;
-        }
-
-        if (!array_key_exists($url, $this->mediaRequests)) {
-            $this->mediaRequests[$url] = [];
-        }
-        // make sure podcast is unique for resource
-        if (!in_array($podcast, $this->mediaRequests[$url])) {
-            $this->mediaRequests[$url][] = $podcast;
-        }
-    }
-
-    /**
-     * @param Episode $episode
-     * @param string $url
-     * @return void
-     */
-    private function addEpisodeMediaFetchRequest(Episode $episode, string $url) : void {
-        // check if sourceUrl already exists for episode
-        if ($episode->hasAudioBySourceUrl($url) || $episode->hasImageBySourceUrl($url) || $episode->hasPdfBySourceUrl($url)) {
-            return;
-        }
-
-        if (!array_key_exists($url, $this->mediaRequests)) {
-            $this->mediaRequests[$url] = [];
-        }
-        // make sure episode is unique for resource
-        if (!in_array($episode, $this->mediaRequests[$url])) {
-            $this->mediaRequests[$url][] = $episode;
-        }
-    }
-
-    /**
-     * @param ImageContainerInterface $entity
-     * @param UploadedFile $upload
-     * @param string $sourceUrl
-     * @return void
-     */
-    private function addImageToEntity(ImageContainerInterface $entity, UploadedFile $upload, string $sourceUrl) : void {
-        $image = new Image();
-        $image->setFile($upload);
-        $image->setPublic(true);
-        $image->setEntity($entity);
-        $image->setDescription('');
-        $image->setSourceUrl($sourceUrl);
-        $image->prePersist();
-
-        $this->em->persist($image);
-        $entity->addImage($image);
-        $this->em->flush();
-    }
-
-    /**
-     * @param AudioContainerInterface $entity
-     * @param UploadedFile $upload
-     * @param string $sourceUrl
-     * @return void
-     */
-    private function addAudioToEntity(AudioContainerInterface $entity, UploadedFile $upload, string $sourceUrl) : void {
-        $audio = new Audio();
-        $audio->setFile($upload);
-        $audio->setPublic(true);
-        $audio->setEntity($entity);
-        $audio->setDescription('');
-        $audio->setSourceUrl($sourceUrl);
-        $audio->prePersist();
-
-        $this->em->persist($audio);
-        $entity->addAudio($audio);
-        $this->em->flush();
-    }
-
-    /**
-     * @param PdfContainerInterface $entity
-     * @param UploadedFile $upload
-     * @param string $sourceUrl
-     * @return void
-     */
-    private function addPdfToEntity(PdfContainerInterface $entity, UploadedFile $upload, string $sourceUrl) : void {
-        $pdf = new Pdf();
-        $pdf->setFile($upload);
-        $pdf->setPublic(true);
-        $pdf->setEntity($entity);
-        $pdf->setDescription('');
-        $pdf->setSourceUrl($sourceUrl);
-        $pdf->prePersist();
-
-        $this->em->persist($pdf);
-        $entity->addPdf($pdf);
-        $this->em->flush();
-    }
-
-    /**
-     * @param RssEpisode $rssEpisode
-     * @param int $default default season number
-     * @return int
-     */
-    private function getSeasonNumber(RssEpisode $rssEpisode, int $default) : int {
-        $seasonNumber = intval($rssEpisode->getSeason());
-        return $seasonNumber === 0 ? $default : $seasonNumber;
-    }
-
-    /**
-     * @param RssEpisode $rssEpisode
-     * @param int $default default episode number
-     * @return int
-     */
-    private function getEpisodeNumber(RssEpisode $rssEpisode, int $default) : int {
-        $episodeNumber = intval($rssEpisode->getEpisodeNumber());
-        return $episodeNumber === 0 ? $default : $episodeNumber;
-    }
-
-    /**
-     * @param string $name
-     * @return Category
-     */
-    private function getCategory(string $name) {
-        $category = $this->categoryRepository->findOneBy([
-            'label' => $name
-        ]);
-        if (!$category) {
-            $category = new Category();
-            $category->setLabel($name);
-            $this->em->persist($category);
-            $this->em->flush();
-        }
-        return $category;
-    }
-
-    /**
-     * @required
-     */
+    #[\Symfony\Contracts\Service\Attribute\Required]
     public function setPodcastRepository(PodcastRepository $podcastRepository) : void {
         $this->podcastRepository = $podcastRepository;
     }
 
-    /**
-     * @required
-     */
+    #[\Symfony\Contracts\Service\Attribute\Required]
     public function setLanguageRepository(LanguageRepository $languageRepository) : void {
         $this->languageRepository = $languageRepository;
     }
 
-    /**
-     * @required
-     */
+    #[\Symfony\Contracts\Service\Attribute\Required]
     public function setCategoryRepository(CategoryRepository $categoryRepository) : void {
         $this->categoryRepository = $categoryRepository;
     }
 
-    /**
-     * @required
-     */
+    #[\Symfony\Contracts\Service\Attribute\Required]
     public function setAudioManager(AudioManager $audioManager) : void {
         $this->audioManager = $audioManager;
     }
 
-    /**
-     * @required
-     */
+    #[\Symfony\Contracts\Service\Attribute\Required]
     public function setImageManager(ImageManager $imageManager) : void {
         $this->imageManager = $imageManager;
     }
 
-    /**
-     * @required
-     */
+    #[\Symfony\Contracts\Service\Attribute\Required]
     public function setPdfManager(PdfManager $pdfManager) : void {
         $this->pdfManager = $pdfManager;
     }

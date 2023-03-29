@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Tests\Repository;
 
 use App\Repository\ExportRepository;
@@ -22,6 +16,6 @@ class ExportRepositoryTest extends ServiceTestCase {
 
     protected function setUp() : void {
         parent::setUp();
-        $this->repo = self::$container->get(ExportRepository::class);
+        $this->repo = self::getContainer()->get(ExportRepository::class);
     }
 }

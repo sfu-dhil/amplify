@@ -2,19 +2,13 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Form;
 
 use App\Entity\Language;
 use Nines\UtilBundle\Form\TermType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 /**
  * Language form.
@@ -26,9 +20,7 @@ class LanguageType extends TermType {
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
         $builder->add('name', TextType::class, [
             'label' => 'Language Code',
-            'attr' => [
-                'help_block' => 'The language code.',
-            ],
+            'help' => 'The language code.',
         ]);
         parent::buildForm($builder, $options);
     }

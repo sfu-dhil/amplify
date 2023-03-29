@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace App\Form;
 
 use App\Entity\Episode;
@@ -35,18 +29,12 @@ class EpisodeType extends AbstractType {
         $builder->add('number', null, [
             'label' => 'Number',
             'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
         $builder->add('date', DateType::class, [
             'label' => 'Date',
             'required' => true,
             'widget' => 'single_text',
             'html5' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
         $builder->add('runTime', TimeType::class, [
             'label' => 'Run Time',
@@ -55,32 +43,23 @@ class EpisodeType extends AbstractType {
             'html5' => false,
             'widget' => 'single_text',
             'with_seconds' => true,
-
-            'attr' => [
-                'help_block' => 'Runtime in hh:mm:ss format',
-            ],
+            'help' => 'Runtime in hh:mm:ss format',
         ]);
         $builder->add('title', TextType::class, [
             'label' => 'Title',
             'required' => true,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
         $builder->add('subTitle', TextType::class, [
             'label' => 'Alternative Title',
             'required' => false,
-            'attr' => [
-                'help_block' => '',
-            ],
         ]);
         $builder->add('language', Select2EntityType::class, [
             'label' => 'Primary Language',
             'class' => Language::class,
             'remote_route' => 'language_typeahead',
             'allow_clear' => true,
+            'help' => 'Leave this field blank to use the podcast primary language',
             'attr' => [
-                'help_block' => 'Leave this field blank to use the podcast primary language',
                 'add_path' => 'language_new_popup',
                 'add_label' => 'Add Language',
             ],
@@ -89,7 +68,6 @@ class EpisodeType extends AbstractType {
             'label' => 'Bibliography',
             'required' => false,
             'attr' => [
-                'help_block' => '',
                 'class' => 'tinymce',
             ],
         ]);
@@ -97,7 +75,6 @@ class EpisodeType extends AbstractType {
             'label' => 'Transcript',
             'required' => false,
             'attr' => [
-                'help_block' => '',
                 'class' => 'tinymce',
             ],
         ]);
@@ -105,7 +82,6 @@ class EpisodeType extends AbstractType {
             'label' => 'Description',
             'required' => true,
             'attr' => [
-                'help_block' => '',
                 'class' => 'tinymce',
             ],
         ]);
@@ -113,7 +89,6 @@ class EpisodeType extends AbstractType {
             'label' => 'Permissions',
             'required' => false,
             'attr' => [
-                'help_block' => '',
                 'class' => 'tinymce',
             ],
         ]);
@@ -128,7 +103,6 @@ class EpisodeType extends AbstractType {
                 'label' => false,
             ],
             'attr' => [
-                'help_block' => '',
                 'class' => 'collection collection-simple oclcfast',
             ],
         ]);
@@ -138,7 +112,6 @@ class EpisodeType extends AbstractType {
             'remote_route' => 'season_typeahead',
             'allow_clear' => true,
             'attr' => [
-                'help_block' => '',
                 'add_path' => 'season_new_popup',
                 'add_label' => 'Add Season',
             ],
@@ -150,7 +123,6 @@ class EpisodeType extends AbstractType {
             'remote_route' => 'podcast_typeahead',
             'allow_clear' => true,
             'attr' => [
-                'help_block' => '',
                 'add_path' => 'podcast_new_popup',
                 'add_label' => 'Add Podcast',
             ],
@@ -169,7 +141,6 @@ class EpisodeType extends AbstractType {
             'by_reference' => false,
             'attr' => [
                 'class' => 'collection collection-complex',
-                'help_block' => '',
             ],
         ]);
     }
