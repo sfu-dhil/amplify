@@ -12,11 +12,8 @@ use Nines\UtilBundle\Entity\AbstractTerm;
 
 #[ORM\Entity(repositoryClass: ContributorRoleRepository::class)]
 class ContributorRole extends AbstractTerm {
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string', length: 10, nullable: true)]
-    private $relatorTerm;
+    private ?string $relatorTerm = null;
 
     /**
      * @var Collection<int,Contribution>

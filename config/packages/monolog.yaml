@@ -9,7 +9,8 @@ when@dev:
                 type: rotating_file
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
                 # level: debug
-                level: warning
+                # level: warning
+                level: notice
                 channels: ["!event", "!doctrine", "!console", "!translation"]
                 max_files: 1
 
@@ -33,6 +34,6 @@ when@prod:
             main:
                 type: rotating_file
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
-                level: warning
+                level: notice
                 channels: ["!event", "!doctrine", "!console", "!translation"]
                 max_files: 30

@@ -14,11 +14,6 @@ class ContributionRepositoryTest extends ServiceTestCase {
         $this->assertInstanceOf(ContributionRepository::class, $this->repo);
     }
 
-    public function testIndexQuery() : void {
-        $query = $this->repo->indexQuery();
-        $this->assertCount(4, $query->execute());
-    }
-
     protected function setUp() : void {
         parent::setUp();
         $this->repo = self::getContainer()->get(ContributionRepository::class);

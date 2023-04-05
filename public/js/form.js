@@ -44,12 +44,6 @@
         });
     }
 
-    function formPopup(e) {
-        e.preventDefault();
-        var url = $(this).prop('href');
-        window.open(url, "_blank", "toolbar=no,scrollbars=yes,resizable=yes,top=60,left=60,width=500,height=600");
-    }
-
     function oclcLookup(element, request, response) {
         let suggestIdx = 'suggestall';
         let q = $(element).find('input').val();
@@ -97,28 +91,33 @@
     }
 
     function simpleCollection() {
+        if ( $('.collection-simple').length == 0 ) {
+            return
+        }
         $('.collection-simple').collection({
             init_with_n_elements: 1,
             allow_up: false,
             allow_down: false,
             max: 400,
-            add: '<a href="#" class="btn btn-primary btn-sm"><span class="bi bi-plus"></span></a>',
-            remove: '<a href="#" class="btn btn-light btn-sm"><span class="bi bi-dash"></span></a>',
+            add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i></a>',
+            remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
             after_add: attachOclcFast
         });
     }
 
     function complexCollection() {
+        if ( $('.collection-complex').length == 0 ) {
+            return
+        }
         $('.collection-complex').collection({
             init_with_n_elements: 1,
             allow_up: false,
             allow_down: false,
             max: 400,
-            add: '<a href="#" class="btn btn-primary btn-sm"><span class="bi bi-plus"></span></a>',
-            remove: '<a href="#" class="btn btn-light btn-sm"><span class="bi bi-dash"></span></a>',
+            add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i></a>',
+            remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
             after_add: function(collection, element){
                 $(element).find('.select2entity').select2entity();
-                $(element).find('.select2-container').css('width', '100%');
                 return true;
             },
         });
@@ -136,15 +135,32 @@
         });
     }
 
+    function menuTabs() {
+        const localStorageId = `tab-${location.href}-target`
+        const lastShownTab = localStorage.getItem(localStorageId)
+
+        const tabToggleList = document.querySelectorAll('[data-bs-toggle="tab"]')
+        tabToggleList.forEach(function (tabToggle) {
+            tabToggle.addEventListener('shown.bs.tab', () => {
+                localStorage.setItem(localStorageId, tabToggle.id)
+            })
+            if (lastShownTab === tabToggle.id) {
+                new bootstrap.Tab(tabToggle).show()
+            }
+        });
+    }
+
     $(document).ready(function () {
         $(window).bind('beforeunload', windowBeforeUnload);
         $('form').each(formDirty);
-        $("a.popup").click(formPopup);
         $("a").each(link);
         $("*[data-confirm]").each(confirm);
         let popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
         popoverTriggerList.map(function (popoverTriggerEl) {
-          return new bootstrap.Popover(popoverTriggerEl)
+            return new bootstrap.Popover(popoverTriggerEl, {
+                html: true,
+                trigger: 'focus',
+            })
         }) // add this line to enable bootstrap popover
         let alertList = document.querySelectorAll('.alert')
         alertList.forEach(function (alert) {
@@ -155,6 +171,7 @@
             complexCollection();
         }
         imageModals();
+        menuTabs();
         // The autocomplete widget must be manually added for existing
         // elements.
         $(".collection-simple .mb-3.row").each(function(i,e){

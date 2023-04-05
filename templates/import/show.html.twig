@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}RSS Import {{ import.id }} Status{% endblock %}
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item"><a href="{{ path('homepage') }}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
+    {% if import.podcast %}
+        <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': import.podcast.id}) }}">{{ import.podcast.title }}</a></li>
+    {% endif %}
+    <li class="breadcrumb-item">Imports</li>
+    <li class="breadcrumb-item active" aria-current="page">Job {{ import.id }}</li>
+{% endblock %}
+
+{% block body %}
+    <div class="w-100 m-auto card text-center" style="max-width: 600px">
+        <h5 class="card-title">Importing Podcast</h5>
+        <h6 class="card-title">{{ import.rss }}</h5>
+        <div id="details_container" class="card-body">
+            {% embed 'import/partial/details.html.twig' %}
+            {% endembed %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ asset('css/noise.css') }}">
+{% endblock %}
+
+{% block javascripts %}
+    {% if is_granted('ROLE_CONTENT_ADMIN') and import.isActive %}
+        <script>
+            const setRefreshTimeout = () => {
+                setTimeout(
+                    () => {
+                        $.get("{{ path('import_show_details_json', {'id': import.id }) }}", (data) => {
+                            $("#details_container").html(data.content)
+                            if (data.isActive) {
+                                setRefreshTimeout()
+                            }
+                        })
+                    },
+                    8 * 1000 // 5 seconds
+                )
+            }
+            setRefreshTimeout()
+        </script>
+    {% endif %}
+{% endblock %}

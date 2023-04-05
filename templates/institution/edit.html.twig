@@ -1,15 +1,19 @@
 {% extends 'base.html.twig' %}
 
-    {% block title %}Edit Institution {% endblock %}
+{% block title %}Edit Institution {{ institution.name }}{% endblock %}
 
-    {% block body %}
-        <h1>Edit Institution</h1>
+{% block breadcrumbs %}
+    <li class="breadcrumb-item"><a href="{{ path('homepage') }}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('institution_index') }}">Institutions</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('institution_show', {'id': institution.id }) }}">{{ institution.name }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+{% endblock %}
 
-        {% embed 'institution/partial/form.html.twig' %}
-        {% endembed %}
+{% block body %}
+    {% embed 'institution/partial/form.html.twig' %}
+    {% endembed %}
+{% endblock %}
 
-    {% endblock %}
-
-    {% block javascripts %}
-        {% include '@NinesEditor/editor/widget.html.twig' %}
-    {% endblock %}
+{% block javascripts %}
+    {% include '@NinesEditor/editor/widget.html.twig' %}
+{% endblock %}

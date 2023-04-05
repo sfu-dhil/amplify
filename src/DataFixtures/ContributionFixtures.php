@@ -19,14 +19,14 @@ class ContributionFixtures extends Fixture implements DependentFixtureInterface,
      * {@inheritdoc}
      */
     public function load(ObjectManager $em) : void {
-        for ($i = 0; $i < 4; $i++) {
+        for ($i = 0; $i < 8; $i++) {
             $fixture = new Contribution();
 
             $fixture->setPerson($this->getReference('person.1'));
             $fixture->setContributorrole($this->getReference('contributorrole.1'));
-            $fixture->setPodcast($this->getReference('podcast.1'));
-            $fixture->setSeason($this->getReference('season.1'));
-            $fixture->setEpisode($this->getReference('episode.1'));
+            $fixture->setPodcast($this->getReference($i < 4 ? 'podcast.1' : 'podcast.5'));
+            $fixture->setSeason($this->getReference($i < 4 ? 'season.1' : 'season.5'));
+            $fixture->setEpisode($this->getReference($i < 4 ? 'episode.1' : 'episode.5'));
             $em->persist($fixture);
             $this->setReference('contribution.' . $i, $fixture);
         }

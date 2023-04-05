@@ -19,9 +19,10 @@ parameters:
     dhil.matomo_siteid:
     dhil.matomo_domain:
 
-    nines.editor.upload_dir: '%kernel.project_dir%/public/images/blog'
+    nines.editor.upload_dir: '%kernel.project_dir%/public/uploads/tinymce'
 
     page_size: 25
+    export_root_dir: '%kernel.project_dir%/data/%kernel.environment%/exports'
 
     amplify.thumb.height: 400
     amplify.thumb.width: 600
@@ -31,6 +32,10 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    GuzzleHttp\Client:
+        autowire: true
+        public: true
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -48,4 +53,5 @@ services:
     App\Menu\Builder:
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: main}
+            - { name: knp_menu.menu_builder, method: mainSidebarMenu, alias: main_sidebar}
             - { name: knp_menu.menu_builder, method: footerMenu, alias: footer}

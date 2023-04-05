@@ -1,35 +1,64 @@
-/* Sticky footer styles
--------------------------------------------------- */
-html {
-    position: relative;
-    min-height: 100%;
-}
-
 body {
-    /* Margin bottom by footer height */
-    margin-bottom: 85px;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+}
+html {
+    height: -webkit-fill-available;
 }
 
-.footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    /* Set the fixed height of the footer here */
-    height: 60px;
-    background-color: #f5f5f5;
+.page {
+    min-height: 100vh;
 }
 
-/* Move the content down, to make room for the nav bar. */
-body > .container {
-    padding-top: 70px;
+@media (min-width: 768px) {
+    .page-sidebar {
+        max-width: 300px;
+    }
+
+    .page-content {
+        max-height: 100vh;
+        overflow-y: auto;
+    }
+}
+
+.page-sidebar .btn-toggle {
+    padding: .25rem .5rem;
+    font-weight: 600;
+    color: rgba(0, 0, 0, .65);
+    background-color: transparent;
+}
+.page-sidebar .btn-toggle:hover,
+.page-sidebar .btn-toggle:focus {
+    color: rgba(0, 0, 0, .85);
+    background-color: #d2f4ea;
+}
+
+.page-sidebar .btn-toggle::before {
+    width: 1.25em;
+    line-height: 0;
+    content: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%280,0,0,.5%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
+    transition: transform .35s ease;
+    transform-origin: .5em 50%;
+}
+
+.page-sidebar .btn-toggle[aria-expanded="true"] {
+    color: rgba(0, 0, 0, .85);
+}
+.page-sidebar .btn-toggle[aria-expanded="true"]::before {
+    transform: rotate(90deg);
+}
+
+.page-sidebar .btn-toggle-nav a {
+    padding: .1875rem .5rem;
+    margin-top: .125rem;
+    margin-left: 1.25rem;
+}
+.page-sidebar .btn-toggle-nav a:hover,
+.page-sidebar .btn-toggle-nav a:focus {
+    background-color: #d2f4ea;
 }
 
 /* Custom app styles */
-
-audio {
-    width: 100%;
-}
-
 label.required::after {
     content: ' *';
     color: red;
@@ -67,24 +96,32 @@ a[href ^= 'https://']::after {
     padding-left: 0.5ex;
 }
 
+.breadcrumb .breadcrumb-item {
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.popover .popover-body {
+    padding: 0px;
+}
+
+.form-table-of-contents-wrapper {
+    grid-template-areas: 'form-contents form-table-of-contents';
+    grid-template-columns: 1fr auto;
+}
+
+.form-table-of-contents-wrapper .form-table-of-contents {
+    grid-area: form-table-of-contents;
+}
+
+.form-table-of-contents-wrapper .form-contents {
+    grid-area: form-contents;
+}
+
 .card {
     margin-bottom: 20px;
-}
-
-tbody tr th {
-    width: 20%;
-}
-
-div.checkbox, div.radio {
-    width: 30%;
-    float: left;
-}
-
-input[type="date"].form-control,
-input[type="time"].form-control,
-input[type="datetime-local"].form-control,
-input[type="month"].form-control {
-    line-height: inherit;
 }
 
 div.collection span[class*="-collection-actions"] {
@@ -96,10 +133,9 @@ div.collection-complex > div:not(:last-child) {
     border: 1px solid rgba(128, 128, 128, 0.31);
 }
 
-hr.divider {
-    border: 0;
-    height: 1px;
-    background: #888;
+.status-badge-label {
+    display: inline-block;
+    max-width: 200px;
 }
 
 /* Styling for the FAST autocomplete widget. */

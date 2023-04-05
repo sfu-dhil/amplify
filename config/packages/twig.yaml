@@ -8,7 +8,7 @@ twig:
         interval_format: '%%d days'
     form_themes:
         - '@NinesUtil/form/bootstrap_5_horizontal_layout.html.twig'
-        - 'form/fields.html.twig'
+        - '@TetranzSelect2Entity/Form/fields.html.twig'
         - 'jquery.collection.html.twig'
     globals:
         nines_editor_config: js/editor-config.js

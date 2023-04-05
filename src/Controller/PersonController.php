@@ -18,47 +18,24 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route(path: '/person')]
+#[Route(path: '/people')]
 class PersonController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
-    #[Route(path: '/', name: 'person_index', methods: ['GET'])]
+    #[Route(path: '', name: 'person_index', methods: ['GET'])]
     #[Template]
     public function index(Request $request, PersonRepository $personRepository) : array {
-        $query = $personRepository->indexQuery();
-        $pageSize = $this->getParameter('page_size');
-        $page = $request->query->getint('page', 1);
-
-        return [
-            'people' => $this->paginator->paginate($query, $page, $pageSize),
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    #[Route(path: '/search', name: 'person_search', methods: ['GET'])]
-    #[Template]
-    public function search(Request $request, PersonRepository $personRepository) {
         $q = $request->query->get('q');
-        if ($q) {
-            $query = $personRepository->searchQuery($q);
-            $people = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), ['wrap-queries' => true]);
-        } else {
-            $people = [];
-        }
+        $query = $q ? $personRepository->searchQuery($q) : $personRepository->indexQuery();
 
         return [
-            'people' => $people,
+            'people' => $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), ['wrap-queries' => true]),
             'q' => $q,
         ];
     }
 
-    /**
-     * @return JsonResponse
-     */
     #[Route(path: '/typeahead', name: 'person_typeahead', methods: ['GET'])]
-    public function typeahead(Request $request, PersonRepository $personRepository) {
+    public function typeahead(Request $request, PersonRepository $personRepository) : JsonResponse {
         $q = $request->query->get('q');
         if ( ! $q) {
             return new JsonResponse([]);
@@ -75,13 +52,10 @@ class PersonController extends AbstractController implements PaginatorAwareInter
         return new JsonResponse($data);
     }
 
-    /**
-     * @return array|RedirectResponse
-     */
     #[Route(path: '/new', name: 'person_new', methods: ['GET', 'POST'])]
     #[Template]
     #[IsGranted('ROLE_CONTENT_ADMIN')]
-    public function new(EntityManagerInterface $entityManager, Request $request) {
+    public function new(EntityManagerInterface $entityManager, Request $request) : array|RedirectResponse {
         $person = new Person();
         $form = $this->createForm(PersonType::class, $person);
         $form->handleRequest($request);
@@ -89,7 +63,7 @@ class PersonController extends AbstractController implements PaginatorAwareInter
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($person);
             $entityManager->flush();
-            $this->addFlash('success', 'The new person has been saved.');
+            $this->addFlash('success', 'Person created successfully.');
 
             return $this->redirectToRoute('person_show', ['id' => $person->getId()]);
         }
@@ -100,40 +74,24 @@ class PersonController extends AbstractController implements PaginatorAwareInter
         ];
     }
 
-    /**
-     * @return array|RedirectResponse
-     */
-    #[Route(path: '/new_popup', name: 'person_new_popup', methods: ['GET', 'POST'])]
-    #[Template]
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
-    public function new_popup(EntityManagerInterface $entityManager, Request $request) {
-        return $this->new($entityManager, $request);
-    }
-
-    /**
-     * @return array
-     */
     #[Route(path: '/{id}', name: 'person_show', methods: ['GET'])]
     #[Template]
-    public function show(Person $person) {
+    public function show(Person $person) : array {
         return [
             'person' => $person,
         ];
     }
 
-    /**
-     * @return array|RedirectResponse
-     */
     #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{id}/edit', name: 'person_edit', methods: ['GET', 'POST'])]
     #[Template]
-    public function edit(EntityManagerInterface $entityManager, Request $request, Person $person) {
+    public function edit(EntityManagerInterface $entityManager, Request $request, Person $person) : array|RedirectResponse {
         $form = $this->createForm(PersonType::class, $person);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-            $this->addFlash('success', 'The updated person has been saved.');
+            $this->addFlash('success', 'Person updated successfully.');
 
             return $this->redirectToRoute('person_show', ['id' => $person->getId()]);
         }
@@ -144,13 +102,10 @@ class PersonController extends AbstractController implements PaginatorAwareInter
         ];
     }
 
-    /**
-     * @return RedirectResponse
-     */
     #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{id}', name: 'person_delete', methods: ['DELETE'])]
-    public function delete(EntityManagerInterface $entityManager, Request $request, Person $person) {
-        if ($this->isCsrfTokenValid('delete' . $person->getId(), $request->request->get('_token'))) {
+    public function delete(EntityManagerInterface $entityManager, Request $request, Person $person) : RedirectResponse {
+        if ($this->isCsrfTokenValid('delete_person' . $person->getId(), $request->request->get('_token'))) {
             $entityManager->remove($person);
             $entityManager->flush();
             $this->addFlash('success', 'The person has been deleted.');

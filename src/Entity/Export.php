@@ -10,34 +10,22 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 
 #[ORM\Entity(repositoryClass: ExportRepository::class)]
 class Export extends AbstractEntity {
-    /**
-     * @var Season
-     */
-    #[ORM\ManyToOne(targetEntity: 'Season', inversedBy: 'exports')]
+    #[ORM\ManyToOne(targetEntity: 'Podcast', inversedBy: 'exports')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private $season;
+    private ?Podcast $podcast = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $status;
+    private ?string $status = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'text')]
-    private $message;
+    private ?string $message = null;
 
-    /**
-     * @var string
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $progress = null;
+
     #[ORM\Column(type: 'string', length: 255)]
-    private $format;
+    private ?string $format = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $path = null;
 
@@ -53,7 +41,7 @@ class Export extends AbstractEntity {
      * {@inheritdoc}
      */
     public function __toString() : string {
-        return $this->id;
+        return "{$this->getId()}";
     }
 
     /**
@@ -70,12 +58,12 @@ class Export extends AbstractEntity {
         return [self::$successStatus, self::$failureStatus];
     }
 
-    public function getSeason() : ?Season {
-        return $this->season;
+    public function getPodcast() : ?Podcast {
+        return $this->podcast;
     }
 
-    public function setSeason(?Season $season) : self {
-        $this->season = $season;
+    public function setPodcast(?Podcast $podcast) : self {
+        $this->podcast = $podcast;
 
         return $this;
     }
@@ -126,6 +114,16 @@ class Export extends AbstractEntity {
 
     public function setMessage(?string $message) : self {
         $this->message = $message;
+
+        return $this;
+    }
+
+    public function getProgress() : ?int {
+        return $this->progress;
+    }
+
+    public function setProgress(?int $progress) : self {
+        $this->progress = $progress;
 
         return $this;
     }

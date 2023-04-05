@@ -38,23 +38,21 @@ class SeasonFixtures extends Fixture implements DependentFixtureInterface, Fixtu
      */
     public function load(ObjectManager $em) : void {
         $this->imageManager->setCopy(true);
-        for ($i = 0; $i < 4; $i++) {
+        for ($i = 0; $i < 8; $i++) {
             $fixture = new Season();
             $fixture->setNumber($i);
-            $fixture->setPreserved(0 === $i % 2);
             $fixture->setTitle('Title ' . $i);
             $fixture->setSubTitle('SubTitle ' . $i);
             $fixture->setDescription("<p>This is paragraph {$i}</p>");
-            $fixture->setPodcast($this->getReference('podcast.1'));
+            $fixture->setPodcast($this->getReference($i < 4 ? 'podcast.1' : 'podcast.5'));
             $fixture->setPublisher($this->getReference('publisher.1'));
             $em->persist($fixture);
             $em->flush();
 
-            $imageFile = self::IMAGE_FILES[$i];
+            $imageFile = self::IMAGE_FILES[$i % 4];
             $upload = new UploadedFile(dirname(__FILE__, 3) . '/tests/data/image/' . $imageFile, $imageFile, 'image/jpeg', null, true);
             $image = new Image();
             $image->setFile($upload);
-            $image->setPublic(0 === $i % 2);
             $image->setOriginalName($imageFile);
             $image->setDescription("<p>This is paragraph {$i}</p>");
             $image->setLicense("<p>This is paragraph {$i}</p>");

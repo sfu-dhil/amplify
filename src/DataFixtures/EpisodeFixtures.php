@@ -60,10 +60,9 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
         $this->audioManager->setCopy(true);
         $this->imageManager->setCopy(true);
         $this->pdfManager->setCopy(true);
-        for ($i = 0; $i < 4; $i++) {
+        for ($i = 0; $i < 8; $i++) {
             $fixture = new Episode();
             $fixture->setNumber($i);
-            $fixture->setPreserved(0 === $i % 2);
             $fixture->setDate(new DateTimeImmutable("2020-{$i}-{$i}"));
             $fixture->setRunTime("00:{$i}5:00");
             $fixture->setTitle('Title ' . $i);
@@ -72,40 +71,37 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $fixture->setTranscript("<p>This is paragraph {$i}</p>");
             $fixture->setDescription("<p>This is paragraph {$i}</p>");
             $fixture->setPermissions("<p>This is paragraph {$i}</p>");
-            $fixture->setSeason($this->getReference('season.1'));
-            $fixture->setPodcast($this->getReference('podcast.1'));
+            $fixture->setPodcast($this->getReference($i < 4 ? 'podcast.1' : 'podcast.5'));
+            $fixture->setSeason($this->getReference($i < 4 ? 'season.1' : 'season.5'));
             $fixture->addSubject('Subject ' . $i);
             $fixture->addSubject('Subject ' . ($i + 1));
             $em->persist($fixture);
             $em->flush();
 
-            $audioFile = self::AUDIO_FILES[$i];
+            $audioFile = self::AUDIO_FILES[$i % 4];
             $upload = new UploadedFile(dirname(__FILE__, 3) . '/tests/data/audio/' . $audioFile, $audioFile, 'audio/mp3', null, true);
             $audio = new Audio();
             $audio->setFile($upload);
-            $audio->setPublic(0 === $i % 2);
             $audio->setOriginalName($audioFile);
             $audio->setDescription("<p>This is paragraph {$i}</p>");
             $audio->setLicense("<p>This is paragraph {$i}</p>");
             $audio->setEntity($fixture);
             $em->persist($audio);
 
-            $imageFile = self::IMAGE_FILES[$i];
+            $imageFile = self::IMAGE_FILES[$i % 4];
             $upload = new UploadedFile(dirname(__FILE__, 3) . '/tests/data/image/' . $imageFile, $imageFile, 'image/jpeg', null, true);
             $image = new Image();
             $image->setFile($upload);
-            $image->setPublic(0 === $i % 2);
             $image->setOriginalName($imageFile);
             $image->setDescription("<p>This is paragraph {$i}</p>");
             $image->setLicense("<p>This is paragraph {$i}</p>");
             $image->setEntity($fixture);
             $em->persist($image);
 
-            $file = self::PDFS[$i];
+            $file = self::PDFS[$i % 4];
             $upload = new UploadedFile(dirname(__FILE__, 3) . '/tests/data/pdf/' . $file, $file, 'application/pdf', null, true);
             $pdf = new Pdf();
             $pdf->setFile($upload);
-            $pdf->setPublic(0 === ($i % 2));
             $pdf->setOriginalName($file);
             $pdf->setDescription("<p>This is paragraph {$i}</p>");
             $pdf->setLicense("<p>This is paragraph {$i}</p>");
@@ -115,7 +111,6 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $em->flush();
             $this->setReference('episode.' . $i, $fixture);
         }
-
         $this->audioManager->setCopy(false);
         $this->imageManager->setCopy(false);
         $this->pdfManager->setCopy(false);

@@ -24,26 +24,28 @@ class PublisherRepository extends ServiceEntityRepository {
 
     public function indexQuery() : Query {
         return $this->createQueryBuilder('publisher')
-            ->orderBy('publisher.id')
+            ->orderBy('publisher.name', 'ASC')
             ->getQuery()
         ;
     }
 
     public function typeaheadQuery(string $q) : Query {
-        $qb = $this->createQueryBuilder('publisher');
-        $qb->andWhere('publisher.name LIKE :q');
-        $qb->orderBy('publisher.name', 'ASC');
-        $qb->setParameter('q', "{$q}%");
-
-        return $qb->getQuery();
+        return $this->createQueryBuilder('publisher')
+            ->andWhere('publisher.name LIKE :q')
+            ->orderBy('publisher.name', 'ASC')
+            ->setParameter('q', "%{$q}%")
+            ->getQuery()
+        ;
     }
 
     public function searchQuery(string $q) : Query {
-        $qb = $this->createQueryBuilder('publisher');
-        $qb->andWhere('publisher.name LIKE :q');
-        $qb->orderBy('publisher.name', 'ASC');
-        $qb->setParameter('q', "{$q}%");
-
-        return $qb->getQuery();
+        return $this->createQueryBuilder('publisher')
+            ->addSelect('MATCH (publisher.name, publisher.description) AGAINST(:q BOOLEAN) as HIDDEN score')
+            ->andHaving('score > 0')
+            ->orderBy('score', 'DESC')
+            ->addOrderBy('publisher.name', 'ASC')
+            ->setParameter('q', $q)
+            ->getQuery()
+        ;
     }
 }

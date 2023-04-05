@@ -6,7 +6,6 @@ namespace App\Repository;
 
 use App\Entity\Episode;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -20,30 +19,5 @@ use Doctrine\Persistence\ManagerRegistry;
 class EpisodeRepository extends ServiceEntityRepository {
     public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Episode::class);
-    }
-
-    public function indexQuery() : Query {
-        return $this->createQueryBuilder('episode')
-            ->orderBy('episode.id')
-            ->getQuery()
-        ;
-    }
-
-    public function typeaheadQuery(string $q) : Query {
-        $qb = $this->createQueryBuilder('episode');
-        $qb->andWhere('episode.title LIKE :q');
-        $qb->orderBy('episode.title', 'ASC');
-        $qb->setParameter('q', "{$q}%");
-
-        return $qb->getQuery();
-    }
-
-    public function searchQuery(string $q) : Query {
-        $qb = $this->createQueryBuilder('episode');
-        $qb->andWhere('episode.title LIKE :q');
-        $qb->orderBy('episode.title', 'ASC');
-        $qb->setParameter('q', "{$q}%");
-
-        return $qb->getQuery();
     }
 }

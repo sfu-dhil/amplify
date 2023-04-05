@@ -26,7 +26,7 @@ class ContributionType extends AbstractType {
             'remote_route' => 'person_typeahead',
             'allow_clear' => true,
             'attr' => [
-                'add_path' => 'person_new_popup',
+                'add_path' => 'person_new',
                 'add_label' => 'Add Person',
             ],
         ]);
@@ -37,8 +37,8 @@ class ContributionType extends AbstractType {
             'remote_route' => 'contributor_role_typeahead',
             'allow_clear' => true,
             'attr' => [
-                'add_path' => 'contributor_role_new_popup',
-                'add_label' => 'Add ContributorRole',
+                'add_path' => 'contributor_role_new',
+                'add_label' => 'Add Role',
             ],
         ]);
     }

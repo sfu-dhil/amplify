@@ -31,14 +31,10 @@ return $config
         'backtick_to_shell_exec' => true,
         'blank_line_after_namespace' => true,
         'blank_line_after_opening_tag' => true,
-//        'blank_line_before_statement' => [
-//            'statements' => [
-//                'declare', 'die', 'exit', 'for', 'foreach', 'return', 'try',
-//            ]
-//        ],
-        'braces' => [
-            'allow_single_line_closure' => true,
-            'position_after_functions_and_oop_constructs' => 'same'
+
+        'curly_braces_position' => [
+            'classes_opening_brace' => 'same_line',
+            'functions_opening_brace' => 'same_line',
         ],
 
         'cast_spaces' => [

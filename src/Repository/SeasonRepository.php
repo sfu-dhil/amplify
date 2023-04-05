@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Podcast;
 use App\Entity\Season;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
@@ -22,28 +23,14 @@ class SeasonRepository extends ServiceEntityRepository {
         parent::__construct($registry, Season::class);
     }
 
-    public function indexQuery() : Query {
+    public function typeaheadQuery(Podcast $podcast, string $q) : Query {
         return $this->createQueryBuilder('season')
-            ->orderBy('season.id')
+            ->andWhere('season.podcast = :p')
+            ->andWhere('season.title LIKE :q')
+            ->orderBy('season.title', 'ASC')
+            ->setParameter('p', $podcast->getId())
+            ->setParameter('q', "%{$q}%")
             ->getQuery()
         ;
-    }
-
-    public function typeaheadQuery(string $q) : Query {
-        $qb = $this->createQueryBuilder('season');
-        $qb->andWhere('season.title LIKE :q');
-        $qb->orderBy('season.title', 'ASC');
-        $qb->setParameter('q', "{$q}%");
-
-        return $qb->getQuery();
-    }
-
-    public function searchQuery(string $q) : Query {
-        $qb = $this->createQueryBuilder('season');
-        $qb->andWhere('season.title LIKE :q');
-        $qb->orderBy('season.title', 'ASC');
-        $qb->setParameter('q', "{$q}%");
-
-        return $qb->getQuery();
     }
 }

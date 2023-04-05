@@ -1,15 +1,19 @@
 {% extends 'base.html.twig' %}
 
-    {% block title %}Edit Category {% endblock %}
+{% block title %}Edit Category {{ category.label }}{% endblock %}
 
-    {% block body %}
-        <h1>Edit Category</h1>
+{% block breadcrumbs %}
+    <li class="breadcrumb-item"><a href="{{ path('homepage') }}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('category_index') }}">Categories</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('category_show', {'id': category.id}) }}">{{ category.label }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+{% endblock %}
 
-        {% embed 'category/partial/form.html.twig' %}
-        {% endembed %}
+{% block body %}
+    {% embed 'category/partial/form.html.twig' %}
+    {% endembed %}
+{% endblock %}
 
-    {% endblock %}
-
-    {% block javascripts %}
-        {% include '@NinesEditor/editor/widget.html.twig' %}
-    {% endblock %}
+{% block javascripts %}
+    {% include '@NinesEditor/editor/widget.html.twig' %}
+{% endblock %}

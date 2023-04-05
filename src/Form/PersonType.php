@@ -50,7 +50,7 @@ class PersonType extends AbstractType {
             'remote_route' => 'institution_typeahead',
             'allow_clear' => true,
             'attr' => [
-                'add_path' => 'institution_new_popup',
+                'add_path' => 'institution_new',
                 'add_label' => 'Add Institution',
             ],
         ]);

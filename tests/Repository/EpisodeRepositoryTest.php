@@ -8,27 +8,10 @@ use App\Repository\EpisodeRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class EpisodeRepositoryTest extends ServiceTestCase {
-    private const TYPEAHEAD_QUERY = 'title';
-
     private ?EpisodeRepository $repo = null;
 
     public function testSetUp() : void {
         $this->assertInstanceOf(EpisodeRepository::class, $this->repo);
-    }
-
-    public function testIndexQuery() : void {
-        $query = $this->repo->indexQuery();
-        $this->assertCount(4, $query->execute());
-    }
-
-    public function testTypeaheadQuery() : void {
-        $query = $this->repo->typeaheadQuery(self::TYPEAHEAD_QUERY);
-        $this->assertCount(4, $query->execute());
-    }
-
-    public function testSearchQuery() : void {
-        $query = $this->repo->searchQuery(self::TYPEAHEAD_QUERY);
-        $this->assertCount(4, $query->execute());
     }
 
     protected function setUp() : void {

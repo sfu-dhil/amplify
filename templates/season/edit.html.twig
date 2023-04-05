@@ -1,15 +1,20 @@
 {% extends 'base.html.twig' %}
 
-    {% block title %}Edit Season {% endblock %}
+{% block title %}Edit Season{% endblock %}
 
-    {% block body %}
-        <h1>Edit Season</h1>
+{% block breadcrumbs %}
+    <li class="breadcrumb-item"><a href="{{ path('homepage') }}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': season.podcast.id}) }}">{{ season.podcast.title }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('season_show', {'podcast_id': season.podcast.id, 'id': season.id}) }}">{{ season.title }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+{% endblock %}
 
-        {% embed 'season/partial/form.html.twig' %}
-        {% endembed %}
+{% block body %}
+    {% embed 'season/partial/form.html.twig' %}
+    {% endembed %}
+{% endblock %}
 
-    {% endblock %}
-
-    {% block javascripts %}
-        {% include '@NinesEditor/editor/widget.html.twig' %}
-    {% endblock %}
+{% block javascripts %}
+    {% include '@NinesEditor/editor/widget.html.twig' %}
+{% endblock %}

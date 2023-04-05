@@ -2,32 +2,21 @@
 
 declare(strict_types=1);
 
-/*
- * (c) 2022 Michael Joyce <mjoyce@sfu.ca>
- * This source file is subject to the GPL v2, bundled
- * with this source code in the file LICENSE.
- */
-
 namespace Deployer;
 
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Yaml\Yaml;
 
-require 'recipe/symfony4.php';
+require 'recipe/symfony.php';
 
-// Parse the deployment configuration file
-inventory('config/deploy.yaml');
-$settings = Yaml::parseFile('config/deploy.yaml');
-foreach ($settings['.settings'] as $key => $value) {
-    set($key, $value);
-}
+import('config/deploy.yaml');
 
-// If there's a custom deployment script include it here.
-$app = get('application');
-$customFile = 'deploy.{$app}.php';
-if (file_exists($customFile)) {
-    require $customFile;
-}
+/*
+ * For first deployment after upgrade see https://github.com/deployphp/deployer/blob/ba355deaa1f7b1e4cdc4b3f2734c43cf9486869f/docs/UPGRADE.md#step-2-deploy
+ *
+ * temp to get some scripts running before deployment (might need both)
+ * set('release_path', '{{deploy_path}}/current');
+ * set('update_code_strategy', 'clone');
+ */
 
 set('console', fn() => parse('{{bin/php}} {{release_path}}/bin/console --no-interaction --quiet'));
 set('lock_path', fn() => parse('{{deploy_path}}/.dep/deploy.lock'));
@@ -107,13 +96,13 @@ task('dhil:sphinx:build', function() : void {
 
 task('dhil:sphinx:upload', function() : void {
     if (file_exists('docs')) {
-        $user = get('user');
+        $remoteUser = get('remote_user');
         $host = get('hostname');
         $become = get('become');
         within('{{release_path}}', function() : void {
             run('mkdir -p public/docs/sphinx');
         });
-        runLocally("rsync -av --rsync-path='sudo -u {$become} rsync' ./public/docs/sphinx/ {$user}@{$host}:{{release_path}}/public/docs/sphinx", ['timeout' => null]);
+        runLocally("rsync -av --rsync-path='sudo -u {$become} rsync' ./public/docs/sphinx/ {$remoteUser}@{$host}:{{release_path}}/public/docs/sphinx", ['timeout' => null]);
     }
 })->desc('Upload Sphinx docs to server.');
 
@@ -123,11 +112,11 @@ task('dhil:sphinx', [
 ])->desc('Wrapper around dhil:sphinx:build and dhil:sphinx:upload');
 
 task('dhil:db:backup', function() : void {
-    $user = get('user');
+    $remoteUser = get('remote_user');
     $become = get('become');
     $app = get('application');
 
-    set('become', $user); // prevent sudo -u from failing.
+    set('become', $remoteUser); // prevent sudo -u from failing.
     $date = date('Y-m-d');
     $current = get('release_name');
     $file = "/home/{$become}/{$app}-{$date}-r{$current}.sql";
@@ -137,14 +126,14 @@ task('dhil:db:backup', function() : void {
 })->desc('Backup the mysql database');
 
 task('dhil:db:schema', function() : void {
-    $user = get('user');
+    $remoteUser = get('remote_user');
     $become = get('become');
     $app = get('application');
 
-    set('become', $user); // prevent sudo -u from failing.
-    $file = "/home/{$user}/{$app}-schema.sql";
+    set('become', $remoteUser); // prevent sudo -u from failing.
+    $file = "/home/{$remoteUser}/{$app}-schema.sql";
     run("sudo mysqldump {$app} --flush-logs --no-data -r {$file}");
-    run("sudo chown {$user} {$file}");
+    run("sudo chown {$remoteUser} {$file}");
 
     download($file, basename($file));
     writeln('Downloaded database dump to ' . basename($file));
@@ -153,12 +142,12 @@ task('dhil:db:schema', function() : void {
 
 option('all-tables', null, InputOption::VALUE_NONE, 'Do not ignore any tables when fetching database.');
 task('dhil:db:data', function() : void {
-    $user = get('user');
+    $remoteUser = get('remote_user');
     $become = get('become');
     $app = get('application');
 
-    set('become', $user); // prevent sudo -u from failing.
-    $file = "/home/{$user}/{$app}-data.sql";
+    set('become', $remoteUser); // prevent sudo -u from failing.
+    $file = "/home/{$remoteUser}/{$app}-data.sql";
     $ignore = get('ignore_tables', []);
     if (count($ignore) && ! input()->getOption('all-tables')) {
         $ignoredTables = implode(',', array_map(fn($s) => $app . '.' . $s, $ignore));
@@ -166,7 +155,7 @@ task('dhil:db:data', function() : void {
     } else {
         run("sudo mysqldump {$app} --flush-logs --no-create-info -r {$file}");
     }
-    run("sudo chown {$user} {$file}");
+    run("sudo chown {$remoteUser} {$file}");
 
     download($file, basename($file));
     writeln('Downloaded database dump to ' . basename($file));
@@ -195,17 +184,17 @@ task('dhil:db:migrate', function() : void {
 })->desc('Apply database migrations');
 
 task('dhil:media', function() : void {
-    $user = get('user');
+    $remoteUser = get('remote_user');
     $host = get('hostname');
     $become = get('become');
-    runLocally("rsync -av --rsync-path='sudo -u {$become} rsync' {$user}@{$host}:{{release_path}}/data/ data", ['timeout' => null]);
+    runLocally("rsync -av --rsync-path='sudo -u {$become} rsync' {$remoteUser}@{$host}:{{release_path}}/data/ data", ['timeout' => null]);
 })->desc('Download any uploaded media, assuming it is in /data');
 
 task('dhil:permissions', function() : void {
-    $user = get('user');
+    $remoteUser = get('remote_user');
     $become = get('become');
 
-    set('become', $user); // prevent sudo -u from failing.
+    set('become', $remoteUser); // prevent sudo -u from failing.
     $output = run('cd {{ release_path }} && sudo chcon -R ' . get('context') . ' ' . implode(' ', get('writable_dirs')));
     $output .= run('cd {{ release_path }} && sudo chcon -R unconfined_u:object_r:httpd_log_t:s0 var/log');
     if ($output) {
@@ -216,7 +205,7 @@ task('dhil:permissions', function() : void {
 })->desc('Fix selinux permissions');
 
 // Display a success message.
-task('success', function() : void {
+task('deploy:success', function() : void {
     $target = get('target');
     $release = get('release_name');
     $host = get('hostname');
@@ -257,7 +246,7 @@ task('deploy', [
     'deploy:cache:warmup',
     'deploy:symlink',
     'deploy:unlock',
-    'cleanup',
+    'deploy:cleanup',
 ]);
 after('deploy:failed', 'deploy:unlock');
-after('deploy', 'success');
+after('deploy', 'deploy:success');

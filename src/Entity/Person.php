@@ -13,40 +13,26 @@ use Nines\MediaBundle\Entity\LinkableTrait;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 #[ORM\Entity(repositoryClass: PersonRepository::class)]
+#[ORM\Index(name: 'person_ft', columns: ['fullname', 'bio'], flags: ['fulltext'])]
 class Person extends AbstractEntity implements LinkableInterface {
     use LinkableTrait {
         LinkableTrait::__construct as linkable_constructor;
     }
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string')]
-    private $fullname;
+    private ?string $fullname = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string')]
-    private $sortableName;
+    private ?string $sortableName = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string')]
-    private $location;
+    private ?string $location = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'text')]
-    private $bio;
+    private ?string $bio = null;
 
-    /**
-     * @var Institution
-     */
     #[ORM\ManyToOne(targetEntity: 'App\Entity\Institution', inversedBy: 'people')]
-    private $institution;
+    private ?Institution $institution = null;
 
     /**
      * @var Collection<int,Contribution>

@@ -10,67 +10,57 @@ use Nines\UtilBundle\TestCase\ControllerTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class PublisherTest extends ControllerTestCase {
-    // Change this to HTTP_OK when the site is public.
-    private const ANON_RESPONSE_CODE = Response::HTTP_FOUND;
-
-    private const TYPEAHEAD_QUERY = 'name';
+    private const SEARCH_QUERY = 'name';
 
     public function testAnonIndex() : void {
-        $crawler = $this->client->request('GET', '/publisher/');
-        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
-        $this->assertSame(0, $crawler->selectLink('New')->count());
+        $crawler = $this->client->request('GET', '/publishers');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        $this->assertSame(0, $crawler->filter('.page-actions')->selectLink('New')->count());
     }
 
     public function testUserIndex() : void {
         $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/publisher/');
+        $crawler = $this->client->request('GET', '/publishers');
         $this->assertResponseIsSuccessful();
-        $this->assertSame(0, $crawler->selectLink('New')->count());
+        $this->assertSame(0, $crawler->filter('.page-actions')->selectLink('New')->count());
     }
 
     public function testAdminIndex() : void {
         $this->login(UserFixtures::ADMIN);
-        $crawler = $this->client->request('GET', '/publisher/');
+        $crawler = $this->client->request('GET', '/publishers');
         $this->assertResponseIsSuccessful();
-        $this->assertSame(1, $crawler->selectLink('New')->count());
+        $this->assertSame(1, $crawler->filter('.page-actions')->selectLink('New')->count());
     }
 
     public function testAnonShow() : void {
-        $crawler = $this->client->request('GET', '/publisher/1');
-        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
-        $this->assertSame(0, $crawler->selectLink('Edit')->count());
+        $crawler = $this->client->request('GET', '/publishers/1');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        $this->assertSame(0, $crawler->filter('.page-actions')->selectLink('Edit')->count());
     }
 
     public function testUserShow() : void {
         $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/publisher/1');
+        $crawler = $this->client->request('GET', '/publishers/1');
         $this->assertResponseIsSuccessful();
-        $this->assertSame(0, $crawler->selectLink('Edit')->count());
+        $this->assertSame(0, $crawler->filter('.page-actions')->selectLink('Edit')->count());
     }
 
     public function testAdminShow() : void {
         $this->login(UserFixtures::ADMIN);
-        $crawler = $this->client->request('GET', '/publisher/1');
+        $crawler = $this->client->request('GET', '/publishers/1');
         $this->assertResponseIsSuccessful();
-        $this->assertSame(1, $crawler->selectLink('Edit')->count());
+        $this->assertSame(1, $crawler->filter('.page-actions')->selectLink('Edit')->count());
     }
 
     public function testAnonTypeahead() : void {
-        $this->client->request('GET', '/publisher/typeahead?q=' . self::TYPEAHEAD_QUERY);
+        $this->client->request('GET', '/publishers/typeahead?q=' . self::SEARCH_QUERY);
         $response = $this->client->getResponse();
-        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
-        if (self::ANON_RESPONSE_CODE === Response::HTTP_FOUND) {
-            // If authentication is required stop here.
-            return;
-        }
-        $this->assertSame('application/json', $response->headers->get('content-type'));
-        $json = json_decode($response->getContent());
-        $this->assertCount(4, $json);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
     }
 
     public function testUserTypeahead() : void {
         $this->login(UserFixtures::USER);
-        $this->client->request('GET', '/publisher/typeahead?q=' . self::TYPEAHEAD_QUERY);
+        $this->client->request('GET', '/publishers/typeahead?q=' . self::SEARCH_QUERY);
         $response = $this->client->getResponse();
         $this->assertResponseIsSuccessful();
         $this->assertSame('application/json', $response->headers->get('content-type'));
@@ -80,7 +70,7 @@ class PublisherTest extends ControllerTestCase {
 
     public function testAdminTypeahead() : void {
         $this->login(UserFixtures::ADMIN);
-        $this->client->request('GET', '/publisher/typeahead?q=' . self::TYPEAHEAD_QUERY);
+        $this->client->request('GET', '/publishers/typeahead?q=' . self::SEARCH_QUERY);
         $response = $this->client->getResponse();
         $this->assertResponseIsSuccessful();
         $this->assertSame('application/json', $response->headers->get('content-type'));
@@ -89,24 +79,13 @@ class PublisherTest extends ControllerTestCase {
     }
 
     public function testAnonSearch() : void {
-        $crawler = $this->client->request('GET', '/publisher/search');
-        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
-        if (self::ANON_RESPONSE_CODE === Response::HTTP_FOUND) {
-            // If authentication is required stop here.
-            return;
-        }
-
-        $form = $crawler->selectButton('btn-search')->form([
-            'q' => 'publisher',
-        ]);
-
-        $responseCrawler = $this->client->submit($form);
-        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $crawler = $this->client->request('GET', '/publishers');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
     }
 
     public function testUserSearch() : void {
         $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/publisher/search');
+        $crawler = $this->client->request('GET', '/publishers');
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('btn-search')->form([
@@ -119,7 +98,7 @@ class PublisherTest extends ControllerTestCase {
 
     public function testAdminSearch() : void {
         $this->login(UserFixtures::ADMIN);
-        $crawler = $this->client->request('GET', '/publisher/search');
+        $crawler = $this->client->request('GET', '/publishers');
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('btn-search')->form([
@@ -131,22 +110,22 @@ class PublisherTest extends ControllerTestCase {
     }
 
     public function testAnonEdit() : void {
-        $crawler = $this->client->request('GET', '/publisher/1/edit');
+        $crawler = $this->client->request('GET', '/publishers/1/edit');
         $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserEdit() : void {
         $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/publisher/1/edit');
+        $crawler = $this->client->request('GET', '/publishers/1/edit');
         $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminEdit() : void {
         $this->login(UserFixtures::ADMIN);
-        $formCrawler = $this->client->request('GET', '/publisher/1/edit');
+        $formCrawler = $this->client->request('GET', '/publishers/1/edit');
         $this->assertResponseIsSuccessful();
 
-        $form = $formCrawler->selectButton('Save')->form([
+        $form = $formCrawler->selectButton('Update')->form([
             'publisher[name]' => 'Updated Name',
             'publisher[location]' => 'Updated Location',
             'publisher[website]' => 'http://example.com',
@@ -155,39 +134,28 @@ class PublisherTest extends ControllerTestCase {
         ]);
 
         $this->client->submit($form);
-        $this->assertResponseRedirects('/publisher/1', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/publishers/1', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
     }
 
     public function testAnonNew() : void {
-        $crawler = $this->client->request('GET', '/publisher/new');
-        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
-    }
-
-    public function testAnonNewPopup() : void {
-        $crawler = $this->client->request('GET', '/publisher/new_popup');
+        $crawler = $this->client->request('GET', '/publishers/new');
         $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserNew() : void {
         $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/publisher/new');
-        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function testUserNewPopup() : void {
-        $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/publisher/new_popup');
+        $crawler = $this->client->request('GET', '/publishers/new');
         $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminNew() : void {
         $this->login(UserFixtures::ADMIN);
-        $formCrawler = $this->client->request('GET', '/publisher/new');
+        $formCrawler = $this->client->request('GET', '/publishers/new');
         $this->assertResponseIsSuccessful();
 
-        $form = $formCrawler->selectButton('Save')->form([
+        $form = $formCrawler->selectButton('Create')->form([
             'publisher[name]' => 'Updated Name',
             'publisher[location]' => 'Updated Location',
             'publisher[website]' => 'http://example.com',
@@ -196,42 +164,22 @@ class PublisherTest extends ControllerTestCase {
         ]);
 
         $this->client->submit($form);
-        $this->assertResponseRedirects('/publisher/5', Response::HTTP_FOUND);
-        $responseCrawler = $this->client->followRedirect();
-        $this->assertResponseIsSuccessful();
-    }
-
-    public function testAdminNewPopup() : void {
-        $this->login(UserFixtures::ADMIN);
-        $formCrawler = $this->client->request('GET', '/publisher/new');
-        $this->assertResponseIsSuccessful();
-
-        $form = $formCrawler->selectButton('Save')->form([
-            'publisher[name]' => 'Updated Name',
-            'publisher[location]' => 'Updated Location',
-            'publisher[website]' => 'http://example.com',
-            'publisher[description]' => '<p>Updated Text</p>',
-            'publisher[contact]' => '<p>Updated Text</p>',
-        ]);
-
-        $this->client->submit($form);
-        $this->assertResponseRedirects('/publisher/6', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/publishers/5', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
     }
 
     public function testAdminDelete() : void {
-        /** @var PublisherRepository $repo */
         $repo = self::getContainer()->get(PublisherRepository::class);
         $preCount = count($repo->findAll());
 
         $this->login(UserFixtures::ADMIN);
-        $crawler = $this->client->request('GET', '/publisher/1');
+        $crawler = $this->client->request('GET', '/publishers/1');
         $this->assertResponseIsSuccessful();
         $form = $crawler->selectButton('Delete')->form();
         $this->client->submit($form);
 
-        $this->assertResponseRedirects('/publisher/', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/publishers', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
 

@@ -7,7 +7,6 @@ namespace App\Entity;
 use App\Repository\SeasonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\MediaBundle\Entity\ImageContainerInterface;
 use Nines\MediaBundle\Entity\ImageContainerTrait;
@@ -17,52 +16,28 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 #[ORM\HasLifecycleCallbacks]
 class Season extends AbstractEntity implements ImageContainerInterface {
     use ImageContainerTrait {
-        ImageContainerTrait::__construct as protected trait_constructor;
+        ImageContainerTrait::__construct as protected image_constructor;
     }
 
-    /**
-     * @var int
-     */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private $number;
+    private ?int $number = null;
 
-    /**
-     * @var bool
-     */
-    #[ORM\Column(type: 'boolean', nullable: false)]
-    private $preserved = false;
-
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string')]
-    private $title;
+    private ?string $title = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $subTitle;
+    private ?string $subTitle = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'text')]
-    private $description;
+    private ?string $description = null;
 
-    /**
-     * @var Podcast
-     */
     #[ORM\ManyToOne(targetEntity: 'Podcast', inversedBy: 'seasons')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private $podcast;
+    private ?Podcast $podcast = null;
 
-    /**
-     * @var Publisher
-     */
     #[ORM\ManyToOne(targetEntity: 'Publisher', inversedBy: 'seasons')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
-    private $publisher;
+    private ?Publisher $publisher = null;
 
     /**
      * @var Collection<int,Contribution>
@@ -77,19 +52,11 @@ class Season extends AbstractEntity implements ImageContainerInterface {
     #[ORM\OrderBy(['date' => 'ASC', 'number' => 'ASC', 'title' => 'ASC'])]
     private $episodes;
 
-    /**
-     * @var Collection<int,Export>
-     */
-    #[ORM\OneToMany(targetEntity: 'Export', mappedBy: 'season', orphanRemoval: true)]
-    #[ORM\OrderBy(['created' => 'DESC', 'id' => 'DESC'])]
-    private $exports;
-
     public function __construct() {
         parent::__construct();
-        $this->trait_constructor();
+        $this->image_constructor();
         $this->contributions = new ArrayCollection();
         $this->episodes = new ArrayCollection();
-        $this->exports = new ArrayCollection();
     }
 
     /**
@@ -97,6 +64,10 @@ class Season extends AbstractEntity implements ImageContainerInterface {
      */
     public function __toString() : string {
         return $this->title;
+    }
+
+    public function getSlug() : string {
+        return sprintf('S%02d', $this->number);
     }
 
     public function getNumber() : ?int {
@@ -174,6 +145,20 @@ class Season extends AbstractEntity implements ImageContainerInterface {
         return $this->contributions;
     }
 
+    public function getContributionsGroupedByPerson() : array {
+        $contributions = [];
+
+        foreach ($this->contributions as $contribution) {
+            $person = $contribution->getPerson();
+            if ( ! array_key_exists($person->getId(), $contributions)) {
+                $contributions[$person->getId()] = [];
+            }
+            $contributions[$person->getId()][] = $contribution;
+        }
+
+        return $contributions;
+    }
+
     public function addContribution(Contribution $contribution) : self {
         if ( ! $this->contributions->contains($contribution)) {
             $this->contributions[] = $contribution;
@@ -223,63 +208,51 @@ class Season extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
-    /**
-     * @return Collection<int, Export>
-     */
-    public function getExports() : Collection {
-        return $this->exports;
-    }
+    public function getStatus() : array {
+        $errors = [];
+        $warnings = [];
 
-    public function addExport(Export $export) : self {
-        if ( ! $this->exports->contains($export)) {
-            $this->exports[] = $export;
-            $export->setSeason($this);
+        if (null === $this->getPodcast()) {
+            $errors['Podcast'] = 'No podcast';
+        }
+        if (null === $this->getNumber()) {
+            $errors['Season number'] = 'No season number';
+        }
+        if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
+            $errors['Title'] = 'No title';
+        }
+        if (empty(trim(strip_tags($this->getSubTitle() ?? '')))) {
+            $errors['Subtitle'] = 'No subtitle';
+        }
+        if (null === $this->getPublisher()) {
+            $errors['Publisher'] = 'No publisher';
+        }
+        if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
+            $errors['Description'] = 'No description';
+        }
+        if (null === $this->getContributions() || 0 === count($this->getContributions())) {
+            $errors['Contributions'] = 'No contributions';
         }
 
-        return $this;
-    }
-
-    public function removeExport(Export $export) : self {
-        if ($this->exports->removeElement($export)) {
-            // set the owning side to null (unless already changed)
-            if ($export->getSeason() === $this) {
-                $export->setSeason(null);
+        if (0 === count($this->getImages())) {
+            $errors['Images'] = 'No images';
+        }
+        foreach ($this->getImages() as $image) {
+            $imageWarnings = [];
+            if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
+                $imageWarnings['Description'] = 'No description';
+            }
+            if (empty(trim(strip_tags($image->getLicense() ?? '')))) {
+                $imageWarnings['License'] = 'No license';
+            }
+            if (count($imageWarnings) > 0) {
+                $warnings["Image {$image->getOriginalName()}"] = $imageWarnings;
             }
         }
 
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Export>
-     */
-    public function getActiveExports() : Collection {
-        $expressionBuilder = Criteria::expr();
-        $expression = $expressionBuilder->in('status', Export::getActiveStatuses());
-
-        return $this->exports->matching(new Criteria($expression));
-    }
-
-    public function hasActiveExport() : ?bool {
-        return ! $this->getActiveExports()->isEmpty();
-    }
-
-    public function getPreserved() : ?bool {
-        return $this->preserved;
-    }
-
-    public function setPreserved(bool $preserved) : self {
-        $this->preserved = $preserved;
-
-        return $this;
-    }
-
-    /**
-     * Sets the updated timestamp.
-     */
-    #[ORM\PreUpdate]
-    public function preUpdate() : void {
-        parent::preUpdate();
-        $this->preserved = false;
+        return [
+            'errors' => $errors,
+            'warnings' => $warnings,
+        ];
     }
 }
