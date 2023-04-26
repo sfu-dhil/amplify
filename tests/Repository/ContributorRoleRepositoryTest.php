@@ -8,7 +8,7 @@ use App\Repository\ContributorRoleRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class ContributorRoleRepositoryTest extends ServiceTestCase {
-    private const TYPEAHEAD_QUERY = 'label';
+    private const SEARCH_QUERY = 'label';
 
     private ?ContributorRoleRepository $repo = null;
 
@@ -22,12 +22,12 @@ class ContributorRoleRepositoryTest extends ServiceTestCase {
     }
 
     public function testTypeaheadQuery() : void {
-        $query = $this->repo->typeaheadQuery(self::TYPEAHEAD_QUERY);
+        $query = $this->repo->typeaheadQuery(self::SEARCH_QUERY);
         $this->assertCount(4, $query->execute());
     }
 
     public function testSearchQuery() : void {
-        $query = $this->repo->searchQuery(self::TYPEAHEAD_QUERY);
+        $query = $this->repo->searchQuery(self::SEARCH_QUERY);
         $this->assertCount(4, $query->execute());
     }
 

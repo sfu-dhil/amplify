@@ -19,6 +19,7 @@ framework:
 
         routing:
             # Route your messages to the transports
+            'App\Message\ImportMessage': async
             'App\Message\ExportMessage': async
 
         serializer:

@@ -1,30 +1,100 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Publisher Details {% endblock %}
+{% block title %}Publisher {{ publisher.name }}{% endblock %}
 
- {% block pageheader %}
-     <h1>Publisher Details</h1>
- {% endblock %}
+{% block breadcrumbs %}
+    <li class="breadcrumb-item"><a href="{{ path('homepage') }}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('publisher_index') }}">Publishers</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ publisher.name }}</li>
+{% endblock %}
+
+{% block action_buttons %}
+    {% if is_granted('ROLE_CONTENT_ADMIN') %}
+        <a href="{{ path('publisher_edit', {'id': publisher.id }) }}" class="btn btn-primary">
+            <i class="bi bi-pencil-square"></i> Edit
+        </a>
+        <form class="d-inline-block" method="post" action="{{ path('publisher_delete', {'id': publisher.id }) }}" onsubmit="return confirm('Are you sure you want to delete this publisher?');">
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="hidden" name="_token" value="{{ csrf_token("delete_publisher" ~ publisher.id) }}">
+            <button class="btn btn-danger w-100"><i class="bi bi-trash"></i> Delete</button>
+        </form>
+    {% endif %}
+{% endblock %}
 
 {% block body %}
+    <table class="table table-striped table-sm">
+        <tbody>
+            <tr>
+                <th>Name</th>
+                <td>
+                    {{ publisher.name }}
+                </td>
+            </tr>
+            <tr>
+                <th>Location</th>
+                <td>
+                    {{ publisher.location }}
+                </td>
+            </tr>
+            <tr>
+                <th>Website</th>
+                <td>
+                    {{ publisher.website }}
+                </td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>
+                    {{ publisher.description|default('')|sanitize_html }}
+                </td>
+            </tr>
+            <tr>
+                <th>Contact</th>
+                <td>
+                    {{ publisher.contact|default('')|sanitize_html }}
+                </td>
+            </tr>
 
-    {% if is_granted('ROLE_CONTENT_ADMIN') %}
-        <div class='btn-toolbar'>
-            <div class='btn-group ms-auto'>
-                <a href="{{ path('publisher_edit', {'id': publisher.id }) }}" class="btn btn-light">
-                    <span class="bi bi-pencil-square"></span> Edit </a>
-            </div>
-            <div class='btn-group'>
-                <form class='delete-form' method="post" action="{{ path('publisher_delete', {'id': publisher.id }) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <input type="hidden" name="_token" value="{{ csrf_token("delete" ~ publisher.id) }}">
-                    <button class="btn btn-danger"><span class="bi bi-trash"></span> Delete</button>
-                </form>
-            </div>
-        </div>
-    {% endif %}
-
-    {% embed 'publisher/partial/detail.html.twig' %}
-    {% endembed %}
-
+            <tr>
+                <th>Podcast</th>
+                <td>
+                    {% if publisher.podcasts|length > 0 %}
+                        <ul class="list-unstyled">
+                            {% for podcast in publisher.podcasts %}
+                                <li>
+                                    <a href='{{ path("podcast_show", {"id":podcast.id }) }}'>
+                                        {{ podcast }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Season</th>
+                <td>
+                    {% if publisher.seasons|length > 0 %}
+                        <ul class="list-unstyled">
+                            {% for season in publisher.seasons %}
+                                <li>
+                                    <a href='{{ path("season_show", {"podcast_id": season.podcast.id, "id": season.id }) }}'>
+                                        {{ season }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Created</th>
+                <td>{{ publisher.created|date }}</td>
+            </tr>
+            <tr>
+                <th>Updated</th>
+                <td>{{ publisher.updated|date }}</td>
+            </tr>
+        </tbody>
+    </table>
 {% endblock %}

@@ -24,26 +24,19 @@ class PodcastRepository extends ServiceEntityRepository {
 
     public function indexQuery() : Query {
         return $this->createQueryBuilder('podcast')
-            ->orderBy('podcast.id')
+            ->orderBy('podcast.title', 'ASC')
             ->getQuery()
         ;
     }
 
-    public function typeaheadQuery(string $q) : Query {
-        $qb = $this->createQueryBuilder('podcast');
-        $qb->andWhere('podcast.title LIKE :q');
-        $qb->orderBy('podcast.title', 'ASC');
-        $qb->setParameter('q', "{$q}%");
-
-        return $qb->getQuery();
-    }
-
     public function searchQuery(string $q) : Query {
-        $qb = $this->createQueryBuilder('podcast');
-        $qb->andWhere('podcast.title LIKE :q');
-        $qb->orderBy('podcast.title', 'ASC');
-        $qb->setParameter('q', "{$q}%");
-
-        return $qb->getQuery();
+        return $this->createQueryBuilder('podcast')
+            ->addSelect('MATCH (podcast.title, podcast.subTitle, podcast.description) AGAINST(:q BOOLEAN) as HIDDEN score')
+            ->andHaving('score > 0')
+            ->orderBy('score', 'DESC')
+            ->addOrderBy('podcast.title', 'ASC')
+            ->setParameter('q', $q)
+            ->getQuery()
+        ;
     }
 }

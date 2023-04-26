@@ -6,7 +6,6 @@ namespace App\Form;
 
 use App\Entity\Episode;
 use App\Entity\Language;
-use App\Entity\Podcast;
 use App\Entity\Season;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -16,19 +15,44 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 /**
  * Episode form.
  */
 class EpisodeType extends AbstractType {
+    public function __construct(
+        public UrlGeneratorInterface $router,
+    ) {
+    }
+
     /**
      * Add form fields to $builder.
      */
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
+        $builder->add('season', Select2EntityType::class, [
+            'label' => 'Season',
+            'class' => Season::class,
+            'remote_route' => 'season_typeahead',
+            'remote_params' => ['podcast_id' => $builder->getData()->getPodcast()->getId()],
+            'allow_clear' => true,
+            'attr' => [
+                'add_route' => $this->router->generate('season_new', ['podcast_id' => $builder->getData()->getPodcast()->getId()]),
+                'add_label' => 'Add Season',
+            ],
+        ]);
         $builder->add('number', null, [
-            'label' => 'Number',
+            'label' => 'Episode Number',
             'required' => true,
+        ]);
+        $builder->add('title', TextType::class, [
+            'label' => 'Title',
+            'required' => true,
+        ]);
+        $builder->add('subTitle', TextType::class, [
+            'label' => 'Alternative Title',
+            'required' => false,
         ]);
         $builder->add('date', DateType::class, [
             'label' => 'Date',
@@ -45,14 +69,6 @@ class EpisodeType extends AbstractType {
             'with_seconds' => true,
             'help' => 'Runtime in hh:mm:ss format',
         ]);
-        $builder->add('title', TextType::class, [
-            'label' => 'Title',
-            'required' => true,
-        ]);
-        $builder->add('subTitle', TextType::class, [
-            'label' => 'Alternative Title',
-            'required' => false,
-        ]);
         $builder->add('language', Select2EntityType::class, [
             'label' => 'Primary Language',
             'class' => Language::class,
@@ -60,8 +76,15 @@ class EpisodeType extends AbstractType {
             'allow_clear' => true,
             'help' => 'Leave this field blank to use the podcast primary language',
             'attr' => [
-                'add_path' => 'language_new_popup',
+                'add_path' => 'language_new',
                 'add_label' => 'Add Language',
+            ],
+        ]);
+        $builder->add('description', TextareaType::class, [
+            'label' => 'Description',
+            'required' => true,
+            'attr' => [
+                'class' => 'tinymce',
             ],
         ]);
         $builder->add('bibliography', TextareaType::class, [
@@ -74,13 +97,6 @@ class EpisodeType extends AbstractType {
         $builder->add('transcript', TextareaType::class, [
             'label' => 'Transcript',
             'required' => false,
-            'attr' => [
-                'class' => 'tinymce',
-            ],
-        ]);
-        $builder->add('description', TextareaType::class, [
-            'label' => 'Description',
-            'required' => true,
             'attr' => [
                 'class' => 'tinymce',
             ],
@@ -106,28 +122,6 @@ class EpisodeType extends AbstractType {
                 'class' => 'collection collection-simple oclcfast',
             ],
         ]);
-        $builder->add('season', Select2EntityType::class, [
-            'label' => 'Season',
-            'class' => Season::class,
-            'remote_route' => 'season_typeahead',
-            'allow_clear' => true,
-            'attr' => [
-                'add_path' => 'season_new_popup',
-                'add_label' => 'Add Season',
-            ],
-        ]);
-
-        $builder->add('podcast', Select2EntityType::class, [
-            'label' => 'Podcast',
-            'class' => Podcast::class,
-            'remote_route' => 'podcast_typeahead',
-            'allow_clear' => true,
-            'attr' => [
-                'add_path' => 'podcast_new_popup',
-                'add_label' => 'Add Podcast',
-            ],
-        ]);
-
         $builder->add('contributions', CollectionType::class, [
             'label' => 'Contributions',
             'required' => false,

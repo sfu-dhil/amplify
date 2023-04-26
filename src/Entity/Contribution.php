@@ -10,37 +10,22 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 
 #[ORM\Entity(repositoryClass: ContributionRepository::class)]
 class Contribution extends AbstractEntity {
-    /**
-     * @var Person
-     */
     #[ORM\ManyToOne(targetEntity: 'Person', inversedBy: 'contributions')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private $person;
+    private ?Person $person = null;
 
-    /**
-     * @var ContributorRole
-     */
     #[ORM\ManyToOne(targetEntity: 'ContributorRole', inversedBy: 'contributions')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private $contributorRole;
+    private ?ContributorRole $contributorRole = null;
 
-    /**
-     * @var Podcast
-     */
     #[ORM\ManyToOne(targetEntity: 'Podcast', inversedBy: 'contributions')]
-    private $podcast;
+    private ?Podcast $podcast = null;
 
-    /**
-     * @var Season
-     */
     #[ORM\ManyToOne(targetEntity: 'Season', inversedBy: 'contributions')]
-    private $season;
+    private ?Season $season = null;
 
-    /**
-     * @var Episode
-     */
     #[ORM\ManyToOne(targetEntity: 'Episode', inversedBy: 'contributions')]
-    private $episode;
+    private ?Episode $episode = null;
 
     public function __construct() {
         parent::__construct();

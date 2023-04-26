@@ -36,7 +36,7 @@ services:
 
       # persist file uploads in .data
       - .data/app/data:/var/www/html/data
-      - .data/app/blog_images:/var/www/html/public/images/blog
+      - .data/app/tinymce:/var/www/html/public/uploads/tinymce
       - .data/app/var:/var/www/html/var
 
       # ignore local environment files. Allows you to run the app on your local machine as well via the local overrides

@@ -1,13 +1,14 @@
 # define the hosts
-10.0.0.10:
-    stage: staging
-    become: ~
-    deploy_path: ~
-    user: ~
+hosts:
+    staging:
+        hostname: 10.0.0.10
+        become: ~
+        deploy_path: ~
+        remote_user: ~
 
 # The settings key must start with a dot(.) to prevent it being treated as
 # a host in the inventory.
-.settings:
+config:
     application: ~
     repository: ~
     branch: main
@@ -15,13 +16,17 @@
         - .env.local
         - .env.test.local
     shared_dirs:
+        - data
         - var/log
         - var/sessions
-        - public/images/blog
+        - public/uploads/tinymce
     writable_dirs:
         - var/log
         - var/sessions
         - var/cache
+        - data/prod/pdf
+        - data/prod/image
+        - data/prod/audio
     composer_options: 'install --no-progress --optimize-autoloader --no-interaction'
     context: system_u:object_r:httpd_sys_rw_content_t:s0
     site_path: ~

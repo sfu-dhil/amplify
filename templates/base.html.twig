@@ -9,70 +9,69 @@
 
         <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ asset('node_modules/bootstrap-icons/font/bootstrap-icons.css') }}">
+        <link rel="stylesheet" href="{{ asset('node_modules/select2/dist/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('node_modules/jquery-ui-dist/jquery-ui.css') }}">
+        <link rel="stylesheet" href="{{ asset('node_modules/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css') }}" />
 
         <link rel="stylesheet" href="{{ asset('css/base.css') }}">
-
-        <link href="{{ asset('node_modules/select2/dist/css/select2.min.css') }}" rel="stylesheet">
-        <link href='{{ asset('node_modules/jquery-ui-dist/jquery-ui.css') }}' rel='stylesheet'>
 
         <script src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
         <script src='{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}'></script>
         <script src="{{ asset('node_modules/select2/dist/js/select2.full.min.js') }}"></script>
-
         <script src="{{ asset('bundles/tetranzselect2entity/js/select2entity.js') }}"></script>
         <script src="{{ asset('node_modules/symfony-collection/jquery.collection.js') }}"></script>
         <script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+
         <script src="{{ asset('js/form.js') }}"></script>
 
         {% block styles %}
         {% endblock %}
     </head>
     <body>
-        <nav class="navbar navbar-expand bg-light fixed-top">
-            <div class="container">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div id="navbar" class="collapse navbar-collapse">
-                    {{ knp_menu_render('main') }}
-                    {% if is_granted('ROLE_ADMIN') %}{{ knp_menu_render('nines_media') }}{% endif %}
-                    {{ knp_menu_render('nines_user_nav') }}
-                </div><!--/.nav-collapse -->
-            </div>
-        </nav>
-        <div class="container">
-
-            {% if block('pageheader') is defined %}
-                <div class="mb-4 border-bottom">
-                    {{ block('pageheader') }}
+        <div class="container-fluid">
+            <div class="row page">
+                <div class="col-md-auto page-sidebar p-3 m-0 d-flex flex-column flex-shrink-0">
+                    <a href="{{ path('homepage') }}" class="d-flex link-dark text-decoration-none h4">
+                        <i class="bi bi-soundwave">&nbsp;</i>
+                        Amplify @ SFU
+                    </a>
+                    {{ knp_menu_render('main_sidebar', { 'allow_safe_labels': true }) }}
+                    {{ knp_menu_render('nines_user_sidebar', { 'allow_safe_labels': true }) }}
                 </div>
-            {% endif %}
-
-            {% for type, messages in app.session.flashbag.all() %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        {{ message }}
+                <div class="col page-content p-4 bg-light">
+                    <div class="row mb-3 align-items-center page-actions">
+                        <div class="col-lg">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb m-0">
+                                    {% block breadcrumbs %}
+                                    {% endblock %}
+                                </ol>
+                            </nav>
+                        </div>
+                        <div class="col-lg-auto">
+                            <div class="d-grid gap-2 d-md-block m-2">
+                                <button type="button" class="btn mx-0 px-0 invisible spacer">&nbsp;</button>
+                                {% block action_buttons %}
+                                {% endblock %}
+                            </div>
+                        </div>
                     </div>
-                {% endfor %}
-            {% endfor %}
 
-            {% block body %}
-            {% endblock %}
-        </div>
+                    {% for type, messages in app.session.flashbag.all() %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
 
-        <footer class="footer">
-            <div class="container">
-                <p>
-                    <b>Amplify Podcast Network</b> <br />
-                    <a href="{{ asset('docs/sphinx/index.html') }}">Documentation</a> | <a href="{{ path('privacy') }}">Privacy</a>
-                    |
-                </p>
+                    {% block body %}
+                    {% endblock %}
+                </div>
             </div>
-        </footer>
-
+        </div>
         {% block javascripts %}
         {% endblock %}
-
     </body>
 </html>

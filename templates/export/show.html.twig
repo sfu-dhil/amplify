@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ export.format }} Export {{ export.id }} Status{% endblock %}
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item"><a href="{{ path('homepage') }}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': export.podcast.id}) }}">{{ export.podcast.title }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('export_index', {'podcast_id': export.podcast.id}) }}">Exports</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Job {{ export.id }}</li>
+{% endblock %}
+
+{% block body %}
+    <div class="w-100 m-auto card text-center" style="max-width: 600px">
+        <h5 class="card-title">Exporting Podcast</h5>
+        <h6 class="card-title">Format: {{ export.format }}</h5>
+        <div id="details_container" class="card-body">
+            {% embed 'export/partial/details.html.twig' %}
+            {% endembed %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ asset('css/noise.css') }}">
+{% endblock %}
+
+{% block javascripts %}
+    {% if is_granted('ROLE_CONTENT_ADMIN') and export.isActive %}
+        <script>
+            const setRefreshTimeout = () => {
+                setTimeout(
+                    () => {
+                        $.get("{{ path('export_show_details_json', {'podcast_id': export.podcast.id, 'id': export.id }) }}", (data) => {
+                            $("#details_container").html(data.content)
+                            if (data.isActive) {
+                                setRefreshTimeout()
+                            }
+                        })
+                    },
+                    8 * 1000 // 5 seconds
+                )
+            }
+            setRefreshTimeout()
+        </script>
+    {% endif %}
+{% endblock %}

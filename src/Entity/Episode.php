@@ -30,99 +30,52 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         PdfContainerTrait::__construct as protected pdf_constructor;
     }
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $guid;
+    private ?string $guid = null;
 
-    /**
-     * @var int
-     */
     #[ORM\Column(type: 'integer')]
-    private $number;
+    private ?int $number = null;
 
-    /**
-     * @var bool
-     */
-    #[ORM\Column(type: 'boolean', nullable: false)]
-    private $preserved = false;
-
-    /**
-     * @var DateTimeInterface
-     */
     #[ORM\Column(type: 'date')]
-    private $date;
+    private ?DateTimeInterface $date = null;
 
     /**
      * Run time in seconds.
-     *
-     * @var string
      */
     #[ORM\Column(type: 'string', length: 9, nullable: false)]
-    private $runTime;
+    private ?string $runTime = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
-    private $title;
+    private ?string $title = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $subTitle;
+    private ?string $subTitle = null;
 
-    /**
-     * @var Language
-     */
     #[ORM\ManyToOne(targetEntity: 'App\Entity\Language', inversedBy: 'episodes')]
-    private $language;
+    private ?Language $language = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'text', nullable: true)]
-    private $bibliography;
+    private ?string $bibliography = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'text', nullable: true)]
-    private $transcript;
+    private ?string $transcript = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'text')]
-    private $description;
+    private ?string $description = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'text', nullable: true)]
-    private $permissions;
+    private ?string $permissions = null;
 
-    /**
-     * @var string[]
-     */
     #[ORM\Column(type: 'json')]
-    private $subjects = [];
+    private array $subjects = [];
 
-    /**
-     * @var null|Season
-     */
     #[ORM\ManyToOne(targetEntity: 'Season', inversedBy: 'episodes')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
-    private $season;
+    private ?Season $season = null;
 
-    /**
-     * @var Podcast
-     */
     #[ORM\ManyToOne(targetEntity: 'Podcast', inversedBy: 'episodes')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private $podcast;
+    private ?Podcast $podcast = null;
 
     /**
      * @var Collection<int,Contribution>
@@ -138,9 +91,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         $this->contributions = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString() : string {
         return $this->title;
     }
@@ -166,7 +116,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     }
 
     public function getSlug() : string {
-        if ($this->season) {
+        if ($this->season && $this->season->getId()) {
             return sprintf('S%02dE%02d', $this->season->getNumber(), $this->number);
         }
 
@@ -269,9 +219,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this;
     }
 
-    /**
-     * @return string[]
-     */
     public function getSubjects() : array {
         return $this->subjects;
     }
@@ -292,11 +239,22 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this;
     }
 
-    /**
-     * @return Collection<int,Contribution>
-     */
     public function getContributions() : Collection {
         return $this->contributions;
+    }
+
+    public function getContributionsGroupedByPerson() : array {
+        $contributions = [];
+
+        foreach ($this->contributions as $contribution) {
+            $person = $contribution->getPerson();
+            if ( ! array_key_exists($person->getId(), $contributions)) {
+                $contributions[$person->getId()] = [];
+            }
+            $contributions[$person->getId()][] = $contribution;
+        }
+
+        return $contributions;
     }
 
     public function addContribution(Contribution $contribution) : self {
@@ -330,25 +288,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return null;
     }
 
-    public function getPreserved() : ?bool {
-        return $this->preserved;
-    }
-
-    public function setPreserved(bool $preserved) : self {
-        $this->preserved = $preserved;
-
-        return $this;
-    }
-
-    /**
-     * Sets the updated timestamp.
-     */
-    #[ORM\PreUpdate]
-    public function preUpdate() : void {
-        parent::preUpdate();
-        $this->preserved = false;
-    }
-
     public function getLanguage() : ?Language {
         return $this->language;
     }
@@ -367,5 +306,106 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         $this->permissions = $permissions;
 
         return $this;
+    }
+
+    public function getStatus() : array {
+        $errors = [];
+        $warnings = [];
+
+        if (empty(trim(strip_tags($this->getGuid() ?? '')))) {
+            $warnings['Guid'] = 'No global unique identifier';
+        }
+        if (null === $this->getPodcast()) {
+            $errors['Podcast'] = 'No podcast';
+        }
+        if (null === $this->getSeason()) {
+            $errors['Season'] = 'No season';
+        }
+        if (null === $this->getNumber()) {
+            $errors['Episode number'] = 'No episode number';
+        }
+        if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
+            $errors['Title'] = 'No title';
+        }
+        if (empty(trim(strip_tags($this->getSubTitle() ?? '')))) {
+            $errors['Subtitle'] = 'No subtitle';
+        }
+        if (null === $this->getDate()) {
+            $errors['Date'] = 'No date';
+        }
+        if (null === $this->getRunTime()) {
+            $errors['Run time'] = 'No run time';
+        }
+        if (null === $this->getLanguage()) {
+            $errors['Language'] = 'No primary language';
+        }
+        if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
+            $errors['Description'] = 'No description';
+        }
+        if (empty(trim(strip_tags($this->getBibliography() ?? '')))) {
+            $errors['Bibliography'] = 'No bibliography';
+        }
+        if (empty(trim(strip_tags($this->getTranscript() ?? '')))) {
+            $errors['Transcript'] = 'No transcript';
+        }
+        if (empty(trim(strip_tags($this->getPermissions() ?? '')))) {
+            $errors['Permissions'] = 'No permissions';
+        }
+        if (null === $this->getSubjects() || 0 === count($this->getSubjects())) {
+            $errors['Subjects'] = 'No subjects';
+        }
+        if (null === $this->getContributions() || 0 === count($this->getContributions())) {
+            $errors['Contributions'] = 'No contributions';
+        }
+
+        if (0 === count($this->getAudios())) {
+            $errors['Audios'] = 'No audio';
+        }
+        foreach ($this->getAudios() as $audio) {
+            $audioWarnings = [];
+            if (empty(trim(strip_tags($audio->getDescription() ?? '')))) {
+                $audioWarnings['Description'] = 'No description';
+            }
+            if (empty(trim(strip_tags($audio->getLicense() ?? '')))) {
+                $audioWarnings['License'] = 'No license';
+            }
+            if (count($audioWarnings) > 0) {
+                $warnings["Audio {$audio->getOriginalName()}"] = $audioWarnings;
+            }
+        }
+
+        if (0 === count($this->getImages())) {
+            $errors['Images'] = 'No images';
+        }
+        foreach ($this->getImages() as $image) {
+            $imageWarnings = [];
+            if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
+                $imageWarnings['Description'] = 'No description';
+            }
+            if (empty(trim(strip_tags($image->getLicense() ?? '')))) {
+                $imageWarnings['License'] = 'No license';
+            }
+            if (count($imageWarnings) > 0) {
+                $warnings["Image {$image->getOriginalName()}"] = $imageWarnings;
+            }
+        }
+
+        foreach ($this->getPdfs() as $pdf) {
+            $pdfWarnings = [];
+            if (empty(trim(strip_tags($pdf->getDescription() ?? '')))) {
+                $pdfWarnings['Description'] = 'No description';
+            }
+            if (empty(trim(strip_tags($pdf->getLicense() ?? '')))) {
+                $pdfWarnings['License'] = 'No license';
+            }
+            if (count($pdfWarnings) > 0) {
+                $warnings["PDF {$pdf->getOriginalName()}"] = $pdfWarnings;
+            }
+        }
+
+        return [
+            'errors' => $errors,
+            'warnings' => $warnings,
+        ];
     }
 }

@@ -1,30 +1,66 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Institution Details {% endblock %}
+{% block title %}Institution {{ institution.name }}{% endblock %}
 
- {% block pageheader %}
-     <h1>Institution Details</h1>
- {% endblock %}
+{% block breadcrumbs %}
+    <li class="breadcrumb-item"><a href="{{ path('homepage') }}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('institution_index') }}">Institutions</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ institution.name }}</li>
+{% endblock %}
+
+{% block action_buttons %}
+    {% if is_granted('ROLE_CONTENT_ADMIN') %}
+        <a href="{{ path('institution_edit', {'id': institution.id }) }}" class="btn btn-primary">
+            <i class="bi bi-pencil-square"></i> Edit
+        </a>
+        <form class="d-inline-block" method="post" action="{{ path('institution_delete', {'id': institution.id }) }}" onsubmit="return confirm('Are you sure you want to delete this institution?');">
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="hidden" name="_token" value="{{ csrf_token("delete_institution" ~ institution.id) }}">
+            <button class="btn btn-danger w-100"><i class="bi bi-trash"></i> Delete</button>
+        </form>
+    {% endif %}
+{% endblock %}
 
 {% block body %}
+    <table class="table table-striped table-sm">
+        <tbody>
+            <tr>
+                <th>Country</th>
+                <td>
+                    {{ institution.country }}
+                </td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>
+                    {{ institution.name }}
+                </td>
+            </tr>
 
-    {% if is_granted('ROLE_CONTENT_ADMIN') %}
-        <div class='btn-toolbar'>
-            <div class='btn-group ms-auto'>
-                <a href="{{ path('institution_edit', {'id': institution.id }) }}" class="btn btn-light">
-                    <span class="bi bi-pencil-square"></span> Edit </a>
-            </div>
-            <div class='btn-group'>
-                <form class='delete-form' method="post" action="{{ path('institution_delete', {'id': institution.id }) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <input type="hidden" name="_token" value="{{ csrf_token("delete" ~ institution.id) }}">
-                    <button class="btn btn-danger"><span class="bi bi-trash"></span> Delete</button>
-                </form>
-            </div>
-        </div>
-    {% endif %}
-
-    {% embed 'institution/partial/detail.html.twig' %}
-    {% endembed %}
-
+            <tr>
+                <th>Person</th>
+                <td>
+                    {% if institution.people|length > 0 %}
+                        <ul class="list-unstyled">
+                            {% for person in institution.people %}
+                                <li>
+                                    <a href='{{ path("person_show", {"id":person.id }) }}'>
+                                        {{ person }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Created</th>
+                <td>{{ institution.created|date }}</td>
+            </tr>
+            <tr>
+                <th>Updated</th>
+                <td>{{ institution.updated|date }}</td>
+            </tr>
+        </tbody>
+    </table>
 {% endblock %}

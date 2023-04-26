@@ -2,32 +2,70 @@
 
 {% block title %}Podcast List{% endblock %}
 
-{% block pageheader %}
-    <h1>Podcast List</h1>
-    <p class="count">
-        Displaying {{ podcasts|length }} podcasts of {{ podcasts.getTotalItemCount }} total.
-    </p>
+{% block breadcrumbs %}
+    <li class="breadcrumb-item"><a href="{{ path('homepage') }}">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Podcasts</li>
+{% endblock %}
+
+{% block action_buttons %}
+    {% if is_granted('ROLE_CONTENT_ADMIN') %}
+        <a href="{{ path('import_new') }}" class="btn btn-primary">
+            <i class="bi bi-cloud-arrow-down-fill"></i> RSS Import
+        </a>
+        <a href="{{ path('podcast_new') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> New
+        </a>
+    {% endif %}
 {% endblock %}
 
 {% block body %}
-
-    <div class='btn-toolbar'>
-        <div class='btn-group ms-auto'>
-            {% if is_granted('ROLE_CONTENT_ADMIN') %}
-                <a href="{{ path('podcast_new') }}" class="btn btn-light">
-                    <span class="bi bi-plus"></span> New </a>
-            {% endif %}
-
-            <a href="{{ path('podcast_search') }}" class="btn btn-light">
-                <span class="bi bi-search"></span> Search </a>
+    <form class="my-3" method="get">
+        <div class="input-group">
+            <button class="btn btn-outline-secondary" type="button" data-bs-toggle="popover" data-bs-title="Full text searching options" data-bs-content="<ul class='list-group list-group-flush'><li class='list-group-item'><code>shakespeare</code> - shakespeare should be present, but might not be</li><li class='list-group-item'><code>shakes*</code> - words starting with shakes should be present</li><li class='list-group-item'><code>+agnes</code> - agnes must be present</li><li class='list-group-item'><code>-fisher</code> - fisher must not be present</li><li class='list-group-item'>Combinations are OK: <code>+agnes -fisher</code> finds Anges who isn't a Fisher</li><li class='list-group-item'>Phrases are OK: <code>&quot;nee agnes&quot;</code> finds rows that contain the literal phrase.</ul>">
+                <i class="bi bi-question-circle"></i>
+            </button>
+            <input type="search" class="form-control" placeholder="Search..." aria-label="Search" name="q" id="q" value="{{ q }}" />
+            <button class="btn btn-primary" type="submit" id='btn-search'>
+                <i class="bi bi-search"></i> Search
+            </button>
         </div>
+    </form>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-striped table-sm align-middle">
+            <caption>
+                {{ podcasts.getTotalItemCount ~ ' ' ~ (q ? 'found' : 'total') }}.
+            </caption>
+            <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Website</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for podcast in podcasts %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('podcast_show', { 'id': podcast.id }) }}">
+                                {{ podcast.title }}
+                            </a>
+                        </td>
+                        <td>
+                            {% if podcast.website %}
+                                <a href='{{ podcast.website }}'>{{ podcast.website }}</a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% embed 'status/partial/badge.html.twig' with {
+                                'status': podcast.status,
+                            } %}
+                            {% endembed %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-
-    {% embed 'podcast/partial/table.html.twig' %}
-    {% endembed %}
-
-    <div class="navigation">
-        {{ knp_pagination_render(podcasts) }}
-    </div>
+    {{ knp_pagination_render(podcasts) }}
 
 {% endblock %}

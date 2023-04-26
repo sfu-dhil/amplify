@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Repository;
 
+use App\Repository\PodcastRepository;
 use App\Repository\SeasonRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class SeasonRepositoryTest extends ServiceTestCase {
-    private const TYPEAHEAD_QUERY = 'title';
+    private const SEARCH_QUERY = 'title';
 
     private ?SeasonRepository $repo = null;
 
@@ -16,18 +17,11 @@ class SeasonRepositoryTest extends ServiceTestCase {
         $this->assertInstanceOf(SeasonRepository::class, $this->repo);
     }
 
-    public function testIndexQuery() : void {
-        $query = $this->repo->indexQuery();
-        $this->assertCount(4, $query->execute());
-    }
-
     public function testTypeaheadQuery() : void {
-        $query = $this->repo->typeaheadQuery(self::TYPEAHEAD_QUERY);
-        $this->assertCount(4, $query->execute());
-    }
+        $podcastRepository = self::getContainer()->get(PodcastRepository::class);
+        $podcast = $podcastRepository->find(2);
 
-    public function testSearchQuery() : void {
-        $query = $this->repo->searchQuery(self::TYPEAHEAD_QUERY);
+        $query = $this->repo->typeaheadQuery($podcast, self::SEARCH_QUERY);
         $this->assertCount(4, $query->execute());
     }
 

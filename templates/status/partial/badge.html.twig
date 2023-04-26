@@ -1,0 +1,44 @@
+
+{%- set items = status.errors|merge(status.warnings) -%}
+{%- set label = items|length == 0 ? 'Ready' : items|first is iterable ? items|keys|first : items|first -%}
+{%- set displayPopover = items|length > 1 or items|first is iterable -%}
+{%- if status.errors|length > 0 -%}
+    {%- set itemColor = 'danger' -%}
+{%- elseif status.warnings|length > 0 -%}
+    {%- set itemColor = 'warning' -%}
+{%- else -%}
+    {%- set itemColor = 'success' -%}
+{%- endif -%}
+<button class="btn btn-link text-decoration-none badge rounded-pill text-bg-{{ itemColor }} position-relative"
+    {% if displayPopover %}
+        data-bs-toggle="popover"
+        data-bs-trigger="focus"
+        data-bs-placement="bottom"
+        data-bs-content="
+            <ul class='list-group list-group-flush list-group-numbered'>
+                {%- for key, item in items -%}
+                    {%- set listItemColor = key in status.errors|keys ? 'danger' : 'warning' -%}
+                    <li class='list-group-item text-truncate list-group-item-{{ listItemColor }}'>
+                    {%- if item is iterable -%}
+                        {{ key|e('html_attr') }}
+                        <ul class='list-unstyled ms-4'>
+                            {%- for subitem in item -%}
+                                <li>{{ subitem|e('html_attr') }}</li>
+                            {%- endfor -%}
+                        </ul>
+                    {%- else -%}
+                        {{ item|e('html_attr') }}
+                    {%- endif -%}
+                    </li>
+                {%- endfor -%}
+            </ul>
+        "
+    {% endif %}
+>
+    <span class="status-badge-label text-truncate">
+        {{ label }}
+    </span>
+    {%- if displayPopover -%}
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">{{ status.errors|length + status.warnings|length }}</span>
+    {%- endif -%}
+</button>

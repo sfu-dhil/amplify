@@ -1,0 +1,45 @@
+{% set statusColor = export.isActive ? '' : (export.isSuccess ? 'text-success' : 'text-danger') %}
+{% set progressBarClass = export.isActive ? 'progress-bar-striped progress-bar-animated' : (export.isSuccess ? 'bg-success' : 'bg-danger') %}
+<figure>
+    <div class="progress">
+        <div class="progress-bar {{ progressBarClass }}" role="progressbar" aria-label="Animated striped example" aria-valuenow="{{ export.progress ?? 0 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ export.progress ?? 0 }}%">
+            {{ export.progress ?? 0 }}%
+        </div>
+    </div>
+    <figcaption class="figure-caption {{ statusColor }}">
+        {% if export.status == 'PENDING' %}
+            Job Queued
+        {% elseif export.status == 'WORKING' %}
+            Job In Progress
+        {% elseif export.status == 'SUCCESS' %}
+            Job Successfully Completed
+        {% elseif export.status == 'FAILURE' %}
+            Job Failed
+        {% endif %}
+        {% if export.isActive %}
+            - Started <abbr title="{{ export.created|date }}">{{ export.created|ago }}</abbr>
+        {% else %}
+            - Finished <abbr title="{{ export.updated|date }}">{{ export.updated|ago }}</abbr>
+        {% endif %}
+        <p>{{ export.message }}</p>
+    </figcaption>
+</figure>
+{% if export.isActive %}
+    <p class="card-text">The export job may take several minutes to complete.</p>
+{% endif %}
+{% if export.isActive %}
+    <div class="d-grid ">
+        <div class="noise mx-auto">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i>
+        </div>
+    </div>
+{% elseif export.path %}
+    <a class="btn btn-primary btn-lg" href="{{ path('export_download', {'podcast_id': export.podcast.id, 'id': export.id}) }}" target="_blank"><i class="bi bi-cloud-arrow-down-fill"></i> Download Export</a>
+{% endif %}

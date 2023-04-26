@@ -1,0 +1,13 @@
+{% extends '@NinesMedia/image/new.html.twig' %}
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item"><a href="{{ path('homepage') }}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': entity.podcast.id}) }}">{{ entity.podcast.title }}</a></li>
+    {% if entity.season %}
+        <li class="breadcrumb-item"><a href="{{ path('season_show', {'podcast_id': entity.podcast.id, 'id': entity.season.id}) }}">{{ entity.season.title }}</a></li>
+    {% endif %}
+    <li class="breadcrumb-item"><a href="{{ path('episode_show', {'podcast_id': entity.podcast.id, 'id':entity.id}) }}">{{ entity.title }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('episode_image_show', {'podcast_id': entity.podcast.id, 'episode_id': entity.id, 'id': image.id}) }}">{{ image.originalName }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+{% endblock %}

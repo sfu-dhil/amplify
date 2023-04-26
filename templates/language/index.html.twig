@@ -2,58 +2,24 @@
 
 {% block title %}Language List{% endblock %}
 
-{% block pageheader %}
-    <h1>Language List</h1>
-    <p class="count">
-        Displaying {{ languages|length }} languages of {{ languages.getTotalItemCount }} total.
-    </p>
+{% block breadcrumbs %}
+    <li class="breadcrumb-item"><a href="{{ path('homepage') }}">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Languages</li>
+{% endblock %}
+
+{% block action_buttons %}
+    {% if is_granted('ROLE_CONTENT_ADMIN') %}
+        <a href="{{ path('language_new') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> New
+        </a>
+    {% endif %}
 {% endblock %}
 
 {% block body %}
-
-    <div class='btn-toolbar'>
-        <div class='btn-group ms-auto'>
-            {% if is_granted('ROLE_CONTENT_ADMIN') %}
-                <a href="{{ path('language_new') }}" class="btn btn-light">
-                    <span class="bi bi-plus"></span> New </a>
-            {% endif %}
-
-            <a href="{{ path('language_search') }}" class="btn btn-light">
-                <span class="bi bi-search"></span> Search </a>
-        </div>
-    </div>
-
-    <table class="table table-bordered table-condensed table-hover table-striped">
-        <thead>
-            <tr>
-                <th>Language Code</th>
-                <th>Label</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for langauge in languages %}
-                <tr>
-                    <td>
-                        <a href="{{ path('language_show', {'id': langauge.id}) }}">
-                            {{ langauge.name }}
-                        </a>
-                    </td>
-                    <td>
-                        <a href="{{ path('language_show', {'id': langauge.id}) }}">
-                            {{ langauge.label }}
-                        </a>
-                    </td>
-                    <td>
-                        {{ langauge.description|raw }}
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <div class="navigation">
-        {{ knp_pagination_render(languages) }}
-    </div>
-
+    {% embed '@NinesUtil/term/partial/index.html.twig' with {
+        'terms': languages,
+        'path': 'language_show',
+        'caption': languages.getTotalItemCount ~ ' ' ~ (q ? 'found' : 'total'),
+    } %}
+    {% endembed %}
 {% endblock %}

@@ -13,18 +13,13 @@ use Nines\UtilBundle\Entity\AbstractEntity;
 #[ORM\Table]
 #[ORM\UniqueConstraint(name: 'institutions_uniq', columns: ['country', 'name'])]
 #[ORM\Entity(repositoryClass: InstitutionRepository::class)]
+#[ORM\Index(name: 'institution_ft', columns: ['name'], flags: ['fulltext'])]
 class Institution extends AbstractEntity {
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string', length: 40, nullable: false)]
-    private $country;
+    private ?string $country = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string', length: 100, nullable: false)]
-    private $name;
+    private ?string $name = null;
 
     /**
      * @var Collection<int,Person>

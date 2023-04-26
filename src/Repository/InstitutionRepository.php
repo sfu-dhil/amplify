@@ -24,28 +24,31 @@ class InstitutionRepository extends ServiceEntityRepository {
 
     public function indexQuery() : Query {
         return $this->createQueryBuilder('institution')
-            ->orderBy('institution.id')
+            ->orderBy('institution.name', 'ASC')
+            ->addOrderBy('institution.country', 'ASC')
             ->getQuery()
         ;
     }
 
     public function typeaheadQuery(string $q) : Query {
-        $qb = $this->createQueryBuilder('institution');
-        $qb->andWhere('institution.name LIKE :q');
-        $qb->orderBy('institution.name', 'ASC');
-        $qb->addOrderBy('institution.country', 'ASC');
-        $qb->setParameter('q', "%{$q}%");
-
-        return $qb->getQuery();
+        return $this->createQueryBuilder('institution')
+            ->andWhere('institution.name LIKE :q')
+            ->orderBy('institution.name', 'ASC')
+            ->addOrderBy('institution.country', 'ASC')
+            ->setParameter('q', "%{$q}%")
+            ->getQuery()
+        ;
     }
 
     public function searchQuery(string $q) : Query {
-        $qb = $this->createQueryBuilder('institution');
-        $qb->andWhere('institution.name LIKE :q');
-        $qb->orderBy('institution.name', 'ASC');
-        $qb->addOrderBy('institution.country', 'ASC');
-        $qb->setParameter('q', "%{$q}%");
-
-        return $qb->getQuery();
+        return $this->createQueryBuilder('institution')
+            ->addSelect('MATCH (institution.name) AGAINST(:q BOOLEAN) as HIDDEN score')
+            ->andHaving('score > 0')
+            ->orderBy('score', 'DESC')
+            ->addOrderBy('institution.name', 'ASC')
+            ->addOrderBy('institution.country', 'ASC')
+            ->setParameter('q', $q)
+            ->getQuery()
+        ;
     }
 }

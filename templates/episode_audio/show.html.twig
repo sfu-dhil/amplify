@@ -1,0 +1,48 @@
+{% extends '@NinesMedia/audio/show.html.twig' %}
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item"><a href="{{ path('homepage') }}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': entity.podcast.id}) }}">{{ entity.podcast.title }}</a></li>
+    {% if entity.season %}
+        <li class="breadcrumb-item"><a href="{{ path('season_show', {'podcast_id': entity.podcast.id, 'id': entity.season.id}) }}">{{ entity.season.title }}</a></li>
+    {% endif %}
+    <li class="breadcrumb-item"><a href="{{ path('episode_show', {'podcast_id': entity.podcast.id, 'id':entity.id}) }}">{{ entity.title }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ audio.originalName }}</li>
+{% endblock %}
+
+{% block body %}
+    <figure class="text-center">
+        <audio controls src='{{ path('nines_media_audio_play', {'id': audio.id}) }}' type='{{ audio.mimeType }}' class="w-100">
+            Your browser does not support playing audio.
+        </audio>
+        <figcaption class="figure-caption">{{ audio.originalName }}</figcaption>
+    </figure>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 my-3 g-4">
+        <div class="col">
+            <h6><i class="bi bi-file-earmark"></i> Mime Type</h6>
+            {{ audio.mimeType }}
+        </div>
+        <div class="col">
+            <h6><i class="bi bi-file-earmark"></i> File Size</h6>
+            {{ audio.fileSize|byte_size }}
+        </div>
+        <div class="col">
+            <h6><i class="bi bi-calendar-event"></i> Created</h6>
+            {{ audio.created|date('Y-m-d') }}
+        </div>
+        <div class="col">
+            <h6><i class="bi bi-calendar-event"></i> Last Updated</h6>
+            {{ audio.updated|date('Y-m-d') }}
+        </div>
+        <div class="col">
+            <h6><i class="bi bi-info-circle"></i> Description</h6>
+            {{ audio.description|default('')|sanitize_html }}
+        </div>
+        <div class="col">
+            <h6><i class="bi bi-list-task"></i> License</h6>
+            {{ audio.license|default('')|sanitize_html }}
+        </div>
+    </div>
+{% endblock %}

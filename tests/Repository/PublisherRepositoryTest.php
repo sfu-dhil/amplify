@@ -8,7 +8,7 @@ use App\Repository\PublisherRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class PublisherRepositoryTest extends ServiceTestCase {
-    private const TYPEAHEAD_QUERY = 'name';
+    private const SEARCH_QUERY = 'name';
 
     private ?PublisherRepository $repo = null;
 
@@ -22,12 +22,12 @@ class PublisherRepositoryTest extends ServiceTestCase {
     }
 
     public function testTypeaheadQuery() : void {
-        $query = $this->repo->typeaheadQuery(self::TYPEAHEAD_QUERY);
+        $query = $this->repo->typeaheadQuery(self::SEARCH_QUERY);
         $this->assertCount(4, $query->execute());
     }
 
     public function testSearchQuery() : void {
-        $query = $this->repo->searchQuery(self::TYPEAHEAD_QUERY);
+        $query = $this->repo->searchQuery(self::SEARCH_QUERY);
         $this->assertCount(4, $query->execute());
     }
 

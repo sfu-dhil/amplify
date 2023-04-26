@@ -1,14 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block pageheader %}
-    <h1>Privacy Policy</h1>
-{% endblock %}
-
-{% block styles %}
+{% block breadcrumbs %}
+    <li class="breadcrumb-item"><a href="{{ path('homepage') }}">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Privacy Policy</li>
 {% endblock %}
 
 {% block body %}
-
     <p>Effective date: January 8, 2019</p>
     <p>This page informs you of our policies regarding the collection, use, and disclosure of personal data and user
         analytics when you use this website and the choices you have associated with that data. The Digital Humanities
@@ -22,7 +19,7 @@
         be used to contact or identify you ("Personal Data"). This information will only be collected by request. You
         are not required to provide this information to use the website. Personally identifiable information may
         include, but is not limited to email address and first name and last name.</p>
-    <h2>User Analytics</h2>
+    <h4>User Analytics</h4>
     <p>This website uses matomo to collect anonymous usage statistics. The usage information is limited to:</p>
     <ul>
         <li>The date and time of your visit to the website</li>
@@ -34,31 +31,30 @@
     <p>You may choose not to have this information tracked, either by configuring your web browser to include a
         <a href="https://www.eff.org/deeplinks/2012/06/how-turn-do-not-track-your-browser">“Do not track”</a> request
         with each page view or by opting-out at the bottom of this page.</p>
-    <h2>Content</h2>
+    <h4>Content</h4>
     <p>This website does not allow anyone other than designated administrators to publish content, such as comments or
         uploaded images. We may accept comments on individual pages, but those comments will not be made public until an
         administrator approves and publishes each one.</p>
     <p>This website does not hotlink images, videos, or other content from other sites.</p>
     <p>This website does not use fonts or icons from third-party servers which could be used to track users.</p>
-    <h2>Additional Software</h2>
+    <h4>Additional Software</h4>
     <p>This website does not load software in your web browser that serves any purpose beyond displaying the website and
         its assets&emdash;meaning it does not use your user agent to mine cryptocurrency, for example.</p>
-    <h2>Encryption</h2>
+    <h4>Encryption</h4>
     <p>This website uses encryption provided by Let’s Encrypt, and all requests not using encryption are redirected to
         the equivalent encrypted page. This encryption prevents anyone between your web browser and the web server (such
         as your Internet service provider) from seeing details about what was requested or what the resulting page
         contains.</p>
-    <h2>More Information</h2>
+    <h4>More Information</h4>
     <p>If you have any questions about this Privacy Policy, please contact us.</p>
     <ul>
         <li>By email: <a href="mailto:dhil@sfu.ca">dhil@sfu.ca</a></li>
         <li>By visiting this page on our website: <a href="{{ url('privacy') }}">{{ url('privacy') }}</a></li>
     </ul>
-    <h2>Opt Out of Data Collection</h2>
-
-    <div class="card card-light">
+    <h4>Opt Out of Data Collection</h4>
+    <div class="card">
         <div class="card-header">
-            <h5 class="card-title">Analytics Settings</h5>
+            <h4 class="card-title">Analytics Settings</h4>
         </div>
         <div class="card-body">
             {% if matomo_enabled %}

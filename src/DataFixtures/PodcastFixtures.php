@@ -33,7 +33,7 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface, Fixt
      */
     public function load(ObjectManager $em) : void {
         $this->imageManager->setCopy(true);
-        for ($i = 0; $i < 4; $i++) {
+        for ($i = 0; $i < 8; $i++) {
             $fixture = new Podcast();
             $fixture->setTitle('Title ' . $i);
             $fixture->setSubTitle('SubTitle ' . $i);
@@ -47,11 +47,10 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $em->persist($fixture);
             $em->flush();
 
-            $imageFile = self::IMAGE_FILES[$i];
+            $imageFile = self::IMAGE_FILES[$i % 4];
             $upload = new UploadedFile(dirname(__FILE__, 3) . '/tests/data/image/' . $imageFile, $imageFile, 'image/jpeg', null, true);
             $image = new Image();
             $image->setFile($upload);
-            $image->setPublic(0 === $i % 2);
             $image->setOriginalName($imageFile);
             $image->setDescription("<p>This is paragraph {$i}</p>");
             $image->setLicense("<p>This is paragraph {$i}</p>");

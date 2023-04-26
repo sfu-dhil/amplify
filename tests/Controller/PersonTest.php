@@ -10,67 +10,55 @@ use Nines\UtilBundle\TestCase\ControllerTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class PersonTest extends ControllerTestCase {
-    // Change this to HTTP_OK when the site is public.
-    private const ANON_RESPONSE_CODE = Response::HTTP_FOUND;
-
-    private const TYPEAHEAD_QUERY = 'fullname';
+    private const SEARCH_QUERY = 'fullname';
 
     public function testAnonIndex() : void {
-        $crawler = $this->client->request('GET', '/person/');
-        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
-        $this->assertSame(0, $crawler->selectLink('New')->count());
+        $crawler = $this->client->request('GET', '/people');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
     }
 
     public function testUserIndex() : void {
         $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/person/');
+        $crawler = $this->client->request('GET', '/people');
         $this->assertResponseIsSuccessful();
-        $this->assertSame(0, $crawler->selectLink('New')->count());
+        $this->assertSame(0, $crawler->filter('.page-actions')->selectLink('New')->count());
     }
 
     public function testAdminIndex() : void {
         $this->login(UserFixtures::ADMIN);
-        $crawler = $this->client->request('GET', '/person/');
+        $crawler = $this->client->request('GET', '/people');
         $this->assertResponseIsSuccessful();
-        $this->assertSame(1, $crawler->selectLink('New')->count());
+        $this->assertSame(1, $crawler->filter('.page-actions')->selectLink('New')->count());
     }
 
     public function testAnonShow() : void {
-        $crawler = $this->client->request('GET', '/person/1');
-        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
-        $this->assertSame(0, $crawler->selectLink('Edit')->count());
+        $crawler = $this->client->request('GET', '/people/1');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
     }
 
     public function testUserShow() : void {
         $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/person/1');
+        $crawler = $this->client->request('GET', '/people/1');
         $this->assertResponseIsSuccessful();
-        $this->assertSame(0, $crawler->selectLink('Edit')->count());
+        $this->assertSame(0, $crawler->filter('.page-actions')->selectLink('Edit')->count());
     }
 
     public function testAdminShow() : void {
         $this->login(UserFixtures::ADMIN);
-        $crawler = $this->client->request('GET', '/person/1');
+        $crawler = $this->client->request('GET', '/people/1');
         $this->assertResponseIsSuccessful();
-        $this->assertSame(1, $crawler->selectLink('Edit')->count());
+        $this->assertSame(1, $crawler->filter('.page-actions')->selectLink('Edit')->count());
     }
 
     public function testAnonTypeahead() : void {
-        $this->client->request('GET', '/person/typeahead?q=' . self::TYPEAHEAD_QUERY);
+        $this->client->request('GET', '/people/typeahead?q=' . self::SEARCH_QUERY);
         $response = $this->client->getResponse();
-        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
-        if (self::ANON_RESPONSE_CODE === Response::HTTP_FOUND) {
-            // If authentication is required stop here.
-            return;
-        }
-        $this->assertSame('application/json', $response->headers->get('content-type'));
-        $json = json_decode($response->getContent());
-        $this->assertCount(4, $json);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
     }
 
     public function testUserTypeahead() : void {
         $this->login(UserFixtures::USER);
-        $this->client->request('GET', '/person/typeahead?q=' . self::TYPEAHEAD_QUERY);
+        $this->client->request('GET', '/people/typeahead?q=' . self::SEARCH_QUERY);
         $response = $this->client->getResponse();
         $this->assertResponseIsSuccessful();
         $this->assertSame('application/json', $response->headers->get('content-type'));
@@ -80,7 +68,7 @@ class PersonTest extends ControllerTestCase {
 
     public function testAdminTypeahead() : void {
         $this->login(UserFixtures::ADMIN);
-        $this->client->request('GET', '/person/typeahead?q=' . self::TYPEAHEAD_QUERY);
+        $this->client->request('GET', '/people/typeahead?q=' . self::SEARCH_QUERY);
         $response = $this->client->getResponse();
         $this->assertResponseIsSuccessful();
         $this->assertSame('application/json', $response->headers->get('content-type'));
@@ -89,24 +77,13 @@ class PersonTest extends ControllerTestCase {
     }
 
     public function testAnonSearch() : void {
-        $crawler = $this->client->request('GET', '/person/search');
-        $this->assertResponseStatusCodeSame(self::ANON_RESPONSE_CODE);
-        if (self::ANON_RESPONSE_CODE === Response::HTTP_FOUND) {
-            // If authentication is required stop here.
-            return;
-        }
-
-        $form = $crawler->selectButton('btn-search')->form([
-            'q' => 'person',
-        ]);
-
-        $responseCrawler = $this->client->submit($form);
-        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $crawler = $this->client->request('GET', '/people');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
     }
 
     public function testUserSearch() : void {
         $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/person/search');
+        $crawler = $this->client->request('GET', '/people');
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('btn-search')->form([
@@ -119,7 +96,7 @@ class PersonTest extends ControllerTestCase {
 
     public function testAdminSearch() : void {
         $this->login(UserFixtures::ADMIN);
-        $crawler = $this->client->request('GET', '/person/search');
+        $crawler = $this->client->request('GET', '/people');
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('btn-search')->form([
@@ -131,22 +108,22 @@ class PersonTest extends ControllerTestCase {
     }
 
     public function testAnonEdit() : void {
-        $crawler = $this->client->request('GET', '/person/1/edit');
+        $crawler = $this->client->request('GET', '/people/1/edit');
         $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserEdit() : void {
         $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/person/1/edit');
+        $crawler = $this->client->request('GET', '/people/1/edit');
         $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminEdit() : void {
         $this->login(UserFixtures::ADMIN);
-        $formCrawler = $this->client->request('GET', '/person/1/edit');
+        $formCrawler = $this->client->request('GET', '/people/1/edit');
         $this->assertResponseIsSuccessful();
 
-        $form = $formCrawler->selectButton('Save')->form([
+        $form = $formCrawler->selectButton('Update')->form([
             'person[fullname]' => 'Updated Fullname',
             'person[sortableName]' => 'Updated SortableName',
             'person[location]' => 'Updated Location',
@@ -155,39 +132,28 @@ class PersonTest extends ControllerTestCase {
         $this->overrideField($form, 'person[institution]', '2');
 
         $this->client->submit($form);
-        $this->assertResponseRedirects('/person/1', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/people/1', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
     }
 
     public function testAnonNew() : void {
-        $crawler = $this->client->request('GET', '/person/new');
-        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
-    }
-
-    public function testAnonNewPopup() : void {
-        $crawler = $this->client->request('GET', '/person/new_popup');
+        $crawler = $this->client->request('GET', '/people/new');
         $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
     }
 
     public function testUserNew() : void {
         $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/person/new');
-        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function testUserNewPopup() : void {
-        $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/person/new_popup');
+        $crawler = $this->client->request('GET', '/people/new');
         $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAdminNew() : void {
         $this->login(UserFixtures::ADMIN);
-        $formCrawler = $this->client->request('GET', '/person/new');
+        $formCrawler = $this->client->request('GET', '/people/new');
         $this->assertResponseIsSuccessful();
 
-        $form = $formCrawler->selectButton('Save')->form([
+        $form = $formCrawler->selectButton('Create')->form([
             'person[fullname]' => 'Updated Fullname',
             'person[sortableName]' => 'Updated SortableName',
             'person[location]' => 'Updated Location',
@@ -196,42 +162,22 @@ class PersonTest extends ControllerTestCase {
         $this->overrideField($form, 'person[institution]', '2');
 
         $this->client->submit($form);
-        $this->assertResponseRedirects('/person/5', Response::HTTP_FOUND);
-        $responseCrawler = $this->client->followRedirect();
-        $this->assertResponseIsSuccessful();
-    }
-
-    public function testAdminNewPopup() : void {
-        $this->login(UserFixtures::ADMIN);
-        $formCrawler = $this->client->request('GET', '/person/new');
-        $this->assertResponseIsSuccessful();
-
-        $form = $formCrawler->selectButton('Save')->form([
-            'person[fullname]' => 'Updated Fullname',
-            'person[sortableName]' => 'Updated SortableName',
-            'person[location]' => 'Updated Location',
-            'person[bio]' => '<p>Updated Text</p>',
-        ]);
-        $this->overrideField($form, 'person[institution]', '2');
-
-        $this->client->submit($form);
-        $this->assertResponseRedirects('/person/6', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/people/5', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
     }
 
     public function testAdminDelete() : void {
-        /** @var PersonRepository $repo */
         $repo = self::getContainer()->get(PersonRepository::class);
         $preCount = count($repo->findAll());
 
         $this->login(UserFixtures::ADMIN);
-        $crawler = $this->client->request('GET', '/person/1');
+        $crawler = $this->client->request('GET', '/people/1');
         $this->assertResponseIsSuccessful();
         $form = $crawler->selectButton('Delete')->form();
         $this->client->submit($form);
 
-        $this->assertResponseRedirects('/person/', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/people', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
 

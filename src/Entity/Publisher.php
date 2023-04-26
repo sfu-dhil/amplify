@@ -11,36 +11,22 @@ use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 #[ORM\Entity(repositoryClass: PublisherRepository::class)]
+#[ORM\Index(name: 'publisher_ft', columns: ['name', 'description'], flags: ['fulltext'])]
 class Publisher extends AbstractEntity {
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string', nullable: false)]
-    private $name;
+    private ?string $name = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string', nullable: true)]
-    private $location;
+    private ?string $location = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string', nullable: true)]
-    private $website;
+    private ?string $website = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'text')]
-    private $description;
+    private ?string $description = null;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'text')]
-    private $contact;
+    private ?string $contact = null;
 
     /**
      * @var Collection<int,Podcast>

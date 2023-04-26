@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Category;
 use App\Entity\Language;
 use App\Entity\Podcast;
 use App\Entity\Publisher;
@@ -35,7 +36,7 @@ class PodcastType extends AbstractType {
         ]);
         $builder->add('explicit', ChoiceType::class, [
             'label' => 'Explicit',
-            'expanded' => true,
+            'expanded' => false,
             'multiple' => false,
             'choices' => [
                 'Yes' => true,
@@ -43,12 +44,13 @@ class PodcastType extends AbstractType {
             ],
             'required' => true,
         ]);
-        $builder->add('description', TextareaType::class, [
-            'label' => 'Description',
+        $builder->add('website', UrlType::class, [
+            'label' => 'Website',
             'required' => true,
-            'attr' => [
-                'class' => 'tinymce',
-            ],
+        ]);
+        $builder->add('rss', UrlType::class, [
+            'label' => 'Rss',
+            'required' => true,
         ]);
         $builder->add('language', Select2EntityType::class, [
             'label' => 'Primary Language',
@@ -56,8 +58,15 @@ class PodcastType extends AbstractType {
             'remote_route' => 'language_typeahead',
             'allow_clear' => true,
             'attr' => [
-                'add_path' => 'language_new_popup',
+                'add_path' => 'language_new',
                 'add_label' => 'Add Language',
+            ],
+        ]);
+        $builder->add('description', TextareaType::class, [
+            'label' => 'Description',
+            'required' => true,
+            'attr' => [
+                'class' => 'tinymce',
             ],
         ]);
         $builder->add('copyright', TextareaType::class, [
@@ -70,20 +79,12 @@ class PodcastType extends AbstractType {
         ]);
         $builder->add('license', TextareaType::class, [
             'label' => 'License',
-            'required' => true,
+            'required' => false,
             'help' => 'Optional. See <a href="https://creativecommons.org/about/cclicenses/">CreativeCommons.org</a> for suggestions',
             'help_html' => true,
             'attr' => [
                 'class' => 'tinymce',
             ],
-        ]);
-        $builder->add('website', UrlType::class, [
-            'label' => 'Website',
-            'required' => true,
-        ]);
-        $builder->add('rss', UrlType::class, [
-            'label' => 'Rss',
-            'required' => true,
         ]);
         $builder->add('publisher', Select2EntityType::class, [
             'label' => 'Publisher',
@@ -91,7 +92,7 @@ class PodcastType extends AbstractType {
             'remote_route' => 'publisher_typeahead',
             'allow_clear' => true,
             'attr' => [
-                'add_path' => 'publisher_new_popup',
+                'add_path' => 'publisher_new',
                 'add_label' => 'Add Publisher',
             ],
         ]);
@@ -106,6 +107,24 @@ class PodcastType extends AbstractType {
                 'label' => false,
             ],
             'by_reference' => false,
+            'attr' => [
+                'class' => 'collection collection-complex',
+            ],
+        ]);
+        $builder->add('categories', CollectionType::class, [
+            'label' => 'Categories',
+            'required' => false,
+            'allow_add' => true,
+            'allow_delete' => true,
+            'delete_empty' => true,
+            'entry_type' => Select2EntityType::class,
+            'entry_options' => [
+                'label' => false,
+                'class' => Category::class,
+                'remote_route' => 'category_typeahead',
+                'allow_clear' => true,
+            ],
+            'by_reference' => true,
             'attr' => [
                 'class' => 'collection collection-complex',
             ],

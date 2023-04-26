@@ -28,8 +28,9 @@ RUN apt-get update \
         unzip \
         ghostscript \
         libicu-dev \
+        libapache2-mod-xsendfile \
     && cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
-    && a2enmod rewrite \
+    && a2enmod rewrite headers \
     && docker-php-ext-configure intl \
     && docker-php-ext-install xsl pdo pdo_mysql zip intl \
     && pecl install imagick pcov \

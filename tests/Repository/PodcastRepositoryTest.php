@@ -8,7 +8,7 @@ use App\Repository\PodcastRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class PodcastRepositoryTest extends ServiceTestCase {
-    private const TYPEAHEAD_QUERY = 'title';
+    private const SEARCH_QUERY = 'title';
 
     private ?PodcastRepository $repo = null;
 
@@ -18,17 +18,12 @@ class PodcastRepositoryTest extends ServiceTestCase {
 
     public function testIndexQuery() : void {
         $query = $this->repo->indexQuery();
-        $this->assertCount(4, $query->execute());
-    }
-
-    public function testTypeaheadQuery() : void {
-        $query = $this->repo->typeaheadQuery(self::TYPEAHEAD_QUERY);
-        $this->assertCount(4, $query->execute());
+        $this->assertCount(8, $query->execute());
     }
 
     public function testSearchQuery() : void {
-        $query = $this->repo->searchQuery(self::TYPEAHEAD_QUERY);
-        $this->assertCount(4, $query->execute());
+        $query = $this->repo->searchQuery(self::SEARCH_QUERY);
+        $this->assertCount(8, $query->execute());
     }
 
     protected function setUp() : void {

@@ -24,26 +24,28 @@ class PersonRepository extends ServiceEntityRepository {
 
     public function indexQuery() : Query {
         return $this->createQueryBuilder('person')
-            ->orderBy('person.id')
+            ->orderBy('person.sortableName', 'ASC')
             ->getQuery()
         ;
     }
 
     public function typeaheadQuery(string $q) : Query {
-        $qb = $this->createQueryBuilder('person');
-        $qb->andWhere('person.fullname LIKE :q');
-        $qb->orderBy('person.sortableName', 'ASC');
-        $qb->setParameter('q', "{$q}%");
-
-        return $qb->getQuery();
+        return $this->createQueryBuilder('person')
+            ->andWhere('person.fullname LIKE :q')
+            ->orderBy('person.sortableName', 'ASC')
+            ->setParameter('q', "%{$q}%")
+            ->getQuery()
+        ;
     }
 
     public function searchQuery(string $q) : Query {
-        $qb = $this->createQueryBuilder('person');
-        $qb->andWhere('person.fullname LIKE :q');
-        $qb->orderBy('person.sortableName', 'ASC');
-        $qb->setParameter('q', "{$q}%");
-
-        return $qb->getQuery();
+        return $this->createQueryBuilder('person')
+            ->addSelect('MATCH (person.fullname, person.bio) AGAINST(:q BOOLEAN) as HIDDEN score')
+            ->andHaving('score > 0')
+            ->orderBy('score', 'DESC')
+            ->addOrderBy('person.sortableName', 'ASC')
+            ->setParameter('q', $q)
+            ->getQuery()
+        ;
     }
 }

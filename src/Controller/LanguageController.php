@@ -18,47 +18,24 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route(path: '/language')]
+#[Route(path: '/languages')]
 class LanguageController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
-    #[Route(path: '/', name: 'language_index', methods: ['GET'])]
+    #[Route(path: '', name: 'language_index', methods: ['GET'])]
     #[Template]
     public function index(Request $request, LanguageRepository $languageRepository) : array {
-        $query = $languageRepository->indexQuery();
-        $pageSize = $this->getParameter('page_size');
-        $page = $request->query->getint('page', 1);
-
-        return [
-            'languages' => $this->paginator->paginate($query, $page, $pageSize),
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    #[Route(path: '/search', name: 'language_search', methods: ['GET'])]
-    #[Template]
-    public function search(Request $request, LanguageRepository $languageRepository) {
         $q = $request->query->get('q');
-        if ($q) {
-            $query = $languageRepository->searchQuery($q);
-            $languages = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), ['wrap-queries' => true]);
-        } else {
-            $languages = [];
-        }
+        $query = $q ? $languageRepository->searchQuery($q) : $languageRepository->indexQuery();
 
         return [
-            'languages' => $languages,
+            'languages' => $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), ['wrap-queries' => true]),
             'q' => $q,
         ];
     }
 
-    /**
-     * @return JsonResponse
-     */
     #[Route(path: '/typeahead', name: 'language_typeahead', methods: ['GET'])]
-    public function typeahead(Request $request, LanguageRepository $languageRepository) {
+    public function typeahead(Request $request, LanguageRepository $languageRepository) : JsonResponse {
         $q = $request->query->get('q');
         if ( ! $q) {
             return new JsonResponse([]);
@@ -75,13 +52,10 @@ class LanguageController extends AbstractController implements PaginatorAwareInt
         return new JsonResponse($data);
     }
 
-    /**
-     * @return array|RedirectResponse
-     */
     #[Route(path: '/new', name: 'language_new', methods: ['GET', 'POST'])]
     #[Template]
     #[IsGranted('ROLE_CONTENT_ADMIN')]
-    public function new(EntityManagerInterface $entityManager, Request $request) {
+    public function new(EntityManagerInterface $entityManager, Request $request) : array|RedirectResponse {
         $language = new Language();
         $form = $this->createForm(LanguageType::class, $language);
         $form->handleRequest($request);
@@ -89,7 +63,7 @@ class LanguageController extends AbstractController implements PaginatorAwareInt
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($language);
             $entityManager->flush();
-            $this->addFlash('success', 'The new language has been saved.');
+            $this->addFlash('success', 'Language created successfully.');
 
             return $this->redirectToRoute('language_show', ['id' => $language->getId()]);
         }
@@ -100,40 +74,24 @@ class LanguageController extends AbstractController implements PaginatorAwareInt
         ];
     }
 
-    /**
-     * @return array|RedirectResponse
-     */
-    #[Route(path: '/new_popup', name: 'language_new_popup', methods: ['GET', 'POST'])]
-    #[Template]
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
-    public function new_popup(EntityManagerInterface $entityManager, Request $request) {
-        return $this->new($entityManager, $request);
-    }
-
-    /**
-     * @return array
-     */
     #[Route(path: '/{id}', name: 'language_show', methods: ['GET'])]
     #[Template]
-    public function show(Language $language) {
+    public function show(Language $language) : array {
         return [
             'language' => $language,
         ];
     }
 
-    /**
-     * @return array|RedirectResponse
-     */
     #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{id}/edit', name: 'language_edit', methods: ['GET', 'POST'])]
     #[Template]
-    public function edit(EntityManagerInterface $entityManager, Request $request, Language $language) {
+    public function edit(EntityManagerInterface $entityManager, Request $request, Language $language) : array|RedirectResponse {
         $form = $this->createForm(LanguageType::class, $language);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-            $this->addFlash('success', 'The updated language has been saved.');
+            $this->addFlash('success', 'Language updated successfully.');
 
             return $this->redirectToRoute('language_show', ['id' => $language->getId()]);
         }
@@ -144,13 +102,10 @@ class LanguageController extends AbstractController implements PaginatorAwareInt
         ];
     }
 
-    /**
-     * @return RedirectResponse
-     */
     #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{id}', name: 'language_delete', methods: ['DELETE'])]
-    public function delete(EntityManagerInterface $entityManager, Request $request, Language $language) {
-        if ($this->isCsrfTokenValid('delete' . $language->getId(), $request->request->get('_token'))) {
+    public function delete(EntityManagerInterface $entityManager, Request $request, Language $language) : RedirectResponse {
+        if ($this->isCsrfTokenValid('delete_language' . $language->getId(), $request->request->get('_token'))) {
             $entityManager->remove($language);
             $entityManager->flush();
             $this->addFlash('success', 'The language has been deleted.');

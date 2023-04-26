@@ -8,85 +8,36 @@ use App\Entity\Podcast;
 use App\Form\PodcastType;
 use App\Repository\PodcastRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
-use Nines\MediaBundle\Controller\ImageControllerTrait;
-use Nines\MediaBundle\Entity\Image;
 use Nines\UtilBundle\Controller\PaginatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
-#[Route(path: '/podcast')]
+#[Route(path: '/podcasts')]
 class PodcastController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
-    use ImageControllerTrait;
 
-    #[Route(path: '/', name: 'podcast_index', methods: ['GET'])]
-    #[Template('podcast/index.html.twig')]
-    public function index(Request $request, PodcastRepository $podcastRepository) : array {
-        $query = $podcastRepository->indexQuery();
-        $pageSize = $this->getParameter('page_size');
-        $page = $request->query->getint('page', 1);
-
-        return [
-            'podcasts' => $this->paginator->paginate($query, $page, $pageSize),
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    #[Route(path: '/search', name: 'podcast_search', methods: ['GET'])]
-    #[Template('podcast/search.html.twig')]
-    public function search(Request $request, PodcastRepository $podcastRepository) {
+    #[Route(path: '', name: 'podcast_index', methods: ['GET'])]
+    #[Template]
+    public function index(Request $request, PodcastRepository $podcastRepository) : array|RedirectResponse {
         $q = $request->query->get('q');
-        if ($q) {
-            $query = $podcastRepository->searchQuery($q);
-            $podcasts = $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), ['wrap-queries' => true]);
-        } else {
-            $podcasts = [];
-        }
+        $query = $q ? $podcastRepository->searchQuery($q) : $podcastRepository->indexQuery();
 
         return [
-            'podcasts' => $podcasts,
+            'podcasts' => $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), ['wrap-queries' => true]),
             'q' => $q,
         ];
     }
 
-    /**
-     * @return JsonResponse
-     */
-    #[Route(path: '/typeahead', name: 'podcast_typeahead', methods: ['GET'])]
-    public function typeahead(Request $request, PodcastRepository $podcastRepository) {
-        $q = $request->query->get('q');
-        if ( ! $q) {
-            return new JsonResponse([]);
-        }
-        $data = [];
-
-        foreach ($podcastRepository->typeaheadQuery($q)->execute() as $result) {
-            $data[] = [
-                'id' => $result->getId(),
-                'text' => (string) $result,
-            ];
-        }
-
-        return new JsonResponse($data);
-    }
-
-    /**
-     * @return array|RedirectResponse
-     */
     #[Route(path: '/new', name: 'podcast_new', methods: ['GET', 'POST'])]
-    #[Template('podcast/new.html.twig')]
+    #[Template]
     #[IsGranted('ROLE_CONTENT_ADMIN')]
-    public function new(EntityManagerInterface $entityManager, Request $request) {
+    public function new(EntityManagerInterface $entityManager, Request $request) : array|RedirectResponse {
         $podcast = new Podcast();
         $form = $this->createForm(PodcastType::class, $podcast);
         $form->handleRequest($request);
@@ -98,7 +49,7 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
             }
             $entityManager->persist($podcast);
             $entityManager->flush();
-            $this->addFlash('success', 'The new podcast has been saved.');
+            $this->addFlash('success', 'Podcast created successfully.');
 
             return $this->redirectToRoute('podcast_show', ['id' => $podcast->getId()]);
         }
@@ -109,34 +60,22 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
         ];
     }
 
-    /**
-     * @return array|RedirectResponse
-     */
-    #[Route(path: '/new_popup', name: 'podcast_new_popup', methods: ['GET', 'POST'])]
-    #[Template('podcast/new_popup.html.twig')]
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
-    public function new_popup(EntityManagerInterface $entityManager, Request $request) {
-        return $this->new($entityManager, $request);
-    }
-
-    /**
-     * @return array
-     */
-    #[Route(path: '/{id}', name: 'podcast_show', methods: ['GET'])]
-    #[Template('podcast/show.html.twig')]
-    public function show(Podcast $podcast) {
+    #[Route(path: '/{id}', name: 'podcast_show', methods: ['GET'], requirements: [
+        'id' => Requirement::DIGITS,
+    ])]
+    #[Template]
+    public function show(Podcast $podcast) : array|RedirectResponse {
         return [
             'podcast' => $podcast,
         ];
     }
 
-    /**
-     * @return array|RedirectResponse
-     */
     #[IsGranted('ROLE_CONTENT_ADMIN')]
-    #[Route(path: '/{id}/edit', name: 'podcast_edit', methods: ['GET', 'POST'])]
-    #[Template('podcast/edit.html.twig')]
-    public function edit(EntityManagerInterface $entityManager, Request $request, Podcast $podcast) {
+    #[Route(path: '/{id}/edit', name: 'podcast_edit', methods: ['GET', 'POST'], requirements: [
+        'id' => Requirement::DIGITS,
+    ])]
+    #[Template]
+    public function edit(EntityManagerInterface $entityManager, Request $request, Podcast $podcast) : array|RedirectResponse {
         $form = $this->createForm(PodcastType::class, $podcast);
         $form->handleRequest($request);
 
@@ -148,7 +87,7 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
                 }
             }
             $entityManager->flush();
-            $this->addFlash('success', 'The updated podcast has been saved.');
+            $this->addFlash('success', 'Podcast updated successfully.');
 
             return $this->redirectToRoute('podcast_show', ['id' => $podcast->getId()]);
         }
@@ -159,53 +98,17 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
         ];
     }
 
-    /**
-     * @return RedirectResponse
-     */
     #[IsGranted('ROLE_CONTENT_ADMIN')]
-    #[Route(path: '/{id}', name: 'podcast_delete', methods: ['DELETE'])]
-    public function delete(EntityManagerInterface $entityManager, Request $request, Podcast $podcast) {
-        if ($this->isCsrfTokenValid('delete' . $podcast->getId(), $request->request->get('_token'))) {
+    #[Route(path: '/{id}', name: 'podcast_delete', methods: ['DELETE'], requirements: [
+        'id' => Requirement::DIGITS,
+    ])]
+    public function delete(EntityManagerInterface $entityManager, Request $request, Podcast $podcast) : RedirectResponse {
+        if ($this->isCsrfTokenValid('delete_podcast' . $podcast->getId(), $request->request->get('_token'))) {
             $entityManager->remove($podcast);
             $entityManager->flush();
             $this->addFlash('success', 'The podcast has been deleted.');
         }
 
         return $this->redirectToRoute('podcast_index');
-    }
-
-    /**
-     * @throws Exception
-     *
-     * @return array<string,mixed>|RedirectResponse
-     */
-    #[Route(path: '/{id}/new_image', name: 'podcast_new_image', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
-    #[Template('podcast/new_image.html.twig')]
-    public function newImage(Request $request, EntityManagerInterface $em, Podcast $podcast) {
-        return $this->newImageAction($request, $em, $podcast, 'podcast_show');
-    }
-
-    /**
-     * @throws Exception
-     *
-     * @return array<string,mixed>|RedirectResponse
-     */
-    #[Route(path: '/{id}/edit_image/{image_id}', name: 'podcast_edit_image', methods: ['GET', 'POST'])]
-    #[ParamConverter('image', options: ['id' => 'image_id'])]
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
-    #[Template('podcast/edit_image.html.twig')]
-    public function editImage(Request $request, EntityManagerInterface $em, Podcast $podcast, Image $image) {
-        return $this->editImageAction($request, $em, $podcast, $image, 'podcast_show');
-    }
-
-    /**
-     * @return RedirectResponse
-     */
-    #[Route(path: '/{id}/delete_image/{image_id}', name: 'podcast_delete_image', methods: ['DELETE'])]
-    #[ParamConverter('image', options: ['id' => 'image_id'])]
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
-    public function deleteImage(Request $request, EntityManagerInterface $em, Podcast $podcast, Image $image) {
-        return $this->deleteImageAction($request, $em, $podcast, $image, 'podcast_show');
     }
 }

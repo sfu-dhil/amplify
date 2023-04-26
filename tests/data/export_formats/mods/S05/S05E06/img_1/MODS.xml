@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods xmlns="http://www.loc.gov/mods/v3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
+        version="3.5">
+    <titleInfo>
+        <title>Title 5 S05E06: Image</title>
+    </titleInfo>
+    <typeOfResource>still image</typeOfResource>
+    <identifier type='amplify'>episode:7:image:19</identifier>
+</mods>

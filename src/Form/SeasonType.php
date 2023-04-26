@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\Podcast;
 use App\Entity\Publisher;
 use App\Entity\Season;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -25,18 +23,8 @@ class SeasonType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
         $builder->add('number', null, [
-            'label' => 'Number',
+            'label' => 'Season Number',
             'required' => false,
-        ]);
-        $builder->add('preserved', ChoiceType::class, [
-            'label' => 'Preserved',
-            'expanded' => true,
-            'multiple' => false,
-            'choices' => [
-                'Yes' => true,
-                'No' => false,
-            ],
-            'required' => true,
         ]);
         $builder->add('title', TextType::class, [
             'label' => 'Title',
@@ -54,25 +42,13 @@ class SeasonType extends AbstractType {
             ],
         ]);
 
-        $builder->add('podcast', Select2EntityType::class, [
-            'label' => 'Podcast',
-            'class' => Podcast::class,
-            'remote_route' => 'podcast_typeahead',
-            'allow_clear' => true,
-            'required' => true,
-            'attr' => [
-                'add_path' => 'podcast_new_popup',
-                'add_label' => 'Add Podcast',
-            ],
-        ]);
-
         $builder->add('publisher', Select2EntityType::class, [
             'label' => 'Publisher',
             'class' => Publisher::class,
             'remote_route' => 'publisher_typeahead',
             'allow_clear' => true,
             'attr' => [
-                'add_path' => 'publisher_new_popup',
+                'add_path' => 'publisher_new',
                 'add_label' => 'Add Publisher',
             ],
         ]);
