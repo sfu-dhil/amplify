@@ -5,16 +5,13 @@
 ] %}
 {{ form_start(form) }}
 {{ form_widget(form) }}
-<div class="mb-3 row">
-    <div class="col-sm-2"></div>
-    <div class="col-sm-10">
-        {% if season.id is null %}
-            <input type="submit" value="Create" class="btn btn-primary" />
-            <a href="{{ path('podcast_show', { 'id': season.podcast.id }) }}" class="btn btn-warning"> Cancel </a>
-        {% else %}
-            <input type="submit" value="Update" class="btn btn-primary" />
-            <a href="{{ path('season_show', { 'podcast_id': season.podcast.id, 'id': season.id }) }}" class="btn btn-warning"> Cancel </a>
-        {% endif %}
-    </div>
+<div class="mb-3 text-center">
+    {% if season.id is null %}
+        <input type="submit" value="Create" class="btn btn-primary" />
+        <a href="{{ path('podcast_show', { 'id': season.podcast.id }) }}" class="btn btn-warning"> Cancel </a>
+    {% else %}
+        <input type="submit" value="Update" class="btn btn-primary" />
+        <a href="{{ path('season_show', { 'podcast_id': season.podcast.id, 'id': season.id }) }}" class="btn btn-warning"> Cancel </a>
+    {% endif %}
 </div>
 {{ form_end(form) }}

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods xmlns="http://www.loc.gov/mods/v3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
+        version="3.5">
+    <identifier type="uri">{{ path('nines_media_image_show', {'id': image.id}) }}</identifier>
+    <identifier type="urn">urn:amplify:podcast:{{ episode.podcast.id }}:season:{{ episode.season.id }}:episode:{{ episode.id }}:image:{{ image.id }}</identifier>
+
+    <titleInfo>
+        <title>{{ episode.title }}: Image</title>
+    </titleInfo>
+    <titleInfo type="alternative">
+        <title>{{ image.originalName }}</title>
+    </titleInfo>
+
+    {% for contribution in contributions %}
+    {% embed 'export/format/mods/partial/contribution.xml.twig' with {
+        'person': contribution.person,
+        'roles': contribution.roles,
+    } %}{% endembed %}
+    {% endfor %}
+
+    {% if episode.language %}
+    {% embed 'export/format/mods/partial/language.xml.twig' with {
+        'language': episode.language,
+    } %}{% endembed %}
+    {% endif %}
+
+    <typeOfResource>still image</typeOfResource>
+    <physicalDescription>
+        <form authority="marcform">electronic</form>
+        <internetMediaType>{{ image.mimeType }}</internetMediaType>
+        <extent>1 image file; filesize {{ image.fileSize|byte_size }}; dimensions {{ image.imageWidth }}px x {{ image.imageHeight }}px</extent>
+        <digitalOrigin>born digital</digitalOrigin>
+    </physicalDescription>
+    <originInfo eventType="publication">
+        <dateIssued encoding="iso8601">{{ episode.date|date('Y-m-d') }}</dateIssued>
+        <dateCaptured encoding="iso8601">{{ image.updated|date('Y-m-d') }}</dateCaptured>
+        <issuance>serial</issuance>
+        {% if episode.season.publisher %}
+        <publisher>{{ episode.season.publisher.name }}</publisher>
+        {% elseif episode.podcast.publisher %}
+        <publisher>{{ episode.podcast.publisher.name }}</publisher>
+        {% endif %}
+    </originInfo>
+
+    <genre authority="lcsh" valueURI="https://id.loc.gov/authorities/genreForms/gf2011026450">Podcasts</genre>
+    <genre authority="marcgt">nonmusical sound</genre>
+    {% embed 'export/format/mods/partial/subjects_episode.xml.twig' with {
+        'episode': episode,
+    } %}{% endembed %}
+    {% embed 'export/format/mods/partial/subjects_podcast.xml.twig' with {
+        'podcast': episode.podcast,
+    } %}{% endembed %}
+
+    {% if episode.podcast.copyright %}
+    <accessCondition type="use and reproduction">
+        {{ episode.podcast.copyright|html2txt }}
+    </accessCondition>
+    {% endif %}
+
+    {% if image.description %}
+    <abstract type="summary" displayLabel="File Content description">
+        {{ image.description|html2txt }}
+    </abstract>
+    {% endif %}
+    {% if image.license  %}
+    <abstract displayLabel="File License">
+        {{ image.license|html2txt }}
+    </abstract>
+    {% endif %}
+
+    <relatedItem type="host">
+        {% embed 'export/format/mods/partial/identifier_episode.xml.twig' with {
+            'episode': episode,
+        } %}{% endembed %}
+    </relatedItem>
+</mods>

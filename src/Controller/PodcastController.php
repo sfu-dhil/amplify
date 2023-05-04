@@ -47,6 +47,10 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
                 $contribution->setPodcast($podcast);
                 $entityManager->persist($contribution);
             }
+            foreach ($podcast->getImages() as $image) {
+                $image->setEntity($podcast);
+                $entityManager->persist($image);
+            }
             $entityManager->persist($podcast);
             $entityManager->flush();
             $this->addFlash('success', 'Podcast created successfully.');
@@ -76,6 +80,7 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
     ])]
     #[Template]
     public function edit(EntityManagerInterface $entityManager, Request $request, Podcast $podcast) : array|RedirectResponse {
+        $existingImages = $podcast->getImages();
         $form = $this->createForm(PodcastType::class, $podcast);
         $form->handleRequest($request);
 
@@ -86,6 +91,18 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
                     $entityManager->persist($contribution);
                 }
             }
+            $currentImageIds = [];
+            foreach ($podcast->getImages() as $image) {
+                $image->setEntity($podcast);
+                $entityManager->persist($image);
+                $currentImageIds[] = $image->getId();
+            }
+            foreach ($existingImages as $existingImage) {
+                if ( ! in_array($existingImage->getId(), $currentImageIds, true)) {
+                    $entityManager->remove($existingImage);
+                }
+            }
+
             $entityManager->flush();
             $this->addFlash('success', 'Podcast updated successfully.');
 

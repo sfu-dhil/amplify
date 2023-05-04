@@ -46,9 +46,6 @@ class Publisher extends AbstractEntity {
         $this->seasons = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString() : string {
         return $this->name;
     }

@@ -33,6 +33,9 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $guid = null;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: false, options: ['default' => 'full'])]
+    private ?string $episodeType = null;
+
     #[ORM\Column(type: 'integer')]
     private ?int $number = null;
 
@@ -50,6 +53,9 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $subTitle = null;
+
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $explicit = null;
 
     #[ORM\ManyToOne(targetEntity: 'App\Entity\Language', inversedBy: 'episodes')]
     private ?Language $language = null;
@@ -70,7 +76,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     private array $subjects = [];
 
     #[ORM\ManyToOne(targetEntity: 'Season', inversedBy: 'episodes')]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Season $season = null;
 
     #[ORM\ManyToOne(targetEntity: 'Podcast', inversedBy: 'episodes')]
@@ -99,8 +105,18 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this->guid;
     }
 
-    public function setGuid(string $guid) : self {
+    public function setGuid(?string $guid) : self {
         $this->guid = $guid;
+
+        return $this;
+    }
+
+    public function getEpisodeType() : ?string {
+        return $this->episodeType;
+    }
+
+    public function setEpisodeType(string $episodeType) : self {
+        $this->episodeType = $episodeType;
 
         return $this;
     }
@@ -116,11 +132,15 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     }
 
     public function getSlug() : string {
-        if ($this->season && $this->season->getId()) {
-            return sprintf('S%02dE%02d', $this->season->getNumber(), $this->number);
+        $seasonSlug = $this->season?->getId() ? $this->season->getSlug() : '';
+        if ('bonus' === $this->getEpisodeType()) {
+            return "{$seasonSlug} Bonus {$this->number}";
+        }
+        if ('trailer' === $this->getEpisodeType()) {
+            return "{$seasonSlug} Trailer {$this->number}";
         }
 
-        return sprintf('E%02d', $this->number);
+        return $seasonSlug . sprintf('E%02d', $this->number);
     }
 
     public function getDate() : ?DateTimeInterface {
@@ -159,6 +179,16 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
 
     public function setSubTitle(?string $subTitle) : self {
         $this->subTitle = $subTitle;
+
+        return $this;
+    }
+
+    public function getExplicit() : ?bool {
+        return $this->explicit;
+    }
+
+    public function setExplicit(bool $explicit) : self {
+        $this->explicit = $explicit;
 
         return $this;
     }
@@ -312,14 +342,17 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         $errors = [];
         $warnings = [];
 
-        if (empty(trim(strip_tags($this->getGuid() ?? '')))) {
-            $warnings['Guid'] = 'No global unique identifier';
-        }
+        // if (empty(trim(strip_tags($this->getGuid() ?? '')))) {
+        //     $warnings['Guid'] = 'No global unique identifier';
+        // }
         if (null === $this->getPodcast()) {
             $errors['Podcast'] = 'No podcast';
         }
         if (null === $this->getSeason()) {
             $errors['Season'] = 'No season';
+        }
+        if (empty(trim(strip_tags($this->getEpisodeType() ?? '')))) {
+            $errors['Episode type'] = 'No episode type';
         }
         if (null === $this->getNumber()) {
             $errors['Episode number'] = 'No episode number';
@@ -328,7 +361,10 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
             $errors['Title'] = 'No title';
         }
         if (empty(trim(strip_tags($this->getSubTitle() ?? '')))) {
-            $errors['Subtitle'] = 'No subtitle';
+            $warnings['Subtitle'] = 'No subtitle';
+        }
+        if (null === $this->getExplicit()) {
+            $warnings['Explicit'] = 'No explicit status';
         }
         if (null === $this->getDate()) {
             $errors['Date'] = 'No date';

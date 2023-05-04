@@ -16,9 +16,6 @@ class PersonFixtures extends Fixture implements DependentFixtureInterface, Fixtu
         return ['dev', 'test'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(ObjectManager $em) : void {
         for ($i = 0; $i < 4; $i++) {
             $fixture = new Person();
@@ -26,6 +23,8 @@ class PersonFixtures extends Fixture implements DependentFixtureInterface, Fixtu
             $fixture->setSortableName('SortableName ' . $i);
             $fixture->setLocation('Location ' . $i);
             $fixture->setBio("<p>This is paragraph {$i}</p>");
+            $fixture->setCreated(new \DateTimeImmutable('2023-05-25'));
+            $fixture->setUpdated(new \DateTimeImmutable('2023-05-25'));
             $fixture->setInstitution($this->getReference('institution.1'));
             $em->persist($fixture);
             $this->setReference('person.' . $i, $fixture);
@@ -41,9 +40,6 @@ class PersonFixtures extends Fixture implements DependentFixtureInterface, Fixtu
         $em->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDependencies() {
         return [
             InstitutionFixtures::class,

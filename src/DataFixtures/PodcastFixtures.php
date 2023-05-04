@@ -28,9 +28,6 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface, Fixt
         return ['dev', 'test'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(ObjectManager $em) : void {
         $this->imageManager->setCopy(true);
         for ($i = 0; $i < 8; $i++) {
@@ -43,6 +40,8 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $fixture->setLicense("<p>This is license {$i}</p>");
             $fixture->setWebsite("<p>This is paragraph {$i}</p>");
             $fixture->setRss("https://rss.com/{$i}");
+            $fixture->setCreated(new \DateTimeImmutable('2023-05-25'));
+            $fixture->setUpdated(new \DateTimeImmutable('2023-05-25'));
             $fixture->setPublisher($this->getReference('publisher.1'));
             $em->persist($fixture);
             $em->flush();
@@ -54,6 +53,8 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $image->setOriginalName($imageFile);
             $image->setDescription("<p>This is paragraph {$i}</p>");
             $image->setLicense("<p>This is paragraph {$i}</p>");
+            $image->setCreated(new \DateTimeImmutable('2023-05-25'));
+            $image->setUpdated(new \DateTimeImmutable('2023-05-25'));
             $image->setEntity($fixture);
             $em->persist($image);
             $em->flush();
@@ -65,9 +66,6 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface, Fixt
         $this->imageManager->setCopy(false);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDependencies() {
         return [
             PublisherFixtures::class,

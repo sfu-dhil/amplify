@@ -5,12 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use App\Repository\EpisodeRepository;
-use Nines\MediaBundle\Repository\AudioRepository;
-use Nines\MediaBundle\Repository\ImageRepository;
-use Nines\MediaBundle\Repository\PdfRepository;
-use Nines\MediaBundle\Service\AudioManager;
-use Nines\MediaBundle\Service\ImageManager;
-use Nines\MediaBundle\Service\PdfManager;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\TestCase\ControllerTestCase;
 use Symfony\Component\HttpFoundation\Response;

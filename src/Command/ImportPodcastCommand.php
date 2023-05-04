@@ -14,18 +14,14 @@ use App\Repository\CategoryRepository;
 use App\Repository\ImportRepository;
 use App\Repository\LanguageRepository;
 use App\Repository\PodcastRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Response;
-use Lukaswhite\PodcastFeedParser\Episode as RssEpisode;
-use Lukaswhite\PodcastFeedParser\Episodes as RssEpisodes;
-use Lukaswhite\PodcastFeedParser\Parser as RssParser;
-use Lukaswhite\PodcastFeedParser\Podcast as RssPodcast;
 use Nines\MediaBundle\Entity\Audio;
 use Nines\MediaBundle\Entity\AudioContainerInterface;
 use Nines\MediaBundle\Entity\Image;
@@ -35,16 +31,23 @@ use Nines\MediaBundle\Entity\PdfContainerInterface;
 use Nines\MediaBundle\Service\AudioManager;
 use Nines\MediaBundle\Service\ImageManager;
 use Nines\MediaBundle\Service\PdfManager;
+use SimplePie\Item as SimplePieItem;
+use SimplePie\SimplePie;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[AsCommand(name: 'app:import:podcast')]
 class ImportPodcastCommand extends Command {
+    private const NS_GOOGLE_PLAY = 'http://www.google.com/schemas/play-podcasts/1.0';
+
+    private const NS_PODCAST = 'https://podcastindex.org/namespace/1.0';
+
     public function __construct(
         private EntityManagerInterface $em,
         private PodcastRepository $podcastRepository,
@@ -56,15 +59,15 @@ class ImportPodcastCommand extends Command {
         private PdfManager $pdfManager,
         private Filesystem $filesystem,
         private Client $client,
-        private RssParser $parser = new RssParser(),
+        private HtmlSanitizerInterface $importContentSanitizer,
+        private ?SimplePie $feed = null,
         private ?int $totalSteps = null,
         private ?string $rssUrl = null,
         private ?Podcast $podcast = null,
         private ?Import $import = null,
-        private ?RssPodcast $rssPodcast = null,
-        private ?RssEpisodes $rssEpisodes = null,
         private ?OutputInterface $output = null,
         private array $seasons = [],
+        private array $seasonEpisodeCounter = [],
         private array $episodes = [],
         private array $mediaRequests = [],
     ) {
@@ -160,18 +163,6 @@ class ImportPodcastCommand extends Command {
         $this->em->flush();
     }
 
-    private function getSeasonNumber(RssEpisode $rssEpisode, int $default) : int {
-        $seasonNumber = (int) $rssEpisode->getSeason();
-
-        return 0 === $seasonNumber ? $default : $seasonNumber;
-    }
-
-    private function getEpisodeNumber(RssEpisode $rssEpisode, int $default) : int {
-        $episodeNumber = (int) $rssEpisode->getEpisodeNumber();
-
-        return 0 === $episodeNumber ? $default : $episodeNumber;
-    }
-
     private function getCategory(string $name) : Category {
         $category = $this->categoryRepository->findOneBy([
             'label' => $name,
@@ -203,114 +194,40 @@ class ImportPodcastCommand extends Command {
         }
     }
 
-    protected function configure() : void {
-        $this->setDescription('Import Podcast from RSS feed');
-        $this->addArgument(
-            'url',
-            InputArgument::REQUIRED,
-            'RSS feed url.'
-        );
-        $this->addArgument(
-            'podcastId',
-            InputArgument::OPTIONAL,
-            'ID of podcast.'
-        );
-        $this->addArgument(
-            'importId',
-            InputArgument::OPTIONAL,
-            'ID of import.'
-        );
+    private function getFeedTag(string $namespace, string $name) : ?array {
+        $tags = $this->feed->get_channel_tags($namespace, $name);
+        if ($tags && count($tags)) {
+            return $tags[0];
+        }
+
+        return null;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int {
-        $this->output = $output;
-
-        $this->rssUrl = $input->getArgument('url');
-        $podcastId = $input->getArgument('podcastId');
-        $importId = $input->getArgument('importId');
-
-        if ( ! $this->rssUrl) {
-            $this->output->writeln('No RSS url found.');
-
-            return 0;
+    private function getFeedTagValue(string $namespace, string $name) : ?string {
+        $tag = $this->getFeedTag($namespace, $name);
+        if ($tag && array_key_exists('data', $tag)) {
+            return $this->feed->sanitize($tag['data'], SimplePie::CONSTRUCT_TEXT);
         }
 
-        $this->podcast = $podcastId ? $this->podcastRepository->find($podcastId) : new Podcast();
-        if ($podcastId && ! $this->podcast) {
-            $this->output->writeln('No podcast found.');
+        return null;
+    }
 
-            return 0;
+    private function getItemTag(SimplePieItem $item, string $namespace, string $name) : ?array {
+        $tags = $item->get_item_tags($namespace, $name);
+        if ($tags && count($tags)) {
+            return $tags[0];
         }
 
-        $this->import = $importId ? $this->importRepository->find($importId) : null;
-        if ($importId && ! $this->import) {
-            $this->output->writeln('No import found.');
+        return null;
+    }
 
-            return 0;
+    private function getItemTagValue(SimplePieItem $item, string $namespace, string $name) : ?string {
+        $tag = $this->getItemTag($item, $namespace, $name);
+        if ($tag && array_key_exists('data', $tag)) {
+            return $this->feed->sanitize($tag['data'], SimplePie::CONSTRUCT_TEXT);
         }
 
-        try {
-            $this->updateMessage("Fetching RSS feed from {$this->rssUrl}");
-
-            try {
-                $response = $this->client->get($this->rssUrl);
-            } catch (ConnectException $e) {
-                $this->updateMessage('Could not connect to RSS feed url.');
-                $this->output->writeln("Message: {$e->getMessage()}");
-
-                return 0;
-            } catch (RequestException $e) {
-                $this->updateMessage("Error accessing RSS feed. Error: {$e->getMessage()}");
-
-                return 0;
-            }
-
-            if (200 !== $response->getStatusCode()) {
-                $this->updateMessage("Could not read RSS feed. Code {$response->getStatusCode()} Message: {$response->getBody()->getContents()}");
-
-                return 0;
-            }
-
-            $this->seasons = [];
-            foreach ($this->podcast->getSeasons() as $season) {
-                if ($season->getNumber() > 0) {
-                    $this->seasons[$season->getNumber()] = $season;
-                }
-            }
-            $this->episodes = [];
-            foreach ($this->podcast->getEpisodes() as $episode) {
-                if ($episode->getGuid()) {
-                    $this->episodes[$episode->getGuid()] = $episode;
-                }
-            }
-
-            $this->rssPodcast = $this->parser->setContent($response->getBody()->getContents())->run();
-            $this->rssEpisodes = $this->rssPodcast->getEpisodes();
-
-            $this->updateMessage('Import started');
-            $this->audioManager->setCopy(true);
-            $this->imageManager->setCopy(true);
-            $this->pdfManager->setCopy(true);
-
-            $startTime = microtime(true);
-            $this->processPodcast();
-            $this->processSeasons();
-            $this->processEpisodes();
-            $this->processMedia();
-            $this->cleanupTempFiles();
-
-            $executionTime = microtime(true) - $startTime;
-            $timeInMinutes = number_format($executionTime / 60.0, 2);
-            $this->updateMessage("Import completed in {$timeInMinutes} minutes");
-
-            return 1;
-        } catch (Exception $e) {
-            $this->updateMessage('An unexpected error occurred.');
-            $this->output->writeln("Message: {$e->getMessage()}");
-            $this->output->writeln("Trace: {$e->getTraceAsString()}");
-
-            return 0;
-        }
+        return null;
     }
 
     /**
@@ -318,35 +235,40 @@ class ImportPodcastCommand extends Command {
      * There aren't ways to update license and publisher
      * contributor could only be updated with 1 owner, 1 author, and possibly 1 editor.
      */
-    public function processPodcast() : void {
+    private function processPodcast() : void {
         $this->updateMessage('Processing Podcast metadata');
 
-        $title = $this->rssPodcast->getTitle();
+        $guid = $this->getFeedTagValue(self::NS_PODCAST, 'guid');
+        if ($guid && ! $this->podcast->getGuid()) {
+            $this->podcast->setGuid($guid);
+        }
+
+        $title = $this->feed->get_title();
         if ($title && ! $this->podcast->getTitle()) {
-            $this->podcast->setTitle(mb_strimwidth($title, 0, 252, '...'));
+            $this->podcast->setTitle(mb_strimwidth(html_entity_decode($title), 0, 252, '...'));
         }
 
-        $subtitle = $this->rssPodcast->getSubtitle();
+        $subtitle = $this->getFeedTagValue(SimplePie::NAMESPACE_ITUNES, 'subtitle');
         if ($subtitle && ! $this->podcast->getSubTitle()) {
-            $this->podcast->setSubTitle(mb_strimwidth($subtitle, 0, 252, '...'));
+            $this->podcast->setSubTitle(mb_strimwidth(html_entity_decode($subtitle), 0, 252, '...'));
         }
 
-        $explicit = $this->rssPodcast->getExplicit();
-        if (is_null($explicit)) {
+        $explicit = $this->getFeedTagValue(SimplePie::NAMESPACE_ITUNES, 'explicit') ?? $this->getFeedTagValue(self::NS_GOOGLE_PLAY, 'explicit');
+        if (null === $this->podcast->getExplicit()) {
             $this->podcast->setExplicit('yes' === $explicit);
         }
 
-        $description = $this->rssPodcast->getDescription();
+        $description = $this->feed->get_description();
         if ($description && ! $this->podcast->getDescription()) {
             $this->podcast->setDescription($description);
         }
 
-        $copyright = $this->rssPodcast->getCopyright();
+        $copyright = $this->feed->get_copyright();
         if ($copyright && ! $this->podcast->getCopyright()) {
             $this->podcast->setCopyright($copyright);
         }
 
-        $website = $this->rssPodcast->getLink();
+        $website = $this->feed->get_link();
         if ($website && ! $this->podcast->getWebsite()) {
             $this->podcast->setWebsite($website);
         }
@@ -358,7 +280,7 @@ class ImportPodcastCommand extends Command {
         // skip `license`
         // doesn't seem to be part of RSS feeds
 
-        $languageCode = $this->rssPodcast->getLanguage();
+        $languageCode = $this->feed->get_language();
         if ($languageCode && ! $this->podcast->getLanguage()) {
             $language = $this->languageRepository->findOneBy([
                 'name' => $languageCode,
@@ -379,17 +301,20 @@ class ImportPodcastCommand extends Command {
         // skip `publisher`
         // doesn't seem to be part of RSS feeds
 
-        $categories = $this->rssPodcast->getCategories();
-        if ($categories) {
-            foreach ($categories as $rssCategory) {
-                $name = html_entity_decode($rssCategory->getName());
-                $category = $this->getCategory($name);
+        $categories = array_merge(
+            $this->feed->get_channel_tags(SimplePie::NAMESPACE_ITUNES, 'category') ?? [],
+            $this->feed->get_channel_tags(self::NS_GOOGLE_PLAY, 'category') ?? [],
+        );
+        if ($categories && count($categories)) {
+            foreach ($categories as $categoryData) {
+                $name = $this->feed->sanitize($categoryData['attribs']['']['text'], SimplePie::CONSTRUCT_TEXT);
+                $category = $this->getCategory(html_entity_decode($name));
                 $this->podcast->addCategory($category);
 
-                if ($rssCategory->getChildren()) {
-                    foreach ($rssCategory->getChildren() as $rssSubcategory) {
-                        $subName = html_entity_decode($rssSubcategory->getName());
-                        $category = $this->getCategory("{$name} - {$subName}");
+                if (isset($categoryData['child']) && is_array($categoryData['child'])) {
+                    foreach ($categoryData['child'][SimplePie::NAMESPACE_ITUNES]['category'] as $subCategoryData) {
+                        $subName = $this->feed->sanitize($subCategoryData['attribs']['']['text'], SimplePie::CONSTRUCT_TEXT);
+                        $category = $this->getCategory(html_entity_decode("{$name} - {$subName}"));
                         $this->podcast->addCategory($category);
                     }
                 }
@@ -407,14 +332,9 @@ class ImportPodcastCommand extends Command {
         // include `contributor` + `contributor_role`?
         // we can get author, owner at the podcast level but nothing else
 
-        $artwork = $this->rssPodcast->getArtwork();
-        if ($artwork) {
-            $this->addPodcastMediaFetchRequest($this->podcast, $artwork->getUri());
-        }
-
-        $image = $this->rssPodcast->getImage();
-        if ($image) {
-            $this->addPodcastMediaFetchRequest($this->podcast, $image->getUrl());
+        $imageUrl = $this->feed->get_image_url();
+        if ($imageUrl) {
+            $this->addPodcastMediaFetchRequest($this->podcast, $imageUrl);
         }
     }
 
@@ -423,12 +343,17 @@ class ImportPodcastCommand extends Command {
      * Podcasts RSS feeds have limited Season information so at most we can generate missing seasons
      * with extremely limited populated fields.
      */
-    public function processSeasons() : void {
+    private function processSeasons() : void {
         $this->updateMessage('Processing Season metadata');
 
-        foreach ($this->rssEpisodes as $rssEpisode) {
-            $seasonNumber = $this->getSeasonNumber($rssEpisode, 1);
+        foreach ($this->feed->get_items() as $item) {
+            $seasonNumber = (int) ($this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'season') ?? 1);
             $season = $this->seasons[$seasonNumber] ?? null;
+            $this->seasonEpisodeCounter[$seasonNumber] = [
+                'full' => 0,
+                'bonus' => 0,
+                'trailer' => 0,
+            ];
 
             if (null === $season) {
                 $this->output->writeln("Generating stub for Season {$seasonNumber}");
@@ -436,7 +361,7 @@ class ImportPodcastCommand extends Command {
                 $season->setNumber($seasonNumber);
                 $season->setTitle("Season {$seasonNumber}");
                 $season->setSubTitle(null);
-                $season->setDescription("Season {$seasonNumber}");
+                $season->setDescription('');
                 $season->setPodcast($this->podcast);
                 $this->podcast->addSeason($season);
 
@@ -450,64 +375,109 @@ class ImportPodcastCommand extends Command {
     /**
      * Update/Create episodes.
      */
-    public function processEpisodes() : void {
+    private function processEpisodes() : void {
         $this->updateMessage('Processing Episode metadata');
-        $totalEpisodes = count($this->rssEpisodes);
-
-        foreach ($this->rssEpisodes as $index => $rssEpisode) {
-            $guid = $rssEpisode->getGuid();
+        foreach (array_reverse($this->feed->get_items()) as $item) {
+            $guid = $item->get_id();
             $this->output->writeln("Processing Episode guid {$guid}");
             $episode = $this->episodes[$guid] ?? null;
 
             if (null === $episode) {
                 $episode = new Episode();
                 $episode->setGuid($guid);
+                $episode->setTitle('');
+                $episode->setDescription('');
+                $episode->setRunTime('');
 
                 $episode->setPodcast($this->podcast);
                 $this->podcast->addEpisode($episode);
                 $this->episodes[$guid] = $episode;
             }
-            $season = $this->seasons[$this->getSeasonNumber($rssEpisode, 1)];
+            $episodeType = trim(mb_strtolower($this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'episodeType') ?? ''));
+            if ( ! in_array($episodeType, ['full', 'bonus', 'trailer'], true)) {
+                $episodeType = 'full';
+            }
+            $episode->setEpisodeType($episodeType);
+
+            $seasonNumber = (int) ($this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'season') ?? 1);
+            $season = $this->seasons[$seasonNumber];
             $episode->setSeason($season);
 
-            if (null === $episode->getNumber()) {
-                $episode->setNumber($this->getEpisodeNumber($rssEpisode, $totalEpisodes - (int) $index));
-                $this->output->writeln("- Season {$episode->getSeason()->getNumber()} Episode {$episode->getNumber()}");
+            $episodeNumber = $episode->getNumber() ? $episode->getNumber() : (int) $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'episode');
+            if ($episodeNumber) {
+                $this->seasonEpisodeCounter[$seasonNumber][$episodeType] = $episodeNumber;
+            } else {
+                $episodeNumber = ++$this->seasonEpisodeCounter[$seasonNumber][$episodeType];
+            }
+            $episode->setNumber($episodeNumber);
+
+            $this->output->writeln("- Season {$episode->getSeason()->getNumber()} Episode {$episode->getNumber()}");
+
+            $explicit = $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'explicit') ?? $this->getItemTagValue($item, self::NS_GOOGLE_PLAY, 'explicit');
+            if (null === $episode->getExplicit()) {
+                $episode->setExplicit('yes' === $explicit);
             }
 
-            $publishedDate = $rssEpisode->getPublishedDate();
+            $publishedDate = $item->get_date('Y-m-d H:i:s');
             if ($publishedDate && ! $episode->getDate()) {
+                $publishedDate = new DateTimeImmutable($publishedDate);
+                $episode->setDate($publishedDate);
+            } else if ( ! $episode->getDate()) {
+                $publishedDate = new DateTimeImmutable('now');
                 $episode->setDate($publishedDate);
             }
 
-            $duration = $rssEpisode->getDuration();
+            $duration = $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'duration');
             if ($duration && ! $episode->getRunTime()) {
-                $episode->setRunTime(gmdate('H:i:s', (int) $duration));
+                if (preg_match('/^\\d{2}:\\d{2}:\\d{2}$/i', $duration)) {
+                    $episode->setRunTime($duration);
+                } elseif (preg_match('/^\\d+$/i', $duration)) {
+                    $episode->setRunTime(gmdate('H:i:s', (int) $duration));
+                }
             }
 
-            $title = $rssEpisode->getTitle();
+            $title = $item->get_title();
             if ($title && ! $episode->getTitle()) {
-                $episode->setTitle(mb_strimwidth($title, 0, 252, '...'));
+                $episode->setTitle(mb_strimwidth(html_entity_decode($title), 0, 252, '...'));
             }
 
-            $subtitle = $rssEpisode->getSubtitle();
+            $subtitle = $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'subtitle');
             if ($subtitle && ! $episode->getSubTitle()) {
-                $episode->setSubTitle(mb_strimwidth($subtitle, 0, 252, '...'));
+                $episode->setSubTitle(mb_strimwidth(html_entity_decode($subtitle), 0, 252, '...'));
             }
 
             // skip `bibliography`
             // not part of RSS feed
 
-            // skip `transcript`
-            // not part of RSS feed
+            // Try to pull plaintext transcript if available and not already set
+            $transcriptUrls = $item->get_item_tags(self::NS_PODCAST, 'transcript');
+            if ($transcriptUrls && ! $episode->getTranscript()) {
+                if ($transcriptUrls && count($transcriptUrls)) {
+                    foreach ($transcriptUrls as $transcriptUrlData) {
+                        $transcriptUrl = $transcriptUrlData['attribs']['']['url'];
+                        $transcriptType = $transcriptUrlData['attribs']['']['type'];
 
-            $description = $rssEpisode->getDescription();
+                        if ('text/html' === $transcriptType) {
+                            try {
+                                $response = $this->client->get($transcriptUrl);
+                            } catch (Exception $e) {
+                                $this->output->writeln("Transcript error message: {$e->getMessage()}");
+                            }
+                            if (200 === $response->getStatusCode()) {
+                                $episode->setTranscript($response->getBody()->getContents());
+                            }
+                        }
+                    }
+                }
+            }
+
+            $description = $item->get_content();
             if ($description && ! $episode->getDescription()) {
-                $episode->setDescription($description);
+                $episode->setDescription($this->importContentSanitizer->sanitize($description));
             }
 
             // skip `subjects`
-            // not part of RSS feed
+            // not part of RSS feed (closest is keywords)
 
             // default language to the podcast language if not already set
             if (null === $episode->getLanguage() && $this->podcast->getLanguage()) {
@@ -520,14 +490,10 @@ class ImportPodcastCommand extends Command {
             $this->em->persist($episode);
             $this->em->flush();
 
-            $medias = $rssEpisode->getMedias();
-            foreach ($medias as $media) {
-                $this->addEpisodeMediaFetchRequest($episode, $media->getUri());
-            }
-
-            $artwork = $rssEpisode->getArtwork();
-            if ($artwork) {
-                $this->addEpisodeMediaFetchRequest($episode, $artwork->getUri());
+            foreach ($item->get_enclosures() as $enclosure) {
+                if ($enclosure && $enclosure->get_link()) {
+                    $this->addEpisodeMediaFetchRequest($episode, $enclosure->get_link());
+                }
             }
         }
     }
@@ -535,7 +501,7 @@ class ImportPodcastCommand extends Command {
     /**
      * download media for podcast & episodes concurrently.
      */
-    public function processMedia() : void {
+    private function processMedia() : void {
         $this->updateMessage('Downloading Media Files');
 
         $urls = array_keys($this->mediaRequests);
@@ -638,6 +604,119 @@ class ImportPodcastCommand extends Command {
             $completed++;
             $total = count($successRequests);
             $this->updateMessage("Final server processing ({$completed}/{$total})");
+        }
+    }
+
+    protected function configure() : void {
+        $this->setDescription('Import Podcast from RSS feed');
+        $this->addArgument(
+            'url',
+            InputArgument::REQUIRED,
+            'RSS feed url.'
+        );
+        $this->addArgument(
+            'podcastId',
+            InputArgument::OPTIONAL,
+            'ID of podcast.'
+        );
+        $this->addArgument(
+            'importId',
+            InputArgument::OPTIONAL,
+            'ID of import.'
+        );
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output) : int {
+        $this->output = $output;
+
+        $this->rssUrl = $input->getArgument('url');
+        $podcastId = $input->getArgument('podcastId');
+        $importId = $input->getArgument('importId');
+
+        if ( ! $this->rssUrl) {
+            $this->output->writeln('No RSS url found.');
+
+            return 0;
+        }
+
+        $this->podcast = $podcastId ? $this->podcastRepository->find($podcastId) : new Podcast();
+        if ($podcastId && ! $this->podcast) {
+            $this->output->writeln('No podcast found.');
+
+            return 0;
+        }
+
+        $this->import = $importId ? $this->importRepository->find($importId) : null;
+        if ($importId && ! $this->import) {
+            $this->output->writeln('No import found.');
+
+            return 0;
+        }
+
+        try {
+            $this->updateMessage("Fetching RSS feed from {$this->rssUrl}");
+
+            try {
+                $response = $this->client->get($this->rssUrl);
+            } catch (ConnectException $e) {
+                $this->updateMessage('Could not connect to RSS feed url.');
+                $this->output->writeln("Message: {$e->getMessage()}");
+
+                return 0;
+            } catch (RequestException $e) {
+                $this->updateMessage("Error accessing RSS feed. Error: {$e->getMessage()}");
+
+                return 0;
+            }
+
+            if (200 !== $response->getStatusCode()) {
+                $this->updateMessage("Could not read RSS feed. Code {$response->getStatusCode()} Message: {$response->getBody()->getContents()}");
+
+                return 0;
+            }
+
+            $this->mediaRequests = [];
+            $this->seasons = [];
+            $this->seasonEpisodeCounter = [];
+            foreach ($this->podcast->getSeasons() as $season) {
+                if ($season->getNumber() > 0) {
+                    $this->seasons[$season->getNumber()] = $season;
+                }
+            }
+            $this->episodes = [];
+            foreach ($this->podcast->getEpisodes() as $episode) {
+                if ($episode->getGuid()) {
+                    $this->episodes[$episode->getGuid()] = $episode;
+                }
+            }
+
+            $this->feed = new SimplePie();
+            $this->feed->set_raw_data($response->getBody()->getContents());
+            $this->feed->init();
+
+            $this->updateMessage('Import started');
+            $this->audioManager->setCopy(true);
+            $this->imageManager->setCopy(true);
+            $this->pdfManager->setCopy(true);
+
+            $startTime = microtime(true);
+            $this->processPodcast();
+            $this->processSeasons();
+            $this->processEpisodes();
+            $this->processMedia();
+            $this->cleanupTempFiles();
+
+            $executionTime = microtime(true) - $startTime;
+            $timeInMinutes = number_format($executionTime / 60.0, 2);
+            $this->updateMessage("Import completed in {$timeInMinutes} minutes");
+
+            return 1;
+        } catch (Exception $e) {
+            $this->output->writeln("Message: {$e->getMessage()}");
+            $this->output->writeln("Trace: {$e->getTraceAsString()}");
+            $this->updateMessage('An unexpected error occurred.');
+
+            return 0;
         }
     }
 }

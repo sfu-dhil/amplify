@@ -32,9 +32,6 @@ class Institution extends AbstractEntity {
         $this->people = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString() : string {
         return $this->name;
     }

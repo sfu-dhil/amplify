@@ -23,9 +23,16 @@ class ExportType extends AbstractType {
             'expanded' => false,
             'multiple' => false,
             'choices' => [
+                'Islandora' => 'islandora',
                 'MODS' => 'mods',
-                'bepress' => 'bepress',
+                'Bepress' => 'bepress',
             ],
+            'help' => '
+                <p>
+                    Islandora exports must used with <a href="https://github.com/mjordan/islandora_workbench" target="_blank">Islandora Workbench</a>.
+                </p>
+            ',
+            'help_html' => true,
             'required' => true,
         ]);
     }

@@ -21,6 +21,9 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         ImageContainerTrait::__construct as protected image_constructor;
     }
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $guid = null;
+
     #[ORM\Column(type: 'string')]
     private ?string $title = null;
 
@@ -72,7 +75,7 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
      * @var Collection<int,Episode>
      */
     #[ORM\OneToMany(targetEntity: 'Episode', mappedBy: 'podcast')]
-    #[ORM\OrderBy(['number' => 'ASC', 'title' => 'ASC'])]
+    #[ORM\OrderBy(['date' => 'ASC', 'episodeType' => 'DESC', 'number' => 'ASC', 'title' => 'ASC'])]
     private $episodes;
 
     /**
@@ -107,11 +110,18 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         $this->imports = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString() : string {
         return $this->title;
+    }
+
+    public function getGuid() : ?string {
+        return $this->guid;
+    }
+
+    public function setGuid(?string $guid) : self {
+        $this->guid = $guid;
+
+        return $this;
     }
 
     public function getTitle() : ?string {
@@ -432,11 +442,14 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         $errors = [];
         $warnings = [];
 
+        // if (empty(trim(strip_tags($this->getGuid() ?? '')))) {
+        //     $warnings['Guid'] = 'No global unique identifier';
+        // }
         if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
             $errors['Title'] = 'No title';
         }
         if (empty(trim(strip_tags($this->getSubTitle() ?? '')))) {
-            $errors['Subtitle'] = 'No subtitle';
+            $warnings['Subtitle'] = 'No subtitle';
         }
         if (empty(trim(strip_tags($this->getWebsite() ?? '')))) {
             $errors['Website'] = 'No website';

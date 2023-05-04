@@ -25,17 +25,17 @@ class ExportPodcastCommandTest extends CommandTestCase {
         $this->assertTrue($fileSystem->exists($filePath));
 
         $finder = new Finder();
-        $zip = new ZipArchive;
+        $zip = new ZipArchive();
         $this->assertTrue($zip->open($filePath));
 
-        $expectedDir =  dirname(__FILE__, 2) . '/data/export_formats/mods';
+        $expectedDir = dirname(__FILE__, 2) . '/data/export_formats/mods';
         $finder->files()->in($expectedDir);
         $expectedFiles = [];
         foreach ($finder as $file) {
-            $expectedFiles []= $file->getRelativePathname();
+            $expectedFiles[] = $file->getRelativePathname();
             $zipContent = $zip->getFromName($file->getRelativePathname());
             $this->assertNotFalse($zipContent, "MODS export file {$file->getRelativePathname()} doesn't exist in zip");
-            $this->assertTrue(sha1($zipContent) == sha1_file($file->getRealpath()), "MODS export file {$file->getRelativePathname()} zip contents don't match expected contents");
+            $this->assertTrue(sha1($zipContent) === sha1_file($file->getRealpath()), "MODS export file {$file->getRelativePathname()} zip contents don't match expected contents");
         }
         for ($i = 0; $i < $zip->count(); $i++) {
             $zipFile = $zip->getNameIndex($i);

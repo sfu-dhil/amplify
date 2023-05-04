@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods xmlns="http://www.loc.gov/mods/v3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
+        version="3.5">
+    <identifier type="uri">/podcasts/6/seasons/8</identifier>
+<identifier type="urn">urn:amplify:podcast:6:season:8</identifier>
+
+<titleInfo>
+    <title>Title 5</title>
+    <subTitle>Title 7</subTitle>
+    <partNumber>S07</partNumber>
+</titleInfo>
+<titleInfo type="alternative">
+    <title>SubTitle 7</title>
+</titleInfo>
+
+        <name type="personal">
+    <namePart>SortableName 1</namePart>
+    <displayForm>Fullname 1</displayForm>
+        <affiliation>Name 1</affiliation>
+            <role>
+        <roleTerm type="text" authority="marcrelator">Label 1</roleTerm>
+            </role>
+        <role>
+        <roleTerm type="text" authority="marcrelator">Label 1</roleTerm>
+            </role>
+        <role>
+        <roleTerm type="text" authority="marcrelator">Label 1</roleTerm>
+            </role>
+        <role>
+        <roleTerm type="text" authority="marcrelator">Label 1</roleTerm>
+            </role>
+            <description>This is paragraph 1</description>
+    </name>    
+    
+    <targetAudience authority="marctarget">general<targetAudience>
+    <typeOfResource collection="yes">sound recording-nonmusical</typeOfResource>
+    <physicalDescription>
+        <form authority="marcform">electronic</form>
+        <form authority="marcform">sound recording</form>
+        <extent>1 podcast season; 0 episode(s); 1 image file(s)</extent>
+        <digitalOrigin>born digital</digitalOrigin>
+    </physicalDescription>
+    <originInfo>
+        <dateCaptured encoding="iso8601">2023-05-25</dateCaptured>
+        <issuance>serial</issuance>
+                <publisher>Name 1</publisher>
+            </originInfo>
+
+    <genre authority="lcsh" valueURI="https://id.loc.gov/authorities/genreForms/gf2011026450">Podcasts</genre>
+    <genre authority="marcgt">nonmusical sound</genre>
+    
+        <accessCondition type="use and reproduction">
+        This is paragraph 5
+    </accessCondition>
+    
+        <abstract type="summary" displayLabel="Season Content description">
+        This is paragraph 7
+    </abstract>
+    
+    <relatedItem type="series">
+        <identifier type="uri">/podcasts/6</identifier>
+<identifier type="urn">urn:amplify:podcast:6</identifier>
+
+<titleInfo>
+    <title>Title 5</title>
+</titleInfo>
+<titleInfo type="alternative">
+    <title>SubTitle 5</title>
+</titleInfo>
+    </relatedItem>
+    </mods>

@@ -81,7 +81,7 @@ task('dhil:fonts', function() : void {
  */
 task('dhil:phpunit', function() : void {
     if (file_exists('Makefile')) {
-        $output = run('cd {{ release_path }} && make test.db test', ['timeout' => null]);
+        $output = run('cd {{ release_path }} && make test', ['timeout' => null]);
     } else {
         $output = run('cd {{ release_path }} && ./vendor/bin/phpunit', ['timeout' => null]);
     }

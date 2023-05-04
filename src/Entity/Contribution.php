@@ -31,9 +31,6 @@ class Contribution extends AbstractEntity {
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString() : string {
         return implode(',', [$this->person, $this->contributorRole, $this->podcast, $this->season, $this->episode]);
     }

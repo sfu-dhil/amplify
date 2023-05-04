@@ -3,120 +3,81 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
         version="3.5">
-    <titleInfo>
-        <title>{{ episode.podcast.title }} {{ episode.slug }}: {{ episode.title }}</title>
-        <partNumber>{{ episode.slug }}</partNumber>
-        <partName>{{ episode.podcast.title }}</partName>
-        <partNumber>{{ episode.season.title }}</partNumber>
-    </titleInfo>
-    {% if episode.subTitle %}
-    <titleInfo type="alternative">
-        <title>{{ episode.subTitle }}</title>
-    </titleInfo>
+    {% embed 'export/format/mods/partial/identifier_episode.xml.twig' with {
+        'episode': episode,
+    } %}{% endembed %}
+
+    {% for contribution in contributions %}
+    {% embed 'export/format/mods/partial/contribution.xml.twig' with {
+        'person': contribution.person,
+        'roles': contribution.roles,
+    } %}{% endembed %}
+    {% endfor %}
+
+    {% if episode.language %}
+    {% embed 'export/format/mods/partial/language.xml.twig' with {
+        'language': episode.language,
+    } %}{% endembed %}
     {% endif %}
 
-    {% set contributions = episode.podcast.contributions|merge(episode.season.contributions) %}
-    {% for contribution in contributions %}
-        {% set role = contribution.contributorRole %}
-        {% set person = contribution.person %}
-        <name>
-            <namePart>{{ person.fullName }}</namePart>
-            {% if person.institution %}
-                <affiliation>{{ person.institution}}</affiliation>
-            {% endif %}
-            <role>
-                {% if role.relatorTerm %}
-                    <roleTerm type='code' authority='marcrelator'>{{ role.relatorTerm }}</roleTerm>
-                {% endif %}
-                <roleTerm  type="text" authority="marcrel">{{ role.label }}</roleTerm>
-            </role>
-        </name>
-    {% endfor %}
-
-    {% for contribution in episode.contributions %}
-        {% set role = contribution.contributorRole %}
-        {% set person = contribution.person %}
-        <name>
-            <namePart>{{ person.fullName }}</namePart>
-            {% if person.institution %}
-                <affiliation>{{ person.institution}}</affiliation>
-            {% endif %}
-            <role>
-                {% if role.relatorTerm %}
-                    <roleTerm type="code" authority="marcrelator">{{ role.relatorTerm }}</roleTerm>
-                {% endif %}
-                <roleTerm  type="text" authority="marcrel">{{ role.label }}</roleTerm>
-            </role>
-            {% if person.bio %}
-                <description>{{ person.bio(true) }}</description>
-            {% endif %}
-        </name>
-    {% endfor %}
-
+    <targetAudience authority="marctarget">{{ episode.explicit ? 'adult' : 'general' }}<targetAudience>
     <typeOfResource>sound recording-nonmusical</typeOfResource>
-    <genre>Podcast</genre>
-
     <physicalDescription>
+        <form authority="marcform">electronic</form>
         <form authority="marcform">sound recording</form>
-        <extent unit="minutes">{{ episode.runTime }}</extent>
+        <extent>1 podcast episode; {{ episode.audios|length }} audio file(s); {{ episode.images|length }} image file(s); {{ episode.pdfs|length }} pdf file(s); runtime {{ episode.runTime }}</extent>
         <digitalOrigin>born digital</digitalOrigin>
     </physicalDescription>
-
-    <originInfo>
-        <dateIssued>{{ episode.date|date('Y-m-d') }}</dateIssued>
+    <originInfo eventType="publication">
+        <dateIssued encoding="iso8601">{{ episode.date|date('Y-m-d') }}</dateIssued>
+        <dateCaptured encoding="iso8601">{{ episode.updated|date('Y-m-d') }}</dateCaptured>
         <issuance>serial</issuance>
         {% if episode.season.publisher %}
-            <publisher>{{ episode.season.publisher.name }}</publisher>
+        <publisher>{{ episode.season.publisher.name }}</publisher>
         {% elseif episode.podcast.publisher %}
-            <publisher>{{ episode.podcast.publisher.name }}</publisher>
+        <publisher>{{ episode.podcast.publisher.name }}</publisher>
         {% endif %}
     </originInfo>
 
-    {% if episode.language %}
-        <language>
-            <languageTerm type='text'>{{ episode.language }}</languageTerm>
-        </language>
-    {% endif %}
+    <genre authority="lcsh" valueURI="https://id.loc.gov/authorities/genreForms/gf2011026450">Podcasts</genre>
+    <genre authority="marcgt">nonmusical sound</genre>
+    {% embed 'export/format/mods/partial/subjects_episode.xml.twig' with {
+        'episode': episode,
+    } %}{% endembed %}
+    {% embed 'export/format/mods/partial/subjects_podcast.xml.twig' with {
+        'podcast': episode.podcast,
+    } %}{% endembed %}
 
-    <abstract>
-        {{ episode.description|html2txt|raw('xml') }}
-        {% if episode.permissions %}
-            &#10;&#10;{{ episode.permissions|html2txt|raw('xml') }}
-        {% endif %}
-        {% if episode.bibliography %}
-            &#10;&#10;{{ episode.bibliography|html2txt|raw('xml') }}
-        {% endif %}
-        {% if episode.podcast.copyright %}
-            &#10;&#10;{{ episode.podcast.copyright|html2txt|raw('xml') }}
-        {% endif %}
-        {% if episode.podcast.license %}
-            &#10;&#10;{{ episode.podcast.license|html2txt|raw('xml') }}
-        {% endif %}
-    </abstract>
-
-    {% if episode.subjects|length > 0 %}
-        <subject authority="lcsh" authorityURI="http://id.loc.gov/authorities/subjects">
-            {% for subject in episode.subjects %}
-            <topic >{{ subject }}</topic>
-            {% endfor %}
-        </subject>
-    {% endif %}
-
-    {% if episode.podcast.categories %}
-        <subject authorityURI="https://help.apple.com/itc/podcasts_connect/#/itc9267a2f12">
-            {% for category in episode.podcast.categories %}
-                <topic>{{ category }}</topic>
-            {% endfor %}
-        </subject>
-    {% endif %}
+    {% if episode.podcast.copyright %}
     <accessCondition type="use and reproduction">
-        {{ episode.podcast.copyright|raw|striptags }}
+        {{ episode.podcast.copyright|html2txt }}
     </accessCondition>
+    {% endif %}
+
+    {% if episode.description %}
+    <abstract type="summary" displayLabel="Episode Content description">
+        {{ episode.description|html2txt }}
+    </abstract>
+    {% endif %}
+    {% if episode.permissions %}
+    <abstract displayLabel="Episode Permissions">
+        {{ episode.permissions|html2txt }}
+    </abstract>
+    {% endif %}
+    {% if episode.bibliography %}
+    <abstract displayLabel="Episode Bibliography">
+        {{ episode.bibliography|html2txt }}
+    </abstract>
+    {% endif %}
+
     <relatedItem type="series">
-        <titleInfo>
-            <title>{{ episode.podcast.title }}</title>
-            <partNumber>{{ episode.slug }}</partNumber>
-        </titleInfo>
+        {% embed 'export/format/mods/partial/identifier_season.xml.twig' with {
+            'season': episode.season,
+        } %}{% endembed %}
     </relatedItem>
-    <identifier type="amplify">episode:{{ episode.id }}:episode</identifier>
+    <relatedItem type="series">
+        {% embed 'export/format/mods/partial/identifier_podcast.xml.twig' with {
+            'podcast': episode.podcast,
+        } %}{% endembed %}
+    </relatedItem>
 </mods>

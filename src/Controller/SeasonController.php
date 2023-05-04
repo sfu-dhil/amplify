@@ -62,6 +62,10 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
                 $contribution->setSeason($season);
                 $entityManager->persist($contribution);
             }
+            foreach ($season->getImages() as $image) {
+                $image->setEntity($season);
+                $entityManager->persist($image);
+            }
             $entityManager->persist($season);
             $entityManager->flush();
             $this->addFlash('success', 'Season created successfully.');
@@ -91,6 +95,7 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
     ])]
     #[Template]
     public function edit(EntityManagerInterface $entityManager, Request $request, Podcast $podcast, Season $season) : array|RedirectResponse {
+        $existingImages = $season->getImages();
         $form = $this->createForm(SeasonType::class, $season);
         $form->handleRequest($request);
 
@@ -99,6 +104,17 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
                 $contribution->setSeason($season);
                 if ( ! $entityManager->contains($contribution)) {
                     $entityManager->persist($contribution);
+                }
+            }
+            $currentImageIds = [];
+            foreach ($season->getImages() as $image) {
+                $image->setEntity($season);
+                $entityManager->persist($image);
+                $currentImageIds[] = $image->getId();
+            }
+            foreach ($existingImages as $existingImage) {
+                if ( ! in_array($existingImage->getId(), $currentImageIds, true)) {
+                    $entityManager->remove($existingImage);
                 }
             }
             $entityManager->flush();

@@ -118,10 +118,79 @@
             remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
             after_add: function(collection, element){
                 $(element).find('.select2entity').select2entity();
+                if (tinymce && $(element).find('.tinymce').length > 0 ) {
+                    $(element).find('.tinymce').each(function (index, textarea) {
+                        tinymce.execCommand("mceAddEditor", false, textarea.id);
+                    });
+                }
                 return true;
             },
         });
     }
+
+    function mediaCollection() {
+        if ( $('.collection-media').length == 0 ) {
+            return
+        }
+        $('.collection-media.collection-media-image').collection({
+            init_with_n_elements: 0,
+            allow_up: false,
+            allow_down: false,
+            max: 400,
+            position_field_selector: '.position-id',
+            add_at_the_end: true,
+            add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Image</a>',
+            remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
+            after_add: function(collection, element){
+                $(element).find('.select2entity').select2entity();
+                if (tinymce && $(element).find('.tinymce').length > 0 ) {
+                    $(element).find('.tinymce').each(function (index, textarea) {
+                        tinymce.execCommand("mceAddEditor", false, textarea.id);
+                    });
+                }
+                return true;
+            },
+        });
+        $('.collection-media.collection-media-audio').collection({
+            init_with_n_elements: 0,
+            allow_up: false,
+            allow_down: false,
+            max: 400,
+            position_field_selector: '.position-id',
+            add_at_the_end: true,
+            add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Audio</a>',
+            remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
+            after_add: function(collection, element){
+                $(element).find('.select2entity').select2entity();
+                if (tinymce && $(element).find('.tinymce').length > 0 ) {
+                    $(element).find('.tinymce').each(function (index, textarea) {
+                        tinymce.execCommand("mceAddEditor", false, textarea.id);
+                    });
+                }
+                return true;
+            },
+        });
+        $('.collection-media.collection-media-pdf').collection({
+            init_with_n_elements: 0,
+            allow_up: false,
+            allow_down: false,
+            max: 400,
+            position_field_selector: '.position-id',
+            add_at_the_end: true,
+            add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Transcript</a>',
+            remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
+            after_add: function(collection, element){
+                $(element).find('.select2entity').select2entity();
+                if (tinymce && $(element).find('.tinymce').length > 0 ) {
+                    $(element).find('.tinymce').each(function (index, textarea) {
+                        tinymce.execCommand("mceAddEditor", false, textarea.id);
+                    });
+                }
+                return true;
+            },
+        });
+    }
+
 
     function imageModals() {
         $('#imgModal').on('show.bs.modal', function (event) {
@@ -169,6 +238,7 @@
         if (typeof $().collection === 'function') {
             simpleCollection();
             complexCollection();
+            mediaCollection();
         }
         imageModals();
         menuTabs();

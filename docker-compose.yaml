@@ -46,6 +46,7 @@ services:
 
       # use the container's node_modules & vendor folders (don't override)
       - /var/www/html/public/node_modules
+      - /var/www/html/public/bundles
       - /var/www/html/vendor
     healthcheck:
       test: ["CMD-SHELL", "curl --fail http://localhost/health.php || exit 1"]

@@ -46,13 +46,21 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
                 $contribution->setEpisode($episode);
                 $entityManager->persist($contribution);
             }
+            foreach ($episode->getAudios() as $audio) {
+                $audio->setEntity($episode);
+                $entityManager->persist($audio);
+            }
+            foreach ($episode->getImages() as $image) {
+                $image->setEntity($episode);
+                $entityManager->persist($image);
+            }
+            foreach ($episode->getPdfs() as $pdf) {
+                $pdf->setEntity($episode);
+                $entityManager->persist($pdf);
+            }
             $entityManager->persist($episode);
             $entityManager->flush();
             $this->addFlash('success', 'Episode created successfully.');
-
-            if ($episode->getPodcast()->getLanguage() && ! $episode->getLanguage()) {
-                $episode->setLanguage($episode->getPodcast()->getLanguage());
-            }
 
             return $this->redirectToRoute('podcast_show', ['id' => $podcast->getId()]);
         }
@@ -79,6 +87,9 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
     ])]
     #[Template]
     public function edit(EntityManagerInterface $entityManager, Request $request, Podcast $podcast, Episode $episode) : array|RedirectResponse {
+        $existingAudios = $episode->getAudios();
+        $existingImages = $episode->getImages();
+        $existingPdfs = $episode->getPdfs();
         $form = $this->createForm(EpisodeType::class, $episode);
         $form->handleRequest($request);
 
@@ -91,6 +102,39 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
                 $contribution->setEpisode($episode);
                 if ( ! $entityManager->contains($contribution)) {
                     $entityManager->persist($contribution);
+                }
+            }
+            $currentAudioIds = [];
+            foreach ($episode->getAudios() as $audio) {
+                $audio->setEntity($episode);
+                $entityManager->persist($audio);
+                $currentAudioIds[] = $audio->getId();
+            }
+            foreach ($existingAudios as $existingAudio) {
+                if ( ! in_array($existingAudio->getId(), $currentAudioIds, true)) {
+                    $entityManager->remove($existingAudio);
+                }
+            }
+            $currentImageIds = [];
+            foreach ($episode->getImages() as $image) {
+                $image->setEntity($episode);
+                $entityManager->persist($image);
+                $currentImageIds[] = $image->getId();
+            }
+            foreach ($existingImages as $existingImage) {
+                if ( ! in_array($existingImage->getId(), $currentImageIds, true)) {
+                    $entityManager->remove($existingImage);
+                }
+            }
+            $currentPdfIds = [];
+            foreach ($episode->getPdfs() as $pdf) {
+                $pdf->setEntity($episode);
+                $entityManager->persist($pdf);
+                $currentPdfIds[] = $pdf->getId();
+            }
+            foreach ($existingPdfs as $existingPdf) {
+                if ( ! in_array($existingPdf->getId(), $currentPdfIds, true)) {
+                    $entityManager->remove($existingPdf);
                 }
             }
             $entityManager->flush();

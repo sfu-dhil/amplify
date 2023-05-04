@@ -30,7 +30,6 @@ class ImportTest extends ControllerTestCase {
         $preCount = count($repo->findAll());
         $this->messenger('async')->queue()->assertEmpty();
 
-
         $this->login(UserFixtures::ADMIN);
         $formCrawler = $this->client->request('GET', '/podcasts/imports/new');
         $this->assertResponseIsSuccessful();
@@ -40,7 +39,7 @@ class ImportTest extends ControllerTestCase {
         ]);
 
         $this->client->submit($form);
-        $this->assertResponseRedirects("/podcasts/imports/9", Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/podcasts/imports/9', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
 
@@ -71,7 +70,7 @@ class ImportTest extends ControllerTestCase {
 
         $this->login(UserFixtures::ADMIN);
         $this->client->request('GET', '/podcasts/1/imports/new');
-        $this->assertResponseRedirects("/podcasts/imports/10", Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/podcasts/imports/10', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
 

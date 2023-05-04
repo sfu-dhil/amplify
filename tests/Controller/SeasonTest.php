@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use App\Repository\SeasonRepository;
-use Nines\MediaBundle\Repository\ImageRepository;
-use Nines\MediaBundle\Service\ImageManager;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\TestCase\ControllerTestCase;
 use Symfony\Component\HttpFoundation\Response;
