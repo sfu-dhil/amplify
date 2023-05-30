@@ -8,6 +8,7 @@ use App\Entity\Category;
 use App\Entity\Language;
 use App\Entity\Podcast;
 use App\Entity\Publisher;
+use Nines\MediaBundle\Form\ImageType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -16,12 +17,18 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 /**
  * Podcast form.
  */
 class PodcastType extends AbstractType {
+    public function __construct(
+        public UrlGeneratorInterface $router,
+    ) {
+    }
+
     /**
      * Add form fields to $builder.
      */
@@ -127,6 +134,22 @@ class PodcastType extends AbstractType {
             'by_reference' => true,
             'attr' => [
                 'class' => 'collection collection-complex',
+            ],
+        ]);
+        $builder->add('images', CollectionType::class, [
+            'label' => 'Images',
+            'required' => false,
+            'allow_add' => true,
+            'allow_delete' => true,
+            'delete_empty' => true,
+            'entry_type' => ImageType::class,
+            'entry_options' => [
+                'label' => false,
+            ],
+            'prototype' => true,
+            'by_reference' => false,
+            'attr' => [
+                'class' => 'collection collection-media collection-media-image',
             ],
         ]);
     }

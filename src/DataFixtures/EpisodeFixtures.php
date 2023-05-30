@@ -53,20 +53,25 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
         return ['dev', 'test'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(ObjectManager $em) : void {
         $this->audioManager->setCopy(true);
         $this->imageManager->setCopy(true);
         $this->pdfManager->setCopy(true);
         for ($i = 0; $i < 8; $i++) {
             $fixture = new Episode();
+            if (0 === $i % 4 || 1 === $i % 4) {
+                $fixture->setEpisodeType('full');
+            } elseif (2 === $i % 4) {
+                $fixture->setEpisodeType('bonus');
+            } elseif (3 === $i % 4) {
+                $fixture->setEpisodeType('trailer');
+            }
             $fixture->setNumber($i);
             $fixture->setDate(new DateTimeImmutable("2020-{$i}-{$i}"));
             $fixture->setRunTime("00:{$i}5:00");
             $fixture->setTitle('Title ' . $i);
             $fixture->setSubTitle('SubTitle ' . $i);
+            $fixture->setExplicit(0 === $i % 2);
             $fixture->setBibliography("<p>This is paragraph {$i}</p>");
             $fixture->setTranscript("<p>This is paragraph {$i}</p>");
             $fixture->setDescription("<p>This is paragraph {$i}</p>");
@@ -75,6 +80,8 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $fixture->setSeason($this->getReference($i < 4 ? 'season.1' : 'season.5'));
             $fixture->addSubject('Subject ' . $i);
             $fixture->addSubject('Subject ' . ($i + 1));
+            $fixture->setCreated(new \DateTimeImmutable('2023-05-25'));
+            $fixture->setUpdated(new \DateTimeImmutable('2023-05-25'));
             $em->persist($fixture);
             $em->flush();
 
@@ -85,6 +92,8 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $audio->setOriginalName($audioFile);
             $audio->setDescription("<p>This is paragraph {$i}</p>");
             $audio->setLicense("<p>This is paragraph {$i}</p>");
+            $audio->setCreated(new \DateTimeImmutable('2023-05-25'));
+            $audio->setUpdated(new \DateTimeImmutable('2023-05-25'));
             $audio->setEntity($fixture);
             $em->persist($audio);
 
@@ -95,6 +104,8 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $image->setOriginalName($imageFile);
             $image->setDescription("<p>This is paragraph {$i}</p>");
             $image->setLicense("<p>This is paragraph {$i}</p>");
+            $image->setCreated(new \DateTimeImmutable('2023-05-25'));
+            $image->setUpdated(new \DateTimeImmutable('2023-05-25'));
             $image->setEntity($fixture);
             $em->persist($image);
 
@@ -105,6 +116,8 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $pdf->setOriginalName($file);
             $pdf->setDescription("<p>This is paragraph {$i}</p>");
             $pdf->setLicense("<p>This is paragraph {$i}</p>");
+            $pdf->setCreated(new \DateTimeImmutable('2023-05-25'));
+            $pdf->setUpdated(new \DateTimeImmutable('2023-05-25'));
             $pdf->setEntity($fixture);
             $em->persist($pdf);
 
@@ -116,9 +129,6 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
         $this->pdfManager->setCopy(false);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDependencies() {
         return [
             SeasonFixtures::class,

@@ -7,7 +7,11 @@ namespace App\Form;
 use App\Entity\Episode;
 use App\Entity\Language;
 use App\Entity\Season;
+use Nines\MediaBundle\Form\AudioType;
+use Nines\MediaBundle\Form\ImageType;
+use Nines\MediaBundle\Form\PdfType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -42,6 +46,17 @@ class EpisodeType extends AbstractType {
                 'add_label' => 'Add Season',
             ],
         ]);
+        $builder->add('episodeType', ChoiceType::class, [
+            'label' => 'Episode Type',
+            'expanded' => false,
+            'multiple' => false,
+            'choices' => [
+                'Full' => 'full',
+                'Bonus' => 'bonus',
+                'Trailer' => 'trailer',
+            ],
+            'required' => true,
+        ]);
         $builder->add('number', null, [
             'label' => 'Episode Number',
             'required' => true,
@@ -52,6 +67,16 @@ class EpisodeType extends AbstractType {
         ]);
         $builder->add('subTitle', TextType::class, [
             'label' => 'Alternative Title',
+            'required' => false,
+        ]);
+        $builder->add('explicit', ChoiceType::class, [
+            'label' => 'Explicit',
+            'expanded' => false,
+            'multiple' => false,
+            'choices' => [
+                'Yes' => true,
+                'No' => false,
+            ],
             'required' => false,
         ]);
         $builder->add('date', DateType::class, [
@@ -135,6 +160,54 @@ class EpisodeType extends AbstractType {
             'by_reference' => false,
             'attr' => [
                 'class' => 'collection collection-complex',
+            ],
+        ]);
+        $builder->add('audios', CollectionType::class, [
+            'label' => 'Audio',
+            'required' => false,
+            'allow_add' => true,
+            'allow_delete' => true,
+            'delete_empty' => true,
+            'entry_type' => AudioType::class,
+            'entry_options' => [
+                'label' => false,
+            ],
+            'prototype' => true,
+            'by_reference' => false,
+            'attr' => [
+                'class' => 'collection collection-media collection-media-audio',
+            ],
+        ]);
+        $builder->add('images', CollectionType::class, [
+            'label' => 'Images',
+            'required' => false,
+            'allow_add' => true,
+            'allow_delete' => true,
+            'delete_empty' => true,
+            'entry_type' => ImageType::class,
+            'entry_options' => [
+                'label' => false,
+            ],
+            'prototype' => true,
+            'by_reference' => false,
+            'attr' => [
+                'class' => 'collection collection-media collection-media-image',
+            ],
+        ]);
+        $builder->add('pdfs', CollectionType::class, [
+            'label' => 'Transcripts',
+            'required' => false,
+            'allow_add' => true,
+            'allow_delete' => true,
+            'delete_empty' => true,
+            'entry_type' => PdfType::class,
+            'entry_options' => [
+                'label' => false,
+            ],
+            'prototype' => true,
+            'by_reference' => false,
+            'attr' => [
+                'class' => 'collection collection-media collection-media-pdf',
             ],
         ]);
     }

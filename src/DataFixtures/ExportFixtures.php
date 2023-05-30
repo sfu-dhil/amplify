@@ -12,7 +12,6 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Filesystem\Filesystem;
 
 class ExportFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface {
-
     public function __construct(
         private Filesystem $filesystem,
     ) {
@@ -22,9 +21,6 @@ class ExportFixtures extends Fixture implements DependentFixtureInterface, Fixtu
         return ['dev', 'test'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(ObjectManager $em) : void {
         for ($i = 0; $i < 8; $i++) {
             $fixture = new Export();
@@ -46,6 +42,8 @@ class ExportFixtures extends Fixture implements DependentFixtureInterface, Fixtu
             }
             $fixture->setMessage("Message {$i}");
             $fixture->setFormat('mods');
+            $fixture->setCreated(new \DateTimeImmutable('2023-05-25'));
+            $fixture->setUpdated(new \DateTimeImmutable('2023-05-25'));
             $fixture->setPodcast($this->getReference($i < 4 ? 'podcast.1' : 'podcast.5'));
             $em->persist($fixture);
             $em->flush();
@@ -56,9 +54,6 @@ class ExportFixtures extends Fixture implements DependentFixtureInterface, Fixtu
         $em->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDependencies() {
         return [
             PodcastFixtures::class,

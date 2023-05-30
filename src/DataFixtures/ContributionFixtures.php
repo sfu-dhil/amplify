@@ -15,9 +15,6 @@ class ContributionFixtures extends Fixture implements DependentFixtureInterface,
         return ['dev', 'test'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(ObjectManager $em) : void {
         for ($i = 0; $i < 8; $i++) {
             $fixture = new Contribution();
@@ -27,6 +24,8 @@ class ContributionFixtures extends Fixture implements DependentFixtureInterface,
             $fixture->setPodcast($this->getReference($i < 4 ? 'podcast.1' : 'podcast.5'));
             $fixture->setSeason($this->getReference($i < 4 ? 'season.1' : 'season.5'));
             $fixture->setEpisode($this->getReference($i < 4 ? 'episode.1' : 'episode.5'));
+            $fixture->setCreated(new \DateTimeImmutable('2023-05-25'));
+            $fixture->setUpdated(new \DateTimeImmutable('2023-05-25'));
             $em->persist($fixture);
             $this->setReference('contribution.' . $i, $fixture);
         }
@@ -34,9 +33,6 @@ class ContributionFixtures extends Fixture implements DependentFixtureInterface,
         $em->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDependencies() {
         return [
             PersonFixtures::class,

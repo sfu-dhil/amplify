@@ -16,9 +16,6 @@
         <a href="{{ path('podcast_import_new', {'podcast_id': podcast.id }) }}" class="btn btn-primary">
             <i class="bi bi-cloud-arrow-down-fill"></i> RSS Import
         </a>
-        <a href="{{ path('podcast_image_new', {'podcast_id': podcast.id }) }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> New Image
-        </a>
         <a href="{{ path('podcast_edit', {'id': podcast.id }) }}" class="btn btn-primary">
             <i class="bi bi-pencil-square"></i> Edit
         </a>
@@ -37,9 +34,7 @@
                 {% for image in podcast.images %}
                     {% embed '@NinesMedia/image/partial/list-item.html.twig' with {
                         'image': image,
-                        'path_show': path('podcast_image_show', { 'podcast_id': podcast.id, 'id': image.id }),
-                        'path_edit': path('podcast_image_edit', {'podcast_id': podcast.id, 'id': image.id }),
-                        'path_delete': path('podcast_image_delete', {'podcast_id': podcast.id, 'id': image.id }),
+                        'showActions': false,
                     } %}
                     {% endembed %}
                 {% endfor %}
@@ -52,7 +47,7 @@
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 my-3 g-4">
         <div class="col">
             <h6><i class="bi bi-exclamation-octagon"></i> Explicit</h6>
-            {% if podcast.explicit %}Yes{% else %}No{% endif %}
+            {{ podcast.explicit ? 'Yes' : 'No' }}
         </div>
         <div class="col">
             <h6><i class="bi bi-file-text"></i> Primary Language</h6>

@@ -14,15 +14,6 @@
 
 {% block action_buttons %}
     {% if is_granted('ROLE_CONTENT_ADMIN') %}
-        <a href="{{ path('episode_audio_new', {'podcast_id': episode.podcast.id, 'episode_id': episode.id }) }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> New Audio</a>
-
-        <a href="{{ path('episode_pdf_new', {'podcast_id': episode.podcast.id, 'episode_id': episode.id }) }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> New PDF
-        </a>
-        <a href="{{ path('episode_image_new', {'podcast_id': episode.podcast.id, 'episode_id': episode.id }) }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> New Image</a>
-        </a>
         <a href="{{ path('episode_edit', {'podcast_id': episode.podcast.id, 'id': episode.id }) }}" class="btn btn-primary">
             <i class="bi bi-pencil-square"></i> Edit
         </a>
@@ -41,9 +32,7 @@
                 {% for image in episode.images %}
                     {% embed '@NinesMedia/image/partial/list-item.html.twig' with {
                         'image': image,
-                        'path_show': path('episode_image_show', { 'podcast_id': episode.podcast.id, 'episode_id': episode.id, 'id': image.id }),
-                        'path_edit': path('episode_image_edit', {'podcast_id': episode.podcast.id, 'episode_id': episode.id, 'id': image.id }),
-                        'path_delete': path('episode_image_delete', {'podcast_id': episode.podcast.id, 'episode_id': episode.id, 'id': image.id }),
+                        'showActions': false,
                     } %}
                     {% endembed %}
                 {% endfor %}
@@ -55,6 +44,10 @@
         </div>
     </div>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 my-3 g-4">
+        <div class="col">
+            <h6><i class="bi bi-exclamation-octagon"></i> Explicit</h6>
+            {{ episode.explicit ? 'Yes' : 'No' }}
+        </div>
         <div class="col">
             <h6><i class="bi bi-calendar-event"></i> Release Date</h6>
             {{ episode.date|date('Y-m-d') }}
@@ -100,14 +93,14 @@
             } %}
             {% endembed %}
         </div>
-        <div class="col">
-            <h6><i class="bi bi-bookshelf"></i> Bibliography</h6>
-            {{ episode.bibliography|default('')|sanitize_html }}
-        </div>
-        <div class="col">
-            <h6><i class="bi bi-list-task"></i> Permissions</h6>
-            {{ episode.permissions|default('')|sanitize_html }}
-        </div>
+    </div>
+    <div class="my-3">
+        <h6><i class="bi bi-bookshelf"></i> Bibliography</h6>
+        {{ episode.bibliography|default('')|sanitize_html }}
+    </div>
+    <div class="my-3">
+        <h6><i class="bi bi-list-task"></i> Permissions</h6>
+        {{ episode.permissions|default('')|sanitize_html }}
     </div>
     <div class="my-3">
         <h6><i class="bi bi-pen"></i> Transcript</h6>
@@ -121,9 +114,7 @@
                 {% for audio in episode.audios %}
                     {% embed '@NinesMedia/audio/partial/list-item.html.twig' with {
                         'audio': audio,
-                        'path_show': path('episode_audio_show', { 'podcast_id': episode.podcast.id, 'episode_id': episode.id, 'id': audio.id }),
-                        'path_edit': path('episode_audio_edit', {'podcast_id': episode.podcast.id, 'episode_id': episode.id, 'id': audio.id }),
-                        'path_delete': path('episode_audio_delete', {'podcast_id': episode.podcast.id, 'episode_id': episode.id, 'id': audio.id }),
+                        'showActions': false,
                     } %}
                     {% endembed %}
                 {% endfor %}
@@ -134,13 +125,11 @@
     {% if episode.pdfs|length > 0 %}
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Episode PDFs</h5>
+                <h5 class="card-title">Episode Transcript PDFs</h5>
                 {% for pdf in episode.pdfs %}
                     {% embed '@NinesMedia/pdf/partial/list-item.html.twig' with {
                         'pdf': pdf,
-                        'path_show': path('episode_pdf_show', { 'podcast_id': episode.podcast.id, 'episode_id': episode.id, 'id': pdf.id }),
-                        'path_edit': path('episode_pdf_edit', {'podcast_id': episode.podcast.id, 'episode_id': episode.id, 'id': pdf.id }),
-                        'path_delete': path('episode_pdf_delete', {'podcast_id': episode.podcast.id, 'episode_id': episode.id, 'id': pdf.id }),
+                        'showActions': false,
                     } %}
                     {% endembed %}
                 {% endfor %}

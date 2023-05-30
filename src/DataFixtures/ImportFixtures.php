@@ -15,9 +15,6 @@ class ImportFixtures extends Fixture implements DependentFixtureInterface, Fixtu
         return ['dev', 'test'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(ObjectManager $em) : void {
         for ($i = 0; $i < 8; $i++) {
             $fixture = new Import();
@@ -34,6 +31,8 @@ class ImportFixtures extends Fixture implements DependentFixtureInterface, Fixtu
             $fixture->setProgress($i * 25);
             $fixture->setMessage("Message {$i}");
             $fixture->setPodcast($this->getReference("podcast.{$i}"));
+            $fixture->setCreated(new \DateTimeImmutable('2023-05-25'));
+            $fixture->setUpdated(new \DateTimeImmutable('2023-05-25'));
             $em->persist($fixture);
             $em->flush();
 
@@ -43,9 +42,6 @@ class ImportFixtures extends Fixture implements DependentFixtureInterface, Fixtu
         $em->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDependencies() {
         return [
             PodcastFixtures::class,

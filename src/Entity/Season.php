@@ -49,7 +49,7 @@ class Season extends AbstractEntity implements ImageContainerInterface {
      * @var Collection<int,Episode>
      */
     #[ORM\OneToMany(targetEntity: 'Episode', mappedBy: 'season')]
-    #[ORM\OrderBy(['date' => 'ASC', 'number' => 'ASC', 'title' => 'ASC'])]
+    #[ORM\OrderBy(['date' => 'ASC', 'episodeType' => 'DESC', 'number' => 'ASC', 'title' => 'ASC'])]
     private $episodes;
 
     public function __construct() {
@@ -59,9 +59,6 @@ class Season extends AbstractEntity implements ImageContainerInterface {
         $this->episodes = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString() : string {
         return $this->title;
     }
@@ -222,7 +219,7 @@ class Season extends AbstractEntity implements ImageContainerInterface {
             $errors['Title'] = 'No title';
         }
         if (empty(trim(strip_tags($this->getSubTitle() ?? '')))) {
-            $errors['Subtitle'] = 'No subtitle';
+            $warnings['Subtitle'] = 'No subtitle';
         }
         if (null === $this->getPublisher()) {
             $errors['Publisher'] = 'No publisher';

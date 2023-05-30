@@ -8,9 +8,9 @@ use App\Message\ExportMessage;
 use App\Repository\ExportRepository;
 use Nines\UserBundle\DataFixtures\UserFixtures;
 use Nines\UtilBundle\TestCase\ControllerTestCase;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Response;
 use Zenstruck\Messenger\Test\InteractsWithMessenger;
-use Symfony\Component\Filesystem\Filesystem;
 
 class ExportTest extends ControllerTestCase {
     use InteractsWithMessenger;
@@ -60,7 +60,7 @@ class ExportTest extends ControllerTestCase {
         ]);
 
         $this->client->submit($form);
-        $this->assertResponseRedirects("/podcasts/2/exports/9", Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/podcasts/2/exports/9', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
 

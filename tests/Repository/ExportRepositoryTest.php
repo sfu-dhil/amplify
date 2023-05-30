@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Repository;
 
-use App\Repository\PodcastRepository;
 use App\Repository\ExportRepository;
+use App\Repository\PodcastRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class ExportRepositoryTest extends ServiceTestCase {
@@ -15,11 +15,6 @@ class ExportRepositoryTest extends ServiceTestCase {
 
     public function testSetUp() : void {
         $this->assertInstanceOf(ExportRepository::class, $this->repo);
-    }
-
-    protected function setUp() : void {
-        parent::setUp();
-        $this->repo = self::getContainer()->get(ExportRepository::class);
     }
 
     public function testIndexQuery() : void {
@@ -36,5 +31,10 @@ class ExportRepositoryTest extends ServiceTestCase {
 
         $query = $this->repo->searchQuery($podcast, self::SEARCH_QUERY);
         $this->assertCount(4, $query->execute());
+    }
+
+    protected function setUp() : void {
+        parent::setUp();
+        $this->repo = self::getContainer()->get(ExportRepository::class);
     }
 }

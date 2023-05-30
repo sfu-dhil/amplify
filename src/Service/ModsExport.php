@@ -5,223 +5,156 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Episode;
-use App\Entity\Export;
 use App\Entity\Podcast;
-use Doctrine\ORM\EntityManagerInterface;
-use Nines\MediaBundle\Entity\Audio;
-use Nines\MediaBundle\Entity\Image;
-use Nines\MediaBundle\Entity\Pdf;
+use App\Entity\Season;
 use Soundasleep\Html2Text;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
-use Twig\Environment;
-use ZipArchive;
 
-class ModsExport {
-    public function __construct(
-        private EntityManagerInterface $em,
-        private Filesystem $filesystem,
-        private Environment $twig,
-        private ParameterBagInterface $parameterBagInterface,
-        private ?OutputInterface $output = null,
-        private ?Podcast $podcast = null,
-        private ?Export $export = null,
-        private ?int $totalSteps = null,
-    ) {
-    }
+class ModsExport extends ExportService {
+    protected function processPodcast(Podcast $podcast, string $podcastDir) : void {
+        // /MODS.xml
+        $this->filesystem->dumpFile("{$podcastDir}/MODS.xml", $this->twig->render('export/format/mods/podcast.xml.twig', [
+            'podcast' => $podcast,
+            'contributions' => $this->getPodcastContributorPersonAndRoles($podcast),
+        ]));
 
-    private function generateEpisodeMod(Episode $episode, string $destinationDir) : void {
-        $content = $this->twig->render('export/format/mods/episode.xml.twig', [
-            'episode' => $episode,
-        ]);
-        $this->filesystem->dumpFile("{$destinationDir}/MODS.xml", $content);
-    }
+        // /TN.<ext> /img_<n>/MODS.xml /img_<n>/OBJ.<ext>
+        foreach ($podcast->getImages() as $index => $image) {
+            if ( ! $image?->getFile()) {
+                continue;
+            }
 
-    private function generateAudioMod(Episode $episode, string $destinationDir, Audio $audio) : void {
-        $content = $this->twig->render('export/format/mods/audio.xml.twig', [
-            'episode' => $episode,
-            'audio' => $audio,
-        ]);
-        $this->filesystem->dumpFile("{$destinationDir}/MODS.xml", $content);
-    }
-
-    private function generateTranscriptMod(Episode $episode, string $destinationDir, Pdf $pdf) : void {
-        $content = $this->twig->render('export/format/mods/transcript.xml.twig', [
-            'episode' => $episode,
-            'pdf' => $pdf,
-        ]);
-        $this->filesystem->dumpFile("{$destinationDir}/MODS.xml", $content);
-    }
-
-    private function generateImageMod(Episode $episode, string $destinationDir, Image $image) : void {
-        $content = $this->twig->render('export/format/mods/image.xml.twig', [
-            'episode' => $episode,
-            'image' => $image,
-        ]);
-        $this->filesystem->dumpFile("{$destinationDir}/MODS.xml", $content);
-    }
-
-    private function generateEpisodeStructure(Episode $episode, string $destinationDir) : void {
-        $content = $this->twig->render('export/format/mods/episode_structure.xml.twig', [
-            'episode' => $episode,
-        ]);
-        $this->filesystem->dumpFile("{$destinationDir}/structure.xml", $content);
-    }
-
-    private function updateMessage(string $message) : void {
-        $this->output->writeln($message);
-        $this->export->setMessage($message);
-        $this->em->persist($this->export);
-        $this->em->flush();
-    }
-
-    private function updateProgress(int $step) : void {
-        $this->export->setProgress((int) ($step * 100 / $this->totalSteps));
-        $this->em->persist($this->export);
-        $this->em->flush();
-    }
-
-    public function exportPodcast(OutputInterface $output, Podcast $podcast, Export $export) : void {
-        $this->output = $output;
-        $this->podcast = $podcast;
-        $this->export = $export;
-
-        $exportTmpRootDir = sys_get_temp_dir() . "/exports/{$this->export->getId()}";
-        // remove folder if already exists
-        if ($this->filesystem->exists($exportTmpRootDir)) {
-            $this->filesystem->remove($exportTmpRootDir);
+            $podcastImageDir = "{$podcastDir}/img_{$index}";
+            $this->filesystem->mkdir($podcastImageDir, 0o777);
+            $this->filesystem->dumpFile("{$podcastImageDir}/MODS.xml", $this->twig->render('export/format/mods/podcast_image.xml.twig', [
+                'podcast' => $podcast,
+                'image' => $image,
+                'contributions' => $this->getPodcastContributorPersonAndRoles($podcast),
+            ]));
+            $this->filesystem->copy($image->getFile()->getRealPath(), "{$podcastImageDir}/OBJ.{$image->getExtension()}");
+            if (0 === $index) {
+                $this->filesystem->copy($image->getFile()->getRealPath(), "{$podcastDir}/TN.{$image->getExtension()}");
+            }
         }
-        $this->filesystem->mkdir($exportTmpRootDir);
+    }
 
-        $totalEpisodeCount = 0;
-        $currentEpisode = 0;
-        foreach ($this->podcast->getSeasons() as $season) {
-            $totalEpisodeCount += count($season->getEpisodes());
+    protected function processSeason(Season $season, string $seasonDir) : void {
+        // /MODS.xml
+        $this->filesystem->dumpFile("{$seasonDir}/MODS.xml", $this->twig->render('export/format/mods/season.xml.twig', [
+            'season' => $season,
+            'contributions' => $this->getSeasonContributorPersonAndRoles($season),
+        ]));
+
+        // /TN.<ext> /img_<n>/MODS.xml /img_<n>/OBJ.<ext>
+        foreach ($season->getImages() as $index => $image) {
+            if ( ! $image?->getFile()) {
+                continue;
+            }
+
+            $seasonImageDir = "{$seasonDir}/img_{$index}";
+            $this->filesystem->mkdir($seasonImageDir, 0o777);
+            $this->filesystem->dumpFile("{$seasonImageDir}/MODS.xml", $this->twig->render('export/format/mods/season_image.xml.twig', [
+                'season' => $season,
+                'image' => $image,
+                'contributions' => $this->getSeasonContributorPersonAndRoles($season),
+            ]));
+            $this->filesystem->copy($image->getFile()->getRealPath(), "{$seasonImageDir}/OBJ.{$image->getExtension()}");
+            if (0 === $index) {
+                $this->filesystem->copy($image->getFile()->getRealPath(), "{$seasonDir}/TN.{$image->getExtension()}");
+            }
         }
-        $this->totalSteps = ($totalEpisodeCount * 2) + 10;
-        $stepsCompletedCount = 0;
+    }
 
-        $this->updateMessage('Starting Mods export.');
-        foreach ($this->podcast->getSeasons() as $season) {
-            $seasonDir = "{$exportTmpRootDir}/{$season->getSlug()}";
-            $this->filesystem->mkdir($seasonDir);
+    protected function processEpisode(Episode $episode, string $episodeDir) : void {
+        // /MODS.xml
+        $this->filesystem->dumpFile("{$episodeDir}/MODS.xml", $this->twig->render('export/format/mods/episode.xml.twig', [
+            'episode' => $episode,
+            'contributions' => $this->getEpisodeContributorPersonAndRoles($episode),
+        ]));
+        if ($episode->getTranscript()) {
+            $text = Html2Text::convert($episode->getTranscript());
+            $this->filesystem->dumpFile("{$episodeDir}/FULL_TEXT.txt", wordwrap($text));
+        }
 
-            foreach ($season->getEpisodes() as $episode) {
-                $currentEpisode++;
-                $this->updateMessage("Generating metadata for {$episode->getSlug()} ({$currentEpisode}/{$totalEpisodeCount})");
+        // /audio/MODS.xml /audio/OBJ.<ext>
+        foreach ($episode->getAudios() as $index => $audio) {
+            if ( ! $audio?->getFile()) {
+                continue;
+            }
 
-                $episodeDir = "{$seasonDir}/{$episode->getSlug()}";
-                $this->filesystem->mkdir($episodeDir);
+            $episodeAudioDir = 0 === $index ? "{$episodeDir}/audio" : "{$episodeDir}/audio_{$index}";
+            $this->filesystem->mkdir($episodeAudioDir, 0o777);
+            $this->filesystem->dumpFile("{$episodeAudioDir}/MODS.xml", $this->twig->render('export/format/mods/episode_audio.xml.twig', [
+                'episode' => $episode,
+                'audio' => $audio,
+                'contributions' => $this->getEpisodeContributorPersonAndRoles($episode),
+            ]));
+            $this->filesystem->copy($audio->getFile()->getRealPath(), "{$episodeAudioDir}/OBJ.{$audio->getExtension()}");
+        }
 
-                // /structure.xml /MODS.xml
-                $this->generateEpisodeStructure($episode, $episodeDir);
-                $this->generateEpisodeMod($episode, $episodeDir);
+        // /transcript/MODS.xml /transcript/OBJ.pdf /transcript/FULL_TEXT.txt (if episode transcript available)
+        // /transcript_<n>/MODS.xml /transcript_<n>/OBJ.pdf for pdfs after the first
+        foreach ($episode->getPdfs() as $index => $pdf) {
+            if ( ! $pdf?->getFile()) {
+                continue;
+            }
 
-                // /audio/MODS.xml (prefer audio/x-wav) /audio/OBJ.<ext> /audio/PROXY_MP3.<ext> (if mp3 exists)
-                $audioMp3 = $episode->getAudio('audio/mpeg');
-                $audioWav = $episode->getAudio('audio/x-wav');
-                $audio = $audioWav ?? $audioMp3;
-                if ($audio?->getFile()) {
-                    $episodeAudioDir = "{$episodeDir}/audio";
-                    $this->filesystem->mkdir($episodeAudioDir);
-
-                    $this->generateAudioMod($episode, $episodeAudioDir, $audio);
-                    $this->filesystem->copy($audio->getFile()->getRealPath(), "{$episodeAudioDir}/OBJ.{$audio->getExtension()}");
-                    if ($audioMp3 && $audioMp3 !== $audio && $audioMp3?->getFile()) {
-                        $this->filesystem->copy($audioMp3->getFile()->getRealPath(), "{$episodeAudioDir}/PROXY_MP3.{$audioMp3->getExtension()}");
-                    }
-                }
-
-                // /transcript/MODS.xml /transcript/OBJ.pdf /transcript/FULL_TEXT.txt (if episode transcript available)
-                // /transcript_<n>/MODS.xml /transcript_<n>/OBJ.pdf for pdfs after the first
-                if (count($episode->getPdfs()) > 0) {
-                    $episodeTranscriptDir = "{$episodeDir}/transcript";
-                    $this->filesystem->mkdir($episodeTranscriptDir);
-
-                    if ($episode->getTranscript()) {
-                        $text = Html2Text::convert($episode->getTranscript());
-                        $this->filesystem->dumpFile("{$episodeTranscriptDir}/FULL_TEXT.txt", wordwrap($text));
-                    }
-                    foreach ($episode->getPdfs() as $index => $pdf) {
-                        if ($pdf?->getFile()) {
-                            if (0 === $index) {
-                                $destinationDir = $episodeTranscriptDir;
-                            } else {
-                                $n = $index - 1;
-                                $destinationDir = "{$episodeTranscriptDir}_{$n}";
-                            }
-                            $this->generateTranscriptMod($episode, $destinationDir, $pdf);
-                            $this->filesystem->copy($pdf->getFile()->getRealPath(), "{$destinationDir}/OBJ.pdf");
-                        }
-                    }
-                }
-
-                // /TN.<ext> /img_<n>/MODS.xml /img_<n>/OBJ.<ext>
-                $images = array_merge($episode->getImages(), $season->getImages(), $podcast->getImages());
-                if (count($images) > 0) {
-                    $tn = $images[0];
-                    if ($tn?->getFile()) {
-                        $this->filesystem->copy($tn->getFile()->getRealPath(), "{$episodeDir}/TN.{$tn->getExtension()}");
-                    }
-
-                    foreach ($images as $index => $image) {
-                        if ($image?->getFile()) {
-                            $episodeImageDir = "{$episodeDir}/img_{$index}";
-                            $this->filesystem->mkdir($episodeImageDir);
-
-                            $this->generateImageMod($episode, $episodeImageDir, $image);
-                            $this->filesystem->copy($image->getFile()->getRealPath(), "{$episodeImageDir}/OBJ.{$image->getExtension()}");
-                        }
-                    }
-                }
-
-                $this->updateProgress(++$stepsCompletedCount);
+            $episodeTranscriptDir = 0 === $index ? "{$episodeDir}/transcript" : "{$episodeDir}/transcript_{$index}";
+            $this->filesystem->mkdir($episodeTranscriptDir, 0o777);
+            $this->filesystem->dumpFile("{$episodeTranscriptDir}/MODS.xml", $this->twig->render('export/format/mods/episode_transcript.xml.twig', [
+                'episode' => $episode,
+                'pdf' => $pdf,
+                'contributions' => $this->getEpisodeContributorPersonAndRoles($episode),
+            ]));
+            $this->filesystem->copy($pdf->getFile()->getRealPath(), "{$episodeTranscriptDir}/OBJ.pdf");
+            if (0 === $index && $episode->getTranscript()) {
+                $text = Html2Text::convert($episode->getTranscript());
+                $this->filesystem->dumpFile("{$episodeTranscriptDir}/FULL_TEXT.txt", wordwrap($text));
             }
         }
 
-        // zip step
-        $this->updateMessage('Preparing files for compression.');
-        $zipFilePath = $this->filesystem->tempnam(sys_get_temp_dir(), "podcast_export_{$this->podcast->getId()}", '.zip');
-        $zip = new ZipArchive();
-        $zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        // /TN.<ext> /img_<n>/MODS.xml /img_<n>/OBJ.<ext>
+        foreach ($episode->getImages() as $index => $image) {
+            if ( ! $image?->getFile()) {
+                continue;
+            }
 
-        $finder = new Finder();
-        $finder->files()->in($exportTmpRootDir);
-        $currentFile = 0;
-        foreach ($finder as $index => $file) {
-            $currentFile++;
-            $zip->addFile($file->getRealpath(), $file->getRelativePathname());
-            $zip->setCompressionName('bar.jpg', ZipArchive::CM_DEFLATE, 9);
+            $episodeImageDir = "{$episodeDir}/img_{$index}";
+            $this->filesystem->mkdir($episodeImageDir, 0o777);
+            $this->filesystem->dumpFile("{$episodeImageDir}/MODS.xml", $this->twig->render('export/format/mods/episode_image.xml.twig', [
+                'episode' => $episode,
+                'image' => $image,
+                'contributions' => $this->getEpisodeContributorPersonAndRoles($episode),
+            ]));
+            $this->filesystem->copy($image->getFile()->getRealPath(), "{$episodeImageDir}/OBJ.{$image->getExtension()}");
+            if (0 === $index) {
+                $this->filesystem->copy($image->getFile()->getRealPath(), "{$episodeDir}/TN.{$image->getExtension()}");
+            }
         }
-        $zip->registerProgressCallback(0.01, function ($r) use ($stepsCompletedCount, $totalEpisodeCount) : void {
-            // we don't know how many files there are beforehand so we approximate the increase by
-            // file completion fraction multiplied by the total episodes (why we do *2 episodes steps previously)
-            $percent = (int) ($r * 100);
-            $this->updateMessage("Compressing files ({$percent}%).");
-            $tempCurrentStep = $stepsCompletedCount + ($r * $totalEpisodeCount);
-            $this->updateProgress((int) $tempCurrentStep);
-        });
-        $zip->close();
-        $this->updateProgress($stepsCompletedCount += $totalEpisodeCount);
+    }
 
-        // move zip file to project folder and update export
-        $this->updateMessage('Preparing zip for download.');
-        $relativePath = "{$this->export->getId()}.zip";
-        $appExportFilePath = $this->parameterBagInterface->get('export_root_dir') . "/{$relativePath}";
-        $this->filesystem->rename($zipFilePath, $appExportFilePath, true);
+    protected function generate() : void {
+        $this->updateMessage('Starting Mods export.');
+        $currentEpisode = 0;
 
-        $this->export->setPath($relativePath);
-        $this->em->persist($this->export);
-        $this->em->flush();
+        $this->processPodcast($this->podcast, $this->exportTmpRootDir);
 
-        $this->updateProgress($stepsCompletedCount += 5);
+        foreach ($this->podcast->getSeasons() as $season) {
+            $seasonDir = "{$this->exportTmpRootDir}/{$season->getSlug()}";
+            $this->filesystem->mkdir($seasonDir, 0o777);
 
-        // cleanup step
-        $this->updateMessage('Cleaning up temporary files.');
-        $this->filesystem->remove($zipFilePath);
-        $this->filesystem->remove($exportTmpRootDir);
-        $this->updateProgress($stepsCompletedCount += 5);
+            $this->processSeason($season, $seasonDir);
+
+            foreach ($season->getEpisodes() as $episode) {
+                $currentEpisode++;
+                $this->updateMessage("Generating metadata for {$episode->getSlug()} ({$currentEpisode}/{$this->totalEpisodes})");
+
+                $episodeDir = "{$seasonDir}/{$episode->getSlug()}";
+                $this->filesystem->mkdir($episodeDir, 0o777);
+
+                $this->processEpisode($episode, $episodeDir);
+
+                $this->updateProgress(++$this->stepsCompleted);
+            }
+        }
     }
 }

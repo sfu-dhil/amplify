@@ -10,12 +10,12 @@ use App\Entity\Language;
 use App\Entity\Podcast;
 use App\Entity\Season;
 use App\Repository\PodcastRepository;
-use Nines\MediaBundle\Entity\StoredFileInterface;
-use Nines\UtilBundle\TestCase\CommandTestCase;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use Nines\MediaBundle\Entity\StoredFileInterface;
+use Nines\UtilBundle\TestCase\CommandTestCase;
 
 class ImportPodcastCommandTest extends CommandTestCase {
     private string $rssFeed = <<<'EOD'
@@ -188,6 +188,7 @@ class ImportPodcastCommandTest extends CommandTestCase {
             'runTime' => $episode->getRunTime(),
             'title' => $episode->getTitle(),
             'subTitle' => $episode->getSubTitle(),
+            'explicit' => $episode->getExplicit(),
             'description' => $episode->getDescription(),
             'season' => $this->seasonStub($episode->getSeason()),
             'language' => $this->languageStub($episode->getLanguage()),
@@ -223,7 +224,7 @@ class ImportPodcastCommandTest extends CommandTestCase {
             'number' => 1,
             'title' => 'Season 1',
             'subTitle' => null,
-            'description' => 'Season 1',
+            'description' => '',
         ];
         $sharedGravatarImage = [
             'originalName' => 'gravatar',
@@ -255,13 +256,44 @@ class ImportPodcastCommandTest extends CommandTestCase {
             'seasons' => [$expectedSeasonStub],
             'episodes' => [
                 [
+                    'guid' => 'https://podcast.com/?p=1',
+                    'number' => 1,
+                    'date' => '2022-10-12T14:43:07-07:00',
+                    'runTime' => '01:10:10',
+                    'title' => 'episode 1 title stub',
+                    'subTitle' => 'episode 1 itunes subtitle stub',
+                    'explicit' => true,
+                    'description' => 'episode 1 content stub',
+                    'season' => $expectedSeasonStub,
+                    'language' => $expectedLanguageStub,
+                    'audios' => [
+                        [
+                            'originalName' => 'audio.mp3',
+                            'mimeType' => 'audio/mpeg',
+                            'checksum' => '3867b514cbaeb2fa5503da76cb9d1328',
+                            'sourceUrl' => 'https://podcast.com/1/audio.mp3',
+                        ],
+                    ],
+                    'images' => [
+                        $sharedGravatarImage,
+                        [
+                            'originalName' => 'image.jpg',
+                            'mimeType' => 'image/jpeg',
+                            'checksum' => '1d86f8f0a2d4f99c2eaaab1ce9fb3b08',
+                            'sourceUrl' => 'https://podcast.com/1/image.jpg?w=1024',
+                        ],
+                    ],
+                    'pdfs' => [],
+                ],
+                [
                     'guid' => 'https://podcast.com/?p=2',
                     'number' => 2,
-                    'date' => '2022-10-13T14:43:00-07:00',
+                    'date' => '2022-10-13T14:43:07-07:00',
                     'runTime' => '01:10:09',
                     'title' => 'episode 2 title stub',
                     'subTitle' => 'episode 2 itunes subtitle stub',
-                    'description' => 'episode 2 description stub',
+                    'explicit' => true,
+                    'description' => 'episode 2 content stub',
                     'season' => $expectedSeasonStub,
                     'language' => $expectedLanguageStub,
                     'audios' => [
@@ -290,35 +322,6 @@ class ImportPodcastCommandTest extends CommandTestCase {
                         ],
                     ],
                 ],
-                [
-                    'guid' => 'https://podcast.com/?p=1',
-                    'number' => 1,
-                    'date' => '2022-10-12T14:43:00-07:00',
-                    'runTime' => '01:10:10',
-                    'title' => 'episode 1 title stub',
-                    'subTitle' => 'episode 1 itunes subtitle stub',
-                    'description' => 'episode 1 description stub',
-                    'season' => $expectedSeasonStub,
-                    'language' => $expectedLanguageStub,
-                    'audios' => [
-                        [
-                            'originalName' => 'audio.mp3',
-                            'mimeType' => 'audio/mpeg',
-                            'checksum' => '3867b514cbaeb2fa5503da76cb9d1328',
-                            'sourceUrl' => 'https://podcast.com/1/audio.mp3',
-                        ],
-                    ],
-                    'images' => [
-                        $sharedGravatarImage,
-                        [
-                            'originalName' => 'image.jpg',
-                            'mimeType' => 'image/jpeg',
-                            'checksum' => '1d86f8f0a2d4f99c2eaaab1ce9fb3b08',
-                            'sourceUrl' => 'https://podcast.com/1/image.jpg?w=1024',
-                        ],
-                    ],
-                    'pdfs' => [],
-                ],
             ],
         ];
 
@@ -343,9 +346,9 @@ class ImportPodcastCommandTest extends CommandTestCase {
             new Response(200, [], file_get_contents(dirname(__FILE__, 2) . '/data/image/28213926366_4430448ff7_c.jpg')),
             new Response(200, [], file_get_contents(dirname(__FILE__, 2) . '/data/image/30191231240_4010f114ba_c.jpg')),
             new Response(200, [], file_get_contents(dirname(__FILE__, 2) . '/data/image/33519978964_c025c0da71_c.jpg')),
-            new Response(200, [], file_get_contents(dirname(__FILE__, 2) . '/data/pdf/holmes_1.pdf')),
             new Response(200, [], file_get_contents(dirname(__FILE__, 2) . '/data/audio/94934__bletort__taegum-1.mp3')),
             new Response(200, [], file_get_contents(dirname(__FILE__, 2) . '/data/image/33519978964_c025c0da71_c.jpg')),
+            new Response(200, [], file_get_contents(dirname(__FILE__, 2) . '/data/pdf/holmes_1.pdf')),
             new Response(200, [], file_get_contents(dirname(__FILE__, 2) . '/data/audio/94934__bletort__taegum-1.mp3')),
         );
 
@@ -366,9 +369,9 @@ class ImportPodcastCommandTest extends CommandTestCase {
             new Response(200, [], file_get_contents(dirname(__FILE__, 2) . '/data/image/28213926366_4430448ff7_c.jpg')),
             new Response(200, [], file_get_contents(dirname(__FILE__, 2) . '/data/image/30191231240_4010f114ba_c.jpg')),
             new Response(200, [], file_get_contents(dirname(__FILE__, 2) . '/data/image/33519978964_c025c0da71_c.jpg')),
-            new Response(200, [], file_get_contents(dirname(__FILE__, 2) . '/data/pdf/holmes_1.pdf')),
             new Response(200, [], file_get_contents(dirname(__FILE__, 2) . '/data/audio/94934__bletort__taegum-1.mp3')),
             new Response(200, [], file_get_contents(dirname(__FILE__, 2) . '/data/image/33519978964_c025c0da71_c.jpg')),
+            new Response(200, [], file_get_contents(dirname(__FILE__, 2) . '/data/pdf/holmes_1.pdf')),
             new Response(200, [], file_get_contents(dirname(__FILE__, 2) . '/data/audio/94934__bletort__taegum-1.mp3')),
         );
         $this->execute('app:import:podcast', [

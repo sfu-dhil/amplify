@@ -36,9 +36,6 @@ class Import extends AbstractEntity {
 
     private static $failureStatus = 'FAILURE';
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString() : string {
         return "{$this->getId()}";
     }

@@ -80,8 +80,9 @@ a[href ^= 'mailto:']::after {
     padding-left: 0.5ex;
 }
 
-a[href ^= 'http://']::after,
-a[href ^= 'https://']::after {
+
+a[href ^= 'http://']:not('.ignore-external')::after,
+a[href ^= 'https://']:not('.ignore-external')::after {
     content: "\F1C5";
     display: inline-block;
     font-family: bootstrap-icons !important;
@@ -107,19 +108,6 @@ a[href ^= 'https://']::after {
     padding: 0px;
 }
 
-.form-table-of-contents-wrapper {
-    grid-template-areas: 'form-contents form-table-of-contents';
-    grid-template-columns: 1fr auto;
-}
-
-.form-table-of-contents-wrapper .form-table-of-contents {
-    grid-area: form-table-of-contents;
-}
-
-.form-table-of-contents-wrapper .form-contents {
-    grid-area: form-contents;
-}
-
 .card {
     margin-bottom: 20px;
 }
@@ -128,6 +116,7 @@ div.collection span[class*="-collection-actions"] {
     width: inherit !important;
 }
 
+div.collection-media > div:not(:last-child),
 div.collection-complex > div:not(:last-child) {
     padding-top: 15px;
     border: 1px solid rgba(128, 128, 128, 0.31);

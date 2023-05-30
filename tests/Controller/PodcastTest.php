@@ -77,7 +77,7 @@ class PodcastTest extends ControllerTestCase {
         $this->assertSame(0, $crawler->selectLink('New Season')->count());
         $this->assertSame(4, $crawler->filter('div[role="tablist"] span[role="tab"]')->count());
         foreach (range(1, 4) as $seasonId) {
-            $expectedEpisodes = $seasonId === 2 ? 4 : 0;
+            $expectedEpisodes = 2 === $seasonId ? 4 : 0;
             $this->assertSame(1, $crawler->filter("#nav-season-{$seasonId}-tab")->count());
             $this->assertSame(0, $crawler->filter("#nav-season-{$seasonId} .season-actions")->selectLink('Edit')->count());
             $this->assertSame($expectedEpisodes, $crawler->filter("#nav-season-{$seasonId} table tbody tr")->count());
@@ -94,7 +94,7 @@ class PodcastTest extends ControllerTestCase {
         $this->assertSame(1, $crawler->selectLink('New Season')->count());
         $this->assertSame(4, $crawler->filter('div[role="tablist"] span[role="tab"]')->count());
         foreach (range(1, 4) as $seasonId) {
-            $expectedEpisodes = $seasonId === 2 ? 4 : 0;
+            $expectedEpisodes = 2 === $seasonId ? 4 : 0;
             $this->assertSame(1, $crawler->filter("#nav-season-{$seasonId}-tab")->count());
             $this->assertSame(1, $crawler->filter("#nav-season-{$seasonId} .season-actions")->selectLink('Edit')->count());
             $this->assertSame($expectedEpisodes, $crawler->filter("#nav-season-{$seasonId} table tbody tr")->count());

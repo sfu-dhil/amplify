@@ -1,0 +1,10 @@
+framework:
+    html_sanitizer:
+        sanitizers:
+            import.content_sanitizer:
+                allow_safe_elements: true
+                drop_elements:
+                    - img
+                    - audio
+                    - video
+                    - embed

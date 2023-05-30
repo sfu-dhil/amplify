@@ -1,0 +1,13 @@
+<identifier type="uri">{{ path('season_show', {'podcast_id': season.podcast.id, 'id': season.id}) }}</identifier>
+<identifier type="urn">urn:amplify:podcast:{{ season.podcast.id }}:season:{{ season.id }}</identifier>
+
+<titleInfo>
+    <title>{{ season.podcast.title }}</title>
+    <subTitle>{{ season.title }}</subTitle>
+    <partNumber>{{ season.slug }}</partNumber>
+</titleInfo>
+{% if season.subTitle %}
+<titleInfo type="alternative">
+    <title>{{ season.subTitle }}</title>
+</titleInfo>
+{% endif %}

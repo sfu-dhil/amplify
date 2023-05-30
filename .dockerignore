@@ -53,7 +53,5 @@ design
 amplify.xpr
 
 # Docker image specific
-**/.git
 /docs
-.gitignore
 /.github/

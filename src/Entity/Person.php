@@ -46,9 +46,6 @@ class Person extends AbstractEntity implements LinkableInterface {
         $this->contributions = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString() : string {
         return $this->fullname;
     }
