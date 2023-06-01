@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\Category;
-use App\Entity\Language;
 use App\Entity\Podcast;
 use App\Entity\Publisher;
 use Nines\MediaBundle\Form\ImageType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\LanguageType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
@@ -59,15 +58,11 @@ class PodcastType extends AbstractType {
             'label' => 'Rss',
             'required' => true,
         ]);
-        $builder->add('language', Select2EntityType::class, [
+        $builder->add('languageCode', LanguageType::class, [
             'label' => 'Primary Language',
-            'class' => Language::class,
-            'remote_route' => 'language_typeahead',
-            'allow_clear' => true,
-            'attr' => [
-                'add_path' => 'language_new',
-                'add_label' => 'Add Language',
-            ],
+            'expanded' => false,
+            'multiple' => false,
+            'preferred_choices' => ['en', 'fr'],
         ]);
         $builder->add('description', TextareaType::class, [
             'label' => 'Description',
@@ -124,18 +119,22 @@ class PodcastType extends AbstractType {
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
-            'entry_type' => Select2EntityType::class,
+            'entry_type' => ChoiceType::class,
             'entry_options' => [
                 'label' => false,
-                'class' => Category::class,
-                'remote_route' => 'category_typeahead',
-                'allow_clear' => true,
+                'choices' => array_reduce($builder->getData()->getAllItunesCategories(), function ($result, $item) {
+                    $result[$item] = $item;
+
+                    return $result;
+                }),
             ],
-            'by_reference' => true,
+            'prototype' => true,
+            'by_reference' => false,
             'attr' => [
-                'class' => 'collection collection-complex',
+                'class' => 'collection collection-simple',
             ],
         ]);
+
         $builder->add('images', CollectionType::class, [
             'label' => 'Images',
             'required' => false,

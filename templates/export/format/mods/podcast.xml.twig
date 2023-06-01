@@ -14,9 +14,9 @@
     } %}{% endembed %}
     {% endfor %}
 
-    {% if podcast.language %}
+    {% if podcast.languageCode %}
     {% embed 'export/format/mods/partial/language.xml.twig' with {
-        'language': podcast.language,
+        'languageCode': podcast.languageCode,
     } %}{% endembed %}
     {% endif %}
 
@@ -44,13 +44,13 @@
 
     {% if podcast.copyright %}
     <accessCondition type="use and reproduction">
-        {{ podcast.copyright|html2txt }}
+        {{ podcast.copyright|default('')|sanitize_html('export.content_sanitizer') }}
     </accessCondition>
     {% endif %}
 
     {% if podcast.description %}
     <abstract type="summary" displayLabel="Podcast Content description">
-        {{ podcast.description|html2txt }}
+        {{ podcast.description|default('')|sanitize_html('export.content_sanitizer') }}
     </abstract>
     {% endif %}
 

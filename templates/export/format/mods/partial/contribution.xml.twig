@@ -13,6 +13,6 @@
     </role>
     {% endfor %}
     {% if person.bio %}
-    <description>{{ person.bio|html2txt }}</description>
+    <description>{{ person.bio|default('')|sanitize_html('export.content_sanitizer') }}</description>
     {% endif %}
 </name>

@@ -14,6 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Twig\Environment;
 use ZipArchive;
 
@@ -23,6 +24,7 @@ class ExportService {
         protected Filesystem $filesystem,
         protected Environment $twig,
         protected ParameterBagInterface $parameterBagInterface,
+        protected HtmlSanitizerInterface $exportContentSanitizer,
         protected ?OutputInterface $output = null,
         protected ?Podcast $podcast = null,
         protected ?Export $export = null,

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Episode;
-use App\Entity\Language;
 use App\Entity\Season;
 use Nines\MediaBundle\Form\AudioType;
 use Nines\MediaBundle\Form\ImageType;
@@ -93,17 +92,6 @@ class EpisodeType extends AbstractType {
             'widget' => 'single_text',
             'with_seconds' => true,
             'help' => 'Runtime in hh:mm:ss format',
-        ]);
-        $builder->add('language', Select2EntityType::class, [
-            'label' => 'Primary Language',
-            'class' => Language::class,
-            'remote_route' => 'language_typeahead',
-            'allow_clear' => true,
-            'help' => 'Leave this field blank to use the podcast primary language',
-            'attr' => [
-                'add_path' => 'language_new',
-                'add_label' => 'Add Language',
-            ],
         ]);
         $builder->add('description', TextareaType::class, [
             'label' => 'Description',

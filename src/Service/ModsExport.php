@@ -7,7 +7,6 @@ namespace App\Service;
 use App\Entity\Episode;
 use App\Entity\Podcast;
 use App\Entity\Season;
-use Soundasleep\Html2Text;
 
 class ModsExport extends ExportService {
     protected function processPodcast(Podcast $podcast, string $podcastDir) : void {
@@ -71,7 +70,7 @@ class ModsExport extends ExportService {
             'contributions' => $this->getEpisodeContributorPersonAndRoles($episode),
         ]));
         if ($episode->getTranscript()) {
-            $text = Html2Text::convert($episode->getTranscript());
+            $text = $this->exportContentSanitizer->sanitize($episode->getTranscript() ?? '');
             $this->filesystem->dumpFile("{$episodeDir}/FULL_TEXT.txt", wordwrap($text));
         }
 
@@ -107,7 +106,7 @@ class ModsExport extends ExportService {
             ]));
             $this->filesystem->copy($pdf->getFile()->getRealPath(), "{$episodeTranscriptDir}/OBJ.pdf");
             if (0 === $index && $episode->getTranscript()) {
-                $text = Html2Text::convert($episode->getTranscript());
+                $text = $this->exportContentSanitizer->sanitize($episode->getTranscript() ?? '');
                 $this->filesystem->dumpFile("{$episodeTranscriptDir}/FULL_TEXT.txt", wordwrap($text));
             }
         }

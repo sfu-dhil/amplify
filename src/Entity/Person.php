@@ -84,7 +84,7 @@ class Person extends AbstractEntity implements LinkableInterface {
         if ($asText) {
             $s = $this->bio;
             $s = strip_tags($s);
-            $s = html_entity_decode($s, ENT_QUOTES | ENT_SUBSTITUTE | ENT_DISALLOWED | ENT_HTML5, 'UTF-8');
+            $s = html_entity_decode($s);
             $s = str_replace(["\r\n", "\r", "\n"], "\n", $s);
             $s = preg_replace("/\n{3,}/", "\n\n", $s);
             $s = preg_replace('/[^\S\n]+/u', ' ', $s);

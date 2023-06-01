@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Command;
 
-use App\Entity\Category;
 use App\Entity\Episode;
-use App\Entity\Language;
 use App\Entity\Podcast;
 use App\Entity\Season;
 use App\Repository\PodcastRepository;
@@ -114,10 +112,6 @@ class ImportPodcastCommandTest extends CommandTestCase {
         foreach ($podcast->getImages() as $image) {
             $images[] = $this->fileStub($image);
         }
-        $categories = [];
-        foreach ($podcast->getCategories() as $category) {
-            $categories[] = $this->categoryStub($category);
-        }
         $seasons = [];
         foreach ($podcast->getSeasons() as $season) {
             $seasons[] = $this->seasonStub($season);
@@ -134,27 +128,11 @@ class ImportPodcastCommandTest extends CommandTestCase {
             'description' => $podcast->getDescription(),
             'copyright' => $podcast->getCopyright(),
             'website' => $podcast->getWebsite(),
-            'language' => $this->languageStub($podcast->getLanguage()),
-            'categories' => $categories,
+            'languageCode' => $podcast->getLanguageCode(),
+            'categories' => $podcast->getCategories(),
             'images' => $images,
             'seasons' => $seasons,
             'episodes' => $episodes,
-        ];
-    }
-
-    public function languageStub(?Language $language) : ?array {
-        if ( ! $language) {
-            return null;
-        }
-
-        return [
-            'name' => $language->getName(),
-        ];
-    }
-
-    public function categoryStub(Category $category) : array {
-        return [
-            'label' => $category->getLabel(),
         ];
     }
 
@@ -191,7 +169,6 @@ class ImportPodcastCommandTest extends CommandTestCase {
             'explicit' => $episode->getExplicit(),
             'description' => $episode->getDescription(),
             'season' => $this->seasonStub($episode->getSeason()),
-            'language' => $this->languageStub($episode->getLanguage()),
             'audios' => $audios,
             'images' => $images,
             'pdfs' => $pdfs,
@@ -217,9 +194,6 @@ class ImportPodcastCommandTest extends CommandTestCase {
             'checksum' => 'c009533aca4c9a309e85606dbc69f8ad',
             'sourceUrl' => null,
         ];
-        $expectedLanguageStub = [
-            'name' => 'en',
-        ];
         $expectedSeasonStub = [
             'number' => 1,
             'title' => 'Season 1',
@@ -239,10 +213,10 @@ class ImportPodcastCommandTest extends CommandTestCase {
             'description' => '<p>This is paragraph 3</p>',
             'copyright' => '<p>This is paragraph 3</p>',
             'website' => '<p>This is paragraph 3</p>',
-            'language' => $expectedLanguageStub,
+            'languageCode' => 'en',
             'categories' => [
-                ['label' => 'Society & Culture'],
-                ['label' => 'Society & Culture - Philosophy'],
+                'Society & Culture',
+                'Society & Culture - Philosophy',
             ],
             'images' => [
                 $initImage,
@@ -265,7 +239,6 @@ class ImportPodcastCommandTest extends CommandTestCase {
                     'explicit' => true,
                     'description' => 'episode 1 content stub',
                     'season' => $expectedSeasonStub,
-                    'language' => $expectedLanguageStub,
                     'audios' => [
                         [
                             'originalName' => 'audio.mp3',
@@ -295,7 +268,6 @@ class ImportPodcastCommandTest extends CommandTestCase {
                     'explicit' => true,
                     'description' => 'episode 2 content stub',
                     'season' => $expectedSeasonStub,
-                    'language' => $expectedLanguageStub,
                     'audios' => [
                         [
                             'originalName' => 'audio.mp3',
@@ -333,7 +305,7 @@ class ImportPodcastCommandTest extends CommandTestCase {
             'description' => '<p>This is paragraph 3</p>',
             'copyright' => '<p>This is paragraph 3</p>',
             'website' => '<p>This is paragraph 3</p>',
-            'language' => null,
+            'languageCode' => null,
             'categories' => [],
             'images' => [$initImage],
             'seasons' => [],

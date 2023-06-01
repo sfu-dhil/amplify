@@ -2,7 +2,7 @@ version: '3.8'
 services:
   db:
     container_name: amplify_db
-    image: mariadb:10.10
+    image: mariadb:10.11
     ports:
       - "13306:3306"
     volumes:
@@ -36,7 +36,6 @@ services:
 
       # persist file uploads in .data
       - .data/app/data:/var/www/html/data
-      - .data/app/tinymce:/var/www/html/public/uploads/tinymce
       - .data/app/var:/var/www/html/var
 
       # ignore local environment files. Allows you to run the app on your local machine as well via the local overrides

@@ -31,7 +31,7 @@
         <role>
         <roleTerm type="text" authority="marcrelator">Label 1</roleTerm>
             </role>
-            <description>This is paragraph 1</description>
+            <description><p>This is paragraph 1</p></description>
     </name>    
     
     <targetAudience authority="marctarget">general<targetAudience>
@@ -52,11 +52,11 @@
     <genre authority="marcgt">nonmusical sound</genre>
     
         <accessCondition type="use and reproduction">
-        This is paragraph 5
+        <p>This is paragraph 5</p>
     </accessCondition>
     
         <abstract type="summary" displayLabel="Season Content description">
-        This is paragraph 4
+        <p>This is paragraph 4</p>
     </abstract>
     
     <relatedItem type="series">

@@ -8,3 +8,10 @@ framework:
                     - audio
                     - video
                     - embed
+            export.content_sanitizer:
+                allow_safe_elements: true
+                drop_elements:
+                    - img
+                    - audio
+                    - video
+                    - embed

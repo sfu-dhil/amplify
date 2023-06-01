@@ -19,7 +19,6 @@ config:
         - data
         - var/log
         - var/sessions
-        - public/uploads/tinymce
     writable_dirs:
         - var/log
         - var/sessions

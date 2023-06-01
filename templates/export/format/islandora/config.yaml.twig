@@ -3,12 +3,26 @@ host: <CHANGE THIS TO THE URL FOR YOUR ISLANDORA INSTALLATION. EX: `https://isla
 username: <CHANGE THIS TO YOUR USERNAME. EX: `admin`>
 input_dir: amplify_podcast_{{ podcast.id }}_input_files
 allow_missing_files: true
+allow_adding_terms: true
 field_text_format_ids:
+- field_abstract: full_html
+- field_description: full_html
 - field_description_long: full_html
-- field_abstract: restricted_html
+- field_note: full_html
+- field_table_of_contents: full_html
 csv_field_templates:
 - field_member_of: ""
 - published: 1
+- langcode: {{ podcast.languageCode|default('en') }},
+- field_language: http://id.loc.gov/vocabulary/languages/{{ podcast.alpha3LanguageCode|default('eng') }},
+- field_genre: http://id.loc.gov/authorities/genreForms/gf2011026450
+- field_rights: {{ podcast.copyright|default('')|striptags }},
+- field_subject_general: "{{ podcast.categories|join('|') }}"
+- field_mode_of_issuance: http://id.loc.gov/vocabulary/issuance/serl
+csv_value_templates:
+- field_physical_form: electronic
+media_types_override:
+- audio: ['mp3', 'wav', 'aac', 'm4a']
 additional_files:
 - thumbnail: http://pcdm.org/use#ThumbnailImage
 ignore_csv_columns:

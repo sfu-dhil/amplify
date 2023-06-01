@@ -9,7 +9,6 @@ use App\Entity\Episode;
 use App\Entity\Person;
 use Exception;
 use League\Csv\Writer;
-use Soundasleep\Html2Text;
 use ZipArchive;
 
 class BepressExport extends ExportService {
@@ -55,7 +54,7 @@ class BepressExport extends ExportService {
     private function addRecordDefaults(array $record) : array {
         $result = [];
         foreach ($this->getCsvMap() as $column => $default) {
-            $result[$column] = array_key_exists($column, $record) ? Html2Text::convert($record[$column] ?? '', ['ignore_errors' => true]) : $default;
+            $result[$column] = array_key_exists($column, $record) ? $this->exportContentSanitizer->sanitize($record[$column] ?? '') : $default;
         }
 
         return $result;

@@ -44,7 +44,7 @@
         <role>
         <roleTerm type="text" authority="marcrelator">Label 1</roleTerm>
             </role>
-            <description>This is paragraph 1</description>
+            <description><p>This is paragraph 1</p></description>
     </name>    
     
     <targetAudience authority="marctarget">adult<targetAudience>
@@ -72,18 +72,18 @@
 </subject>
     
         <accessCondition type="use and reproduction">
-        This is paragraph 5
+        <p>This is paragraph 5</p>
     </accessCondition>
     
         <abstract type="summary" displayLabel="Episode Content description">
-        This is paragraph 6
+        <p>This is paragraph 6</p>
     </abstract>
-            <abstract displayLabel="Episode Permissions">
-        This is paragraph 6
-    </abstract>
-            <abstract displayLabel="Episode Bibliography">
-        This is paragraph 6
-    </abstract>
+            <note displayLabel="Episode Permissions">
+        <p>This is paragraph 6</p>
+    </note>
+            <note displayLabel="Episode Bibliography">
+        <p>This is paragraph 6</p>
+    </note>
     
     <relatedItem type="series">
         <identifier type="uri">/podcasts/6/seasons/6</identifier>

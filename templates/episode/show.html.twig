@@ -57,13 +57,9 @@
             {{ episode.runTime }}
         </div>
         <div class="col">
-            <h6><i class="bi bi-file-text"></i> Primary Language</h6>
-            {{ episode.language }}
-        </div>
-        <div class="col">
             <h6><i class="bi bi-tags"></i> Subjects</h6>
             {% for subject in episode.subjects %}
-                {{ subject }}{{ not loop.last ? ',' : '' }}
+                <span class="badge text-bg-primary">{{ subject }}</span>
             {% endfor %}
         </div>
         <div class="col">

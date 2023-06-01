@@ -13,6 +13,7 @@ use Nines\MediaBundle\Entity\ImageContainerInterface;
 use Nines\MediaBundle\Entity\ImageContainerTrait;
 use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Intl\Languages;
 
 #[ORM\Entity(repositoryClass: PodcastRepository::class)]
 #[ORM\Index(name: 'podcast_ft', columns: ['title', 'sub_title', 'description'], flags: ['fulltext'])]
@@ -36,8 +37,9 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     #[ORM\Column(type: 'text')]
     private ?string $description = null;
 
-    #[ORM\ManyToOne(targetEntity: 'App\Entity\Language')]
-    private ?Language $language = null;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Language]
+    private ?string $languageCode = null;
 
     #[ORM\Column(type: 'text', nullable: false)]
     private ?string $copyright = null;
@@ -56,6 +58,9 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     #[ORM\ManyToOne(targetEntity: 'Publisher', inversedBy: 'podcasts')]
     #[ORM\OrderBy(['name' => 'ASC', 'id' => 'ASC'])]
     private ?Publisher $publisher = null;
+
+    #[ORM\Column(type: 'json', options: ['default' => '[]'])]
+    private array $categories = [];
 
     /**
      * @var Collection<int,Contribution>
@@ -79,13 +84,6 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     private $episodes;
 
     /**
-     * @var Collection<int,Category>
-     */
-    #[ORM\ManyToMany(targetEntity: 'App\Entity\Category', inversedBy: 'podcasts')]
-    #[ORM\OrderBy(['label' => 'ASC', 'id' => 'ASC'])]
-    private $categories;
-
-    /**
      * @var Collection<int,Export>
      */
     #[ORM\OneToMany(targetEntity: 'Export', mappedBy: 'podcast', orphanRemoval: true)]
@@ -99,13 +97,126 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     #[ORM\OrderBy(['created' => 'DESC', 'id' => 'DESC'])]
     private $imports;
 
+    protected static $ITUNES_CATEGORIES = [
+        'Arts' => 'http://id.loc.gov/authorities/classification/N',
+        'Arts - Books' => 'http://id.loc.gov/authorities/classification/NX650.B66',
+        'Arts - Design' => 'http://id.loc.gov/authorities/classification/NC1-NC1940',
+        'Arts - Fashion & Beauty' => 'http://id.loc.gov/authorities/classification/NX650.F37|http://id.loc.gov/authorities/classification/NX650.F45',
+        'Arts - Food' => 'http://id.loc.gov/authorities/classification/NX650.F64',
+        'Arts - Performing Arts' => 'http://id.loc.gov/authorities/classification/NX212',
+        'Arts - Visual Arts' => 'http://id.loc.gov/authorities/classification/N1-N9211',
+        'Business',
+        'Business - Careers',
+        'Business - Entrepreneurship',
+        'Business - Investing',
+        'Business - Management',
+        'Business - Marketing',
+        'Business - Non-Profit',
+        'Comedy',
+        'Comedy - Comedy Interviews',
+        'Comedy - Improv',
+        'Comedy - Stand-Up',
+        'Education',
+        'Education - Courses',
+        'Education - How To',
+        'Education - Language Learning',
+        'Education - Self-Improvement',
+        'Fiction',
+        'Fiction - Comedy Fiction',
+        'Fiction - Drama',
+        'Fiction - Science Fiction',
+        'Government',
+        'History',
+        'Health & Fitness',
+        'Health & Fitness - Alternative Health',
+        'Health & Fitness - Fitness',
+        'Health & Fitness - Medicine',
+        'Health & Fitness - Mental Health',
+        'Health & Fitness - Nutrition',
+        'Health & Fitness - Sexuality',
+        'Kids & Family',
+        'Kids & Family - Education for Kids',
+        'Kids & Family - Parenting',
+        'Kids & Family - Pets & Animals',
+        'Kids & Family - Stories for Kids',
+        'Leisure',
+        'Leisure - Animation & Manga',
+        'Leisure - Automotive',
+        'Leisure - Aviation',
+        'Leisure - Crafts',
+        'Leisure - Games',
+        'Leisure - Hobbies',
+        'Leisure - Home & Garden',
+        'Leisure - Video Games',
+        'Music',
+        'Music - Music Commentary',
+        'Music - Music History',
+        'Music - Music Interviews',
+        'News',
+        'News - Business News',
+        'News - Daily News',
+        'News - Entertainment News',
+        'News - News Commentary',
+        'News - Politics',
+        'News - Sports News',
+        'News - Tech News',
+        'Religion & Spirituality',
+        'Religion & Spirituality - Buddhism',
+        'Religion & Spirituality - Christianity',
+        'Religion & Spirituality - Hinduism',
+        'Religion & Spirituality - Islam',
+        'Religion & Spirituality - Judaism',
+        'Religion & Spirituality - Religion',
+        'Religion & Spirituality - Spirituality',
+        'Science',
+        'Science - Astronomy',
+        'Science - Chemistry',
+        'Science - Earth Sciences',
+        'Science - Life Sciences',
+        'Science - Mathematics',
+        'Science - Natural Sciences',
+        'Science - Nature',
+        'Science - Physics',
+        'Science - Social Sciences',
+        'Society & Culture',
+        'Society & Culture - Documentary',
+        'Society & Culture - Personal Journals',
+        'Society & Culture - Philosophy',
+        'Society & Culture - Places & Travel',
+        'Society & Culture - Relationships',
+        'Sports',
+        'Sports - Baseball',
+        'Sports - Basketball',
+        'Sports - Cricket',
+        'Sports - Fantasy Sports',
+        'Sports - Football',
+        'Sports - Golf',
+        'Sports - Hockey',
+        'Sports - Rugby',
+        'Sports - Running',
+        'Sports - Soccer',
+        'Sports - Swimming',
+        'Sports - Tennis',
+        'Sports - Volleyball',
+        'Sports - Wilderness',
+        'Sports - Wrestling',
+        'Technology',
+        'True Crime',
+        'TV & Film',
+        'TV & Film - After Shows',
+        'TV & Film - Film History',
+        'TV & Film - Film Interviews',
+        'TV & Film - Film Reviews',
+        'TV & Film - TV Reviews',
+    ];
+
+
     public function __construct() {
         parent::__construct();
         $this->image_constructor();
         $this->contributions = new ArrayCollection();
         $this->seasons = new ArrayCollection();
         $this->episodes = new ArrayCollection();
-        $this->categories = new ArrayCollection();
         $this->exports = new ArrayCollection();
         $this->imports = new ArrayCollection();
     }
@@ -313,35 +424,56 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
-    /**
-     * @return Collection<int,Category>
-     */
-    public function getCategories() : Collection {
+    public function getAllItunesCategories() : array {
+        return array_keys(self::$ITUNES_CATEGORIES);
+    }
+
+    public function getLcClassifications() : array {
+        $classifications = [];
+        foreach ($this->categories as $category) {
+            if (array_key_exists($category, self::$ITUNES_CATEGORIES)) {
+                $classifications[] = self::$ITUNES_CATEGORIES[$category];
+            }
+        }
+        return $classifications;
+    }
+
+    public function setCategories(array $categories) : self {
+        $this->categories = $categories;
+
+        return $this;
+    }
+
+    public function getCategories() : array {
         return $this->categories;
     }
 
-    public function addCategory(Category $category) : self {
-        if ( ! $this->categories->contains($category)) {
+    public function addCategory(string $category) : self {
+        if ( ! in_array($category, $this->categories, true)) {
             $this->categories[] = $category;
         }
 
         return $this;
     }
 
-    public function removeCategory(Category $category) : self {
-        if ($this->categories->contains($category)) {
-            $this->categories->removeElement($category);
+    public function removeCategory(string $category) : self {
+        if (false !== ($key = array_search($category, $this->categories, true))) {
+            array_splice($this->category, $key, 1);
         }
 
         return $this;
     }
 
-    public function getLanguage() : ?Language {
-        return $this->language;
+    public function getAlpha3LanguageCode() : ?string {
+        return Languages::getAlpha3Code($this->languageCode ?? '');
     }
 
-    public function setLanguage(?Language $language) : self {
-        $this->language = $language;
+    public function getLanguageCode() : ?string {
+        return $this->languageCode;
+    }
+
+    public function setLanguageCode(?string $languageCode) : self {
+        $this->languageCode = $languageCode;
 
         return $this;
     }
@@ -472,8 +604,8 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         if (null === $this->getPublisher()) {
             $errors['Publisher'] = 'No publisher';
         }
-        if (null === $this->getLanguage()) {
-            $errors['Language'] = 'No language';
+        if (null === $this->getLanguageCode()) {
+            $errors['LanguageCode'] = 'No language';
         }
         if (null === $this->getContributions() || 0 === count($this->getContributions())) {
             $errors['Contributions'] = 'No contributions';

@@ -1,0 +1,13 @@
+<h4>{{ podcast.title }}</h4>
+<ol>
+    {% for season in podcast.seasons %}
+    <li>
+        {{ season.title }}
+        <ol>
+        {% for episode in season.episodes %}
+            <li>{{ episode.title }}</li>
+        {% endfor %}
+        </ol>
+    </li>
+    {% endfor %}
+</ol>

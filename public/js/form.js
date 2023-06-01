@@ -99,6 +99,7 @@
             allow_up: false,
             allow_down: false,
             max: 400,
+            add_at_the_end: true,
             add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i></a>',
             remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
             after_add: attachOclcFast
@@ -114,6 +115,7 @@
             allow_up: false,
             allow_down: false,
             max: 400,
+            add_at_the_end: true,
             add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i></a>',
             remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
             after_add: function(collection, element){

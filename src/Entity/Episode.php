@@ -57,9 +57,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $explicit = null;
 
-    #[ORM\ManyToOne(targetEntity: 'App\Entity\Language', inversedBy: 'episodes')]
-    private ?Language $language = null;
-
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $bibliography = null;
 
@@ -72,7 +69,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $permissions = null;
 
-    #[ORM\Column(type: 'json')]
+    #[ORM\Column(type: 'json', options: ['default' => '[]'])]
     private array $subjects = [];
 
     #[ORM\ManyToOne(targetEntity: 'Season', inversedBy: 'episodes')]
@@ -318,16 +315,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return null;
     }
 
-    public function getLanguage() : ?Language {
-        return $this->language;
-    }
-
-    public function setLanguage(?Language $language) : self {
-        $this->language = $language;
-
-        return $this;
-    }
-
     public function getPermissions() : ?string {
         return $this->permissions;
     }
@@ -371,9 +358,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         }
         if (null === $this->getRunTime()) {
             $errors['Run time'] = 'No run time';
-        }
-        if (null === $this->getLanguage()) {
-            $errors['Language'] = 'No primary language';
         }
         if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
             $errors['Description'] = 'No description';

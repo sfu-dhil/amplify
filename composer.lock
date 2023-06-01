@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1695a279e0ed26bba2a1f23313524ddd",
+    "content-hash": "f8b2970a935f6238ae34b2c1c074d6b5",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -3777,7 +3777,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sfu-dhil/nines-bundles.git",
-                "reference": "30ee97968c504290b0315513ba9643979a1749c8"
+                "reference": "0c7bfac87cea89bce24a24877984f0b719ac15b0"
             },
             "require": {
                 "doctrine/cache": "^2.2",
@@ -3794,7 +3794,6 @@
                 "php": ">=8.2.0",
                 "sensio/framework-extra-bundle": "^6.2",
                 "solarium/solarium": "^6.2",
-                "soundasleep/html2text": "^2.1",
                 "symfony/form": "^6.2",
                 "symfony/html-sanitizer": "^6.2",
                 "symfony/mailer": "^6.2",
@@ -3993,61 +3992,6 @@
                 "source": "https://github.com/solariumphp/solarium/tree/6.2.8"
             },
             "time": "2022-12-06T10:22:19+00:00"
-        },
-        {
-            "name": "soundasleep/html2text",
-            "version": "2.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/soundasleep/html2text.git",
-                "reference": "83502b6f8f1aaef8e2e238897199d64f284b4af3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/soundasleep/html2text/zipball/83502b6f8f1aaef8e2e238897199d64f284b4af3",
-                "reference": "83502b6f8f1aaef8e2e238897199d64f284b4af3",
-                "shasum": ""
-            },
-            "require": {
-                "ext-dom": "*",
-                "ext-libxml": "*",
-                "php": "^7.3|^8.0"
-            },
-            "require-dev": {
-                "phpstan/phpstan": "^1.9",
-                "phpunit/phpunit": "^7.0|^8.0|^9.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Soundasleep\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jevon Wright",
-                    "homepage": "https://jevon.org",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A PHP script to convert HTML into a plain text format",
-            "homepage": "https://github.com/soundasleep/html2text",
-            "keywords": [
-                "email",
-                "html",
-                "php",
-                "text"
-            ],
-            "support": {
-                "email": "support@jevon.org",
-                "issues": "https://github.com/soundasleep/html2text/issues",
-                "source": "https://github.com/soundasleep/html2text/tree/2.1.0"
-            },
-            "time": "2023-01-06T09:28:15+00:00"
         },
         {
             "name": "symfony/asset",

@@ -24,7 +24,7 @@
         "phpdocumentor/reflection-docblock": "^5.2",
         "scienta/doctrine-json-functions": "^5.2",
         "sensio/framework-extra-bundle": "^6.2",
-        "sfu-dhil/nines": "dev-develop#30ee97968c504290b0315513ba9643979a1749c8",
+        "sfu-dhil/nines": "dev-develop#0c7bfac87cea89bce24a24877984f0b719ac15b0",
         "simplepie/simplepie": "^1.8",
         "symfony/asset": "6.2.*",
         "symfony/console": "6.2.*",
@@ -81,10 +81,6 @@
         {
             "type": "git",
             "url": "https://github.com/sfu-dhil/nines-bundles.git"
-        },
-        {
-            "type": "git",
-            "url": "https://github.com/sfu-dhil/podcast-feed-parser.git"
         }
     ],
     "config": {

@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Entity\Category;
 use App\Entity\Episode;
 use App\Entity\Import;
-use App\Entity\Language;
 use App\Entity\Podcast;
 use App\Entity\Season;
-use App\Repository\CategoryRepository;
 use App\Repository\ImportRepository;
-use App\Repository\LanguageRepository;
 use App\Repository\PodcastRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -41,6 +37,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Intl\Languages;
 
 #[AsCommand(name: 'app:import:podcast')]
 class ImportPodcastCommand extends Command {
@@ -52,8 +49,6 @@ class ImportPodcastCommand extends Command {
         private EntityManagerInterface $em,
         private PodcastRepository $podcastRepository,
         private ImportRepository $importRepository,
-        private LanguageRepository $languageRepository,
-        private CategoryRepository $categoryRepository,
         private AudioManager $audioManager,
         private ImageManager $imageManager,
         private PdfManager $pdfManager,
@@ -163,20 +158,6 @@ class ImportPodcastCommand extends Command {
         $this->em->flush();
     }
 
-    private function getCategory(string $name) : Category {
-        $category = $this->categoryRepository->findOneBy([
-            'label' => $name,
-        ]);
-        if ( ! $category) {
-            $category = new Category();
-            $category->setLabel($name);
-            $this->em->persist($category);
-            $this->em->flush();
-        }
-
-        return $category;
-    }
-
     private function updateMessage(string $message) : void {
         $this->output->writeln($message);
         if ($this->import) {
@@ -281,18 +262,8 @@ class ImportPodcastCommand extends Command {
         // doesn't seem to be part of RSS feeds
 
         $languageCode = $this->feed->get_language();
-        if ($languageCode && ! $this->podcast->getLanguage()) {
-            $language = $this->languageRepository->findOneBy([
-                'name' => $languageCode,
-            ]);
-            if ( ! $language) {
-                $language = new Language();
-                $language->setName($languageCode);
-                $language->setLabel($languageCode);
-                $this->em->persist($language);
-                $this->em->flush();
-            }
-            $this->podcast->setLanguage($language);
+        if ($languageCode && Languages::exists($languageCode) && ! $this->podcast->getLanguageCode()) {
+            $this->podcast->setLanguageCode(mb_substr($languageCode, 0, 2));
         }
 
         $this->em->persist($this->podcast);
@@ -308,14 +279,12 @@ class ImportPodcastCommand extends Command {
         if ($categories && count($categories)) {
             foreach ($categories as $categoryData) {
                 $name = $this->feed->sanitize($categoryData['attribs']['']['text'], SimplePie::CONSTRUCT_TEXT);
-                $category = $this->getCategory(html_entity_decode($name));
-                $this->podcast->addCategory($category);
+                $this->podcast->addCategory(html_entity_decode($name));
 
                 if (isset($categoryData['child']) && is_array($categoryData['child'])) {
                     foreach ($categoryData['child'][SimplePie::NAMESPACE_ITUNES]['category'] as $subCategoryData) {
                         $subName = $this->feed->sanitize($subCategoryData['attribs']['']['text'], SimplePie::CONSTRUCT_TEXT);
-                        $category = $this->getCategory(html_entity_decode("{$name} - {$subName}"));
-                        $this->podcast->addCategory($category);
+                        $this->podcast->addCategory(html_entity_decode("{$name} - {$subName}"));
                     }
                 }
             }
@@ -478,11 +447,6 @@ class ImportPodcastCommand extends Command {
 
             // skip `subjects`
             // not part of RSS feed (closest is keywords)
-
-            // default language to the podcast language if not already set
-            if (null === $episode->getLanguage() && $this->podcast->getLanguage()) {
-                $episode->setLanguage($this->podcast->getLanguage());
-            }
 
             // skip `permissions`
             // not part of RSS feed

@@ -41,7 +41,7 @@
         <role>
         <roleTerm type="text" authority="marcrelator">Label 1</roleTerm>
             </role>
-            <description>This is paragraph 1</description>
+            <description><p>This is paragraph 1</p></description>
     </name>    
     
     <typeOfResource>text</typeOfResource>
@@ -69,15 +69,15 @@
 </subject>
     
         <accessCondition type="use and reproduction">
-        This is paragraph 5
+        <p>This is paragraph 5</p>
     </accessCondition>
     
         <abstract type="summary" displayLabel="File Content description">
-        This is paragraph 6
+        <p>This is paragraph 6</p>
     </abstract>
-            <abstract displayLabel="File License">
-        This is paragraph 6
-    </abstract>
+            <note displayLabel="File License">
+        <p>This is paragraph 6</p>
+    </note>
     
     <relatedItem type="host">
         <identifier type="uri">/podcasts/6/episodes/7</identifier>

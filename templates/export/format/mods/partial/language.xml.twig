@@ -1,5 +1,5 @@
 
 <language>
-    <languageTerm type="text">{{ language.label }}</languageTerm>
-    <languageTerm type="code" authority="iso639-1">{{ language.name }}</languageTerm>
+    <languageTerm type="text">{{ languageCode|default('en')|language_name }}</languageTerm>
+    <languageTerm type="code" authority="iso639-3">{{ languageCode|default('en') }}</languageTerm>
 </language>

@@ -19,8 +19,6 @@ parameters:
     dhil.matomo_siteid:
     dhil.matomo_domain:
 
-    nines.editor.upload_dir: '%kernel.project_dir%/public/uploads/tinymce'
-
     page_size: 25
     export_root_dir: '%kernel.project_dir%/data/%kernel.environment%/exports'
     project_root_dir: '%kernel.project_dir%'
@@ -53,6 +51,5 @@ services:
 
     App\Menu\Builder:
         tags:
-            - { name: knp_menu.menu_builder, method: mainMenu, alias: main}
             - { name: knp_menu.menu_builder, method: mainSidebarMenu, alias: main_sidebar}
             - { name: knp_menu.menu_builder, method: footerMenu, alias: footer}
