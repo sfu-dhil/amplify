@@ -7,22 +7,24 @@
         <meta name="google" content="notranslate" />
         <title>{% block title %}Amplify Podcast Network{% endblock %}</title>
 
-        <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('node_modules/bootstrap-icons/font/bootstrap-icons.css') }}">
-        <link rel="stylesheet" href="{{ asset('node_modules/select2/dist/css/select2.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('node_modules/jquery-ui-dist/jquery-ui.css') }}">
-        <link rel="stylesheet" href="{{ asset('node_modules/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css') }}" />
+        <link rel="icon" type="image/x-icon" href="{{ asset_prefix ~ asset('favicon.ico') }}">
 
-        <link rel="stylesheet" href="{{ asset('css/base.css') }}">
+        <link rel="stylesheet" href="{{ asset_prefix ~ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset_prefix ~ asset('node_modules/bootstrap-icons/font/bootstrap-icons.css') }}">
+        <link rel="stylesheet" href="{{ asset_prefix ~ asset('node_modules/select2/dist/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset_prefix ~ asset('node_modules/jquery-ui-dist/jquery-ui.css') }}">
+        <link rel="stylesheet" href="{{ asset_prefix ~ asset('node_modules/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css') }}" />
 
-        <script src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
-        <script src='{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}'></script>
-        <script src="{{ asset('node_modules/select2/dist/js/select2.full.min.js') }}"></script>
-        <script src="{{ asset('bundles/tetranzselect2entity/js/select2entity.js') }}"></script>
-        <script src="{{ asset('node_modules/symfony-collection/jquery.collection.js') }}"></script>
-        <script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+        <link rel="stylesheet" href="{{ asset_prefix ~ asset('css/base.css') }}">
 
-        <script src="{{ asset('js/form.js') }}"></script>
+        <script src="{{ asset_prefix ~ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
+        <script src='{{ asset_prefix ~ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}'></script>
+        <script src="{{ asset_prefix ~ asset('node_modules/select2/dist/js/select2.full.min.js') }}"></script>
+        <script src="{{ asset_prefix ~ asset('bundles/tetranzselect2entity/js/select2entity.js') }}"></script>
+        <script src="{{ asset_prefix ~ asset('node_modules/symfony-collection/jquery.collection.js') }}"></script>
+        <script src="{{ asset_prefix ~ asset('node_modules/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+
+        <script src="{{ asset_prefix ~ asset('js/form.js') }}"></script>
 
         {% block styles %}
         {% endblock %}

@@ -1,4 +1,4 @@
-FROM node:19.8 AS amplify-prod-assets
+FROM node:20.3 AS amplify-prod-assets
 WORKDIR /app
 
 RUN apt-get update \
@@ -15,13 +15,15 @@ RUN yarn --production \
 
 FROM dhilsfu/symfony-base:php-8.2-apache AS amplify
 
+ENV GIT_REPO=https://github.com/sfu-dhil/amplify
+
 # basic deps installer (no script/plugings)
-COPY composer.json composer.lock /var/www/html/
+COPY --chown=www-data:www-data composer.json composer.lock /var/www/html/
 RUN composer install --no-scripts
 
 # copy project files and install all symfony deps
-COPY . /var/www/html
+COPY --chown=www-data:www-data . /var/www/html
 RUN composer install
 
 # copy webpacked js and libs
-COPY --from=amplify-prod-assets /app/node_modules /var/www/html/public/node_modules
+COPY --chown=www-data:www-data --from=amplify-prod-assets /app/node_modules /var/www/html/public/node_modules

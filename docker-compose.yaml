@@ -9,16 +9,16 @@ services:
       - .data/mariadb:/var/lib/mysql
       - ./docker/mariadb/custom.cnf:/etc/mysql/conf.d/custom.cnf
       - ./docker/mariadb/init:/docker-entrypoint-initdb.d
-      # HACK: easy sql script running for setting up db
-      - ./amplify-data.sql:/amplify-data.sql
-      - ./amplify-schema.sql:/amplify-schema.sql
+      # # HACK: easy sql script running for setting up db
+      # - ./amplify-data.sql:/amplify-data.sql
+      # - ./amplify-schema.sql:/amplify-schema.sql
     environment:
       MARIADB_ROOT_PASSWORD: root
       MARIADB_DATABASE: amplify
       MARIADB_USER: amplify
       MARIADB_PASSWORD: password
     healthcheck:
-      test: ["CMD-SHELL", "mysql amplify -u amplify -ppassword -e 'SELECT 1;'  || exit 1"]
+      test: mysql amplify -u amplify -ppassword -e 'SELECT 1;' || exit 1
       interval: 2s
       retries: 120
 
@@ -36,19 +36,14 @@ services:
 
       # persist file uploads in .data
       - .data/app/data:/var/www/html/data
-      - .data/app/var:/var/www/html/var
-
-      # ignore local environment files. Allows you to run the app on your local machine as well via the local overrides
-      - ./docker/app/null:/var/www/html/.env.local
-      - ./docker/app/null:/var/www/html/.env.dev.local
-      - ./docker/app/null:/var/www/html/.env.test.local
+      - .data/app/log:/var/www/html/var/log
 
       # use the container's node_modules & vendor folders (don't override)
       - /var/www/html/public/node_modules
       - /var/www/html/public/bundles
       - /var/www/html/vendor
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://localhost/health.php || exit 1"]
+      test: curl --fail http://localhost/health.php || exit 1
       interval: 2s
       retries: 120
     depends_on:

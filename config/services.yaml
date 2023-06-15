@@ -11,9 +11,6 @@ parameters:
     router.request_context.host: '%env(string:ROUTE_HOST)%'
     router.request_context.base_url: '%env(string:ROUTE_BASE)%'
 
-    asset.request_context.base_path: '%env(string:ROUTE_BASE)%'
-    asset.request_context.secure: auto
-
     dhil.matomo_enabled: '%env(bool:MATOMO_ENABLED)%'
     dhil.matomo_url:
     dhil.matomo_siteid:

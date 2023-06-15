@@ -1,18 +1,22 @@
 # config/routes.yaml
 nines_editor:
     resource: '@NinesEditorBundle/config/routes.yaml'
-    prefix: editor
+    prefix: '%router.request_context.base_url%/editor'
 
 nines_media:
     resource: '@NinesMediaBundle/config/routes.yaml'
+    prefix: '%router.request_context.base_url%'
 
 nines_user:
     resource: '@NinesUserBundle/config/routes.yaml'
+    prefix: '%router.request_context.base_url%'
 
 controllers:
     resource: ../src/Controller/
     type: attribute
+    prefix: '%router.request_context.base_url%'
 
 kernel:
     resource: ../src/Kernel.php
     type: attribute
+    prefix: '%router.request_context.base_url%'

@@ -50,18 +50,18 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # Default controller stuff - open to the public
-        - { path: ^/$, roles: PUBLIC_ACCESS }
-        - { path: ^/privacy$, roles: PUBLIC_ACCESS }
+        - { path: ^%router.request_context.base_url%/$, roles: PUBLIC_ACCESS }
+        - { path: ^%router.request_context.base_url%/privacy$, roles: PUBLIC_ACCESS }
 
         # user controller stuff - open to the public
-        - { path: ^/request$, roles: PUBLIC_ACCESS }
-        - { path: ^/reset, roles: PUBLIC_ACCESS }
-        - { path: ^/login$, roles: PUBLIC_ACCESS }
+        - { path: ^%router.request_context.base_url%/request$, roles: PUBLIC_ACCESS }
+        - { path: ^%router.request_context.base_url%/reset, roles: PUBLIC_ACCESS }
+        - { path: ^%router.request_context.base_url%/login$, roles: PUBLIC_ACCESS }
 
         # Other controllers that should never be public
-        - { path: ^/dublin_core/element, roles: ROLE_USER }
-        - { path: ^/feedback/comment_note, roles: ROLE_USER }
-        - { path: ^/feedback/comment_status, roles: ROLE_USER }
+        - { path: ^%router.request_context.base_url%/dublin_core/element, roles: ROLE_USER }
+        - { path: ^%router.request_context.base_url%/feedback/comment_note, roles: ROLE_USER }
+        - { path: ^%router.request_context.base_url%/feedback/comment_status, roles: ROLE_USER }
 
         # Temporary to keep the rest of the site private.
         - { path: ^/, roles: ROLE_USER }

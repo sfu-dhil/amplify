@@ -11,6 +11,7 @@ twig:
         - '@TetranzSelect2Entity/Form/fields.html.twig'
         - 'jquery.collection.html.twig'
     globals:
+        asset_prefix: '%env(default::string:ROUTE_BASE)%'
         nines_editor_config: js/editor-config.js
         text_service: '@Nines\UtilBundle\Services\Text'
         matomo_enabled: '%dhil.matomo_enabled%'

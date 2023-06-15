@@ -134,7 +134,7 @@ After you update a dependency make sure to rebuild the images
 
 Note: If you are having problems starting/building the application due to php dependencies issues you can also run a standalone php container to help resolve them
 
-    docker run -it -v $(pwd):/var/www/html -w /var/www/html php:7.4-apache bash
+    docker run -it -v $(pwd):/var/www/html -w /var/www/html dhilsfu/symfony-base:php-8.2-apache bash
 
     [check Dockerfile for the 'apt-get update' code piece of amplify]
 

@@ -5,6 +5,7 @@ framework:
         # Configure how to generate URLs in non-HTTP contexts, such as CLI commands.
         # See https://symfony.com/doc/current/routing.html#generating-urls-in-commands
         #default_uri: http://localhost
+        default_uri: '%router.request_context.scheme%://%router.request_context.host%%router.request_context.base_url%'
 
 when@prod:
     framework:

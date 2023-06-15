@@ -43,6 +43,7 @@ jobs:
       with:
         context: .
         load: true
+        pull: true
         tags: dhilsfu/amplify:latest
         cache-from: type=registry,ref=dhilsfu/amplify:buildcache
         cache-to: type=registry,ref=dhilsfu/amplify:buildcache,mode=max
@@ -77,6 +78,7 @@ jobs:
       with:
         context: .
         push: true
+        pull: true
         tags: dhilsfu/amplify:latest,dhilsfu/amplify:${{github.ref_name}}
         cache-from: type=registry,ref=dhilsfu/amplify:buildcache
         cache-to: type=registry,ref=dhilsfu/amplify:buildcache,mode=max
