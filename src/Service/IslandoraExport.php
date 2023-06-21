@@ -216,6 +216,7 @@ class IslandoraExport extends ExportService {
         $record = $this->generateGenericImageRecord($relativeFile, "amplify:episode:{$episode->getId()}", $image, $weight, $thumbnail);
         $record['field_subject'] = implode('|', array_filter($episode->getSubjects()));
         $record['field_edtf_date_issued'] = $episode->getDate()->format('Y-m-d');
+
         return $record;
     }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Entity\Import;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -31,8 +32,8 @@ class ImportFixtures extends Fixture implements DependentFixtureInterface, Fixtu
             $fixture->setProgress($i * 25);
             $fixture->setMessage("Message {$i}");
             $fixture->setPodcast($this->getReference("podcast.{$i}"));
-            $fixture->setCreated(new \DateTimeImmutable('2023-05-25'));
-            $fixture->setUpdated(new \DateTimeImmutable('2023-05-25'));
+            $fixture->setCreated(new DateTimeImmutable('2023-05-25'));
+            $fixture->setUpdated(new DateTimeImmutable('2023-05-25'));
             $em->persist($fixture);
             $em->flush();
 

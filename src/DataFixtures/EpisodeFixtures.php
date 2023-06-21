@@ -80,8 +80,8 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $fixture->setSeason($this->getReference($i < 4 ? 'season.1' : 'season.5'));
             $fixture->addSubject('Subject ' . $i);
             $fixture->addSubject('Subject ' . ($i + 1));
-            $fixture->setCreated(new \DateTimeImmutable('2023-05-25'));
-            $fixture->setUpdated(new \DateTimeImmutable('2023-05-25'));
+            $fixture->setCreated(new DateTimeImmutable('2023-05-25'));
+            $fixture->setUpdated(new DateTimeImmutable('2023-05-25'));
             $em->persist($fixture);
             $em->flush();
 
@@ -92,8 +92,8 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $audio->setOriginalName($audioFile);
             $audio->setDescription("<p>This is paragraph {$i}</p>");
             $audio->setLicense("<p>This is paragraph {$i}</p>");
-            $audio->setCreated(new \DateTimeImmutable('2023-05-25'));
-            $audio->setUpdated(new \DateTimeImmutable('2023-05-25'));
+            $audio->setCreated(new DateTimeImmutable('2023-05-25'));
+            $audio->setUpdated(new DateTimeImmutable('2023-05-25'));
             $audio->setEntity($fixture);
             $em->persist($audio);
 
@@ -104,8 +104,8 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $image->setOriginalName($imageFile);
             $image->setDescription("<p>This is paragraph {$i}</p>");
             $image->setLicense("<p>This is paragraph {$i}</p>");
-            $image->setCreated(new \DateTimeImmutable('2023-05-25'));
-            $image->setUpdated(new \DateTimeImmutable('2023-05-25'));
+            $image->setCreated(new DateTimeImmutable('2023-05-25'));
+            $image->setUpdated(new DateTimeImmutable('2023-05-25'));
             $image->setEntity($fixture);
             $em->persist($image);
 
@@ -116,8 +116,8 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $pdf->setOriginalName($file);
             $pdf->setDescription("<p>This is paragraph {$i}</p>");
             $pdf->setLicense("<p>This is paragraph {$i}</p>");
-            $pdf->setCreated(new \DateTimeImmutable('2023-05-25'));
-            $pdf->setUpdated(new \DateTimeImmutable('2023-05-25'));
+            $pdf->setCreated(new DateTimeImmutable('2023-05-25'));
+            $pdf->setUpdated(new DateTimeImmutable('2023-05-25'));
             $pdf->setEntity($fixture);
             $em->persist($pdf);
 

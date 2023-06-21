@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Entity\Person;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -23,8 +24,8 @@ class PersonFixtures extends Fixture implements DependentFixtureInterface, Fixtu
             $fixture->setSortableName('SortableName ' . $i);
             $fixture->setLocation('Location ' . $i);
             $fixture->setBio("<p>This is paragraph {$i}</p>");
-            $fixture->setCreated(new \DateTimeImmutable('2023-05-25'));
-            $fixture->setUpdated(new \DateTimeImmutable('2023-05-25'));
+            $fixture->setCreated(new DateTimeImmutable('2023-05-25'));
+            $fixture->setUpdated(new DateTimeImmutable('2023-05-25'));
             $fixture->setInstitution($this->getReference('institution.1'));
             $em->persist($fixture);
             $this->setReference('person.' . $i, $fixture);

@@ -12,8 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Nines\MediaBundle\Entity\ImageContainerInterface;
 use Nines\MediaBundle\Entity\ImageContainerTrait;
 use Nines\UtilBundle\Entity\AbstractEntity;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Intl\Languages;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PodcastRepository::class)]
 #[ORM\Index(name: 'podcast_ft', columns: ['title', 'sub_title', 'description'], flags: ['fulltext'])]
@@ -209,7 +209,6 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         'TV & Film - Film Reviews',
         'TV & Film - TV Reviews',
     ];
-
 
     public function __construct() {
         parent::__construct();
@@ -435,6 +434,7 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
                 $classifications[] = self::$ITUNES_CATEGORIES[$category];
             }
         }
+
         return $classifications;
     }
 

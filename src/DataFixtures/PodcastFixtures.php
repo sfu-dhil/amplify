@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Entity\Podcast;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -40,8 +41,8 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $fixture->setLicense("<p>This is license {$i}</p>");
             $fixture->setWebsite("<p>This is paragraph {$i}</p>");
             $fixture->setRss("https://rss.com/{$i}");
-            $fixture->setCreated(new \DateTimeImmutable('2023-05-25'));
-            $fixture->setUpdated(new \DateTimeImmutable('2023-05-25'));
+            $fixture->setCreated(new DateTimeImmutable('2023-05-25'));
+            $fixture->setUpdated(new DateTimeImmutable('2023-05-25'));
             $fixture->setPublisher($this->getReference('publisher.1'));
             $em->persist($fixture);
             $em->flush();
@@ -53,8 +54,8 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $image->setOriginalName($imageFile);
             $image->setDescription("<p>This is paragraph {$i}</p>");
             $image->setLicense("<p>This is paragraph {$i}</p>");
-            $image->setCreated(new \DateTimeImmutable('2023-05-25'));
-            $image->setUpdated(new \DateTimeImmutable('2023-05-25'));
+            $image->setCreated(new DateTimeImmutable('2023-05-25'));
+            $image->setUpdated(new DateTimeImmutable('2023-05-25'));
             $image->setEntity($fixture);
             $em->persist($image);
             $em->flush();

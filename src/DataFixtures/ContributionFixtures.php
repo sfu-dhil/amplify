@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Entity\Contribution;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -24,8 +25,8 @@ class ContributionFixtures extends Fixture implements DependentFixtureInterface,
             $fixture->setPodcast($this->getReference($i < 4 ? 'podcast.1' : 'podcast.5'));
             $fixture->setSeason($this->getReference($i < 4 ? 'season.1' : 'season.5'));
             $fixture->setEpisode($this->getReference($i < 4 ? 'episode.1' : 'episode.5'));
-            $fixture->setCreated(new \DateTimeImmutable('2023-05-25'));
-            $fixture->setUpdated(new \DateTimeImmutable('2023-05-25'));
+            $fixture->setCreated(new DateTimeImmutable('2023-05-25'));
+            $fixture->setUpdated(new DateTimeImmutable('2023-05-25'));
             $em->persist($fixture);
             $this->setReference('contribution.' . $i, $fixture);
         }

@@ -8,7 +8,7 @@
     {% if import.podcast %}
         <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': import.podcast.id}) }}">{{ import.podcast.title }}</a></li>
     {% endif %}
-    <li class="breadcrumb-item">Imports</li>
+    <li class="breadcrumb-item">Import</li>
     <li class="breadcrumb-item active" aria-current="page">Job {{ import.id }}</li>
 {% endblock %}
 

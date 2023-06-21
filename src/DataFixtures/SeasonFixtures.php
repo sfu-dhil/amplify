@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Entity\Season;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -43,8 +44,8 @@ class SeasonFixtures extends Fixture implements DependentFixtureInterface, Fixtu
             $fixture->setDescription("<p>This is paragraph {$i}</p>");
             $fixture->setPodcast($this->getReference($i < 4 ? 'podcast.1' : 'podcast.5'));
             $fixture->setPublisher($this->getReference('publisher.1'));
-            $fixture->setCreated(new \DateTimeImmutable('2023-05-25'));
-            $fixture->setUpdated(new \DateTimeImmutable('2023-05-25'));
+            $fixture->setCreated(new DateTimeImmutable('2023-05-25'));
+            $fixture->setUpdated(new DateTimeImmutable('2023-05-25'));
             $em->persist($fixture);
             $em->flush();
 
@@ -56,8 +57,8 @@ class SeasonFixtures extends Fixture implements DependentFixtureInterface, Fixtu
             $image->setDescription("<p>This is paragraph {$i}</p>");
             $image->setLicense("<p>This is paragraph {$i}</p>");
             $image->setEntity($fixture);
-            $image->setCreated(new \DateTimeImmutable('2023-05-25'));
-            $image->setUpdated(new \DateTimeImmutable('2023-05-25'));
+            $image->setCreated(new DateTimeImmutable('2023-05-25'));
+            $image->setUpdated(new DateTimeImmutable('2023-05-25'));
             $em->persist($image);
             $em->flush();
 
