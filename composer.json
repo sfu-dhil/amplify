@@ -60,7 +60,6 @@
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^7.2",
-        "deployer/deployer": "^7.2",
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "friendsofphp/php-cs-fixer": "^3.15",
         "friendsoftwig/twigcs": "^6.2",

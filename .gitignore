@@ -32,7 +32,6 @@ node_modules
 .data
 
 # MISC
-/config/deploy.yaml
 /*.sql
 /data
 /src/.preload.php
