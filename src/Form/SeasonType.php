@@ -60,7 +60,7 @@ class SeasonType extends AbstractType {
             ],
         ]);
         $builder->add('contributions', CollectionType::class, [
-            'label' => 'Contributions',
+            'label' => 'Contributors',
             'required' => false,
             'allow_add' => true,
             'allow_delete' => true,

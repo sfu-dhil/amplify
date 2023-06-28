@@ -121,8 +121,8 @@ class EpisodeType extends AbstractType {
                 'class' => 'tinymce',
             ],
         ]);
-        $builder->add('subjects', CollectionType::class, [
-            'label' => 'Subject',
+        $builder->add('keywords', CollectionType::class, [
+            'label' => 'Keywords',
             'required' => false,
             'allow_add' => true,
             'allow_delete' => true,
@@ -132,11 +132,11 @@ class EpisodeType extends AbstractType {
                 'label' => false,
             ],
             'attr' => [
-                'class' => 'collection collection-simple oclcfast',
+                'class' => 'collection collection-simple',
             ],
         ]);
         $builder->add('contributions', CollectionType::class, [
-            'label' => 'Contributions',
+            'label' => 'Contributors',
             'required' => false,
             'allow_add' => true,
             'allow_delete' => true,

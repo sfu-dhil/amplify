@@ -2,8 +2,6 @@
 
     var hostname = window.location.hostname.replace('www.', '');
 
-    const fastUrl = '//fast.oclc.org/searchfast/fastsuggest';
-
     function confirm() {
         var $this = $(this);
         $this.click(function () {
@@ -44,52 +42,6 @@
         });
     }
 
-    function oclcLookup(element, request, response) {
-        let suggestIdx = 'suggestall';
-        let q = $(element).find('input').val();
-        let fields = ['suggestall', 'idroot', 'auth', 'type'].join(',');
-        let url = `${fastUrl}?query=${q}&queryIndex=${suggestIdx}&queryReturn=${fields}&suggest=autoSubject`;
-        $.ajax({
-            type: 'GET',
-            url: url,
-            dataType: 'jsonp',
-            cache: false,
-
-            success: function(data) {
-                let subjects = [];
-                let result = data.response.docs;
-                result.forEach(function(d){
-                    let label = `<b>${d.auth}</b>`;
-                    if(d.type==='alt') {
-                        label = `<i>${d.suggestall}</i> use ${label}`;
-                    }
-                    subjects.push({
-                        label: `<span>${label}</span>`,
-                        value: d.auth,
-                    });
-                });
-                response(subjects);
-            },
-            error: function(jq, status, error) {
-                console.log(`lookup error: ${status} - ${error}`);
-                response();
-            },
-        });
-    }
-
-    function attachOclcFast(collection, element) {
-        let $element = $(element);
-        if(! $element.parent().hasClass('oclcfast')) {
-            return;
-        }
-        $element.find('input').autocomplete({
-            minLength: 3,
-            source: function(request, response) {oclcLookup(element,request,response);},
-        }).data("ui-autocomplete")._renderItem = function(ul, item){
-            return $("<li></li>").data('item.autocomplete', item).append(item.label).appendTo(ul);
-        };
-    }
-
     function simpleCollection() {
         if ( $('.collection-simple').length == 0 ) {
             return
@@ -102,7 +54,6 @@
             add_at_the_end: true,
             add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i></a>',
             remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
-            after_add: attachOclcFast
         });
     }
 
@@ -244,11 +195,6 @@
         }
         imageModals();
         menuTabs();
-        // The autocomplete widget must be manually added for existing
-        // elements.
-        $(".collection-simple .mb-3.row").each(function(i,e){
-            attachOclcFast(null, e);
-        });
     });
 
 })(jQuery, window);

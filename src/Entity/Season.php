@@ -210,40 +210,40 @@ class Season extends AbstractEntity implements ImageContainerInterface {
         $warnings = [];
 
         if (null === $this->getPodcast()) {
-            $errors['Podcast'] = 'No podcast';
+            $errors['Podcast'] = 'Missing podcast';
         }
-        if (null === $this->getNumber()) {
-            $errors['Season number'] = 'No season number';
-        }
+        // if (null === $this->getNumber()) {
+        //     $warning['Season number'] = 'Missing season number';
+        // }
         if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
-            $errors['Title'] = 'No title';
+            $errors['Title'] = 'Missing title';
         }
-        if (empty(trim(strip_tags($this->getSubTitle() ?? '')))) {
-            $warnings['Subtitle'] = 'No subtitle';
-        }
-        if (null === $this->getPublisher()) {
-            $errors['Publisher'] = 'No publisher';
-        }
+        // if (empty(trim(strip_tags($this->getSubTitle() ?? '')))) {
+        //     $warnings['Subtitle'] = 'Missing subtitle';
+        // }
         if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
-            $errors['Description'] = 'No description';
+            $errors['Description'] = 'Missing description';
         }
-        if (null === $this->getContributions() || 0 === count($this->getContributions())) {
-            $errors['Contributions'] = 'No contributions';
-        }
+        // if (null === $this->getPublisher()) {
+        //     $warnings['Publisher'] = 'Missing publisher';
+        // }
+        // if (null === $this->getContributions() || 0 === count($this->getContributions())) {
+        //     $warnings['Contributions'] = 'Missing contributors';
+        // }
 
-        if (0 === count($this->getImages())) {
-            $errors['Images'] = 'No images';
-        }
+        // if (0 === count($this->getImages())) {
+        //     $warning['Images'] = 'Missing images';
+        // }
         foreach ($this->getImages() as $image) {
-            $imageWarnings = [];
+            $imageErrors = [];
             if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
-                $imageWarnings['Description'] = 'No description';
+                $imageErrors['Description'] = 'Missing description';
             }
-            if (empty(trim(strip_tags($image->getLicense() ?? '')))) {
-                $imageWarnings['License'] = 'No license';
-            }
-            if (count($imageWarnings) > 0) {
-                $warnings["Image {$image->getOriginalName()}"] = $imageWarnings;
+            // if (empty(trim(strip_tags($image->getLicense() ?? '')))) {
+            //     $imageErrors['License'] = 'Missing license';
+            // }
+            if (count($imageErrors) > 0) {
+                $errors["Image {$image->getOriginalName()}"] = $imageErrors;
             }
         }
 

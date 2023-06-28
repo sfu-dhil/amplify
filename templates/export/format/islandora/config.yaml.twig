@@ -14,9 +14,8 @@ csv_field_templates:
 - field_member_of: ""
 - published: 1
 - langcode: {{ podcast.languageCode|default('en') }},
-- field_language: http://id.loc.gov/vocabulary/languages/{{ podcast.alpha3LanguageCode|default('eng') }},
 - field_genre: http://id.loc.gov/authorities/genreForms/gf2011026450
-- field_rights: {{ podcast.copyright|default('')|striptags }},
+- field_rights: {{ podcast.copyright|default('')|striptags }}
 - field_subject_general: "{{ podcast.categories|join('|') }}"
 - field_mode_of_issuance: http://id.loc.gov/vocabulary/issuance/serl
 csv_value_templates:

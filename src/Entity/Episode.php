@@ -70,7 +70,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     private ?string $permissions = null;
 
     #[ORM\Column(type: 'json', options: ['default' => '[]'])]
-    private array $subjects = [];
+    private array $keywords = [];
 
     #[ORM\ManyToOne(targetEntity: 'Season', inversedBy: 'episodes')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
@@ -240,27 +240,27 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this;
     }
 
-    public function setSubjects(array $subjects) : self {
-        $this->subjects = $subjects;
+    public function setKeywords(array $keywords) : self {
+        $this->keywords = $keywords;
 
         return $this;
     }
 
-    public function getSubjects() : array {
-        return $this->subjects;
+    public function getKeywords() : array {
+        return $this->keywords;
     }
 
-    public function addSubject(string $subject) : self {
-        if ( ! in_array($subject, $this->subjects, true)) {
-            $this->subjects[] = $subject;
+    public function addKeyword(string $keyword) : self {
+        if ( ! in_array($keyword, $this->keywords, true)) {
+            $this->keywords[] = $keyword;
         }
 
         return $this;
     }
 
-    public function removeSubject(string $subject) : self {
-        if (false !== ($key = array_search($subject, $this->subjects, true))) {
-            array_splice($this->subjects, $key, 1);
+    public function removeKeyword(string $keyword) : self {
+        if (false !== ($key = array_search($keyword, $this->keywords, true))) {
+            array_splice($this->keywords, $key, 1);
         }
 
         return $this;
@@ -330,96 +330,91 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         $warnings = [];
 
         // if (empty(trim(strip_tags($this->getGuid() ?? '')))) {
-        //     $warnings['Guid'] = 'No global unique identifier';
+        //     $warnings['Guid'] = 'Missing global unique identifier';
         // }
         if (null === $this->getPodcast()) {
-            $errors['Podcast'] = 'No podcast';
+            $errors['Podcast'] = 'Missing podcast';
         }
         if (null === $this->getSeason()) {
-            $errors['Season'] = 'No season';
+            $errors['Season'] = 'Missing season';
         }
         if (empty(trim(strip_tags($this->getEpisodeType() ?? '')))) {
-            $errors['Episode type'] = 'No episode type';
+            $errors['Episode type'] = 'Missing episode type';
         }
         if (null === $this->getNumber()) {
-            $errors['Episode number'] = 'No episode number';
-        }
-        if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
-            $errors['Title'] = 'No title';
-        }
-        if (empty(trim(strip_tags($this->getSubTitle() ?? '')))) {
-            $warnings['Subtitle'] = 'No subtitle';
-        }
-        if (null === $this->getExplicit()) {
-            $warnings['Explicit'] = 'No explicit status';
+            $errors['Episode number'] = 'Missing episode number';
         }
         if (null === $this->getDate()) {
-            $errors['Date'] = 'No date';
+            $errors['Date'] = 'Missing date';
         }
         if (null === $this->getRunTime()) {
-            $errors['Run time'] = 'No run time';
+            $errors['Run time'] = 'Missing run time';
         }
+        if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
+            $errors['Title'] = 'Missing title';
+        }
+        // if (empty(trim(strip_tags($this->getSubTitle() ?? '')))) {
+        //     $warnings['Subtitle'] = 'Missing subtitle';
+        // }
+        // if (null === $this->getExplicit()) {
+        //     $warnings['Explicit'] = 'Missing explicit status';
+        // }
         if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
-            $errors['Description'] = 'No description';
+            $errors['Description'] = 'Missing description';
         }
-        if (empty(trim(strip_tags($this->getBibliography() ?? '')))) {
-            $errors['Bibliography'] = 'No bibliography';
-        }
-        if (empty(trim(strip_tags($this->getTranscript() ?? '')))) {
-            $errors['Transcript'] = 'No transcript';
-        }
-        if (empty(trim(strip_tags($this->getPermissions() ?? '')))) {
-            $errors['Permissions'] = 'No permissions';
-        }
-        if (null === $this->getSubjects() || 0 === count($this->getSubjects())) {
-            $errors['Subjects'] = 'No subjects';
-        }
-        if (null === $this->getContributions() || 0 === count($this->getContributions())) {
-            $errors['Contributions'] = 'No contributions';
-        }
+        // if (empty(trim(strip_tags($this->getBibliography() ?? '')))) {
+        //     $warnings['Bibliography'] = 'Missing bibliography';
+        // }
+        // if (empty(trim(strip_tags($this->getTranscript() ?? '')))) {
+        //     $warnings['Transcript'] = 'Missing transcript';
+        // }
+        // if (empty(trim(strip_tags($this->getPermissions() ?? '')))) {
+        //     $warnings['Permissions'] = 'Missing permissions';
+        // }
+        // if (null === $this->getContributions() || 0 === count($this->getContributions())) {
+        //     $warnings['Contributions'] = 'Missing contributors';
+        // }
 
         if (0 === count($this->getAudios())) {
-            $errors['Audios'] = 'No audio';
+            $errors['Audios'] = 'Missing audio';
+        }
+        if (0 === count($this->getImages())) {
+            $errors['Images'] = 'Missing images';
         }
         foreach ($this->getAudios() as $audio) {
-            $audioWarnings = [];
+            $audioErrors = [];
             if (empty(trim(strip_tags($audio->getDescription() ?? '')))) {
-                $audioWarnings['Description'] = 'No description';
+                $audioErrors['Description'] = 'Missing description';
             }
-            if (empty(trim(strip_tags($audio->getLicense() ?? '')))) {
-                $audioWarnings['License'] = 'No license';
+            // if (empty(trim(strip_tags($audio->getLicense() ?? '')))) {
+            //     $audioErrors['License'] = 'Missing license';
+            // }
+            if (count($audioErrors) > 0) {
+                $errors["Audio {$audio->getOriginalName()}"] = $audioErrors;
             }
-            if (count($audioWarnings) > 0) {
-                $warnings["Audio {$audio->getOriginalName()}"] = $audioWarnings;
-            }
-        }
-
-        if (0 === count($this->getImages())) {
-            $errors['Images'] = 'No images';
         }
         foreach ($this->getImages() as $image) {
-            $imageWarnings = [];
+            $imageErrors = [];
             if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
-                $imageWarnings['Description'] = 'No description';
+                $imageErrors['Description'] = 'Missing description';
             }
-            if (empty(trim(strip_tags($image->getLicense() ?? '')))) {
-                $imageWarnings['License'] = 'No license';
-            }
-            if (count($imageWarnings) > 0) {
-                $warnings["Image {$image->getOriginalName()}"] = $imageWarnings;
+            // if (empty(trim(strip_tags($image->getLicense() ?? '')))) {
+            //     $imageErrors['License'] = 'Missing license';
+            // }
+            if (count($imageErrors) > 0) {
+                $errors["Image {$image->getOriginalName()}"] = $imageErrors;
             }
         }
-
         foreach ($this->getPdfs() as $pdf) {
-            $pdfWarnings = [];
+            $pdfErrors = [];
             if (empty(trim(strip_tags($pdf->getDescription() ?? '')))) {
-                $pdfWarnings['Description'] = 'No description';
+                $pdfErrors['Description'] = 'Missing description';
             }
-            if (empty(trim(strip_tags($pdf->getLicense() ?? '')))) {
-                $pdfWarnings['License'] = 'No license';
-            }
-            if (count($pdfWarnings) > 0) {
-                $warnings["PDF {$pdf->getOriginalName()}"] = $pdfWarnings;
+            // if (empty(trim(strip_tags($pdf->getLicense() ?? '')))) {
+            //     $pdfErrors['License'] = 'Missing license';
+            // }
+            if (count($pdfErrors) > 0) {
+                $errors["Transcript {$pdf->getOriginalName()}"] = $pdfErrors;
             }
         }
 

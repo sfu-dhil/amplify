@@ -266,9 +266,6 @@ class ImportPodcastCommand extends Command {
             $this->podcast->setLanguageCode(mb_substr($languageCode, 0, 2));
         }
 
-        $this->em->persist($this->podcast);
-        $this->em->flush();
-
         // skip `publisher`
         // doesn't seem to be part of RSS feeds
 
@@ -288,9 +285,18 @@ class ImportPodcastCommand extends Command {
                     }
                 }
             }
-            $this->em->persist($this->podcast);
-            $this->em->flush();
         }
+
+        $keywordsString = $this->getFeedTagValue(SimplePie::NAMESPACE_ITUNES, 'keywords');
+        if ($keywordsString) {
+            $keywords = explode(',', $keywordsString);
+            foreach ($keywords as $keyword) {
+                $this->podcast->addKeyword(trim($keyword));
+            }
+        }
+
+        $this->em->persist($this->podcast);
+        $this->em->flush();
 
         if ($this->import) {
             $this->podcast->addImport($this->import);
@@ -445,8 +451,13 @@ class ImportPodcastCommand extends Command {
                 $episode->setDescription($this->importContentSanitizer->sanitize($description));
             }
 
-            // skip `subjects`
-            // not part of RSS feed (closest is keywords)
+            $keywordsString = $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'keywords');
+            if ($keywordsString) {
+                $keywords = explode(',', $keywordsString);
+                foreach ($keywords as $keyword) {
+                    $episode->addKeyword(trim($keyword));
+                }
+            }
 
             // skip `permissions`
             // not part of RSS feed

@@ -1,5 +1,5 @@
-{% for subject in episode.subjects %}
-<subject authority="lcsh" authorityURI="http://id.loc.gov/authorities/subjects">
-    <topic>{{ subject }}</topic>
+{% for keyword in episode.keywords %}
+<subject displayLabel="Keywords">
+    <topic>{{ keyword }}</topic>
 </subject>
 {% endfor %}

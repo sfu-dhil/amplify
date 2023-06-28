@@ -78,8 +78,8 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $fixture->setPermissions("<p>This is paragraph {$i}</p>");
             $fixture->setPodcast($this->getReference($i < 4 ? 'podcast.1' : 'podcast.5'));
             $fixture->setSeason($this->getReference($i < 4 ? 'season.1' : 'season.5'));
-            $fixture->addSubject('Subject ' . $i);
-            $fixture->addSubject('Subject ' . ($i + 1));
+            $fixture->addKeyword('Keyword ' . $i);
+            $fixture->addKeyword('Keyword ' . ($i + 1));
             $fixture->setCreated(new DateTimeImmutable('2023-05-25'));
             $fixture->setUpdated(new DateTimeImmutable('2023-05-25'));
             $em->persist($fixture);

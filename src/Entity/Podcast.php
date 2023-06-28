@@ -62,6 +62,9 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     #[ORM\Column(type: 'json', options: ['default' => '[]'])]
     private array $categories = [];
 
+    #[ORM\Column(type: 'json', options: ['default' => '[]'])]
+    private array $keywords = [];
+
     /**
      * @var Collection<int,Contribution>
      */
@@ -98,116 +101,116 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     private $imports;
 
     protected static $ITUNES_CATEGORIES = [
-        'Arts' => 'http://id.loc.gov/authorities/classification/N',
-        'Arts - Books' => 'http://id.loc.gov/authorities/classification/NX650.B66',
-        'Arts - Design' => 'http://id.loc.gov/authorities/classification/NC1-NC1940',
-        'Arts - Fashion & Beauty' => 'http://id.loc.gov/authorities/classification/NX650.F37|http://id.loc.gov/authorities/classification/NX650.F45',
-        'Arts - Food' => 'http://id.loc.gov/authorities/classification/NX650.F64',
-        'Arts - Performing Arts' => 'http://id.loc.gov/authorities/classification/NX212',
-        'Arts - Visual Arts' => 'http://id.loc.gov/authorities/classification/N1-N9211',
-        'Business' => '',
-        'Business - Careers' => '',
-        'Business - Entrepreneurship' => '',
-        'Business - Investing' => '',
-        'Business - Management' => '',
-        'Business - Marketing' => '',
-        'Business - Non-Profit' => '',
-        'Comedy' => '',
-        'Comedy - Comedy Interviews' => '',
-        'Comedy - Improv' => '',
-        'Comedy - Stand-Up' => '',
-        'Education' => '',
-        'Education - Courses' => '',
-        'Education - How To' => '',
-        'Education - Language Learning' => '',
-        'Education - Self-Improvement' => '',
-        'Fiction' => '',
-        'Fiction - Comedy Fiction' => '',
-        'Fiction - Drama' => '',
-        'Fiction - Science Fiction' => '',
-        'Government' => '',
-        'History' => '',
-        'Health & Fitness' => '',
-        'Health & Fitness - Alternative Health' => '',
-        'Health & Fitness - Fitness' => '',
-        'Health & Fitness - Medicine' => '',
-        'Health & Fitness - Mental Health' => '',
-        'Health & Fitness - Nutrition' => '',
-        'Health & Fitness - Sexuality' => '',
-        'Kids & Family' => '',
-        'Kids & Family - Education for Kids' => '',
-        'Kids & Family - Parenting' => '',
-        'Kids & Family - Pets & Animals' => '',
-        'Kids & Family - Stories for Kids' => '',
-        'Leisure' => '',
-        'Leisure - Animation & Manga' => '',
-        'Leisure - Automotive' => '',
-        'Leisure - Aviation' => '',
-        'Leisure - Crafts' => '',
-        'Leisure - Games' => '',
-        'Leisure - Hobbies' => '',
-        'Leisure - Home & Garden' => '',
-        'Leisure - Video Games' => '',
-        'Music' => '',
-        'Music - Music Commentary' => '',
-        'Music - Music History' => '',
-        'Music - Music Interviews' => '',
-        'News' => '',
-        'News - Business News' => '',
-        'News - Daily News' => '',
-        'News - Entertainment News' => '',
-        'News - News Commentary' => '',
-        'News - Politics' => '',
-        'News - Sports News' => '',
-        'News - Tech News' => '',
-        'Religion & Spirituality' => '',
-        'Religion & Spirituality - Buddhism' => '',
-        'Religion & Spirituality - Christianity' => '',
-        'Religion & Spirituality - Hinduism' => '',
-        'Religion & Spirituality - Islam' => '',
-        'Religion & Spirituality - Judaism' => '',
-        'Religion & Spirituality - Religion' => '',
-        'Religion & Spirituality - Spirituality' => '',
-        'Science' => '',
-        'Science - Astronomy' => '',
-        'Science - Chemistry' => '',
-        'Science - Earth Sciences' => '',
-        'Science - Life Sciences' => '',
-        'Science - Mathematics' => '',
-        'Science - Natural Sciences' => '',
-        'Science - Nature' => '',
-        'Science - Physics' => '',
-        'Science - Social Sciences' => '',
-        'Society & Culture' => '',
-        'Society & Culture - Documentary' => '',
-        'Society & Culture - Personal Journals' => '',
-        'Society & Culture - Philosophy' => '',
-        'Society & Culture - Places & Travel' => '',
-        'Society & Culture - Relationships' => '',
-        'Sports' => '',
-        'Sports - Baseball' => '',
-        'Sports - Basketball' => '',
-        'Sports - Cricket' => '',
-        'Sports - Fantasy Sports' => '',
-        'Sports - Football' => '',
-        'Sports - Golf' => '',
-        'Sports - Hockey' => '',
-        'Sports - Rugby' => '',
-        'Sports - Running' => '',
-        'Sports - Soccer' => '',
-        'Sports - Swimming' => '',
-        'Sports - Tennis' => '',
-        'Sports - Volleyball' => '',
-        'Sports - Wilderness' => '',
-        'Sports - Wrestling' => '',
-        'Technology' => '',
-        'True Crime' => '',
-        'TV & Film' => '',
-        'TV & Film - After Shows' => '',
-        'TV & Film - Film History' => '',
-        'TV & Film - Film Interviews' => '',
-        'TV & Film - Film Reviews' => '',
-        'TV & Film - TV Reviews' => '',
+        'Arts',
+        'Arts - Books',
+        'Arts - Design',
+        'Arts - Fashion & Beauty',
+        'Arts - Food',
+        'Arts - Performing Arts',
+        'Arts - Visual Arts',
+        'Business',
+        'Business - Careers',
+        'Business - Entrepreneurship',
+        'Business - Investing',
+        'Business - Management',
+        'Business - Marketing',
+        'Business - Non-Profit',
+        'Comedy',
+        'Comedy - Comedy Interviews',
+        'Comedy - Improv',
+        'Comedy - Stand-Up',
+        'Education',
+        'Education - Courses', // Not sure about this one
+        'Education - How To',
+        'Education - Language Learning',
+        'Education - Self-Improvement',
+        'Fiction',
+        'Fiction - Comedy Fiction',
+        'Fiction - Drama',
+        'Fiction - Science Fiction',
+        'Government',
+        'History',
+        'Health & Fitness',
+        'Health & Fitness - Alternative Health',
+        'Health & Fitness - Fitness',
+        'Health & Fitness - Medicine',
+        'Health & Fitness - Mental Health',
+        'Health & Fitness - Nutrition',
+        'Health & Fitness - Sexuality',
+        'Kids & Family',
+        'Kids & Family - Education for Kids',
+        'Kids & Family - Parenting',
+        'Kids & Family - Pets & Animals',
+        'Kids & Family - Stories for Kids',
+        'Leisure',
+        'Leisure - Animation & Manga',
+        'Leisure - Automotive',
+        'Leisure - Aviation',
+        'Leisure - Crafts',
+        'Leisure - Games',
+        'Leisure - Hobbies',
+        'Leisure - Home & Garden',
+        'Leisure - Video Games',
+        'Music',
+        'Music - Music Commentary',
+        'Music - Music History',
+        'Music - Music Interviews',
+        'News',
+        'News - Business News',
+        'News - Daily News',
+        'News - Entertainment News',
+        'News - News Commentary',
+        'News - Politics',
+        'News - Sports News',
+        'News - Tech News',
+        'Religion & Spirituality',
+        'Religion & Spirituality - Buddhism',
+        'Religion & Spirituality - Christianity',
+        'Religion & Spirituality - Hinduism',
+        'Religion & Spirituality - Islam',
+        'Religion & Spirituality - Judaism',
+        'Religion & Spirituality - Religion',
+        'Religion & Spirituality - Spirituality',
+        'Science',
+        'Science - Astronomy',
+        'Science - Chemistry',
+        'Science - Earth Sciences',
+        'Science - Life Sciences',
+        'Science - Mathematics',
+        'Science - Natural Sciences',
+        'Science - Nature',
+        'Science - Physics',
+        'Science - Social Sciences',
+        'Society & Culture',
+        'Society & Culture - Documentary',
+        'Society & Culture - Personal Journals',
+        'Society & Culture - Philosophy',
+        'Society & Culture - Places & Travel',
+        'Society & Culture - Relationships',
+        'Sports',
+        'Sports - Baseball',
+        'Sports - Basketball',
+        'Sports - Cricket',
+        'Sports - Fantasy Sports',
+        'Sports - Football',
+        'Sports - Golf',
+        'Sports - Hockey',
+        'Sports - Rugby',
+        'Sports - Running',
+        'Sports - Soccer',
+        'Sports - Swimming',
+        'Sports - Tennis',
+        'Sports - Volleyball',
+        'Sports - Wilderness',
+        'Sports - Wrestling',
+        'Technology',
+        'True Crime',
+        'TV & Film',
+        'TV & Film - After Shows',
+        'TV & Film - Film History',
+        'TV & Film - Film Interviews',
+        'TV & Film - Film Reviews',
+        'TV & Film - TV Reviews',
     ];
 
     public function __construct() {
@@ -424,18 +427,7 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     }
 
     public function getAllItunesCategories() : array {
-        return array_keys(self::$ITUNES_CATEGORIES);
-    }
-
-    public function getLcClassifications() : array {
-        $classifications = [];
-        foreach ($this->categories as $category) {
-            if (array_key_exists($category, self::$ITUNES_CATEGORIES)) {
-                $classifications[] = self::$ITUNES_CATEGORIES[$category];
-            }
-        }
-
-        return $classifications;
+        return self::$ITUNES_CATEGORIES;
     }
 
     public function setCategories(array $categories) : self {
@@ -464,8 +456,38 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
+    public function setKeywords(array $keywords) : self {
+        $this->keywords = $keywords;
+
+        return $this;
+    }
+
+    public function getKeywords() : array {
+        return $this->keywords;
+    }
+
+    public function addKeyword(string $keyword) : self {
+        if ( ! in_array($keyword, $this->keywords, true)) {
+            $this->keywords[] = $keyword;
+        }
+
+        return $this;
+    }
+
+    public function removeKeyword(string $keyword) : self {
+        if (false !== ($key = array_search($keyword, $this->keywords, true))) {
+            array_splice($this->keywords, $key, 1);
+        }
+
+        return $this;
+    }
+
     public function getAlpha3LanguageCode() : ?string {
-        return Languages::getAlpha3Code($this->languageCode ?? '');
+        if (null === $this->languageCode) {
+            return null;
+        }
+
+        return Languages::getAlpha3Code(mb_substr($this->languageCode, 0, 2));
     }
 
     public function getLanguageCode() : ?string {
@@ -575,55 +597,58 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         $warnings = [];
 
         // if (empty(trim(strip_tags($this->getGuid() ?? '')))) {
-        //     $warnings['Guid'] = 'No global unique identifier';
+        //     $warnings['Guid'] = 'Missing global unique identifier';
         // }
         if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
-            $errors['Title'] = 'No title';
+            $errors['Title'] = 'Missing title';
         }
-        if (empty(trim(strip_tags($this->getSubTitle() ?? '')))) {
-            $warnings['Subtitle'] = 'No subtitle';
-        }
-        if (empty(trim(strip_tags($this->getWebsite() ?? '')))) {
-            $errors['Website'] = 'No website';
-        }
-        if (empty(trim(strip_tags($this->getRss() ?? '')))) {
-            $errors['Rss'] = 'No rss';
-        }
+        // if (empty(trim(strip_tags($this->getSubTitle() ?? '')))) {
+        //     $warnings['Subtitle'] = 'Missing subtitle';
+        // }
+        // if (null === $this->getLanguageCode()) {
+        //     $warnings['LanguageCode'] = 'Missing primary language';
+        // }
         if (null === $this->getExplicit()) {
-            $errors['Explicit'] = 'No explicit status';
+            $errors['Explicit'] = 'Missing explicit status';
         }
         if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
-            $errors['Description'] = 'No description';
+            $errors['Description'] = 'Missing description';
         }
         if (empty(trim(strip_tags($this->getCopyright() ?? '')))) {
-            $errors['Copyright'] = 'No copyright';
+            $errors['Copyright'] = 'Missing copyright';
         }
-        if (empty(trim(strip_tags($this->getLicense() ?? '')))) {
-            $errors['License'] = 'No license';
+        // if (empty(trim(strip_tags($this->getLicense() ?? '')))) {
+        //     $warnings['License'] = 'Missing license';
+        // }
+        if (empty(trim(strip_tags($this->getWebsite() ?? '')))) {
+            $errors['Website'] = 'Missing website';
         }
-        if (null === $this->getPublisher()) {
-            $errors['Publisher'] = 'No publisher';
+        if (empty(trim(strip_tags($this->getRss() ?? '')))) {
+            $errors['Rss'] = 'Missing rss';
         }
-        if (null === $this->getLanguageCode()) {
-            $errors['LanguageCode'] = 'No language';
+        if (null === $this->getCategories() || 0 === count($this->getCategories())) {
+            $errors['Categories'] = 'Missing Apple podcast categories';
         }
-        if (null === $this->getContributions() || 0 === count($this->getContributions())) {
-            $errors['Contributions'] = 'No contributions';
-        }
+        // if (null === $this->getPublisher()) {
+        //     $warnings['Publisher'] = 'Missing publisher';
+        // }
+        // if (null === $this->getContributions() || 0 === count($this->getContributions())) {
+        //     $warnings['Contributions'] = 'Missing contributors';
+        // }
 
-        if (0 === count($this->getImages())) {
-            $errors['Images'] = 'No images';
-        }
+        // if (0 === count($this->getImages())) {
+        //     $warnings['Images'] = 'Missing images';
+        // }
         foreach ($this->getImages() as $image) {
-            $imageWarnings = [];
+            $imageErrors = [];
             if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
-                $imageWarnings['Description'] = 'No description';
+                $imageErrors['Description'] = 'Missing description';
             }
-            if (empty(trim(strip_tags($image->getLicense() ?? '')))) {
-                $imageWarnings['License'] = 'No license';
-            }
-            if (count($imageWarnings) > 0) {
-                $warnings["Image {$image->getOriginalName()}"] = $imageWarnings;
+            // if (empty(trim(strip_tags($image->getLicense() ?? '')))) {
+            //     $imageErrors['License'] = 'Missing license';
+            // }
+            if (count($imageErrors) > 0) {
+                $errors["Image {$image->getOriginalName()}"] = $imageErrors;
             }
         }
 

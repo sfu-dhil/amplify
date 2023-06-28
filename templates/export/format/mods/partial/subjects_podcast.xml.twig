@@ -3,3 +3,8 @@
     <topic>{{ category }}</topic>
 </subject>
 {% endfor %}
+{% for keyword in podcast.keywords %}
+<subject displayLabel="Keywords">
+    <topic>{{ keyword }}</topic>
+</subject>
+{% endfor %}

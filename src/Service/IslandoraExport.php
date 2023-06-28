@@ -86,6 +86,7 @@ class IslandoraExport extends ExportService {
                 count($podcast->getImages()) . ' image file(s)',
             ]),
             'field_date_captured' => $podcast->getUpdated()->format('Y-m-d'),
+            'field_subject' => implode('|', array_filter($podcast->getKeywords())),
             'field_table_of_contents' => $this->twig->render('export/format/islandora/podcast_toc.html.twig', [
                 'podcast' => $podcast,
             ]),
@@ -115,6 +116,7 @@ class IslandoraExport extends ExportService {
                 count($season->getImages()) . ' image file(s)',
             ]),
             'field_date_captured' => $season->getUpdated()->format('Y-m-d'),
+            'field_subject' => implode('|', array_filter($season->getPodcast()->getKeywords())),
             'field_table_of_contents' => $this->twig->render('export/format/islandora/season_toc.html.twig', [
                 'season' => $season,
             ]),
@@ -151,7 +153,7 @@ class IslandoraExport extends ExportService {
             ]),
             'field_edtf_date_issued' => $episode->getDate()->format('Y-m-d'),
             'field_date_captured' => $episode->getUpdated()->format('Y-m-d'),
-            'field_subject' => implode('|', array_filter($episode->getSubjects())),
+            'field_subject' => implode('|', array_filter($episode->getKeywords())),
         ]);
     }
 
@@ -180,7 +182,7 @@ class IslandoraExport extends ExportService {
             ]),
             'field_edtf_date_issued' => $episode->getDate()->format('Y-m-d'),
             'field_date_captured' => $audio->getUpdated()->format('Y-m-d'),
-            'field_subject' => implode('|', array_filter($episode->getSubjects())),
+            'field_subject' => implode('|', array_filter($episode->getKeywords())),
         ]);
     }
 
@@ -214,7 +216,7 @@ class IslandoraExport extends ExportService {
 
     private function generateEpisodeImageRecord(string $relativeFile, Episode $episode, Image $image, int $weight, ?string $thumbnail) : array {
         $record = $this->generateGenericImageRecord($relativeFile, "amplify:episode:{$episode->getId()}", $image, $weight, $thumbnail);
-        $record['field_subject'] = implode('|', array_filter($episode->getSubjects()));
+        $record['field_subject'] = implode('|', array_filter($episode->getKeywords()));
         $record['field_edtf_date_issued'] = $episode->getDate()->format('Y-m-d');
 
         return $record;
@@ -245,7 +247,7 @@ class IslandoraExport extends ExportService {
             ]),
             'field_edtf_date_issued' => $episode->getDate()->format('Y-m-d'),
             'field_date_captured' => $pdf->getUpdated()->format('Y-m-d'),
-            'field_subject' => implode('|', array_filter($episode->getSubjects())),
+            'field_subject' => implode('|', array_filter($episode->getKeywords())),
         ]);
     }
 
@@ -276,10 +278,7 @@ class IslandoraExport extends ExportService {
             'field_date_captured' => '',
             'field_table_of_contents' => '',
             'field_subject' => '',
-
-            // 'field_classification' => '',
-            // 'field_dewey_classification' => '',
-            // 'field_lcc_classification' => '',
+            'field_linked_agent' => '',
         ];
     }
 

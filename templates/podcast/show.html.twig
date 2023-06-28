@@ -72,13 +72,19 @@
             {% endif %}
         </div>
         <div class="col">
-            <h6><i class="bi bi-tags"></i> Categories</h6>
+            <h6><i class="bi bi-tags"></i> Apple Podcast Categories</h6>
             {% for category in podcast.categories %}
                 <span class="badge text-bg-primary">{{ category }}</span>
             {% endfor %}
         </div>
         <div class="col">
-            <h6><i class="bi bi-people-fill"></i> Contributions</h6>
+            <h6><i class="bi bi-tags"></i> Keywords</h6>
+            {% for keyword in podcast.keywords %}
+                <span class="badge text-bg-primary">{{ keyword }}</span>
+            {% endfor %}
+        </div>
+        <div class="col">
+            <h6><i class="bi bi-people-fill"></i> Contributors</h6>
             {% for contributions in podcast.getContributionsGroupedByPerson %}
                 {% set person = (contributions|first).person %}
                 <div>
@@ -90,7 +96,7 @@
             {% endfor %}
         </div>
         <div class="col">
-            <h6><i class="bi bi-list-check"></i> Podcast Status</h6>
+            <h6><i class="bi bi-list-check"></i> Podcast Exportable Status</h6>
             {% embed 'status/partial/badge.html.twig' with {
                 'status': podcast.status,
             } %}
@@ -115,7 +121,6 @@
     </div>
     <div class="row my-3">
         <div class="col-lg h3">
-            Episodes
         </div>
         <div class="col-lg-auto">
             <div class="d-grid gap-2 d-md-block m-2">

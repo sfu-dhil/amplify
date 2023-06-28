@@ -183,7 +183,7 @@ class BepressExport extends ExportService {
                 $recordData = $this->addRecordDefaults([
                     // title `required`
                     'title' => "{$this->podcast->getTitle()} {$episode->getSlug()}: {$episode->getTitle()}",
-                    'keywords' => count($episode->getSubjects()) > 0 ? implode(', ', $episode->getSubjects()) : '',
+                    'keywords' => count($episode->getKeywords()) > 0 ? implode(',', $episode->getKeywords()) : '',
                     'abstract' => $episode->getDescription(),
 
                     // author1_fname `required`
@@ -209,7 +209,7 @@ class BepressExport extends ExportService {
                     // publication_date `required` (format `YYYY-MM-DD`)
                     'publication_date' => $episode->getDate()?->format('Y-m-d'),
                     'rights' => $this->podcast->getCopyright(),
-                    'subject_area' => count($this->podcast->getCategories()) > 0 ? $this->podcast->getCategories()[0]->getLabel() : '',
+                    'subject_area' => count($this->podcast->getCategories()) > 0 ? implode(', ', $this->podcast->getCategories()) : '',
                 ]);
                 $csv->insertOne($recordData);
                 $zipBatchUpload->addFile($audio->getFile()->getRealPath(), "{$episode->getSlug()}.{$audio->getExtension()}");

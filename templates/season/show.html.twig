@@ -50,7 +50,7 @@
             {% endif %}
         </div>
         <div class="col">
-            <h6><i class="bi bi-people-fill"></i> Contributions</h6>
+            <h6><i class="bi bi-people-fill"></i> Contributors</h6>
             {% for contributions in season.getContributionsGroupedByPerson %}
                 {% set person = (contributions|first).person %}
                 <div>
@@ -62,7 +62,7 @@
             {% endfor %}
         </div>
         <div class="col">
-            <h6><i class="bi bi-list-check"></i> Season Status</h6>
+            <h6><i class="bi bi-list-check"></i> Season Exportable Status</h6>
             {% embed 'status/partial/badge.html.twig' with {
                 'status': season.status,
             } %}

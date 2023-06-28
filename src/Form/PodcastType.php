@@ -99,7 +99,7 @@ class PodcastType extends AbstractType {
             ],
         ]);
         $builder->add('contributions', CollectionType::class, [
-            'label' => 'Contributions',
+            'label' => 'Contributors',
             'required' => false,
             'allow_add' => true,
             'allow_delete' => true,
@@ -114,7 +114,7 @@ class PodcastType extends AbstractType {
             ],
         ]);
         $builder->add('categories', CollectionType::class, [
-            'label' => 'Categories',
+            'label' => 'Apple Podcast Categories',
             'required' => false,
             'allow_add' => true,
             'allow_delete' => true,
@@ -134,7 +134,20 @@ class PodcastType extends AbstractType {
                 'class' => 'collection collection-simple',
             ],
         ]);
-
+        $builder->add('keywords', CollectionType::class, [
+            'label' => 'Keywords',
+            'required' => false,
+            'allow_add' => true,
+            'allow_delete' => true,
+            'delete_empty' => true,
+            'entry_type' => TextType::class,
+            'entry_options' => [
+                'label' => false,
+            ],
+            'attr' => [
+                'class' => 'collection collection-simple',
+            ],
+        ]);
         $builder->add('images', CollectionType::class, [
             'label' => 'Images',
             'required' => false,

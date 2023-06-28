@@ -57,13 +57,13 @@
             {{ episode.runTime }}
         </div>
         <div class="col">
-            <h6><i class="bi bi-tags"></i> Subjects</h6>
-            {% for subject in episode.subjects %}
-                <span class="badge text-bg-primary">{{ subject }}</span>
+            <h6><i class="bi bi-tags"></i> Keywords</h6>
+            {% for keyword in episode.keywords %}
+                <span class="badge text-bg-primary">{{ keyword }}</span>
             {% endfor %}
         </div>
         <div class="col">
-            <h6><i class="bi bi-people-fill"></i> Contributions</h6>
+            <h6><i class="bi bi-people-fill"></i> Contributors</h6>
             {% for contributions in episode.getContributionsGroupedByPerson %}
                 {% set person = (contributions|first).person %}
                 <div>
@@ -83,7 +83,7 @@
             {{ episode.updated|date('Y-m-d') }}
         </div>
         <div class="col">
-            <h6><i class="bi bi-list-check"></i> Episode Status</h6>
+            <h6><i class="bi bi-list-check"></i> Episode Exportable Status</h6>
             {% embed 'status/partial/badge.html.twig' with {
                 'status': episode.status,
             } %}

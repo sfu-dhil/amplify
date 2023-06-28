@@ -22,7 +22,7 @@
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{{ asset('css/noise.css') }}">
+    <link rel="stylesheet" href="{{ asset_prefix|default('') ~ asset('css/noise.css') }}">
 {% endblock %}
 
 {% block javascripts %}
