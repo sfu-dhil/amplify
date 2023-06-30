@@ -26,7 +26,6 @@ COPY --chown=www-data:www-data --chmod=775 . /var/www/html
 RUN mkdir -p data/prod data/dev data/test var/cache/prod var/cache/dev var/cache/test var/sessions var/log \
     && chown -R www-data:www-data data var \
     && chmod -R 775 data var \
-    && chmod -R 777 var/cache \
     && composer install
 
 # copy webpacked js and libs

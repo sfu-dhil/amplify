@@ -13,13 +13,14 @@ field_text_format_ids:
 csv_field_templates:
 - field_member_of: ""
 - published: 1
-- langcode: {{ podcast.languageCode|default('en') }},
-- field_genre: http://id.loc.gov/authorities/genreForms/gf2011026450
-- field_rights: {{ podcast.copyright|default('')|striptags }}
+- langcode: {{ podcast.languageCode|default('en') }}
+- field_genre: Podcasts
+- field_rights: "{{ podcast.copyright|default('')|striptags }}"
 - field_subject_general: "{{ podcast.categories|join('|') }}"
-- field_mode_of_issuance: http://id.loc.gov/vocabulary/issuance/serl
+- field_mode_of_issuance: serial
 csv_value_templates:
-- field_physical_form: electronic
+- field_subject: subject:$csv_value
+- field_subject_general: subject:$csv_value
 media_types_override:
 - audio: ['mp3', 'wav', 'aac', 'm4a']
 additional_files:

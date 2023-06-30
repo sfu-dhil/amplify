@@ -63,6 +63,19 @@ class IslandoraExport extends ExportService {
         return $result;
     }
 
+    private function getLinkedAgents(array $contributions) : string {
+        $linked_agents = [];
+        foreach ($contributions as $contribution) {
+            $person = $contribution['person'];
+            foreach ($contribution['roles'] as $role) {
+                if ($role->getRelatorTerm()) {
+                    $linked_agents[]= "relators:{$role->getRelatorTerm()}:person:{$person->getSortableName()}";
+                }
+            }
+        }
+        return implode('|', $linked_agents);
+    }
+
     private function generatePodcastRecord(Podcast $podcast, ?string $thumbnail) : array {
         return $this->addRecordDefaults([
             'id' => "amplify:podcast:{$podcast->getId()}",
@@ -78,7 +91,7 @@ class IslandoraExport extends ExportService {
             'field_description' => mb_strimwidth($podcast->getDescription() ?? '', 0, 252, '...'),
             'field_description_long' => $podcast->getDescription(),
             'field_related_websites' => $this->getPodcastWebsites($podcast),
-            'field_physical_form' => 'http://id.loc.gov/authorities/genreForms/gf2011026594',
+            'field_physical_form' => 'Electronic|Sound recordings',
             'field_extent' => implode('|', [
                 '1 podcast',
                 count($podcast->getSeasons()) . ' season(s)',
@@ -90,6 +103,7 @@ class IslandoraExport extends ExportService {
             'field_table_of_contents' => $this->twig->render('export/format/islandora/podcast_toc.html.twig', [
                 'podcast' => $podcast,
             ]),
+            'field_linked_agent' => $this->getLinkedAgents($this->getPodcastContributorPersonAndRoles($podcast)),
         ]);
     }
 
@@ -109,7 +123,7 @@ class IslandoraExport extends ExportService {
             'field_description' => mb_strimwidth($season->getDescription() ?? '', 0, 252, '...'),
             'field_description_long' => $season->getDescription(),
             'field_related_websites' => $this->getSeasonWebsites($season),
-            'field_physical_form' => 'http://id.loc.gov/authorities/genreForms/gf2011026594',
+            'field_physical_form' => 'Electronic|Sound recordings',
             'field_extent' => implode('|', [
                 '1 podcast season',
                 count($season->getEpisodes()) . ' episode(s)',
@@ -120,6 +134,7 @@ class IslandoraExport extends ExportService {
             'field_table_of_contents' => $this->twig->render('export/format/islandora/season_toc.html.twig', [
                 'season' => $season,
             ]),
+            'field_linked_agent' => $this->getLinkedAgents($this->getSeasonContributorPersonAndRoles($season)),
         ]);
     }
 
@@ -143,7 +158,7 @@ class IslandoraExport extends ExportService {
                 $episode->getPermissions() ?? '',
                 $episode->getBibliography() ?? '',
             ])),
-            'field_physical_form' => 'http://id.loc.gov/authorities/genreForms/gf2011026594',
+            'field_physical_form' => 'Electronic|Sound recordings',
             'field_extent' => implode('|', [
                 '1 podcast episode',
                 count($episode->getAudios()) . ' audio file(s)',
@@ -154,6 +169,7 @@ class IslandoraExport extends ExportService {
             'field_edtf_date_issued' => $episode->getDate()->format('Y-m-d'),
             'field_date_captured' => $episode->getUpdated()->format('Y-m-d'),
             'field_subject' => implode('|', array_filter($episode->getKeywords())),
+            'field_linked_agent' => $this->getLinkedAgents($this->getEpisodeContributorPersonAndRoles($episode)),
         ]);
     }
 
@@ -174,7 +190,7 @@ class IslandoraExport extends ExportService {
             'field_description_long' => $audio->getDescription(),
             'field_note' => $audio->getLicense(),
             'field_related_websites' => $audio->getSourceUrl(),
-            'field_physical_form' => 'http://id.loc.gov/authorities/genreForms/gf2011026594',
+            'field_physical_form' => 'Electronic|Sound recordings',
             'field_extent' => implode('|', [
                 '1 audio file',
                 "filesize {$audio->getFileSize()}",
@@ -183,6 +199,7 @@ class IslandoraExport extends ExportService {
             'field_edtf_date_issued' => $episode->getDate()->format('Y-m-d'),
             'field_date_captured' => $audio->getUpdated()->format('Y-m-d'),
             'field_subject' => implode('|', array_filter($episode->getKeywords())),
+            'field_linked_agent' => $this->getLinkedAgents($this->getEpisodeContributorPersonAndRoles($episode)),
         ]);
     }
 
@@ -204,7 +221,7 @@ class IslandoraExport extends ExportService {
             'field_description_long' => $image->getDescription(),
             'field_note' => $image->getLicense(),
             'field_related_websites' => $image->getSourceUrl(),
-            'field_physical_form' => 'http://id.loc.gov/authorities/genreForms/gf2017027251',
+            'field_physical_form' => 'Electronic|Pictures',
             'field_extent' => implode('|', [
                 '1 image',
                 "filesize {$image->getFileSize()}",
@@ -218,6 +235,7 @@ class IslandoraExport extends ExportService {
         $record = $this->generateGenericImageRecord($relativeFile, "amplify:episode:{$episode->getId()}", $image, $weight, $thumbnail);
         $record['field_subject'] = implode('|', array_filter($episode->getKeywords()));
         $record['field_edtf_date_issued'] = $episode->getDate()->format('Y-m-d');
+        $record['field_linked_agent'] = $this->getLinkedAgents($this->getEpisodeContributorPersonAndRoles($episode));
 
         return $record;
     }
@@ -240,7 +258,7 @@ class IslandoraExport extends ExportService {
             'field_description_long' => $pdf->getDescription(),
             'field_note' => $pdf->getLicense(),
             'field_related_websites' => $pdf->getSourceUrl(),
-            'field_physical_form' => 'http://id.loc.gov/authorities/genreForms/gf2019026083',
+            'field_physical_form' => 'Electronic|Text corpora',
             'field_extent' => implode('|', [
                 '1 pdf file',
                 "filesize {$pdf->getFileSize()}",

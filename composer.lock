@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f20c2a772c8b083be78417906219d0a5",
+    "content-hash": "e15e3e877c8acf2b772155defb21aaf8",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -3777,7 +3777,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sfu-dhil/nines-bundles.git",
-                "reference": "499ffc4c6c1a5c220dd0980eb87d1bee62d1e433"
+                "reference": "858accc99a78d2007adbd24a9de9d38b8d6359f6"
             },
             "require": {
                 "doctrine/cache": "^2.2",
