@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route(path: '/publishers')]
+#[IsGranted('ROLE_USER')]
 class PublisherController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
@@ -54,7 +55,6 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
 
     #[Route(path: '/new', name: 'publisher_new', methods: ['GET', 'POST'])]
     #[Template]
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     public function new(EntityManagerInterface $entityManager, Request $request) : array|RedirectResponse {
         $publisher = new Publisher();
         $form = $this->createForm(PublisherType::class, $publisher);
@@ -82,7 +82,6 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
         ];
     }
 
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{id}/edit', name: 'publisher_edit', methods: ['GET', 'POST'])]
     #[Template]
     public function edit(EntityManagerInterface $entityManager, Request $request, Publisher $publisher) : array|RedirectResponse {
@@ -102,7 +101,6 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
         ];
     }
 
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{id}', name: 'publisher_delete', methods: ['DELETE'])]
     public function delete(EntityManagerInterface $entityManager, Request $request, Publisher $publisher) : RedirectResponse {
         if ($this->isCsrfTokenValid('delete_publisher' . $publisher->getId(), $request->request->get('_token'))) {

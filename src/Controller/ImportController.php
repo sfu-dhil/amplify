@@ -23,14 +23,15 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
 #[Route(path: '/podcasts')]
+#[IsGranted('ROLE_USER')]
 class ImportController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Template]
     #[Route(path: '/imports/new', name: 'import_new', methods: ['GET', 'POST'])]
     public function new(EntityManagerInterface $entityManager, MessageBusInterface $bus, Request $request) : array|RedirectResponse {
         $import = new Import();
+        $import->setUser($this->getUser());
         $form = $this->createForm(ImportType::class, $import);
         $form->handleRequest($request);
 
@@ -53,13 +54,14 @@ class ImportController extends AbstractController implements PaginatorAwareInter
         ];
     }
 
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{podcast_id}/imports/new', name: 'podcast_import_new', methods: ['GET', 'POST'], requirements: [
         'podcast_id' => Requirement::DIGITS,
     ])]
     #[ParamConverter('podcast', options: ['id' => 'podcast_id'])]
+    #[IsGranted('access', 'podcast')]
     public function podcast_new(EntityManagerInterface $entityManager, MessageBusInterface $bus, Request $request, Podcast $podcast) : RedirectResponse {
         $import = new Import();
+        $import->setUser($this->getUser());
         $import->setRss($podcast->getRss());
         $import->setPendingStatus();
         $import->setMessage('Waiting to start import.');

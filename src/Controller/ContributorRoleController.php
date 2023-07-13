@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route(path: '/contributor_roles')]
+#[IsGranted('ROLE_USER')]
 class ContributorRoleController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
@@ -54,7 +55,6 @@ class ContributorRoleController extends AbstractController implements PaginatorA
 
     #[Route(path: '/new', name: 'contributor_role_new', methods: ['GET', 'POST'])]
     #[Template]
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     public function new(EntityManagerInterface $entityManager, Request $request) : array|RedirectResponse {
         $contributorRole = new ContributorRole();
         $form = $this->createForm(ContributorRoleType::class, $contributorRole);
@@ -82,7 +82,6 @@ class ContributorRoleController extends AbstractController implements PaginatorA
         ];
     }
 
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{id}/edit', name: 'contributor_role_edit', methods: ['GET', 'POST'])]
     #[Template]
     public function edit(EntityManagerInterface $entityManager, Request $request, ContributorRole $contributorRole) : array|RedirectResponse {
@@ -102,7 +101,6 @@ class ContributorRoleController extends AbstractController implements PaginatorA
         ];
     }
 
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{id}', name: 'contributor_role_delete', methods: ['DELETE'])]
     public function delete(EntityManagerInterface $entityManager, Request $request, ContributorRole $contributorRole) : RedirectResponse {
         if ($this->isCsrfTokenValid('delete_contributor_role' . $contributorRole->getId(), $request->request->get('_token'))) {

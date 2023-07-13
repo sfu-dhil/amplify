@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Entity\Podcast;
+use App\Entity\Share;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
@@ -12,6 +13,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Nines\MediaBundle\Entity\Image;
 use Nines\MediaBundle\Service\ImageManager;
+use Nines\UserBundle\DataFixtures\UserFixtures;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class PodcastFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface {
@@ -61,6 +63,12 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $em->persist($image);
             $em->flush();
 
+            $share = new Share();
+            $share->setPodcast($fixture);
+            $share->setUser($this->getReference('user.user_access'));
+            $em->persist($share);
+            $em->flush();
+
             $this->setReference('podcast.' . $i, $fixture);
         }
 
@@ -71,6 +79,8 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface, Fixt
     public function getDependencies() {
         return [
             PublisherFixtures::class,
+            UserFixtures::class,
+            UserExtraFixtures::class,
         ];
     }
 

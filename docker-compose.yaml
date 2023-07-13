@@ -34,6 +34,8 @@ services:
       # code for development
       - .:/var/www/html
 
+      # use the container's var (for cache, etc)
+      - /var/www/html/var
       # persist file uploads in .data
       - .data/app/data:/var/www/html/data
       - .data/app/log:/var/www/html/var/log

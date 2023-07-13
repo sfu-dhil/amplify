@@ -97,14 +97,6 @@ class Season extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
-    public function getFirstEpisode() : ?Episode {
-        return $this->episodes->first();
-    }
-
-    public function getLastEpisode() : ?Episode {
-        return $this->episodes->last();
-    }
-
     public function getDescription() : ?string {
         return $this->description;
     }

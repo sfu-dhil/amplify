@@ -24,12 +24,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Requirement\Requirement;
 
 #[Route(path: '/podcasts/{podcast_id}/exports', requirements: [
     'podcast_id' => Requirement::DIGITS,
 ])]
 #[ParamConverter('podcast', options: ['id' => 'podcast_id'])]
+#[IsGranted('access', 'podcast')]
 class ExportController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
@@ -46,7 +48,6 @@ class ExportController extends AbstractController implements PaginatorAwareInter
         ];
     }
 
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Template]
     #[Route(path: '/new', name: 'export_new', methods: ['GET', 'POST'])]
     public function new(EntityManagerInterface $entityManager, MessageBusInterface $bus, Request $request, Podcast $podcast) : array|RedirectResponse {
@@ -80,6 +81,10 @@ class ExportController extends AbstractController implements PaginatorAwareInter
     ])]
     #[Template]
     public function show(Podcast $podcast, Export $export) : array|RedirectResponse {
+        if ($export->getPodcast() !== $podcast) {
+            throw new ResourceNotFoundException();
+        }
+
         return [
             'export' => $export,
         ];
@@ -89,6 +94,10 @@ class ExportController extends AbstractController implements PaginatorAwareInter
         'id' => Requirement::DIGITS,
     ])]
     public function show_details_json(Podcast $podcast, Export $export) : JsonResponse {
+        if ($export->getPodcast() !== $podcast) {
+            throw new ResourceNotFoundException();
+        }
+
         return new JsonResponse([
             'content' => $this->renderView('export/partial/details.html.twig', [
                 'export' => $export,
@@ -101,6 +110,10 @@ class ExportController extends AbstractController implements PaginatorAwareInter
         'id' => Requirement::DIGITS,
     ])]
     public function download(Podcast $podcast, Export $export) : BinaryFileResponse {
+        if ($export->getPodcast() !== $podcast) {
+            throw new ResourceNotFoundException();
+        }
+
         $fullPath = $this->getParameter('export_root_dir') . '/' . $export->getPath();
         $response = new BinaryFileResponse($fullPath);
         $response->trustXSendfileTypeHeader();
@@ -114,14 +127,14 @@ class ExportController extends AbstractController implements PaginatorAwareInter
         return $response;
     }
 
-    /**
-     * @return RedirectResponse
-     */
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{id}', name: 'export_delete', methods: ['DELETE'], requirements: [
         'id' => Requirement::DIGITS,
     ])]
-    public function delete(EntityManagerInterface $entityManager, Request $request, Filesystem $filesystem, Podcast $podcast, Export $export) {
+    public function delete(EntityManagerInterface $entityManager, Request $request, Filesystem $filesystem, Podcast $podcast, Export $export) : RedirectResponse {
+        if ($export->getPodcast() !== $podcast) {
+            throw new ResourceNotFoundException();
+        }
+
         $podcast = $export->getPodcast();
         $relativePath = $export->getPath();
         $fullPath = $this->getParameter('export_root_dir') . "/{$relativePath}";

@@ -17,18 +17,19 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Requirement\Requirement;
 
 #[Route(path: '/podcasts/{podcast_id}/episodes', requirements: [
     'podcast_id' => Requirement::DIGITS,
 ])]
 #[ParamConverter('podcast', options: ['id' => 'podcast_id'])]
+#[IsGranted('access', 'podcast')]
 class EpisodeController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
     #[Route(path: '/new', name: 'episode_new', methods: ['GET', 'POST'])]
     #[Template]
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     public function new(EntityManagerInterface $entityManager, Request $request, Podcast $podcast) : array|RedirectResponse {
         $episode = new Episode();
         $episode->setPodcast($podcast);
@@ -71,18 +72,25 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
         'id' => Requirement::DIGITS,
     ])]
     #[Template]
-    public function show(Episode $episode) : array|RedirectResponse {
+    public function show(Podcast $podcast, Episode $episode) : array|RedirectResponse {
+        if ($episode->getPodcast() !== $podcast) {
+            throw new ResourceNotFoundException();
+        }
+
         return [
             'episode' => $episode,
         ];
     }
 
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{id}/edit', name: 'episode_edit', methods: ['GET', 'POST'], requirements: [
         'id' => Requirement::DIGITS,
     ])]
     #[Template]
     public function edit(EntityManagerInterface $entityManager, Request $request, Podcast $podcast, Episode $episode) : array|RedirectResponse {
+        if ($episode->getPodcast() !== $podcast) {
+            throw new ResourceNotFoundException();
+        }
+
         $existingAudios = $episode->getAudios();
         $existingImages = $episode->getImages();
         $existingPdfs = $episode->getPdfs();
@@ -141,11 +149,14 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
         ];
     }
 
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{id}', name: 'episode_delete', methods: ['DELETE'], requirements: [
         'id' => Requirement::DIGITS,
     ])]
     public function delete(EntityManagerInterface $entityManager, Request $request, Podcast $podcast, Episode $episode) : RedirectResponse {
+        if ($episode->getPodcast() !== $podcast) {
+            throw new ResourceNotFoundException();
+        }
+
         if ($this->isCsrfTokenValid('delete_episode' . $episode->getId(), $request->request->get('_token'))) {
             $entityManager->remove($episode);
             $entityManager->flush();

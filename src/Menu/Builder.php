@@ -7,6 +7,7 @@ namespace App\Menu;
 use App\Repository\PodcastRepository;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
+use Nines\UserBundle\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -34,15 +35,19 @@ class Builder implements ContainerAwareInterface {
         return $this->authChecker->isGranted($role);
     }
 
+    protected function getUser() : ?User {
+        if ( ! $this->hasRole('ROLE_USER')) {
+            return null;
+        }
+        $user = $this->tokenStorage->getToken()->getUser();
+        if ( ! $user instanceof User) {
+            return null;
+        }
+
+        return $user;
+    }
+
     public function mainSidebarMenu(array $options) : ItemInterface {
-        $podcasts = $this->podcastRepository->findBy(
-            [],
-            [
-                'title' => 'ASC',
-                'id' => 'ASC',
-            ],
-            5
-        );
 
         $menu = $this->factory->createItem('root');
         $menu->setChildrenAttributes([
@@ -75,6 +80,10 @@ class Builder implements ContainerAwareInterface {
                 ],
             ]);
 
+            $podcasts = ($this->hasRole('ROLE_ADMIN') ? $this->podcastRepository->indexQuery() : $this->podcastRepository->indexUserQuery($this->getUser()))
+                ->setMaxResults(5)
+                ->getResult()
+            ;
             foreach ($podcasts as $podcast) {
                 $podcastsMenu->addChild("Podcast_{$podcast->getId()}", [
                     'label' => $podcast->getTitle(),

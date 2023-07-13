@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Podcast;
+use App\Entity\Share;
 use App\Form\PodcastType;
 use App\Repository\PodcastRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,6 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
 #[Route(path: '/podcasts')]
+#[IsGranted('ROLE_USER')]
 class PodcastController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
@@ -26,7 +28,12 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
     #[Template]
     public function index(Request $request, PodcastRepository $podcastRepository) : array|RedirectResponse {
         $q = $request->query->get('q');
-        $query = $q ? $podcastRepository->searchQuery($q) : $podcastRepository->indexQuery();
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $query = $q ? $podcastRepository->searchQuery($q) : $podcastRepository->indexQuery();
+        } else {
+            $query = $q ? $podcastRepository->searchUserQuery($this->getUser(), $q) : $podcastRepository->indexUserQuery($this->getUser());
+        }
 
         return [
             'podcasts' => $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), ['wrap-queries' => true]),
@@ -36,7 +43,6 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
 
     #[Route(path: '/new', name: 'podcast_new', methods: ['GET', 'POST'])]
     #[Template]
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     public function new(EntityManagerInterface $entityManager, Request $request) : array|RedirectResponse {
         $podcast = new Podcast();
         $form = $this->createForm(PodcastType::class, $podcast);
@@ -51,6 +57,13 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
                 $image->setEntity($podcast);
                 $entityManager->persist($image);
             }
+            // add one time owner permissions on user who created podcast
+            $share = new Share();
+            $share->setPodcast($podcast);
+            $share->setUser($this->getUser());
+            $podcast->addShare($share);
+            $entityManager->persist($share);
+
             $entityManager->persist($podcast);
             $entityManager->flush();
             $this->addFlash('success', 'Podcast created successfully.');
@@ -68,17 +81,18 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
         'id' => Requirement::DIGITS,
     ])]
     #[Template]
+    #[IsGranted('access', 'podcast')]
     public function show(Podcast $podcast) : array|RedirectResponse {
         return [
             'podcast' => $podcast,
         ];
     }
 
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{id}/edit', name: 'podcast_edit', methods: ['GET', 'POST'], requirements: [
         'id' => Requirement::DIGITS,
     ])]
     #[Template]
+    #[IsGranted('access', 'podcast')]
     public function edit(EntityManagerInterface $entityManager, Request $request, Podcast $podcast) : array|RedirectResponse {
         $existingImages = $podcast->getImages();
         $form = $this->createForm(PodcastType::class, $podcast);
@@ -115,10 +129,10 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
         ];
     }
 
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{id}', name: 'podcast_delete', methods: ['DELETE'], requirements: [
         'id' => Requirement::DIGITS,
     ])]
+    #[IsGranted('access', 'podcast')]
     public function delete(EntityManagerInterface $entityManager, Request $request, Podcast $podcast) : RedirectResponse {
         if ($this->isCsrfTokenValid('delete_podcast' . $podcast->getId(), $request->request->get('_token'))) {
             $entityManager->remove($podcast);

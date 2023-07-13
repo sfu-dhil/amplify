@@ -60,28 +60,28 @@ assets: ## Link assets into /public
 ## Database migrations
 
 migrate: ## Run any migrations as required
-	$(CONSOLE) --env=dev doctrine:migrations:migrate --no-interaction --allow-no-migration
+	$(CONSOLE) doctrine:migrations:migrate --no-interaction --allow-no-migration
 
 migrate.down: ## Undo one migration
 	# This is arcane nonsense and only works in GNU Make
-	$(eval CURRENT=$(shell $(CONSOLE) --env=dev doctrine:migrations:current))
-	$(CONSOLE) --env=dev doctrine:migrations:execute '$(CURRENT)' --down
+	$(eval CURRENT=$(shell $(CONSOLE) doctrine:migrations:current))
+	$(CONSOLE) doctrine:migrations:execute '$(CURRENT)' --down
 
 migrate.diff: ## Generate a migration by diffing the db and entities
-	$(CONSOLE) --env=dev doctrine:migrations:diff --no-interaction --quiet
+	$(CONSOLE) doctrine:migrations:diff --no-interaction --quiet
 
 migrate.status: ## Status of database migrations
-	$(CONSOLE) --env=dev doctrine:migrations:status
+	$(CONSOLE) doctrine:migrations:status
 
 migrate.rollup: ## Roll up all migrations in to a schema definition
 	rm -rf migrations/*
-	$(CONSOLE) --env=dev doctrine:migrations:dump-schema --no-interaction --quiet
-	$(CONSOLE) --env=dev doctrine:migrations:rollup --no-interaction --quiet
+	$(CONSOLE) doctrine:migrations:dump-schema --no-interaction --quiet
+	$(CONSOLE) doctrine:migrations:rollup --no-interaction --quiet
 	$(PHPCSF) fix migrations
 
 migrate.reset: ## Reset all migrations metadata
-	$(CONSOLE) --env=dev doctrine:migrations:version --delete --all --no-interaction --quiet
-	$(CONSOLE) --env=dev doctrine:migrations:version --add --all --no-interaction --quiet
+	$(CONSOLE) doctrine:migrations:version --delete --all --no-interaction --quiet
+	$(CONSOLE) doctrine:migrations:version --add --all --no-interaction --quiet
 
 
 ## -- Container debug targets

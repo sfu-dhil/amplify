@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Repository\ImportRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Nines\UserBundle\Entity\User;
 use Nines\UtilBundle\Entity\AbstractEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -14,6 +15,10 @@ class Import extends AbstractEntity {
     #[ORM\ManyToOne(targetEntity: 'Podcast', inversedBy: 'imports')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?Podcast $podcast = null;
+
+    #[ORM\ManyToOne(targetEntity: 'Nines\UserBundle\Entity\User')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    private ?User $user = null;
 
     #[ORM\Column(type: 'string', nullable: false)]
     #[Assert\Url(normalizer: 'trim', protocols: ['http', 'https'])]
@@ -60,6 +65,16 @@ class Import extends AbstractEntity {
 
     public function setPodcast(?Podcast $podcast) : self {
         $this->podcast = $podcast;
+
+        return $this;
+    }
+
+    public function getUser() : ?User {
+        return $this->user;
+    }
+
+    public function setUser(?User $user) : self {
+        $this->user = $user;
 
         return $this;
     }

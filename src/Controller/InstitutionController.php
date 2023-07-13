@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route(path: '/institutions')]
+#[IsGranted('ROLE_USER')]
 class InstitutionController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
@@ -54,7 +55,6 @@ class InstitutionController extends AbstractController implements PaginatorAware
 
     #[Route(path: '/new', name: 'institution_new', methods: ['GET', 'POST'])]
     #[Template]
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     public function new(EntityManagerInterface $entityManager, Request $request) : array|RedirectResponse {
         $institution = new Institution();
         $form = $this->createForm(InstitutionType::class, $institution);
@@ -82,7 +82,6 @@ class InstitutionController extends AbstractController implements PaginatorAware
         ];
     }
 
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{id}/edit', name: 'institution_edit', methods: ['GET', 'POST'])]
     #[Template]
     public function edit(EntityManagerInterface $entityManager, Request $request, Institution $institution) : array|RedirectResponse {
@@ -102,7 +101,6 @@ class InstitutionController extends AbstractController implements PaginatorAware
         ];
     }
 
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{id}', name: 'institution_delete', methods: ['DELETE'])]
     public function delete(EntityManagerInterface $entityManager, Request $request, Institution $institution) : RedirectResponse {
         if ($this->isCsrfTokenValid('delete_institution' . $institution->getId(), $request->request->get('_token'))) {

@@ -28,7 +28,7 @@
 {% endblock %}
 
 {% block javascripts %}
-    {% if is_granted('ROLE_CONTENT_ADMIN') and import.isActive %}
+    {% if import.isActive %}
         <script>
             const setRefreshTimeout = () => {
                 setTimeout(

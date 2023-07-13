@@ -19,12 +19,14 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Requirement\Requirement;
 
 #[Route(path: '/podcasts/{podcast_id}/seasons', requirements: [
     'podcast_id' => Requirement::DIGITS,
 ])]
 #[ParamConverter('podcast', options: ['id' => 'podcast_id'])]
+#[IsGranted('access', 'podcast')]
 class SeasonController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
@@ -48,7 +50,6 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
 
     #[Route(path: '/new', name: 'season_new', methods: ['GET', 'POST'])]
     #[Template]
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     public function new(EntityManagerInterface $entityManager, Request $request, Podcast $podcast) : array|RedirectResponse {
         $season = new Season();
         $season->setPodcast($podcast);
@@ -84,17 +85,24 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
     ])]
     #[Template]
     public function show(Podcast $podcast, Season $season) : array|RedirectResponse {
+        if ($season->getPodcast() !== $podcast) {
+            throw new ResourceNotFoundException();
+        }
+
         return [
             'season' => $season,
         ];
     }
 
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{id}/edit', name: 'season_edit', methods: ['GET', 'POST'], requirements: [
         'id' => Requirement::DIGITS,
     ])]
     #[Template]
     public function edit(EntityManagerInterface $entityManager, Request $request, Podcast $podcast, Season $season) : array|RedirectResponse {
+        if ($season->getPodcast() !== $podcast) {
+            throw new ResourceNotFoundException();
+        }
+
         $existingImages = $season->getImages();
         $form = $this->createForm(SeasonType::class, $season);
         $form->handleRequest($request);
@@ -129,11 +137,14 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
         ];
     }
 
-    #[IsGranted('ROLE_CONTENT_ADMIN')]
     #[Route(path: '/{id}', name: 'season_delete', methods: ['DELETE'], requirements: [
         'id' => Requirement::DIGITS,
     ])]
     public function delete(EntityManagerInterface $entityManager, Request $request, Podcast $podcast, Season $season) : RedirectResponse {
+        if ($season->getPodcast() !== $podcast) {
+            throw new ResourceNotFoundException();
+        }
+
         if ($this->isCsrfTokenValid('delete_season' . $season->getId(), $request->request->get('_token'))) {
             $entityManager->remove($season);
             $entityManager->flush();

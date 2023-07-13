@@ -66,6 +66,13 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     private array $keywords = [];
 
     /**
+     * @var Collection<int,Share>
+     */
+    #[ORM\OneToMany(targetEntity: 'Share', mappedBy: 'podcast', orphanRemoval: true)]
+    #[ORM\OrderBy(['created' => 'DESC', 'id' => 'DESC'])]
+    private $shares;
+
+    /**
      * @var Collection<int,Contribution>
      */
     #[ORM\OneToMany(targetEntity: 'Contribution', mappedBy: 'podcast')]
@@ -216,6 +223,7 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     public function __construct() {
         parent::__construct();
         $this->image_constructor();
+        $this->shares = new ArrayCollection();
         $this->contributions = new ArrayCollection();
         $this->seasons = new ArrayCollection();
         $this->episodes = new ArrayCollection();
@@ -224,7 +232,7 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     }
 
     public function __toString() : string {
-        return $this->title;
+        return $this->title ?? '';
     }
 
     public function getGuid() : ?string {
@@ -313,6 +321,34 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
 
     public function setPublisher(?Publisher $publisher) : self {
         $this->publisher = $publisher;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int,Share>
+     */
+    public function getShares() : Collection {
+        return $this->shares;
+    }
+
+    public function addShare(Share $share) : self {
+        if ( ! $this->shares->contains($share)) {
+            $this->shares[] = $share;
+            $share->setPodcast($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShare(Share $share) : self {
+        if ($this->shares->contains($share)) {
+            $this->shares->removeElement($share);
+            // set the owning side to null (unless already changed)
+            if ($share->getPodcast() === $this) {
+                $share->setPodcast(null);
+            }
+        }
 
         return $this;
     }

@@ -31,6 +31,7 @@ class ImportHandler {
         try {
             $rss = $import->getRss();
             $podcastId = $import?->getPodcast()?->getId() ?? '';
+            $userId = $import?->getUser()?->getId() ?? '';
 
             $this->logger->notice('------------------------------------------------------------------------------');
             $this->logger->notice("Starting Import {$import->getId()} on RSS Feed {$rss} Podcast {$podcastId}");
@@ -49,6 +50,7 @@ class ImportHandler {
                 'url' => $rss,
                 'podcastId' => $podcastId,
                 'importId' => $import->getId(),
+                'userId' => $userId,
             ]);
 
             $output = new StreamOutput(fopen('php://stdout', 'w'));

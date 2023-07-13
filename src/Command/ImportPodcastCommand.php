@@ -8,6 +8,7 @@ use App\Entity\Episode;
 use App\Entity\Import;
 use App\Entity\Podcast;
 use App\Entity\Season;
+use App\Entity\Share;
 use App\Repository\ImportRepository;
 use App\Repository\PodcastRepository;
 use DateTimeImmutable;
@@ -27,6 +28,8 @@ use Nines\MediaBundle\Entity\PdfContainerInterface;
 use Nines\MediaBundle\Service\AudioManager;
 use Nines\MediaBundle\Service\ImageManager;
 use Nines\MediaBundle\Service\PdfManager;
+use Nines\UserBundle\Entity\User;
+use Nines\UserBundle\Repository\UserRepository;
 use SimplePie\Item as SimplePieItem;
 use SimplePie\SimplePie;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -49,6 +52,7 @@ class ImportPodcastCommand extends Command {
         private EntityManagerInterface $em,
         private PodcastRepository $podcastRepository,
         private ImportRepository $importRepository,
+        private UserRepository $userRepository,
         private AudioManager $audioManager,
         private ImageManager $imageManager,
         private PdfManager $pdfManager,
@@ -59,12 +63,14 @@ class ImportPodcastCommand extends Command {
         private ?int $totalSteps = null,
         private ?string $rssUrl = null,
         private ?Podcast $podcast = null,
+        private ?User $user = null,
         private ?Import $import = null,
         private ?OutputInterface $output = null,
         private array $seasons = [],
         private array $seasonEpisodeCounter = [],
         private array $episodes = [],
         private array $mediaRequests = [],
+        private bool $isNew = false,
     ) {
         parent::__construct();
     }
@@ -301,6 +307,15 @@ class ImportPodcastCommand extends Command {
         if ($this->import) {
             $this->podcast->addImport($this->import);
             $this->em->persist($this->import);
+            $this->em->flush();
+        }
+
+        // add initial share if userId is present on new podcast
+        if ($this->isNew && $this->user) {
+            $share = new Share();
+            $share->setUser($this->user);
+            $this->podcast->addShare($share);
+            $this->em->persist($share);
             $this->em->flush();
         }
 
@@ -599,6 +614,11 @@ class ImportPodcastCommand extends Command {
             InputArgument::OPTIONAL,
             'ID of import.'
         );
+        $this->addArgument(
+            'userId',
+            InputArgument::OPTIONAL,
+            'ID of user.'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) : int {
@@ -607,6 +627,7 @@ class ImportPodcastCommand extends Command {
         $this->rssUrl = $input->getArgument('url');
         $podcastId = $input->getArgument('podcastId');
         $importId = $input->getArgument('importId');
+        $userId = $input->getArgument('userId');
 
         if ( ! $this->rssUrl) {
             $this->output->writeln('No RSS url found.');
@@ -620,10 +641,18 @@ class ImportPodcastCommand extends Command {
 
             return 0;
         }
+        $this->isNew = ! $podcastId;
 
         $this->import = $importId ? $this->importRepository->find($importId) : null;
         if ($importId && ! $this->import) {
             $this->output->writeln('No import found.');
+
+            return 0;
+        }
+
+        $this->user = $userId ? $this->userRepository->find($userId) : null;
+        if ($userId && ! $this->user) {
+            $this->output->writeln('No user found.');
 
             return 0;
         }
