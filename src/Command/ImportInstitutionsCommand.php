@@ -15,14 +15,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(name: 'app:import:institutions')]
 class ImportInstitutionsCommand extends Command {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
 
-    public function __construct(EntityManagerInterface $em) {
-        $this->em = $em;
-        parent::__construct(null);
+    public function __construct(
+        private EntityManagerInterface $em,
+    ) {
+        parent::__construct();
     }
 
     protected function configure() : void {

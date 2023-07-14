@@ -1,0 +1,6 @@
+when@test:
+    services:
+        _defaults:
+            public: true
+
+        Symfony\Contracts\HttpClient\HttpClientInterface: ~

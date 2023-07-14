@@ -47,10 +47,6 @@ public/dev
 # Mac DS_Store
 .DS_Store
 
-# Local design files
-design
-amplify.xpr
-
 # Docker image specific
 /docs
 /.github/

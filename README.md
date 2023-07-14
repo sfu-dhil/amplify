@@ -8,7 +8,6 @@ episodes and describing the metadata for them.
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 - A copy of the `amplify-schema.sql` and `amplify-data.sql` database files. If you are not sure what these are or where to get them, you should contact the [Digital Humanities Innovation Lab](mailto:dhil@sfu.ca) for access. These files should be placed in the root folder.
-- A copy of the blog images. These should be placed directly into the `.data/app/blog_images/` directory (start the application for the first time if you don't see the directory).
 - A copy of the data (audio/image/pdf) files. These should be placed directly into the `.data/data/audio`,  `.data/data/image`,  `.data/data/pdf` directory (start the application for the first time if you don't see the data directory).
 
 ## Initialize the Application

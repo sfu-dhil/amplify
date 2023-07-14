@@ -1,4 +1,4 @@
-FROM node:20.3 AS amplify-prod-assets
+FROM node:20.4 AS amplify-prod-assets
 WORKDIR /app
 
 RUN apt-get update \
@@ -14,7 +14,6 @@ RUN yarn --production \
     && yarn cache clean
 
 FROM dhilsfu/symfony-base:php-8.2-apache AS amplify
-
 ENV GIT_REPO=https://github.com/sfu-dhil/amplify
 
 # basic deps installer (no script/plugings)
