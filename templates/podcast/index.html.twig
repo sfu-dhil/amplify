@@ -55,6 +55,7 @@
                         </td>
                         <td>
                             {% embed 'status/partial/badge.html.twig' with {
+                                'edit_link': path('podcast_edit', {'id': podcast.id }),
                                 'status': podcast.status,
                             } %}
                             {% endembed %}

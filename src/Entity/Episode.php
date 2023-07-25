@@ -330,92 +330,58 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         $warnings = [];
 
         // if (empty(trim(strip_tags($this->getGuid() ?? '')))) {
-        //     $warnings['Guid'] = 'Missing global unique identifier';
+        //     $warnings['episode_guid_label'] = 'Missing global unique identifier';
         // }
         if (null === $this->getPodcast()) {
-            $errors['Podcast'] = 'Missing podcast';
+            $errors['episode_podcast_label'] = 'Missing podcast';
         }
         if (null === $this->getSeason()) {
-            $errors['Season'] = 'Missing season';
+            $errors['episode_season_label'] = 'Missing season';
         }
         if (empty(trim(strip_tags($this->getEpisodeType() ?? '')))) {
-            $errors['Episode type'] = 'Missing episode type';
+            $errors['episode_episodeType_label'] = 'Missing episode type';
         }
         if (null === $this->getNumber()) {
-            $errors['Episode number'] = 'Missing episode number';
+            $errors['episode_number_label'] = 'Missing episode number';
         }
         if (null === $this->getDate()) {
-            $errors['Date'] = 'Missing date';
+            $errors['episode_date_label'] = 'Missing date';
         }
         if (null === $this->getRunTime()) {
-            $errors['Run time'] = 'Missing run time';
+            $errors['episode_runTime_label'] = 'Missing run time';
         }
         if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
-            $errors['Title'] = 'Missing title';
+            $errors['episode_title_label'] = 'Missing title';
         }
         // if (empty(trim(strip_tags($this->getSubTitle() ?? '')))) {
-        //     $warnings['Subtitle'] = 'Missing subtitle';
+        //     $warnings['episode_subTitle_label'] = 'Missing subtitle';
         // }
         // if (null === $this->getExplicit()) {
-        //     $warnings['Explicit'] = 'Missing explicit status';
+        //     $warnings['episode_explicit_label'] = 'Missing explicit status';
         // }
         if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
-            $errors['Description'] = 'Missing description';
+            $errors['episode_description_label'] = 'Missing description';
         }
         // if (empty(trim(strip_tags($this->getBibliography() ?? '')))) {
-        //     $warnings['Bibliography'] = 'Missing bibliography';
-        // }
-        // if (empty(trim(strip_tags($this->getTranscript() ?? '')))) {
-        //     $warnings['Transcript'] = 'Missing transcript';
+        //     $warnings['episode_bibliography_label'] = 'Missing bibliography';
         // }
         // if (empty(trim(strip_tags($this->getPermissions() ?? '')))) {
-        //     $warnings['Permissions'] = 'Missing permissions';
+        //     $warnings['episode_permissions_label'] = 'Missing permissions';
         // }
         // if (null === $this->getContributions() || 0 === count($this->getContributions())) {
-        //     $warnings['Contributions'] = 'Missing contributors';
+        //     $warnings['episode_contributions_label'] = 'Missing contributors';
         // }
 
         if (0 === count($this->getAudios())) {
-            $errors['Audios'] = 'Missing audio';
+            $errors['episode_audios_label'] = 'Missing audio';
         }
-        if (0 === count($this->getImages())) {
-            $errors['Images'] = 'Missing images';
-        }
-        foreach ($this->getAudios() as $audio) {
-            $audioErrors = [];
-            if (empty(trim(strip_tags($audio->getDescription() ?? '')))) {
-                $audioErrors['Description'] = 'Missing description';
-            }
-            // if (empty(trim(strip_tags($audio->getLicense() ?? '')))) {
-            //     $audioErrors['License'] = 'Missing license';
-            // }
-            if (count($audioErrors) > 0) {
-                $errors["Audio {$audio->getOriginalName()}"] = $audioErrors;
-            }
-        }
-        foreach ($this->getImages() as $image) {
-            $imageErrors = [];
+        foreach ($this->getImages() as $index => $image) {
             if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
-                $imageErrors['Description'] = 'Missing description';
-            }
-            // if (empty(trim(strip_tags($image->getLicense() ?? '')))) {
-            //     $imageErrors['License'] = 'Missing license';
-            // }
-            if (count($imageErrors) > 0) {
-                $errors["Image {$image->getOriginalName()}"] = $imageErrors;
+                $errors["episode_images_{$index}_description_label"] = 'Missing image description';
             }
         }
-        foreach ($this->getPdfs() as $pdf) {
-            $pdfErrors = [];
-            if (empty(trim(strip_tags($pdf->getDescription() ?? '')))) {
-                $pdfErrors['Description'] = 'Missing description';
-            }
-            // if (empty(trim(strip_tags($pdf->getLicense() ?? '')))) {
-            //     $pdfErrors['License'] = 'Missing license';
-            // }
-            if (count($pdfErrors) > 0) {
-                $errors["Transcript {$pdf->getOriginalName()}"] = $pdfErrors;
-            }
+        if (0 === count($this->getPdfs()) && empty(trim(strip_tags($this->getTranscript() ?? '')))) {
+            $errors['episode_transcript_label'] = 'Missing transcript';
         }
 
         return [

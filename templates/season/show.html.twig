@@ -34,20 +34,20 @@
                     {% endembed %}
                 {% endfor %}
             </div>
-            <h1 class="card-title">{{ season.title }}</h1>
-            {% if season.subTitle %}<h5 class="card-subtitle">{{ season.subTitle }}</h5>{% endif %}
+            <h1 class="card-title text-truncate">{{ season.title }}</h1>
+            {% if season.subTitle %}<h5 class="card-subtitle text-truncate">{{ season.subTitle }}</h5>{% endif %}
             {% if season.number %}<h5 class="card-subtitle mt-2">Season {{ season.number }}</h5>{% endif %}
             <div class="card-text my-3">{{ season.description|default('')|sanitize_html }}</div>
         </div>
     </div>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 my-3 g-4">
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-journals"></i> Publisher</h6>
             {% if season.publisher %}
                 <a href='{{ path("publisher_show", {"id": season.publisher.id}) }}'>{{ season.publisher }}</a>
             {% endif %}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-people-fill"></i> Contributors</h6>
             {% for contributions in season.getContributionsGroupedByPerson %}
                 {% set person = (contributions|first).person %}
@@ -59,18 +59,19 @@
                 </div>
             {% endfor %}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-list-check"></i> Season Exportable Status</h6>
             {% embed 'status/partial/badge.html.twig' with {
+                'edit_link': path('season_edit', {'podcast_id': season.podcast.id, 'id': season.id }),
                 'status': season.status,
             } %}
             {% endembed %}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-calendar-event"></i> Created</h6>
             {{ season.created|date('Y-m-d') }}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-calendar-event"></i> Last Updated</h6>
             {{ season.updated|date('Y-m-d') }}
         </div>

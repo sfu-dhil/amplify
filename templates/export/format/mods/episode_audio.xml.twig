@@ -59,17 +59,6 @@
     </accessCondition>
     {% endif %}
 
-    {% if audio.description %}
-    <abstract type="summary" displayLabel="File Content description">
-        {{ audio.description|default('')|sanitize_html('export.content_sanitizer') }}
-    </abstract>
-    {% endif %}
-    {% if audio.license  %}
-    <note displayLabel="File License">
-        {{ audio.license|default('')|sanitize_html('export.content_sanitizer') }}
-    </note>
-    {% endif %}
-
     <relatedItem type="host">
         {% embed 'export/format/mods/partial/identifier_episode.xml.twig' with {
             'episode': episode,

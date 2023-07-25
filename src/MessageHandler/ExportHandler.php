@@ -77,6 +77,5 @@ class ExportHandler {
 
             throw $e;
         }
-// } catch (Exception $e) {
     }
 }

@@ -15,7 +15,7 @@
 {% block body %}
     <div class="w-100 m-auto card text-center" style="max-width: 600px">
         <h5 class="card-title">Importing Podcast</h5>
-        <h6 class="card-title">{{ import.rss }}</h5>
+        <h6 class="card-title text-truncate">{{ import.rss }}</h5>
         <div id="details_container" class="card-body">
             {% embed 'import/partial/details.html.twig' %}
             {% endembed %}

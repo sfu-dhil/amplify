@@ -60,11 +60,6 @@
         {{ image.description|default('')|sanitize_html('export.content_sanitizer') }}
     </abstract>
     {% endif %}
-    {% if image.license  %}
-    <note displayLabel="File License">
-        {{ image.license|default('')|sanitize_html('export.content_sanitizer') }}
-    </note>
-    {% endif %}
 
     <relatedItem type="host">
         {% embed 'export/format/mods/partial/identifier_season.xml.twig' with {

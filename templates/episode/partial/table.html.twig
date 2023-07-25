@@ -19,6 +19,7 @@
                     <td><a href="{{ path('episode_show', {'podcast_id': episode.podcast.id, 'id': episode.id}) }}">{{ episode.title|u.truncate(50, '...') }}</a></td>
                     <td>
                         {% embed 'status/partial/badge.html.twig' with {
+                            'edit_link': path('episode_edit', {'podcast_id': episode.podcast.id, 'id': episode.id }),
                             'status': episode.status,
                         } %}
                         {% endembed %}

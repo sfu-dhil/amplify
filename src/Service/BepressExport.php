@@ -76,24 +76,24 @@ class BepressExport extends ExportService {
             'author1_institution' => '',
             'author1_is_corporate' => 'FALSE', // need to provide default value but we are not tracking this in amplify
             'author2_fname' => '',
-            'author2_mname' => '',
+            // 'author2_mname' => '',
             'author2_lname' => '',
-            'author2_suffix' => '',
-            'author2_email' => '',
+            // 'author2_suffix' => '',
+            // 'author2_email' => '',
             'author2_institution' => '',
             'author2_is_corporate' => 'FALSE',
             'author3_fname' => '',
-            'author3_mname' => '',
+            // 'author3_mname' => '',
             'author3_lname' => '',
-            'author3_suffix' => '',
-            'author3_email' => '',
+            // 'author3_suffix' => '',
+            // 'author3_email' => '',
             'author3_institution' => '',
             'author3_is_corporate' => 'FALSE',
             'author4_fname' => '',
-            'author4_mname' => '',
+            // 'author4_mname' => '',
             'author4_lname' => '',
-            'author4_suffix' => '',
-            'author4_email' => '',
+            // 'author4_suffix' => '',
+            // 'author4_email' => '',
             'author4_institution' => '',
             'author4_is_corporate' => 'FALSE',
             // 'disciplines' => '', // fixed list, separated by `;`
@@ -158,7 +158,7 @@ class BepressExport extends ExportService {
         foreach ($this->podcast->getSeasons() as $season) {
             foreach ($season->getEpisodes() as $episode) {
                 $currentEpisode++;
-                $audio = $episode->getAudio('audio/mpeg') ?? $episode->getAudios()[0] ?? null;
+                $audio = $episode->getAudio('audio/wav') ?? $episode->getAudio('audio/mpeg') ?? $episode->getAudios()[0] ?? null;
                 if (null === $audio || ! $this->filesystem->exists($audio->getFile()->getRealPath())) {
                     $this->updateMessage("Skipping metadata for {$episode->getSlug()} missing audio ({$currentEpisode}/{$this->totalEpisodes})");
                     $this->updateProgress($this->stepsCompleted += 2);

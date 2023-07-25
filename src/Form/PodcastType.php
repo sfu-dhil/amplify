@@ -6,7 +6,6 @@ namespace App\Form;
 
 use App\Entity\Podcast;
 use App\Entity\Publisher;
-use Nines\MediaBundle\Form\ImageType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -115,7 +114,7 @@ class PodcastType extends AbstractType {
         ]);
         $builder->add('categories', CollectionType::class, [
             'label' => 'Apple Podcast Categories',
-            'required' => false,
+            'required' => true,
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
@@ -131,7 +130,7 @@ class PodcastType extends AbstractType {
             'prototype' => true,
             'by_reference' => false,
             'attr' => [
-                'class' => 'collection collection-simple',
+                'class' => 'collection collection-complex',
             ],
         ]);
         $builder->add('keywords', CollectionType::class, [
@@ -145,16 +144,16 @@ class PodcastType extends AbstractType {
                 'label' => false,
             ],
             'attr' => [
-                'class' => 'collection collection-simple',
+                'class' => 'collection collection-complex',
             ],
         ]);
         $builder->add('images', CollectionType::class, [
             'label' => 'Images',
-            'required' => false,
+            'required' => true,
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
-            'entry_type' => ImageType::class,
+            'entry_type' => AmplifyImageType::class,
             'entry_options' => [
                 'label' => false,
             ],

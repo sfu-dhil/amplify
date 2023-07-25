@@ -6,7 +6,6 @@ namespace App\Form;
 
 use App\Entity\Publisher;
 use App\Entity\Season;
-use Nines\MediaBundle\Form\ImageType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -80,7 +79,7 @@ class SeasonType extends AbstractType {
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => false,
-            'entry_type' => ImageType::class,
+            'entry_type' => AmplifyImageType::class,
             'entry_options' => [
                 'label' => false,
             ],

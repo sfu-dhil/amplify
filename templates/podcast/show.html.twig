@@ -40,39 +40,39 @@
                     {% endembed %}
                 {% endfor %}
             </div>
-            <h1 class="card-title">{{ podcast.title }}</h1>
-            {% if podcast.subTitle %}<h5 class="card-subtitle">{{ podcast.subTitle }}</h5>{% endif %}
+            <h1 class="card-title text-truncate">{{ podcast.title }}</h1>
+            {% if podcast.subTitle %}<h5 class="card-subtitle text-truncate">{{ podcast.subTitle }}</h5>{% endif %}
             <div class="card-text my-3">{{ podcast.description|default('')|sanitize_html }}</div>
         </div>
     </div>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 my-3 g-4">
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-exclamation-octagon"></i> Explicit</h6>
             {{ podcast.explicit ? 'Yes' : 'No' }}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-file-text"></i> Primary Language</h6>
             {{ podcast.languageCode|language_name }}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-broadcast-pin"></i> Podcast Website</h6>
             {% if podcast.website %}
                 <a href='{{ podcast.website }}'>{{ podcast.website }}</a>
             {% endif %}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-rss"></i> Rss</h6>
             {% if podcast.rss %}
                 <a href='{{ podcast.rss }}'>{{ podcast.rss }}</a>
             {% endif %}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-journals"></i> Publisher</h6>
             {% if podcast.publisher %}
                 <a href='{{ path("publisher_show", {"id": podcast.publisher.id}) }}'>{{ podcast.publisher }}</a>
             {% endif %}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-tags"></i> Apple Podcast Categories</h6>
             {% for category in podcast.categories %}
                 <span class="badge text-bg-primary">{{ category }}</span>
@@ -84,7 +84,7 @@
                 <span class="badge text-bg-primary">{{ keyword }}</span>
             {% endfor %}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-people-fill"></i> Contributors</h6>
             {% for contributions in podcast.getContributionsGroupedByPerson %}
                 {% set person = (contributions|first).person %}
@@ -96,29 +96,32 @@
                 </div>
             {% endfor %}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-list-check"></i> Podcast Exportable Status</h6>
             {% embed 'status/partial/badge.html.twig' with {
+                'edit_link': path('podcast_edit', {'id': podcast.id }),
                 'status': podcast.status,
             } %}
             {% endembed %}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-calendar-event"></i> Created</h6>
             {{ podcast.created|date('Y-m-d') }}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-calendar-event"></i> Last Updated</h6>
             {{ podcast.updated|date('Y-m-d') }}
         </div>
-        <div class="col">
-            <h6><i class="bi bi-list-task"></i> License</h6>
-            {{ podcast.license|default('')|sanitize_html }}
-        </div>
-        <div class="col">
-            <h6><i class="bi bi-c-circle"></i> Copyright</h6>
-            {{ podcast.copyright|default('')|sanitize_html }}
-        </div>
+    </div>
+    <hr />
+    <div class="text-truncate">
+        <h6><i class="bi bi-list-task"></i> License</h6>
+        <div class="show-more-content">{{ podcast.license|default('')|sanitize_html }}</div>
+    </div>
+    <hr />
+    <div class="text-truncate">
+        <h6><i class="bi bi-c-circle"></i> Copyright</h6>
+        <div class="show-more-content">{{ podcast.copyright|default('')|sanitize_html }}</div>
     </div>
     <div class="row my-3">
         <div class="col-lg h3">
@@ -143,8 +146,8 @@
             <span class="nav-link {{ selected ? 'active' : '' }}" id="{{ id }}" data-bs-toggle="tab" data-bs-target="#{{ target_id }}" type="button" role="tab" aria-controls="{{ target_id }}" aria-selected="{{ selected }}">
                 Season {{ season.number }}
                 {% embed 'status/partial/badge.html.twig' with {
+                    'edit_link': path('season_edit', {'podcast_id': season.podcast.id, 'id': season.id }),
                     'status': season.status,
-
                 } %}
                 {% endembed %}
             </span>
@@ -165,7 +168,7 @@
             {% set selected = loop.first %}
             <div class="tab-pane fade {{ selected ? 'show active' : '' }}" id="{{ id }}" role="tabpanel" aria-labelledby="{{ selector_id }}" tabindex="{{ loop.index }}">
                 <div class="row my-3 mx-1">
-                    <div class="col-lg h3">
+                    <div class="col-lg h3 text-truncate">
                         {{ season.title }}
                     </div>
                     <div class="col-lg-auto">

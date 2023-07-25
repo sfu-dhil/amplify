@@ -1,7 +1,7 @@
-
 {%- set items = status.errors|merge(status.warnings) -%}
-{%- set label = items|length == 0 ? 'Ready' : items|first is iterable ? items|keys|first : items|first -%}
-{%- set displayPopover = items|length > 1 or items|first is iterable -%}
+{%- set anchor = items|length == 0 ? 'Ready' : items|keys|first -%}
+{%- set label = items|length == 0 ? 'Ready' : items|first -%}
+{%- set displayPopover = items|length > 1 -%}
 {%- if status.errors|length > 0 -%}
     {%- set itemColor = 'danger' -%}
 {%- elseif status.warnings|length > 0 -%}
@@ -19,26 +19,24 @@
                 {%- for key, item in items -%}
                     {%- set listItemColor = key in status.errors|keys ? 'danger' : 'warning' -%}
                     <li class='list-group-item text-truncate list-group-item-{{ listItemColor }}'>
-                    {%- if item is iterable -%}
-                        {{ key|e('html_attr') }}
-                        <ul class='list-unstyled ms-4'>
-                            {%- for subitem in item -%}
-                                <li>{{ subitem|e('html_attr') }}</li>
-                            {%- endfor -%}
-                        </ul>
-                    {%- else -%}
-                        {{ item|e('html_attr') }}
-                    {%- endif -%}
+                        <a href='{{ edit_link ~ '#' ~ key }}' target='_blank' class='link-{{ listItemColor }} text-decoration-none'>
+                            {{ item|e('html_attr') }}
+                        </a>
                     </li>
                 {%- endfor -%}
             </ul>
         "
     {% endif %}
 >
-    <span class="status-badge-label text-truncate">
-        {{ label }}
-    </span>
     {%- if displayPopover -%}
+        <span class="status-badge-label text-truncate">
+            {{ label }}
+        </span>
         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">{{ status.errors|length + status.warnings|length }}</span>
+    {%- else -%}
+        <a class="status-badge-label text-truncate link-light text-decoration-none" href="{{ edit_link ~ '#' ~ anchor }}" target="_blank">
+            {{ label }}
+        </a>
     {%- endif -%}
 </button>
+

@@ -633,58 +633,50 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         $warnings = [];
 
         // if (empty(trim(strip_tags($this->getGuid() ?? '')))) {
-        //     $warnings['Guid'] = 'Missing global unique identifier';
+        //     $warnings['podcast_guid_label'] = 'Missing global unique identifier';
         // }
         if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
-            $errors['Title'] = 'Missing title';
+            $errors['podcast_title_label'] = 'Missing title';
         }
         // if (empty(trim(strip_tags($this->getSubTitle() ?? '')))) {
-        //     $warnings['Subtitle'] = 'Missing subtitle';
+        //     $warnings['podcast_subTitle_label'] = 'Missing subtitle';
         // }
         // if (null === $this->getLanguageCode()) {
-        //     $warnings['LanguageCode'] = 'Missing primary language';
+        //     $warnings['podcast_languageCode_label'] = 'Missing primary language';
         // }
         if (null === $this->getExplicit()) {
-            $errors['Explicit'] = 'Missing explicit status';
+            $errors['podcast_explicit_label'] = 'Missing explicit status';
         }
         if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
-            $errors['Description'] = 'Missing description';
+            $errors['podcast_description_label'] = 'Missing description';
         }
         if (empty(trim(strip_tags($this->getCopyright() ?? '')))) {
-            $errors['Copyright'] = 'Missing copyright';
+            $errors['podcast_copyright_label'] = 'Missing copyright';
         }
         // if (empty(trim(strip_tags($this->getLicense() ?? '')))) {
-        //     $warnings['License'] = 'Missing license';
+        //     $warnings['podcast_license_label'] = 'Missing license';
         // }
         if (empty(trim(strip_tags($this->getWebsite() ?? '')))) {
-            $errors['Website'] = 'Missing website';
+            $errors['podcast_website_label'] = 'Missing website';
         }
         if (empty(trim(strip_tags($this->getRss() ?? '')))) {
-            $errors['Rss'] = 'Missing rss';
+            $errors['podcast_rss_label'] = 'Missing rss';
         }
         if (null === $this->getCategories() || 0 === count($this->getCategories())) {
-            $errors['Categories'] = 'Missing Apple podcast categories';
+            $errors['podcast_categories_label'] = 'Missing Apple podcast categories';
         }
         // if (null === $this->getPublisher()) {
-        //     $warnings['Publisher'] = 'Missing publisher';
+        //     $warnings['podcast_publisher_label'] = 'Missing publisher';
         // }
         // if (null === $this->getContributions() || 0 === count($this->getContributions())) {
-        //     $warnings['Contributions'] = 'Missing contributors';
+        //     $warnings['podcast_contributions_label'] = 'Missing contributors';
         // }
-
-        // if (0 === count($this->getImages())) {
-        //     $warnings['Images'] = 'Missing images';
-        // }
-        foreach ($this->getImages() as $image) {
-            $imageErrors = [];
+        if (0 === count($this->getImages())) {
+            $errors['podcast_images_label'] = 'Missing image';
+        }
+        foreach ($this->getImages() as $index => $image) {
             if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
-                $imageErrors['Description'] = 'Missing description';
-            }
-            // if (empty(trim(strip_tags($image->getLicense() ?? '')))) {
-            //     $imageErrors['License'] = 'Missing license';
-            // }
-            if (count($imageErrors) > 0) {
-                $errors["Image {$image->getOriginalName()}"] = $imageErrors;
+                $errors["podcast_images_{$index}_description_label"] = 'Missing image description';
             }
         }
 

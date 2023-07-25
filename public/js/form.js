@@ -195,6 +195,41 @@
         }
         imageModals();
         menuTabs();
+
+        let showMoreContentList = [].slice.call(document.querySelectorAll('.show-more-content'))
+        showMoreContentList.map((showMoreContentEl) => {
+            if (showMoreContentEl.offsetHeight < showMoreContentEl.scrollHeight || showMoreContentEl.offsetWidth < showMoreContentEl.scrollWidth) {
+                const showMoreButtonEl = $('<button class="btn btn-primary btn-sm mb-3">Show more</button>')
+                const showMore = () => {
+                    $(showMoreContentEl).toggleClass('show-more-content')
+                    $(showMoreContentEl).off('click')
+                    $(showMoreButtonEl).remove()
+                }
+                $(showMoreContentEl).click(showMore)
+                $(showMoreButtonEl).click(showMore)
+                $(showMoreContentEl).after(showMoreButtonEl)
+            } else {
+                $(showMoreContentEl).toggleClass('show-more-content')
+            }
+        })
+        if (location.hash) {
+            let scrollOffset = document.querySelector(location.hash).offsetTop
+            const setAnchorScroll = () => {
+                $('.page-content').scrollTop(scrollOffset - 20);
+            }
+            const updateAnchorScroll = () => {
+                const currentScrollOffset = document.querySelector(location.hash).offsetTop
+                if (scrollOffset != currentScrollOffset) {
+                    scrollOffset = currentScrollOffset
+                    setAnchorScroll()
+                }
+            }
+            setAnchorScroll()
+            setTimeout(updateAnchorScroll, 1000)
+            setTimeout(updateAnchorScroll, 2000)
+            setTimeout(updateAnchorScroll, 3000)
+            setTimeout(updateAnchorScroll, 4000)
+        }
     });
 
 })(jQuery, window);

@@ -186,10 +186,6 @@ class IslandoraExport extends ExportService {
             'field_display_title' => $audio->getOriginalName(),
             'field_identifier' => $audio->getSourceUrl(),
 
-            'field_abstract' => $audio->getDescription(),
-            'field_description' => mb_strimwidth($audio->getDescription() ?? '', 0, 252, '...'),
-            'field_description_long' => $audio->getDescription(),
-            'field_note' => $audio->getLicense(),
             'field_related_websites' => $audio->getSourceUrl(),
             'field_physical_form' => 'Electronic|Sound recordings',
             'field_extent' => implode('|', [
@@ -220,7 +216,6 @@ class IslandoraExport extends ExportService {
             'field_abstract' => $image->getDescription(),
             'field_description' => mb_strimwidth($image->getDescription() ?? '', 0, 252, '...'),
             'field_description_long' => $image->getDescription(),
-            'field_note' => $image->getLicense(),
             'field_related_websites' => $image->getSourceUrl(),
             'field_physical_form' => 'Electronic|Pictures',
             'field_extent' => implode('|', [
@@ -254,10 +249,6 @@ class IslandoraExport extends ExportService {
             'field_display_title' => $pdf->getOriginalName(),
             'field_identifier' => $pdf->getSourceUrl(),
 
-            'field_abstract' => $pdf->getDescription(),
-            'field_description' => mb_strimwidth($pdf->getDescription() ?? '', 0, 252, '...'),
-            'field_description_long' => $pdf->getDescription(),
-            'field_note' => $pdf->getLicense(),
             'field_related_websites' => $pdf->getSourceUrl(),
             'field_physical_form' => 'Electronic|Text corpora',
             'field_extent' => implode('|', [

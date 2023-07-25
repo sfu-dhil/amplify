@@ -53,10 +53,6 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
                 $contribution->setPodcast($podcast);
                 $entityManager->persist($contribution);
             }
-            foreach ($podcast->getImages() as $image) {
-                $image->setEntity($podcast);
-                $entityManager->persist($image);
-            }
             // add one time owner permissions on user who created podcast
             $share = new Share();
             $share->setPodcast($podcast);
@@ -65,6 +61,12 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
             $entityManager->persist($share);
 
             $entityManager->persist($podcast);
+            $entityManager->flush();
+
+            foreach ($podcast->getImages() as $image) {
+                $image->setEntity($podcast);
+                $entityManager->persist($image);
+            }
             $entityManager->flush();
             $this->addFlash('success', 'Podcast created successfully.');
 

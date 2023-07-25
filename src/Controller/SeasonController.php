@@ -63,11 +63,13 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
                 $contribution->setSeason($season);
                 $entityManager->persist($contribution);
             }
+            $entityManager->persist($season);
+            $entityManager->flush();
+
             foreach ($season->getImages() as $image) {
                 $image->setEntity($season);
                 $entityManager->persist($image);
             }
-            $entityManager->persist($season);
             $entityManager->flush();
             $this->addFlash('success', 'Season created successfully.');
 

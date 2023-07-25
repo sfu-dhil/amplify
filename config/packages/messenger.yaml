@@ -16,11 +16,14 @@ framework:
                 options:
                     auto_setup: false
                     queue_name: failed
+            scheduled:
+                dsn: 'schedule://default'
 
         routing:
             # Route your messages to the transports
             'App\Message\ImportMessage': async
             'App\Message\ExportMessage': async
+            'App\Message\ExportCleanupMessage': async
 
         serializer:
             default_serializer: messenger.transport.symfony_serializer

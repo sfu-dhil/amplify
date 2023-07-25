@@ -55,7 +55,7 @@ services:
   worker:
     <<: *app
     container_name: amplify_worker
-    command: php bin/console messenger:consume async -vv
+    command: php bin/console messenger:consume async scheduled -vv
     ports: []
     healthcheck: {}
     depends_on:

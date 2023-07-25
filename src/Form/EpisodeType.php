@@ -6,9 +6,6 @@ namespace App\Form;
 
 use App\Entity\Episode;
 use App\Entity\Season;
-use Nines\MediaBundle\Form\AudioType;
-use Nines\MediaBundle\Form\ImageType;
-use Nines\MediaBundle\Form\PdfType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -44,6 +41,7 @@ class EpisodeType extends AbstractType {
                 'add_route' => $this->router->generate('season_new', ['podcast_id' => $builder->getData()->getPodcast()->getId()]),
                 'add_label' => 'Add Season',
             ],
+            'required' => true,
         ]);
         $builder->add('episodeType', ChoiceType::class, [
             'label' => 'Episode Type',
@@ -132,7 +130,7 @@ class EpisodeType extends AbstractType {
                 'label' => false,
             ],
             'attr' => [
-                'class' => 'collection collection-simple',
+                'class' => 'collection collection-complex',
             ],
         ]);
         $builder->add('contributions', CollectionType::class, [
@@ -152,11 +150,11 @@ class EpisodeType extends AbstractType {
         ]);
         $builder->add('audios', CollectionType::class, [
             'label' => 'Audio',
-            'required' => false,
+            'required' => true,
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
-            'entry_type' => AudioType::class,
+            'entry_type' => AmplifyAudioType::class,
             'entry_options' => [
                 'label' => false,
             ],
@@ -172,7 +170,7 @@ class EpisodeType extends AbstractType {
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
-            'entry_type' => ImageType::class,
+            'entry_type' => AmplifyImageType::class,
             'entry_options' => [
                 'label' => false,
             ],
@@ -188,7 +186,7 @@ class EpisodeType extends AbstractType {
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
-            'entry_type' => PdfType::class,
+            'entry_type' => AmplifyPdfType::class,
             'entry_options' => [
                 'label' => false,
             ],

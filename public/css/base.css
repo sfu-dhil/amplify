@@ -59,7 +59,7 @@ html {
 }
 
 /* Custom app styles */
-label.required::after {
+label.required::after, legend.required::after {
     content: ' *';
     color: red;
     font-weight: bold;
@@ -98,6 +98,13 @@ a[href ^= 'https://']:not('.ignore-external')::after {
 }
 
 .breadcrumb .breadcrumb-item {
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.badge {
     max-width: 250px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -154,4 +161,17 @@ div.collection-complex > div:not(:last-child) {
 
 .ui-state-active {
     background-color: #91d6ec;
+}
+
+.show-more-content {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+    cursor: pointer;
+    text-overflow: ellipsis;
+
+    * {
+        display: inline;
+    }
 }

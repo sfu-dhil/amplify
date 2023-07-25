@@ -202,40 +202,29 @@ class Season extends AbstractEntity implements ImageContainerInterface {
         $warnings = [];
 
         if (null === $this->getPodcast()) {
-            $errors['Podcast'] = 'Missing podcast';
+            $errors['season_podcast_label'] = 'Missing podcast';
         }
         // if (null === $this->getNumber()) {
-        //     $warning['Season number'] = 'Missing season number';
+        //     $warning['season_number_label'] = 'Missing season number';
         // }
         if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
-            $errors['Title'] = 'Missing title';
+            $errors['season_title_label'] = 'Missing title';
         }
         // if (empty(trim(strip_tags($this->getSubTitle() ?? '')))) {
-        //     $warnings['Subtitle'] = 'Missing subtitle';
+        //     $warnings['season_subTitle_label'] = 'Missing subtitle';
         // }
         if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
-            $errors['Description'] = 'Missing description';
+            $errors['season_description_label'] = 'Missing description';
         }
         // if (null === $this->getPublisher()) {
-        //     $warnings['Publisher'] = 'Missing publisher';
+        //     $warnings['season_publisher_label'] = 'Missing publisher';
         // }
         // if (null === $this->getContributions() || 0 === count($this->getContributions())) {
-        //     $warnings['Contributions'] = 'Missing contributors';
+        //     $warnings['season_contributions_label'] = 'Missing contributors';
         // }
-
-        // if (0 === count($this->getImages())) {
-        //     $warning['Images'] = 'Missing images';
-        // }
-        foreach ($this->getImages() as $image) {
-            $imageErrors = [];
+        foreach ($this->getImages() as $index => $image) {
             if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
-                $imageErrors['Description'] = 'Missing description';
-            }
-            // if (empty(trim(strip_tags($image->getLicense() ?? '')))) {
-            //     $imageErrors['License'] = 'Missing license';
-            // }
-            if (count($imageErrors) > 0) {
-                $errors["Image {$image->getOriginalName()}"] = $imageErrors;
+                $errors["season_images_{$index}_description_label"] = 'Missing image description';
             }
         }
 

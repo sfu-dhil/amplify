@@ -35,22 +35,22 @@
                     {% endembed %}
                 {% endfor %}
             </div>
-            <h1 class="card-title">{{ episode.title }}</h1>
-            {% if episode.subTitle %}<h5 class="card-subtitle">{{ episode.subTitle }}</h5>{% endif %}
+            <h1 class="card-title text-truncate">{{ episode.title }}</h1>
+            {% if episode.subTitle %}<h5 class="card-subtitle text-truncate">{{ episode.subTitle }}</h5>{% endif %}
             <h5 class="card-subtitle mt-2">{{ episode.slug }}</h5>
             <div class="card-text my-3">{{ episode.description|default('')|sanitize_html }}</div>
         </div>
     </div>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 my-3 g-4">
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-exclamation-octagon"></i> Explicit</h6>
             {{ episode.explicit ? 'Yes' : 'No' }}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-calendar-event"></i> Release Date</h6>
             {{ episode.date|date('Y-m-d') }}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-stopwatch"></i> Run Time</h6>
             {{ episode.runTime }}
         </div>
@@ -60,7 +60,7 @@
                 <span class="badge text-bg-primary">{{ keyword }}</span>
             {% endfor %}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-people-fill"></i> Contributors</h6>
             {% for contributions in episode.getContributionsGroupedByPerson %}
                 {% set person = (contributions|first).person %}
@@ -72,39 +72,43 @@
                 </div>
             {% endfor %}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-calendar-event"></i> Created</h6>
             {{ episode.created|date('Y-m-d') }}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-calendar-event"></i> Last Updated</h6>
             {{ episode.updated|date('Y-m-d') }}
         </div>
-        <div class="col">
+        <div class="col text-truncate">
             <h6><i class="bi bi-list-check"></i> Episode Exportable Status</h6>
             {% embed 'status/partial/badge.html.twig' with {
+                'edit_link': path('episode_edit', {'podcast_id': episode.podcast.id, 'id': episode.id }),
                 'status': episode.status,
             } %}
             {% endembed %}
         </div>
     </div>
+    <hr />
     <div class="my-3">
         <h6><i class="bi bi-bookshelf"></i> Bibliography</h6>
-        {{ episode.bibliography|default('')|sanitize_html }}
+        <div class="show-more-content">{{ episode.bibliography|default('')|sanitize_html }}</div>
     </div>
+    <hr />
     <div class="my-3">
         <h6><i class="bi bi-list-task"></i> Permissions</h6>
-        {{ episode.permissions|default('')|sanitize_html }}
+        <div class="show-more-content">{{ episode.permissions|default('')|sanitize_html }}</div>
     </div>
+    <hr />
     <div class="my-3">
         <h6><i class="bi bi-pen"></i> Transcript</h6>
-        {{ episode.transcript|default('')|sanitize_html }}
+        <div class="show-more-content">{{ episode.transcript|default('')|sanitize_html }}</div>
     </div>
 
     {% if episode.audios|length > 0 %}
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Episode Audio</h5>
+                <h5 class="card-title text-truncate">Episode Audio</h5>
                 {% for audio in episode.audios %}
                     {% embed '@NinesMedia/audio/partial/list-item.html.twig' with {
                         'audio': audio,
@@ -119,7 +123,7 @@
     {% if episode.pdfs|length > 0 %}
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Episode Transcript PDFs</h5>
+                <h5 class="card-title text-truncate">Episode Transcript PDFs</h5>
                 {% for pdf in episode.pdfs %}
                     {% embed '@NinesMedia/pdf/partial/list-item.html.twig' with {
                         'pdf': pdf,

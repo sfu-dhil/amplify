@@ -39,10 +39,13 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($episode);
             foreach ($episode->getContributions() as $contribution) {
                 $contribution->setEpisode($episode);
                 $entityManager->persist($contribution);
             }
+            $entityManager->flush();
+
             foreach ($episode->getAudios() as $audio) {
                 $audio->setEntity($episode);
                 $entityManager->persist($audio);
@@ -55,7 +58,6 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
                 $pdf->setEntity($episode);
                 $entityManager->persist($pdf);
             }
-            $entityManager->persist($episode);
             $entityManager->flush();
             $this->addFlash('success', 'Episode created successfully.');
 

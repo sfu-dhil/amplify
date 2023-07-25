@@ -60,17 +60,6 @@
     </accessCondition>
     {% endif %}
 
-    {% if pdf.description %}
-    <abstract type="summary" displayLabel="File Content description">
-        {{ pdf.description|default('')|sanitize_html('export.content_sanitizer') }}
-    </abstract>
-    {% endif %}
-    {% if pdf.license  %}
-    <note displayLabel="File License">
-        {{ pdf.license|default('')|sanitize_html('export.content_sanitizer') }}
-    </note>
-    {% endif %}
-
     <relatedItem type="host">
         {% embed 'export/format/mods/partial/identifier_episode.xml.twig' with {
             'episode': episode,
