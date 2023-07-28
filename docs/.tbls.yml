@@ -1,0 +1,17 @@
+dsn: mariadb://amplify:password@localhost:13306/amplify
+docPath: schema
+exclude:
+- migration_versions
+- messenger_messages
+- import
+- export
+- share
+- nines_*
+er:
+  hideDef: true
+  format: svg
+disableOutputSchema: true
+templates:
+  md:
+    index: 'tbls_templates/index.md.tmpl'
+    table: 'tbls_templates/table.md.tmpl'

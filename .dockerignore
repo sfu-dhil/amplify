@@ -28,6 +28,11 @@ coverage/
 # Yarn packages.
 node_modules
 
+# docs
+/docs/_site
+/public/docs
+/docs/.jekyll-cache
+
 # Docker
 .data
 
@@ -48,5 +53,4 @@ public/dev
 .DS_Store
 
 # Docker image specific
-/docs
 /.github/

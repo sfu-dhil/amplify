@@ -159,6 +159,14 @@ First make sure the application and database are started with `docker compose up
 
 If the coverage file doesn't open automatically you can manually open it `coverage/index.html`
 
+## Update Database schema docs
+
+    # Start the amplify dev environment
+    docker compose up -d --build
+
+    # build the schema docs
+    docker run -it --rm --network="host" -v $(pwd)/docs:/work -w /work k1low/tbls:v1.68.2 doc --rm-dist
+
 ## Misc
 
 ### PHP Code standards

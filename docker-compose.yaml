@@ -64,6 +64,16 @@ services:
       app:
         condition: service_healthy
 
+  docs:
+    container_name: amplify_docs_watcher
+    build:
+      context: .
+      target: amplify-docs
+    command: jekyll serve
+    volumes:
+      - ./docs:/app
+      - ./public/docs:/app/_site
+
   mail:
     container_name: amplify_mail
     image: mailhog/mailhog:v1.0.1

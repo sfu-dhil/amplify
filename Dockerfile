@@ -1,3 +1,15 @@
+FROM ruby:3.2.2 AS amplify-docs
+WORKDIR /app
+
+# build ruby deps
+COPY docs/Gemfile docs/Gemfile.lock /app/
+RUN bundle update --bundler \
+    && bundle install
+
+COPY docs /app
+
+RUN jekyll build
+
 FROM node:20.4 AS amplify-prod-assets
 WORKDIR /app
 
@@ -24,6 +36,8 @@ RUN composer install --no-scripts
 COPY --chown=www-data:www-data --chmod=775 . /var/www/html
 # copy webpacked js and libs
 COPY --chown=www-data:www-data --chmod=775 --from=amplify-prod-assets /app/node_modules /var/www/html/public/node_modules
+# copy docs
+COPY --chown=www-data:www-data --chmod=775 --from=amplify-docs /app/_site /var/www/html/public/docs
 
 RUN mkdir -p data/prod data/dev data/test var/cache/prod var/cache/dev var/cache/test var/sessions var/log \
     && chown -R www-data:www-data data var \

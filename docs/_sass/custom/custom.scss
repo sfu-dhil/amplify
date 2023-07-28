@@ -1,0 +1,18 @@
+/*
+  Customizations/overrides
+ */
+
+.subtitle{
+  @extend .fs-6;
+  @extend .fw-300;
+  &:after{
+    content:"";
+    width:100%;
+    display:block;
+      height: 1px;
+      padding: 0;
+      margin: $sp-6 0;
+      background-color: $border-color;
+      border: 0;
+  }
+}

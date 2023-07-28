@@ -10,6 +10,7 @@ use Knp\Menu\ItemInterface;
 use Nines\UserBundle\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -24,6 +25,7 @@ class Builder implements ContainerAwareInterface {
         private AuthorizationCheckerInterface $authChecker,
         private TokenStorageInterface $tokenStorage,
         private PodcastRepository $podcastRepository,
+        private ParameterBagInterface $parameterBagInterface,
     ) {
     }
 
@@ -160,6 +162,17 @@ class Builder implements ContainerAwareInterface {
                 ],
             ]);
         }
+
+        $menu->addChild('Documentation', [
+            'uri' => $this->parameterBagInterface->get('router.request_context.base_url') . '/docs/',
+            'attributes' => [
+                'class' => 'mb-1',
+            ],
+            'linkAttributes' => [
+                'target' => '_blank',
+                'class' => 'btn fw-bold d-inline-flex align-items-center rounded border-0',
+            ],
+        ]);
 
         $menu->addChild('Privacy', [
             'route' => 'privacy',
