@@ -10,8 +10,7 @@ services:
       - ./docker/mariadb/custom.cnf:/etc/mysql/conf.d/custom.cnf
       - ./docker/mariadb/init:/docker-entrypoint-initdb.d
       # # HACK: easy sql script running for setting up db
-      # - ./amplify-data.sql:/amplify-data.sql
-      # - ./amplify-schema.sql:/amplify-schema.sql
+      # - ./amplify.sql:/amplify.sql
     environment:
       MARIADB_ROOT_PASSWORD: root
       MARIADB_DATABASE: amplify
