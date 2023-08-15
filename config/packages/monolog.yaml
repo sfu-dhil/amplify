@@ -11,8 +11,17 @@ when@dev:
                 # level: debug
                 # level: warning
                 level: notice
-                channels: ["!event", "!doctrine", "!console", "!translation"]
+                channels: ["!event", "!doctrine", "!console", "!translation", "!messenger"]
                 max_files: 1
+            messenger:
+                type: rotating_file
+                path: "%kernel.logs_dir%/%kernel.environment%-messenger.log"
+                # level: debug
+                # level: warning
+                level: notice
+                channels: ["messenger"]
+                max_files: 1
+
 
 when@test:
     monolog:
@@ -23,7 +32,14 @@ when@test:
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
                 # level: debug
                 level: warning
-                channels: ['!event', '!doctrine', '!console', '!translation']
+                channels: ['!event', '!doctrine', '!console', '!translation', "!messenger"]
+            messenger:
+                type: rotating_file
+                max_files: 1
+                path: "%kernel.logs_dir%/%kernel.environment%-messenger.log"
+                # level: debug
+                level: warning
+                channels: ['messenger']
             console:
                 type:   console
                 channels: ['!event', '!doctrine', '!console', '!translation']
@@ -35,5 +51,11 @@ when@prod:
                 type: rotating_file
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
                 level: notice
-                channels: ["!event", "!doctrine", "!console", "!translation"]
+                channels: ["!event", "!doctrine", "!console", "!translation", "!messenger"]
+                max_files: 30
+            messenger:
+                type: rotating_file
+                path: "%kernel.logs_dir%/%kernel.environment%-messenger.log"
+                level: notice
+                channels: ["messenger"]
                 max_files: 30

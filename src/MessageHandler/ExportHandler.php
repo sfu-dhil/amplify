@@ -21,7 +21,7 @@ class ExportHandler {
         private KernelInterface $kernel,
         private EntityManagerInterface $entityManager,
         private ExportRepository $exportRepository,
-        private LoggerInterface $logger,
+        private LoggerInterface $messengerLogger,
     ) {
     }
 
@@ -31,8 +31,7 @@ class ExportHandler {
         try {
             $podcastId = $export->getPodcast()->getId();
 
-            $this->logger->notice('------------------------------------------------------------------------------');
-            $this->logger->notice("Starting Export {$export->getId()} on Podcast {$podcastId}");
+            $this->messengerLogger->notice("Starting Export {$export->getId()} on Podcast {$podcastId}");
 
             $export->setWorkingStatus();
             $export->setProgress(0);
@@ -64,16 +63,14 @@ class ExportHandler {
             $this->entityManager->persist($export);
             $this->entityManager->flush();
 
-            $this->logger->notice("Finished Export {$export->getId()} on Podcast {$podcastId}");
-            $this->logger->notice('------------------------------------------------------------------------------');
+            $this->messengerLogger->notice("Finished Export {$export->getId()} on Podcast {$podcastId}");
         } catch (Exception $e) {
             $export->setFailureStatus();
             $export->setMessage('There was a problem exporting the podcast.');
             $this->entityManager->persist($export);
             $this->entityManager->flush();
 
-            $this->logger->error("Error Export {$export->getId()} Podcast {$podcastId} \n{$e->getMessage()}");
-            $this->logger->notice('------------------------------------------------------------------------------');
+            $this->messengerLogger->error("Error Export {$export->getId()} Podcast {$podcastId} \n{$e->getMessage()}");
 
             throw $e;
         }

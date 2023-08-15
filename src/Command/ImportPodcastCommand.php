@@ -521,7 +521,7 @@ class ImportPodcastCommand extends Command {
         $successRequests = [];
         $completed = 0;
         $pool = new Pool($this->client, $requests(), [
-            'concurrency' => 100,
+            'concurrency' => 20,
             'fulfilled' => function (Response $response, $index) use ($urls, &$successRequests, &$completed, &$stepsCompletedCount) : void {
                 $url = $urls[$index];
                 $successRequests[$url] = $this->mediaRequests[$url];

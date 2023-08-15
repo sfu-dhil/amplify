@@ -37,6 +37,7 @@ services:
       - /var/www/html/var
       # persist file uploads in .data
       - .data/app/data:/var/www/html/data
+      # persist logs
       - .data/app/log:/var/www/html/var/log
 
       # use the container's node_modules & vendor folders (don't override)

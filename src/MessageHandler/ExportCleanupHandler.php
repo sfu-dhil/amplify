@@ -17,14 +17,13 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 class ExportCleanupHandler {
     public function __construct(
         private KernelInterface $kernel,
-        private LoggerInterface $logger,
+        private LoggerInterface $messengerLogger,
     ) {
     }
 
     public function __invoke(ExportCleanupMessage $exportCleanupMessage) : void {
         try {
-            $this->logger->notice('------------------------------------------------------------------------------');
-            $this->logger->notice('Starting Export Cleanup');
+            $this->messengerLogger->notice('Starting Export Cleanup');
 
             // setup the console command
             $application = new Application($this->kernel);
@@ -37,11 +36,9 @@ class ExportCleanupHandler {
             $output = new StreamOutput(fopen('php://stdout', 'w'));
             $application->run($input, $output);
 
-            $this->logger->notice('Finished Export Cleanup');
-            $this->logger->notice('------------------------------------------------------------------------------');
+            $this->messengerLogger->notice('Finished Export Cleanup');
         } catch (Exception $e) {
-            $this->logger->error("Error Export Cleanup \n{$e->getMessage()}");
-            $this->logger->notice('------------------------------------------------------------------------------');
+            $this->messengerLogger->error("Error Export Cleanup \n{$e->getMessage()}");
 
             throw $e;
         }

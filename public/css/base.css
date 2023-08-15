@@ -104,13 +104,6 @@ a[href ^= 'https://']:not('.ignore-external')::after {
     white-space: nowrap;
 }
 
-.badge {
-    max-width: 250px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
 .popover .popover-body {
     padding: 0px;
 }

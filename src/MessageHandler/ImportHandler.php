@@ -21,7 +21,7 @@ class ImportHandler {
         private KernelInterface $kernel,
         private EntityManagerInterface $entityManager,
         private ImportRepository $importRepository,
-        private LoggerInterface $logger,
+        private LoggerInterface $messengerLogger,
     ) {
     }
 
@@ -33,8 +33,7 @@ class ImportHandler {
             $podcastId = $import?->getPodcast()?->getId() ?? '';
             $userId = $import?->getUser()?->getId() ?? '';
 
-            $this->logger->notice('------------------------------------------------------------------------------');
-            $this->logger->notice("Starting Import {$import->getId()} on RSS Feed {$rss} Podcast {$podcastId}");
+            $this->messengerLogger->notice("Starting Import {$import->getId()} on RSS Feed {$rss} Podcast {$podcastId}");
             $import->setWorkingStatus();
             $import->setProgress(0);
             $import->setMessage('Importing Files');
@@ -66,16 +65,14 @@ class ImportHandler {
             $this->entityManager->persist($import);
             $this->entityManager->flush();
 
-            $this->logger->notice("Finished import {$import->getId()} on RSS Feed {$rss} Podcast {$podcastId}");
-            $this->logger->notice('------------------------------------------------------------------------------');
+            $this->messengerLogger->notice("Finished import {$import->getId()} on RSS Feed {$rss} Podcast {$podcastId}");
         } catch (Exception $e) {
             $import->setFailureStatus();
             $import->setMessage('There was a problem importing the podcast.');
             $this->entityManager->persist($import);
             $this->entityManager->flush();
 
-            $this->logger->error("Error Import {$import->getId()} on RSS Feed {$rss} Podcast {$podcastId} \n{$e->getMessage()}");
-            $this->logger->notice('------------------------------------------------------------------------------');
+            $this->messengerLogger->error("Error Import {$import->getId()} on RSS Feed {$rss} Podcast {$podcastId} \n{$e->getMessage()}");
 
             throw $e;
         }
