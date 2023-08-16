@@ -53,6 +53,7 @@ class PersonType extends AbstractType {
                 'add_path' => 'institution_new',
                 'add_label' => 'Add Institution',
             ],
+            'placeholder' => 'Search for an existing person by name',
         ]);
         LinkableType::add($builder, $options);
         $builder->setDataMapper($this->mapper);

@@ -24,7 +24,7 @@
         "phpdocumentor/reflection-docblock": "^5.3",
         "scienta/doctrine-json-functions": "^5.3",
         "sensio/framework-extra-bundle": "^6.2",
-        "sfu-dhil/nines": "6.2.1",
+        "sfu-dhil/nines": "6.3.0",
         "simplepie/simplepie": "^1.8",
         "symfony/asset": "6.3.*",
         "symfony/console": "6.3.*",

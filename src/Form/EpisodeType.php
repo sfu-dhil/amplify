@@ -41,6 +41,7 @@ class EpisodeType extends AbstractType {
                 'add_route' => $this->router->generate('season_new', ['podcast_id' => $builder->getData()->getPodcast()->getId()]),
                 'add_label' => 'Add Season',
             ],
+            'placeholder' => 'Search for an existing season by title',
             'required' => true,
         ]);
         $builder->add('episodeType', ChoiceType::class, [

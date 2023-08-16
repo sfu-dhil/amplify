@@ -20,11 +20,13 @@ class ShareType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) : void {
         $builder->add('user', Select2EntityType::class, [
-            'label' => 'Person',
+            'label' => false,
+            'required' => true,
             'class' => User::class,
             'remote_route' => 'share_user_typeahead',
             'remote_params' => ['podcast_id' => $builder->getData()->getPodcast()->getId()],
             'allow_clear' => true,
+            'placeholder' => 'Search for an existing user by name or email',
         ]);
     }
 

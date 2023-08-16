@@ -25,14 +25,6 @@ class ShareRepositoryTest extends ServiceTestCase {
         $this->assertCount(1, $query->execute());
     }
 
-    public function testSearchQuery() : void {
-        $podcastRepository = self::getContainer()->get(PodcastRepository::class);
-        $podcast = $podcastRepository->find(2);
-
-        $query = $this->repo->searchQuery($podcast, self::SEARCH_QUERY);
-        $this->assertCount(1, $query->execute());
-    }
-
     protected function setUp() : void {
         parent::setUp();
         $this->repo = self::getContainer()->get(ShareRepository::class);

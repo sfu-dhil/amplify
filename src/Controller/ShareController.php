@@ -33,22 +33,9 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class ShareController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
 
-    #[Route(path: '', name: 'share_index', methods: ['GET'])]
+    #[Route(path: '', name: 'share_index', methods: ['GET', 'POST'])]
     #[Template]
-    public function index(Request $request, ShareRepository $shareRepository, Podcast $podcast) : array|RedirectResponse {
-        $q = $request->query->get('q');
-        $query = $q ? $shareRepository->searchQuery($podcast, $q) : $shareRepository->indexQuery($podcast);
-
-        return [
-            'podcast' => $podcast,
-            'shares' => $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), ['wrap-queries' => true]),
-            'q' => $q,
-        ];
-    }
-
-    #[Route(path: '/new', name: 'share_new', methods: ['GET', 'POST'])]
-    #[Template]
-    public function new(EntityManagerInterface $entityManager, Request $request, Podcast $podcast) : array|RedirectResponse {
+    public function index(EntityManagerInterface $entityManager, Request $request, ShareRepository $shareRepository, Podcast $podcast) : array|RedirectResponse {
         $share = new Share();
         $share->setPodcast($podcast);
         $podcast->addShare($share);
@@ -60,19 +47,17 @@ class ShareController extends AbstractController implements PaginatorAwareInterf
             try {
                 $entityManager->persist($share);
                 $entityManager->flush();
+                $this->addFlash('success', 'Successfully shared podcast.');
             } catch (UniqueConstraintViolationException $e) {
                 $this->addFlash('warning', "{$share->getUser()->getFullname()} already has access to the podcast.");
-
-                return $this->redirectToRoute('share_index', ['podcast_id' => $podcast->getId()]);
             }
-            $this->addFlash('success', 'Successfully shared podcast.');
 
             return $this->redirectToRoute('share_index', ['podcast_id' => $podcast->getId()]);
         }
 
         return [
             'podcast' => $podcast,
-            'share' => $share,
+            'shares' => $shareRepository->indexQuery($podcast)->getResult(),
             'form' => $form->createView(),
         ];
     }

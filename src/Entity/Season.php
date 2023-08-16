@@ -135,46 +135,26 @@ class Season extends AbstractEntity implements ImageContainerInterface {
 
         if (null === $this->getPodcast()) {
             $this->status[] = [
-                'route' => 'season_edit',
-                'route_params' => [
-                    'podcast_id' => $this->getPodcast()->getId(),
-                    'id' => $this->getId(),
-                    '_fragment' => 'season_podcast_label',
-                ],
+                'anchor' => 'season_podcast_label',
                 'label' => 'Missing podcast',
             ];
         }
         if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
             $this->status[] = [
-                'route' => 'season_edit',
-                'route_params' => [
-                    'podcast_id' => $this->getPodcast()->getId(),
-                    'id' => $this->getId(),
-                    '_fragment' => 'season_title_label',
-                ],
+                'anchor' => 'season_title_label',
                 'label' => 'Missing title',
             ];
         }
         if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
             $this->status[] = [
-                'route' => 'season_edit',
-                'route_params' => [
-                    'podcast_id' => $this->getPodcast()->getId(),
-                    'id' => $this->getId(),
-                    '_fragment' => 'season_description_label',
-                ],
+                'anchor' => 'season_description_label',
                 'label' => 'Missing description',
             ];
         }
         foreach ($this->getImages() as $index => $image) {
             if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
                 $this->status[] = [
-                    'route' => 'season_edit',
-                    'route_params' => [
-                        'podcast_id' => $this->getPodcast()->getId(),
-                        'id' => $this->getId(),
-                        '_fragment' => "season_images_{$index}_description_label",
-                    ],
+                    'anchor' => "season_images_{$index}_description_label",
                     'label' => 'Missing image description',
                 ];
             }
@@ -183,6 +163,14 @@ class Season extends AbstractEntity implements ImageContainerInterface {
 
     public function getStatus() : array {
         $status = $this->status;
+        foreach ($status as &$item) {
+            $item['route'] = 'season_edit';
+            $item['route_params'] = [
+                'podcast_id' => $this->getPodcast()->getId(),
+                'id' => $this->getId(),
+                '_fragment' => $item['anchor'],
+            ];
+        }
 
         // track episodes status dynamically
         if (0 === count($this->getEpisodes())) {

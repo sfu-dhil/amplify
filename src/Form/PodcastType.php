@@ -96,6 +96,7 @@ class PodcastType extends AbstractType {
                 'add_path' => 'publisher_new',
                 'add_label' => 'Add Publisher',
             ],
+            'placeholder' => 'Search for an existing publisher by name',
         ]);
         $builder->add('contributions', CollectionType::class, [
             'label' => 'Contributors',

@@ -274,132 +274,86 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
 
         if (null === $this->getPodcast()) {
             $this->status[] = [
-                'route' => 'episode_edit',
-                'route_params' => [
-                    'podcast_id' => $this->getPodcast()->getId(),
-                    'id' => $this->getId(),
-                    '_fragment' => 'episode_podcast_label',
-                ],
+                'anchor' => 'episode_podcast_label',
                 'label' => 'Missing podcast',
             ];
         }
         if (null === $this->getSeason()) {
             $this->status[] = [
-                'route' => 'episode_edit',
-                'route_params' => [
-                    'podcast_id' => $this->getPodcast()->getId(),
-                    'id' => $this->getId(),
-                    '_fragment' => 'episode_season_label',
-                ],
+                'anchor' => 'episode_season_label',
                 'label' => 'Missing season',
             ];
         }
         if (empty(trim(strip_tags($this->getEpisodeType() ?? '')))) {
             $this->status[] = [
-                'route' => 'episode_edit',
-                'route_params' => [
-                    'podcast_id' => $this->getPodcast()->getId(),
-                    'id' => $this->getId(),
-                    '_fragment' => 'episode_episodeType_label',
-                ],
+                'anchor' => 'episode_episodeType_label',
                 'label' => 'Missing episode type',
             ];
         }
         if (null === $this->getNumber()) {
             $this->status[] = [
-                'route' => 'episode_edit',
-                'route_params' => [
-                    'podcast_id' => $this->getPodcast()->getId(),
-                    'id' => $this->getId(),
-                    '_fragment' => 'episode_number_label',
-                ],
+                'anchor' => 'episode_number_label',
                 'label' => 'Missing episode number',
             ];
         }
         if (null === $this->getDate()) {
             $this->status[] = [
-                'route' => 'episode_edit',
-                'route_params' => [
-                    'podcast_id' => $this->getPodcast()->getId(),
-                    'id' => $this->getId(),
-                    '_fragment' => 'episode_date_label',
-                ],
+                'anchor' => 'episode_date_label',
                 'label' => 'Missing date',
             ];
         }
         if (null === $this->getRunTime()) {
             $this->status[] = [
-                'route' => 'episode_edit',
-                'route_params' => [
-                    'podcast_id' => $this->getPodcast()->getId(),
-                    'id' => $this->getId(),
-                    '_fragment' => 'episode_runTime_label',
-                ],
+                'anchor' => 'episode_runTime_label',
                 'label' => 'Missing run time',
             ];
         }
         if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
             $this->status[] = [
-                'route' => 'episode_edit',
-                'route_params' => [
-                    'podcast_id' => $this->getPodcast()->getId(),
-                    'id' => $this->getId(),
-                    '_fragment' => 'episode_title_label',
-                ],
+                'anchor' => 'episode_title_label',
                 'label' => 'Missing title',
             ];
         }
         if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
             $this->status[] = [
-                'route' => 'episode_edit',
-                'route_params' => [
-                    'podcast_id' => $this->getPodcast()->getId(),
-                    'id' => $this->getId(),
-                    '_fragment' => 'episode_description_label',
-                ],
+                'anchor' => 'episode_description_label',
                 'label' => 'Missing description',
             ];
         }
 
         if (0 === count($this->getAudios())) {
             $this->status[] = [
-                'route' => 'episode_edit',
-                'route_params' => [
-                    'podcast_id' => $this->getPodcast()->getId(),
-                    'id' => $this->getId(),
-                    '_fragment' => 'episode_audios_label',
-                ],
+                'anchor' => 'episode_audios_label',
                 'label' => 'Missing audio',
             ];
         }
         foreach ($this->getImages() as $index => $image) {
             if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
                 $this->status[] = [
-                    'route' => 'episode_edit',
-                    'route_params' => [
-                        'podcast_id' => $this->getPodcast()->getId(),
-                        'id' => $this->getId(),
-                        '_fragment' => "episode_images_{$index}_description_label",
-                    ],
+                    'anchor' => "episode_images_{$index}_description_label",
                     'label' => 'Missing image description',
                 ];
             }
         }
         if (0 === count($this->getPdfs()) && empty(trim(strip_tags($this->getTranscript() ?? '')))) {
             $this->status[] = [
-                'route' => 'episode_edit',
-                'route_params' => [
-                    'podcast_id' => $this->getPodcast()->getId(),
-                    'id' => $this->getId(),
-                    '_fragment' => 'episode_transcript_label',
-                ],
+                'anchor' => 'episode_transcript_label',
                 'label' => 'Missing transcript',
             ];
         }
     }
 
     public function getStatus() : array {
-        return $this->status;
+        $status = $this->status;
+        foreach ($status as &$item) {
+            $item['route'] = 'episode_edit';
+            $item['route_params'] = [
+                'podcast_id' => $this->getPodcast()->getId(),
+                'id' => $this->getId(),
+                '_fragment' => $item['anchor'],
+            ];
+        }
+        return $status;
     }
 
     public function getContributions() : Collection {

@@ -29,6 +29,7 @@ class ContributionType extends AbstractType {
                 'add_path' => 'person_new',
                 'add_label' => 'Add Person',
             ],
+            'placeholder' => 'Search for an existing person by name',
         ]);
 
         $builder->add('contributorRole', Select2EntityType::class, [
@@ -40,6 +41,7 @@ class ContributionType extends AbstractType {
                 'add_path' => 'contributor_role_new',
                 'add_label' => 'Add Role',
             ],
+            'placeholder' => 'Search for an existing contributor role by name',
         ]);
     }
 

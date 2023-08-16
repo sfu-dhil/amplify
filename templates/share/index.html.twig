@@ -1,39 +1,26 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}People with access to {{ podcast.title }}{% endblock %}
+{% block title %}Sharing to {{ podcast.title }}{% endblock %}
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ path('homepage') }}">Home</a></li>
     <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
     <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': podcast.id}) }}">{{ podcast.title }}</a></li>
-    <li class="breadcrumb-item active" aria-current="page">People with Access</li>
-{% endblock %}
-
-{% block action_buttons %}
-    <a href="{{ path('share_new', {'podcast_id': podcast.id}) }}" class="btn btn-primary">
-        <i class="bi bi-person-plus-fill"></i> Add
-    </a>
+    <li class="breadcrumb-item active" aria-current="page">Sharing</li>
 {% endblock %}
 
 {% block body %}
-    <form class="my-3" method="get">
-        <div class="input-group">
-            <input type="search" class="form-control" placeholder="Search..." aria-label="Search" name="q" id="q" value="{{ q }}" />
-            <button class="btn btn-primary" type="submit" id='btn-search'>
-                <i class="bi bi-search"></i> Search
-            </button>
-        </div>
-    </form>
+    <h4>Users with access</h4>
     <div class="table-responsive text-nowrap">
         <table class="table table-striped table-sm align-middle">
             <caption>
-                {{ shares.getTotalItemCount ~ ' ' ~ (q ? 'found' : 'total') }}.
+                {{ shares|length ~ ' total' }}.
             </caption>
             <thead>
                 <tr>
                     <th>Fullname</th>
                     <th>Shared On</th>
-                    <th>Actions</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -59,5 +46,20 @@
             </tbody>
         </table>
     </div>
-    {{ knp_pagination_render(shares) }}
+
+    <h4>Share with users</h4>
+    {{ form_start(form) }}
+    <div class="mb-3 row">
+        <div class="col-sm-9">
+            {{ form_widget(form.user) }}
+        </div>
+        <div class="col-sm-3">
+            <input type="submit" value="Share" class="btn btn-primary" />
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+    {% include '@NinesEditor/editor/widget.html.twig' %}
 {% endblock %}

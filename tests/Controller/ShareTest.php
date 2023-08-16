@@ -28,7 +28,7 @@ class ShareTest extends ControllerTestCase {
             $this->login($loginCredentials);
             $crawler = $this->client->request('GET', '/podcasts/2/shares');
             $this->assertResponseIsSuccessful();
-            $this->assertSame(1, $crawler->filter('.page-actions')->selectLink('Add')->count());
+            $this->assertSame(1, $crawler->filter('form')->selectButton('Share')->count());
         }
     }
 
@@ -56,21 +56,21 @@ class ShareTest extends ControllerTestCase {
 
     public function testNew() : void {
         // Anon
-        $crawler = $this->client->request('GET', '/podcasts/2/shares/new');
+        $crawler = $this->client->request('GET', '/podcasts/2/shares');
         $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
 
         // User without podcast access
         $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/podcasts/2/shares/new');
+        $crawler = $this->client->request('GET', '/podcasts/2/shares');
         $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
 
         //  User with podcast access, Admin
         foreach ([UserExtraFixtures::USER_WITH_ACCESS, UserFixtures::ADMIN] as $loginCredentials) {
             $this->login($loginCredentials);
-            $formCrawler = $this->client->request('GET', '/podcasts/2/shares/new');
+            $formCrawler = $this->client->request('GET', '/podcasts/2/shares');
             $this->assertResponseIsSuccessful();
 
-            $form = $formCrawler->selectButton('Add')->form();
+            $form = $formCrawler->selectButton('Share')->form();
             $this->overrideField($form, 'share[user]', '1');
 
             $this->client->submit($form);

@@ -31,16 +31,4 @@ class ShareRepository extends ServiceEntityRepository {
             ->getQuery()
         ;
     }
-
-    public function searchQuery(Podcast $podcast, string $q) : Query {
-        return $this->createQueryBuilder('share')
-            ->leftJoin('share.user', 'user')
-            ->andWhere('share.podcast = :p')
-            ->andWhere('user.fullname LIKE :q OR user.email LIKE :q')
-            ->orderBy('share.created', 'ASC')
-            ->setParameter('p', $podcast->getId())
-            ->setParameter('q', "%{$q}%")
-            ->getQuery()
-        ;
-    }
 }
