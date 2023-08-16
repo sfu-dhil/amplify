@@ -39,6 +39,9 @@ class Season extends AbstractEntity implements ImageContainerInterface {
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?Publisher $publisher = null;
 
+    #[ORM\Column(type: 'json', options: ['default' => '[]'])]
+    private array $status = [];
+
     /**
      * @var Collection<int,Contribution>
      */
@@ -127,6 +130,82 @@ class Season extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
+    private function updateStatus() : void {
+        $this->status = [];
+
+        if (null === $this->getPodcast()) {
+            $this->status[] = [
+                'route' => 'season_edit',
+                'route_params' => [
+                    'podcast_id' => $this->getPodcast()->getId(),
+                    'id' => $this->getId(),
+                    '_fragment' => 'season_podcast_label',
+                ],
+                'label' => 'Missing podcast',
+            ];
+        }
+        if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
+            $this->status[] = [
+                'route' => 'season_edit',
+                'route_params' => [
+                    'podcast_id' => $this->getPodcast()->getId(),
+                    'id' => $this->getId(),
+                    '_fragment' => 'season_title_label',
+                ],
+                'label' => 'Missing title',
+            ];
+        }
+        if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
+            $this->status[] = [
+                'route' => 'season_edit',
+                'route_params' => [
+                    'podcast_id' => $this->getPodcast()->getId(),
+                    'id' => $this->getId(),
+                    '_fragment' => 'season_description_label',
+                ],
+                'label' => 'Missing description',
+            ];
+        }
+        foreach ($this->getImages() as $index => $image) {
+            if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
+                $this->status[] = [
+                    'route' => 'season_edit',
+                    'route_params' => [
+                        'podcast_id' => $this->getPodcast()->getId(),
+                        'id' => $this->getId(),
+                        '_fragment' => "season_images_{$index}_description_label",
+                    ],
+                    'label' => 'Missing image description',
+                ];
+            }
+        }
+    }
+
+    public function getStatus() : array {
+        $status = $this->status;
+
+        // track episodes status dynamically
+        if (0 === count($this->getEpisodes())) {
+            $status[] = [
+                'route' => 'episode_new',
+                'route_params' => [
+                    'podcast_id' => $this->getPodcast()->getId(),
+                ],
+                'label' => 'Missing episodes',
+            ];
+        }
+        foreach ($this->getEpisodes() as $episode) {
+            foreach ($episode->getStatus() as $item) {
+                if (! array_key_exists('child', $item)) {
+                    $item['label'] = "{$episode->getSlug()}: {$item['label']}";
+                    $item['child'] = true;
+                    $status[] = $item;
+                }
+            }
+        }
+        return $status;
+    }
+
     /**
      * @return Collection<int,Contribution>
      */
@@ -197,40 +276,15 @@ class Season extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
-    public function getStatus() : array {
-        $errors = [];
-        $warnings = [];
+    #[ORM\PrePersist]
+    public function prePersist() : void {
+        parent::prePersist();
+        $this->updateStatus();
+    }
 
-        if (null === $this->getPodcast()) {
-            $errors['season_podcast_label'] = 'Missing podcast';
-        }
-        // if (null === $this->getNumber()) {
-        //     $warning['season_number_label'] = 'Missing season number';
-        // }
-        if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
-            $errors['season_title_label'] = 'Missing title';
-        }
-        // if (empty(trim(strip_tags($this->getSubTitle() ?? '')))) {
-        //     $warnings['season_subTitle_label'] = 'Missing subtitle';
-        // }
-        if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
-            $errors['season_description_label'] = 'Missing description';
-        }
-        // if (null === $this->getPublisher()) {
-        //     $warnings['season_publisher_label'] = 'Missing publisher';
-        // }
-        // if (null === $this->getContributions() || 0 === count($this->getContributions())) {
-        //     $warnings['season_contributions_label'] = 'Missing contributors';
-        // }
-        foreach ($this->getImages() as $index => $image) {
-            if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
-                $errors["season_images_{$index}_description_label"] = 'Missing image description';
-            }
-        }
-
-        return [
-            'errors' => $errors,
-            'warnings' => $warnings,
-        ];
+    #[ORM\PreUpdate]
+    public function preUpdate() : void {
+        parent::preUpdate();
+        $this->updateStatus();
     }
 }

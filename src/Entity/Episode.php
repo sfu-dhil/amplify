@@ -72,6 +72,9 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     #[ORM\Column(type: 'json', options: ['default' => '[]'])]
     private array $keywords = [];
 
+    #[ORM\Column(type: 'json', options: ['default' => '[]'])]
+    private array $status = [];
+
     #[ORM\ManyToOne(targetEntity: 'Season', inversedBy: 'episodes')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Season $season = null;
@@ -131,10 +134,10 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     public function getSlug() : string {
         $seasonSlug = $this->season?->getId() ? $this->season->getSlug() : '';
         if ('bonus' === $this->getEpisodeType()) {
-            return "{$seasonSlug} Bonus {$this->number}";
+            return $seasonSlug . sprintf('B%02d', $this->number);
         }
         if ('trailer' === $this->getEpisodeType()) {
-            return "{$seasonSlug} Trailer {$this->number}";
+            return $seasonSlug . sprintf('T%02d', $this->number);
         }
 
         return $seasonSlug . sprintf('E%02d', $this->number);
@@ -266,6 +269,139 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this;
     }
 
+    private function updateStatus() : void {
+        $this->status = [];
+
+        if (null === $this->getPodcast()) {
+            $this->status[] = [
+                'route' => 'episode_edit',
+                'route_params' => [
+                    'podcast_id' => $this->getPodcast()->getId(),
+                    'id' => $this->getId(),
+                    '_fragment' => 'episode_podcast_label',
+                ],
+                'label' => 'Missing podcast',
+            ];
+        }
+        if (null === $this->getSeason()) {
+            $this->status[] = [
+                'route' => 'episode_edit',
+                'route_params' => [
+                    'podcast_id' => $this->getPodcast()->getId(),
+                    'id' => $this->getId(),
+                    '_fragment' => 'episode_season_label',
+                ],
+                'label' => 'Missing season',
+            ];
+        }
+        if (empty(trim(strip_tags($this->getEpisodeType() ?? '')))) {
+            $this->status[] = [
+                'route' => 'episode_edit',
+                'route_params' => [
+                    'podcast_id' => $this->getPodcast()->getId(),
+                    'id' => $this->getId(),
+                    '_fragment' => 'episode_episodeType_label',
+                ],
+                'label' => 'Missing episode type',
+            ];
+        }
+        if (null === $this->getNumber()) {
+            $this->status[] = [
+                'route' => 'episode_edit',
+                'route_params' => [
+                    'podcast_id' => $this->getPodcast()->getId(),
+                    'id' => $this->getId(),
+                    '_fragment' => 'episode_number_label',
+                ],
+                'label' => 'Missing episode number',
+            ];
+        }
+        if (null === $this->getDate()) {
+            $this->status[] = [
+                'route' => 'episode_edit',
+                'route_params' => [
+                    'podcast_id' => $this->getPodcast()->getId(),
+                    'id' => $this->getId(),
+                    '_fragment' => 'episode_date_label',
+                ],
+                'label' => 'Missing date',
+            ];
+        }
+        if (null === $this->getRunTime()) {
+            $this->status[] = [
+                'route' => 'episode_edit',
+                'route_params' => [
+                    'podcast_id' => $this->getPodcast()->getId(),
+                    'id' => $this->getId(),
+                    '_fragment' => 'episode_runTime_label',
+                ],
+                'label' => 'Missing run time',
+            ];
+        }
+        if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
+            $this->status[] = [
+                'route' => 'episode_edit',
+                'route_params' => [
+                    'podcast_id' => $this->getPodcast()->getId(),
+                    'id' => $this->getId(),
+                    '_fragment' => 'episode_title_label',
+                ],
+                'label' => 'Missing title',
+            ];
+        }
+        if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
+            $this->status[] = [
+                'route' => 'episode_edit',
+                'route_params' => [
+                    'podcast_id' => $this->getPodcast()->getId(),
+                    'id' => $this->getId(),
+                    '_fragment' => 'episode_description_label',
+                ],
+                'label' => 'Missing description',
+            ];
+        }
+
+        if (0 === count($this->getAudios())) {
+            $this->status[] = [
+                'route' => 'episode_edit',
+                'route_params' => [
+                    'podcast_id' => $this->getPodcast()->getId(),
+                    'id' => $this->getId(),
+                    '_fragment' => 'episode_audios_label',
+                ],
+                'label' => 'Missing audio',
+            ];
+        }
+        foreach ($this->getImages() as $index => $image) {
+            if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
+                $this->status[] = [
+                    'route' => 'episode_edit',
+                    'route_params' => [
+                        'podcast_id' => $this->getPodcast()->getId(),
+                        'id' => $this->getId(),
+                        '_fragment' => "episode_images_{$index}_description_label",
+                    ],
+                    'label' => 'Missing image description',
+                ];
+            }
+        }
+        if (0 === count($this->getPdfs()) && empty(trim(strip_tags($this->getTranscript() ?? '')))) {
+            $this->status[] = [
+                'route' => 'episode_edit',
+                'route_params' => [
+                    'podcast_id' => $this->getPodcast()->getId(),
+                    'id' => $this->getId(),
+                    '_fragment' => 'episode_transcript_label',
+                ],
+                'label' => 'Missing transcript',
+            ];
+        }
+    }
+
+    public function getStatus() : array {
+        return $this->status;
+    }
+
     public function getContributions() : Collection {
         return $this->contributions;
     }
@@ -325,68 +461,15 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this;
     }
 
-    public function getStatus() : array {
-        $errors = [];
-        $warnings = [];
+    #[ORM\PrePersist]
+    public function prePersist() : void {
+        parent::prePersist();
+        $this->updateStatus();
+    }
 
-        // if (empty(trim(strip_tags($this->getGuid() ?? '')))) {
-        //     $warnings['episode_guid_label'] = 'Missing global unique identifier';
-        // }
-        if (null === $this->getPodcast()) {
-            $errors['episode_podcast_label'] = 'Missing podcast';
-        }
-        if (null === $this->getSeason()) {
-            $errors['episode_season_label'] = 'Missing season';
-        }
-        if (empty(trim(strip_tags($this->getEpisodeType() ?? '')))) {
-            $errors['episode_episodeType_label'] = 'Missing episode type';
-        }
-        if (null === $this->getNumber()) {
-            $errors['episode_number_label'] = 'Missing episode number';
-        }
-        if (null === $this->getDate()) {
-            $errors['episode_date_label'] = 'Missing date';
-        }
-        if (null === $this->getRunTime()) {
-            $errors['episode_runTime_label'] = 'Missing run time';
-        }
-        if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
-            $errors['episode_title_label'] = 'Missing title';
-        }
-        // if (empty(trim(strip_tags($this->getSubTitle() ?? '')))) {
-        //     $warnings['episode_subTitle_label'] = 'Missing subtitle';
-        // }
-        // if (null === $this->getExplicit()) {
-        //     $warnings['episode_explicit_label'] = 'Missing explicit status';
-        // }
-        if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
-            $errors['episode_description_label'] = 'Missing description';
-        }
-        // if (empty(trim(strip_tags($this->getBibliography() ?? '')))) {
-        //     $warnings['episode_bibliography_label'] = 'Missing bibliography';
-        // }
-        // if (empty(trim(strip_tags($this->getPermissions() ?? '')))) {
-        //     $warnings['episode_permissions_label'] = 'Missing permissions';
-        // }
-        // if (null === $this->getContributions() || 0 === count($this->getContributions())) {
-        //     $warnings['episode_contributions_label'] = 'Missing contributors';
-        // }
-
-        if (0 === count($this->getAudios())) {
-            $errors['episode_audios_label'] = 'Missing audio';
-        }
-        foreach ($this->getImages() as $index => $image) {
-            if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
-                $errors["episode_images_{$index}_description_label"] = 'Missing image description';
-            }
-        }
-        if (0 === count($this->getPdfs()) && empty(trim(strip_tags($this->getTranscript() ?? '')))) {
-            $errors['episode_transcript_label'] = 'Missing transcript';
-        }
-
-        return [
-            'errors' => $errors,
-            'warnings' => $warnings,
-        ];
+    #[ORM\PreUpdate]
+    public function preUpdate() : void {
+        parent::preUpdate();
+        $this->updateStatus();
     }
 }

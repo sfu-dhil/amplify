@@ -197,6 +197,10 @@ Automatically fix some standards errors
     docker exec -it amplify_app make dump.twig
 
 
+## Force Podcast export status refresh
+
+    docker exec -it amplify_app ./bin/console app:touch:status
+
 ## Manual Imports
 
     docker exec -it amplify_app ./bin/console app:import:podcast <url> <podcastId> <importId>
