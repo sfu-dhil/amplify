@@ -45,7 +45,7 @@ class Season extends AbstractEntity implements ImageContainerInterface {
     /**
      * @var Collection<int,Contribution>
      */
-    #[ORM\OneToMany(targetEntity: 'Contribution', mappedBy: 'season')]
+    #[ORM\OneToMany(targetEntity: 'Contribution', mappedBy: 'season', cascade: ['remove'])]
     private $contributions;
 
     /**

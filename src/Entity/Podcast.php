@@ -78,21 +78,21 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     /**
      * @var Collection<int,Contribution>
      */
-    #[ORM\OneToMany(targetEntity: 'Contribution', mappedBy: 'podcast')]
+    #[ORM\OneToMany(targetEntity: 'Contribution', mappedBy: 'podcast', cascade: ['remove'])]
     #[ORM\OrderBy(['person' => 'ASC', 'contributorRole' => 'ASC'])]
     private $contributions;
 
     /**
      * @var Collection<int,Season>
      */
-    #[ORM\OneToMany(targetEntity: 'Season', mappedBy: 'podcast')]
+    #[ORM\OneToMany(targetEntity: 'Season', mappedBy: 'podcast', cascade: ['remove'])]
     #[ORM\OrderBy(['number' => 'ASC', 'title' => 'ASC'])]
     private $seasons;
 
     /**
      * @var Collection<int,Episode>
      */
-    #[ORM\OneToMany(targetEntity: 'Episode', mappedBy: 'podcast')]
+    #[ORM\OneToMany(targetEntity: 'Episode', mappedBy: 'podcast', cascade: ['remove'])]
     #[ORM\OrderBy(['date' => 'ASC', 'episodeType' => 'DESC', 'number' => 'ASC', 'title' => 'ASC'])]
     private $episodes;
 

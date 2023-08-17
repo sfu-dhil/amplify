@@ -14,5 +14,11 @@
         <a href="{{ path('episode_show', { 'podcast_id': episode.podcast.id, 'id': episode.id }) }}" class="btn btn-warning"> Cancel </a>
     {% endif %}
 </div>
-{{ form_end(form) }}
-
+{{ form_end(form, {
+    table_of_contents_submit: {
+        label: episode.id is null ? 'Create' : 'Update',
+    },
+    table_of_contents_cancel: {
+        path: episode.id is null ? path('podcast_show', { 'id': episode.podcast.id }) : path('episode_show', { 'podcast_id': episode.podcast.id, 'id': episode.id }),
+    },
+}) }}
