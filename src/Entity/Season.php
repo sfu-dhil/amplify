@@ -66,6 +66,37 @@ class Season extends AbstractEntity implements ImageContainerInterface {
         return $this->title;
     }
 
+    private function updateStatus() : void {
+        $this->status = [];
+
+        if (null === $this->getPodcast()) {
+            $this->status[] = [
+                'anchor' => 'season_podcast_label',
+                'label' => 'Missing podcast',
+            ];
+        }
+        if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
+            $this->status[] = [
+                'anchor' => 'season_title_label',
+                'label' => 'Missing title',
+            ];
+        }
+        if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
+            $this->status[] = [
+                'anchor' => 'season_description_label',
+                'label' => 'Missing description',
+            ];
+        }
+        foreach ($this->getImages() as $index => $image) {
+            if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
+                $this->status[] = [
+                    'anchor' => "season_images_{$index}_description_label",
+                    'label' => 'Missing image description',
+                ];
+            }
+        }
+    }
+
     public function getSlug() : string {
         return sprintf('S%02d', $this->number);
     }
@@ -130,37 +161,6 @@ class Season extends AbstractEntity implements ImageContainerInterface {
         return $this;
     }
 
-    private function updateStatus() : void {
-        $this->status = [];
-
-        if (null === $this->getPodcast()) {
-            $this->status[] = [
-                'anchor' => 'season_podcast_label',
-                'label' => 'Missing podcast',
-            ];
-        }
-        if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
-            $this->status[] = [
-                'anchor' => 'season_title_label',
-                'label' => 'Missing title',
-            ];
-        }
-        if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
-            $this->status[] = [
-                'anchor' => 'season_description_label',
-                'label' => 'Missing description',
-            ];
-        }
-        foreach ($this->getImages() as $index => $image) {
-            if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
-                $this->status[] = [
-                    'anchor' => "season_images_{$index}_description_label",
-                    'label' => 'Missing image description',
-                ];
-            }
-        }
-    }
-
     public function getStatus() : array {
         $status = $this->status;
         foreach ($status as &$item) {
@@ -184,13 +184,14 @@ class Season extends AbstractEntity implements ImageContainerInterface {
         }
         foreach ($this->getEpisodes() as $episode) {
             foreach ($episode->getStatus() as $item) {
-                if (! array_key_exists('child', $item)) {
+                if ( ! array_key_exists('child', $item)) {
                     $item['label'] = "{$episode->getSlug()}: {$item['label']}";
                     $item['child'] = true;
                     $status[] = $item;
                 }
             }
         }
+
         return $status;
     }
 
