@@ -37,7 +37,6 @@
                 <tr>
                     <th scope="col">Title</th>
                     <th scope="col">Website</th>
-                    <th scope="col">Exportable Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -52,13 +51,6 @@
                             {% if podcast.website %}
                                 <a href='{{ podcast.website }}'>{{ podcast.website }}</a>
                             {% endif %}
-                        </td>
-                        <td>
-                            {% embed 'status/partial/badge.html.twig' with {
-                                'edit_link': path('podcast_edit', {'id': podcast.id }),
-                                'status': podcast.status,
-                            } %}
-                            {% endembed %}
                         </td>
                     </tr>
                 {% endfor %}
