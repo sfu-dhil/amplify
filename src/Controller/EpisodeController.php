@@ -58,6 +58,7 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
                 $pdf->setEntity($episode);
                 $entityManager->persist($pdf);
             }
+            $episode->updateStatus();
             $entityManager->flush();
             $this->addFlash('success', 'Episode created successfully.');
 
@@ -139,6 +140,7 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
                     $entityManager->remove($existingPdf);
                 }
             }
+            $episode->updateStatus();
             $entityManager->flush();
             $this->addFlash('success', 'Episode updated successfully.');
 

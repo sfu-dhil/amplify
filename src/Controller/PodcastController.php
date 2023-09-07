@@ -67,6 +67,7 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
                 $image->setEntity($podcast);
                 $entityManager->persist($image);
             }
+            $podcast->updateStatus();
             $entityManager->flush();
             $this->addFlash('success', 'Podcast created successfully.');
 
@@ -118,7 +119,7 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
                     $entityManager->remove($existingImage);
                 }
             }
-
+            $podcast->updateStatus();
             $entityManager->flush();
             $this->addFlash('success', 'Podcast updated successfully.');
 

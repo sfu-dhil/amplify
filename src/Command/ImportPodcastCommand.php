@@ -125,45 +125,6 @@ class ImportPodcastCommand extends Command {
         }
     }
 
-    private function addImageToEntity(ImageContainerInterface $entity, UploadedFile $upload, string $sourceUrl) : void {
-        $image = new Image();
-        $image->setFile($upload);
-        $image->setEntity($entity);
-        $image->setDescription('');
-        $image->setSourceUrl($sourceUrl);
-        $image->prePersist();
-
-        $this->em->persist($image);
-        $entity->addImage($image);
-        $this->em->flush();
-    }
-
-    private function addAudioToEntity(AudioContainerInterface $entity, UploadedFile $upload, string $sourceUrl) : void {
-        $audio = new Audio();
-        $audio->setFile($upload);
-        $audio->setEntity($entity);
-        $audio->setDescription('');
-        $audio->setSourceUrl($sourceUrl);
-        $audio->prePersist();
-
-        $this->em->persist($audio);
-        $entity->addAudio($audio);
-        $this->em->flush();
-    }
-
-    private function addPdfToEntity(PdfContainerInterface $entity, UploadedFile $upload, string $sourceUrl) : void {
-        $pdf = new Pdf();
-        $pdf->setFile($upload);
-        $pdf->setEntity($entity);
-        $pdf->setDescription('');
-        $pdf->setSourceUrl($sourceUrl);
-        $pdf->prePersist();
-
-        $this->em->persist($pdf);
-        $entity->addPdf($pdf);
-        $this->em->flush();
-    }
-
     private function updateMessage(string $message) : void {
         $this->output->writeln($message);
         if ($this->import) {
@@ -562,7 +523,17 @@ class ImportPodcastCommand extends Command {
                 if (str_starts_with($mimetype, 'image/') && ($entity instanceof Podcast || $entity instanceof Episode)) {
                     $image = $entity->getImageByChecksum($checksum);
                     if (null === $image) {
-                        $this->addImageToEntity($entity, $upload, $url);
+                        $image = new Image();
+                        $image->setFile($upload);
+                        $image->setEntity($entity);
+                        $image->setDescription('');
+                        $image->setSourceUrl($url);
+                        $image->prePersist();
+
+                        $this->em->persist($image);
+                        $entity->addImage($image);
+                        $entity->updateStatus();
+                        $this->em->flush();
                     } elseif (null === $image->getSourceUrl()) {
                         $image->setSourceUrl($url);
                         $this->em->persist($image);
@@ -571,7 +542,17 @@ class ImportPodcastCommand extends Command {
                 } elseif (str_starts_with($mimetype, 'audio/') && $entity instanceof Episode) {
                     $audio = $entity->getAudioByChecksum($checksum);
                     if (null === $audio) {
-                        $this->addAudioToEntity($entity, $upload, $url);
+                        $audio = new Audio();
+                        $audio->setFile($upload);
+                        $audio->setEntity($entity);
+                        $audio->setDescription('');
+                        $audio->setSourceUrl($url);
+                        $audio->prePersist();
+
+                        $this->em->persist($audio);
+                        $entity->addAudio($audio);
+                        $entity->updateStatus();
+                        $this->em->flush();
                     } elseif (null === $audio->getSourceUrl()) {
                         $audio->setSourceUrl($url);
                         $this->em->persist($audio);
@@ -580,7 +561,17 @@ class ImportPodcastCommand extends Command {
                 } elseif ('application/pdf' === $mimetype && $entity instanceof Episode) {
                     $pdf = $entity->getPdfByChecksum($checksum);
                     if (null === $pdf) {
-                        $this->addPdfToEntity($entity, $upload, $url);
+                        $pdf = new Pdf();
+                        $pdf->setFile($upload);
+                        $pdf->setEntity($entity);
+                        $pdf->setDescription('');
+                        $pdf->setSourceUrl($url);
+                        $pdf->prePersist();
+
+                        $this->em->persist($pdf);
+                        $entity->addPdf($pdf);
+                        $entity->updateStatus();
+                        $this->em->flush();
                     } elseif (null === $pdf->getSourceUrl()) {
                         $pdf->setSourceUrl($url);
                         $this->em->persist($pdf);

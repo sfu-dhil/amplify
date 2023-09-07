@@ -101,78 +101,80 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this->title;
     }
 
-    private function updateStatus() : void {
-        $this->status = [];
+    public function updateStatus() : void {
+        $status = [];
 
         if (null === $this->getPodcast()) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'episode_podcast_label',
                 'label' => 'Missing podcast',
             ];
         }
         if (null === $this->getSeason()) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'episode_season_label',
                 'label' => 'Missing season',
             ];
         }
         if (empty(trim(strip_tags($this->getEpisodeType() ?? '')))) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'episode_episodeType_label',
                 'label' => 'Missing episode type',
             ];
         }
         if (null === $this->getNumber()) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'episode_number_label',
                 'label' => 'Missing episode number',
             ];
         }
         if (null === $this->getDate()) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'episode_date_label',
                 'label' => 'Missing date',
             ];
         }
         if (null === $this->getRunTime()) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'episode_runTime_label',
                 'label' => 'Missing run time',
             ];
         }
         if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'episode_title_label',
                 'label' => 'Missing title',
             ];
         }
         if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'episode_description_label',
                 'label' => 'Missing description',
             ];
         }
 
         if (0 === count($this->getAudios())) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'episode_audios_label',
                 'label' => 'Missing audio',
             ];
         }
         foreach ($this->getImages() as $index => $image) {
             if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
-                $this->status[] = [
+                $status[] = [
                     'anchor' => "episode_images_{$index}_description_label",
                     'label' => 'Missing image description',
                 ];
             }
         }
         if (0 === count($this->getPdfs()) && empty(trim(strip_tags($this->getTranscript() ?? '')))) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'episode_transcript_label',
                 'label' => 'Missing transcript',
             ];
         }
+
+        $this->status = $status;
     }
 
     public function getGuid() : ?string {
@@ -345,12 +347,12 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
 
     public function getStatus() : array {
         $status = $this->status;
-        foreach ($status as &$item) {
-            $item['route'] = 'episode_edit';
-            $item['route_params'] = [
+        foreach ($status as &$existingStatus) {
+            $existingStatus['route'] = 'episode_edit';
+            $existingStatus['route_params'] = [
                 'podcast_id' => $this->getPodcast()->getId(),
                 'id' => $this->getId(),
-                '_fragment' => $item['anchor'],
+                '_fragment' => $existingStatus['anchor'],
             ];
         }
 

@@ -70,6 +70,7 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
                 $image->setEntity($season);
                 $entityManager->persist($image);
             }
+            $season->updateStatus();
             $entityManager->flush();
             $this->addFlash('success', 'Season created successfully.');
 
@@ -127,6 +128,7 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
                     $entityManager->remove($existingImage);
                 }
             }
+            $season->updateStatus();
             $entityManager->flush();
             $this->addFlash('success', 'Season updated successfully.');
 

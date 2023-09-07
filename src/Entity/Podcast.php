@@ -237,65 +237,67 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         return $this->title ?? '';
     }
 
-    private function updateStatus() : void {
-        $this->status = [];
+    public function updateStatus() : void {
+        $status = [];
 
         if (empty(trim(strip_tags($this->getTitle() ?? '')))) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'podcast_title_label',
                 'label' => 'Missing title',
             ];
         }
         if (null === $this->getExplicit()) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'podcast_explicit_label',
                 'label' => 'Missing explicit status',
             ];
         }
         if (empty(trim(strip_tags($this->getDescription() ?? '')))) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'podcast_description_label',
                 'label' => 'Missing description',
             ];
         }
         if (empty(trim(strip_tags($this->getCopyright() ?? '')))) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'podcast_copyright_label',
                 'label' => 'Missing copyright',
             ];
         }
         if (empty(trim(strip_tags($this->getWebsite() ?? '')))) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'podcast_website_label',
                 'label' => 'Missing website',
             ];
         }
         if (empty(trim(strip_tags($this->getRss() ?? '')))) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'podcast_rss_label',
                 'label' => 'Missing rss',
             ];
         }
         if (null === $this->getCategories() || 0 === count($this->getCategories())) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'podcast_categories_label',
                 'label' => 'Missing Apple podcast categories',
             ];
         }
         if (0 === count($this->getImages())) {
-            $this->status[] = [
+            $status[] = [
                 'anchor' => 'podcast_images_label',
                 'label' => 'Missing image',
             ];
         }
         foreach ($this->getImages() as $index => $image) {
             if (empty(trim(strip_tags($image->getDescription() ?? '')))) {
-                $this->status[] = [
+                $status[] = [
                     'anchor' => "podcast_images_{$index}_description_label",
                     'label' => 'Missing image description',
                 ];
             }
         }
+
+        $this->status = $status;
     }
 
     public function getGuid() : ?string {
@@ -583,11 +585,11 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
 
     public function getStatus() : array {
         $status = $this->status;
-        foreach ($status as &$item) {
-            $item['route'] = 'podcast_edit';
-            $item['route_params'] = [
+        foreach ($status as &$existingStatus) {
+            $existingStatus['route'] = 'podcast_edit';
+            $existingStatus['route_params'] = [
                 'id' => $this->getId(),
-                '_fragment' => $item['anchor'],
+                '_fragment' => $existingStatus['anchor'],
             ];
         }
 
@@ -602,11 +604,11 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
             ];
         }
         foreach ($this->getSeasons() as $season) {
-            foreach ($season->getStatus() as $item) {
-                if ( ! array_key_exists('child', $item)) {
-                    $item['label'] = "{$season->getSlug()}: {$item['label']}";
-                    $item['child'] = true;
-                    $status[] = $item;
+            foreach ($season->getStatus() as $childStatus) {
+                if ( ! array_key_exists('child', $childStatus)) {
+                    $childStatus['label'] = "{$season->getSlug()}: {$childStatus['label']}";
+                    $childStatus['child'] = true;
+                    $status[] = $childStatus;
                 }
             }
         }
