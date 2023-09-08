@@ -9,3 +9,9 @@ Documentation for the Amplify Podcast Network preservation tool
 
 ![Amplify Podcast Network Logo](https://i0.wp.com/amplifypodcastnetwork.ca/wp-content/uploads/2022/05/Amplify-Final-Logo-1-copy-1-edited.png?fit=1200%2C1200&ssl=1&w=640 "Amplify Logo")
 
+
+## Run tbls
+
+From the docs folder (with amplify running)
+
+    docker run --rm -v $PWD:/work -w /work --network host ghcr.io/k1low/tbls doc --rm-dist

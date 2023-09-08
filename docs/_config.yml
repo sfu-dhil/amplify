@@ -4,11 +4,20 @@ theme: just-the-docs
 url: https://amplify.lib.sfu.ca/docs
 favicon_ico: "https://i0.wp.com/amplifypodcastnetwork.ca/wp-content/uploads/2022/03/cropped-amplify-final-social-options-2-sm.png?fit=32%2C32&ssl=1"
 color_scheme: amplify
-baseurl: /docs/
+baseurl: /docs
 exclude:
 - tbls_templates
 callouts:
   warning:
     title: Warning
-    color: red
+    color: yellow
+    opacity: 0.2
+  important:
+    title: Important
+    color: blue
+    opacity: 0.2
+  note:
+    title: Note
+    color: purple
+    opacity: 0.2
 nav_external_links: []

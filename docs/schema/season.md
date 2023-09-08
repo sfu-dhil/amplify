@@ -30,6 +30,7 @@ parent: Schema
 |description|longtext||false|||||
 |created|datetime||false||||(DC2Type:datetime_immutable)|
 |updated|datetime||false||||(DC2Type:datetime_immutable)|
+|status|longtext|'[]'|false||||(DC2Type:json)|
 
 ## Constraints
 

@@ -3,6 +3,7 @@ layout: default
 title: Schema
 has_children: true
 nav_order: 5
+has_toc: false
 ---
 
 <details markdown="block">
@@ -22,12 +23,12 @@ nav_order: 5
 | ---- | ------- | ------- | ---- |
 | [contribution](contribution.md) | 8 |  | BASE TABLE |
 | [contributor_role](contributor_role.md) | 7 |  | BASE TABLE |
-| [episode](episode.md) | 18 |  | BASE TABLE |
+| [episode](episode.md) | 19 |  | BASE TABLE |
 | [institution](institution.md) | 5 |  | BASE TABLE |
 | [person](person.md) | 8 |  | BASE TABLE |
-| [podcast](podcast.md) | 16 |  | BASE TABLE |
+| [podcast](podcast.md) | 17 |  | BASE TABLE |
 | [publisher](publisher.md) | 8 |  | BASE TABLE |
-| [season](season.md) | 9 |  | BASE TABLE |
+| [season](season.md) | 10 |  | BASE TABLE |
 
 ## Relations
 

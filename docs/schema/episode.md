@@ -39,6 +39,7 @@ parent: Schema
 |guid|varchar(255)|NULL|true|||||
 |episode_type|varchar(255)|'full'|false|||||
 |explicit|tinyint(1)|NULL|true|||||
+|status|longtext|'[]'|false||||(DC2Type:json)|
 
 ## Constraints
 

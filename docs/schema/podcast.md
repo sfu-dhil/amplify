@@ -37,6 +37,7 @@ parent: Schema
 |language_code|varchar(255)|NULL|true|||||
 |categories|longtext|'[]'|false||||(DC2Type:json)|
 |keywords|longtext|'[]'|false||||(DC2Type:json)|
+|status|longtext|'[]'|false||||(DC2Type:json)|
 
 ## Constraints
 
