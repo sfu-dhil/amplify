@@ -169,6 +169,10 @@ div.collection-complex > div:not(:last-child) {
     }
 }
 
+.select2-hidden-accessible {
+    display: none !important;
+}
+
 /* bootstrap overrides */
 /* amplify teal #027D82 or 2,125,130 */
 .btn-primary {
