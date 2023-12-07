@@ -76,6 +76,6 @@ services:
 
   mail:
     container_name: amplify_mail
-    image: mailhog/mailhog:v1.0.1
+    image: jcalonso/mailhog:v1.0.1
     ports:
       - "8025:8025"
