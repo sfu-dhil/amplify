@@ -49,7 +49,6 @@ jobs:
         pull: true
         tags: dhilsfu/amplify:latest
         cache-from: type=registry,ref=dhilsfu/amplify:buildcache
-        cache-to: type=registry,ref=dhilsfu/amplify:buildcache,mode=max
 
     - name: Run Unit Tests
       run: |

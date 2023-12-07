@@ -44,7 +44,6 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # Default controller stuff - open to the public
-        - { path: ^%router.request_context.base_url%/$, roles: PUBLIC_ACCESS }
         - { path: ^%router.request_context.base_url%/privacy$, roles: PUBLIC_ACCESS }
 
         # user controller stuff - open to the public
@@ -52,8 +51,8 @@ security:
         - { path: ^%router.request_context.base_url%/reset, roles: PUBLIC_ACCESS }
         - { path: ^%router.request_context.base_url%/login$, roles: PUBLIC_ACCESS }
 
-        # Temporary to keep the rest of the site private.
-        - { path: ^/, roles: ROLE_USER }
+        # Keep the rest of the site private.
+        - { path: ^%router.request_context.base_url%/, roles: ROLE_USER }
 
 when@test:
     security:
