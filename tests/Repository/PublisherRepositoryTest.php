@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Repository;
 
+use App\Repository\PodcastRepository;
 use App\Repository\PublisherRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
@@ -17,17 +18,26 @@ class PublisherRepositoryTest extends ServiceTestCase {
     }
 
     public function testIndexQuery() : void {
-        $query = $this->repo->indexQuery();
+        $podcastRepository = self::getContainer()->get(PodcastRepository::class);
+        $podcast = $podcastRepository->find(2);
+
+        $query = $this->repo->indexQuery($podcast);
         $this->assertCount(4, $query->execute());
     }
 
     public function testTypeaheadQuery() : void {
-        $query = $this->repo->typeaheadQuery(self::SEARCH_QUERY);
+        $podcastRepository = self::getContainer()->get(PodcastRepository::class);
+        $podcast = $podcastRepository->find(2);
+
+        $query = $this->repo->typeaheadQuery($podcast, self::SEARCH_QUERY);
         $this->assertCount(4, $query->execute());
     }
 
     public function testSearchQuery() : void {
-        $query = $this->repo->searchQuery(self::SEARCH_QUERY);
+        $podcastRepository = self::getContainer()->get(PodcastRepository::class);
+        $podcast = $podcastRepository->find(2);
+
+        $query = $this->repo->searchQuery($podcast, self::SEARCH_QUERY);
         $this->assertCount(4, $query->execute());
     }
 

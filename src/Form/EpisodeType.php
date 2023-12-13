@@ -24,8 +24,7 @@ use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 class EpisodeType extends AbstractType {
     public function __construct(
         public UrlGeneratorInterface $router,
-    ) {
-    }
+    ) {}
 
     /**
      * Add form fields to $builder.
@@ -37,10 +36,6 @@ class EpisodeType extends AbstractType {
             'remote_route' => 'season_typeahead',
             'remote_params' => ['podcast_id' => $builder->getData()->getPodcast()->getId()],
             'allow_clear' => true,
-            'attr' => [
-                'add_route' => $this->router->generate('season_new', ['podcast_id' => $builder->getData()->getPodcast()->getId()]),
-                'add_label' => 'Add Season',
-            ],
             'placeholder' => 'Search for an existing season by title',
             'required' => true,
         ]);
@@ -106,13 +101,6 @@ class EpisodeType extends AbstractType {
                 'class' => 'tinymce',
             ],
         ]);
-        $builder->add('transcript', TextareaType::class, [
-            'label' => 'Transcript',
-            'required' => false,
-            'attr' => [
-                'class' => 'tinymce',
-            ],
-        ]);
         $builder->add('permissions', TextareaType::class, [
             'label' => 'Permissions',
             'required' => false,
@@ -132,21 +120,24 @@ class EpisodeType extends AbstractType {
             ],
             'attr' => [
                 'class' => 'collection collection-complex',
+                'data-collection-label' => 'Keyword',
             ],
         ]);
         $builder->add('contributions', CollectionType::class, [
             'label' => 'Contributors',
-            'required' => false,
+            'required' => true,
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
             'entry_type' => ContributionType::class,
             'entry_options' => [
                 'label' => false,
+                'podcast' => $builder->getData()->getPodcast(),
             ],
             'by_reference' => false,
             'attr' => [
                 'class' => 'collection collection-complex',
+                'data-collection-label' => 'Contributor',
             ],
         ]);
         $builder->add('audios', CollectionType::class, [
@@ -167,7 +158,7 @@ class EpisodeType extends AbstractType {
         ]);
         $builder->add('images', CollectionType::class, [
             'label' => 'Images',
-            'required' => false,
+            'required' => true,
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
@@ -181,9 +172,16 @@ class EpisodeType extends AbstractType {
                 'class' => 'collection collection-media collection-media-image',
             ],
         ]);
-        $builder->add('pdfs', CollectionType::class, [
-            'label' => 'Transcripts',
+        $builder->add('transcript', TextareaType::class, [
+            'label' => 'Transcript (Text)',
             'required' => false,
+            'attr' => [
+                'class' => 'tinymce',
+            ],
+        ]);
+        $builder->add('pdfs', CollectionType::class, [
+            'label' => 'Transcript (PDF)',
+            'required' => true,
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,

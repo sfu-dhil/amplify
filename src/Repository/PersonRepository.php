@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Person;
+use App\Entity\Podcast;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,29 +23,35 @@ class PersonRepository extends ServiceEntityRepository {
         parent::__construct($registry, Person::class);
     }
 
-    public function indexQuery() : Query {
+    public function indexQuery(Podcast $podcast) : Query {
         return $this->createQueryBuilder('person')
+            ->andWhere('person.podcast = :p')
             ->orderBy('person.sortableName', 'ASC')
+            ->setParameter('p', $podcast->getId())
             ->getQuery()
         ;
     }
 
-    public function typeaheadQuery(string $q) : Query {
+    public function typeaheadQuery(Podcast $podcast, string $q) : Query {
         return $this->createQueryBuilder('person')
             ->andWhere('person.fullname LIKE :q')
+            ->andWhere('person.podcast = :p')
             ->orderBy('person.sortableName', 'ASC')
             ->setParameter('q', "%{$q}%")
+            ->setParameter('p', $podcast->getId())
             ->getQuery()
         ;
     }
 
-    public function searchQuery(string $q) : Query {
+    public function searchQuery(Podcast $podcast, string $q) : Query {
         return $this->createQueryBuilder('person')
             ->addSelect('MATCH (person.fullname, person.bio) AGAINST(:q BOOLEAN) as HIDDEN score')
+            ->andWhere('person.podcast = :p')
             ->andHaving('score > 0')
             ->orderBy('score', 'DESC')
             ->addOrderBy('person.sortableName', 'ASC')
             ->setParameter('q', $q)
+            ->setParameter('p', $podcast->getId())
             ->getQuery()
         ;
     }

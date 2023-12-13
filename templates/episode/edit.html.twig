@@ -3,7 +3,6 @@
 {% block title %}Edit Episode {{ episode.title }}{% endblock %}
 
 {% block breadcrumbs %}
-    <li class="breadcrumb-item"><a href="{{ path('homepage') }}">Home</a></li>
     <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
     <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': episode.podcast.id}) }}">{{ episode.podcast.title }}</a></li>
     {% if episode.season %}

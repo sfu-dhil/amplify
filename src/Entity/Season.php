@@ -36,7 +36,7 @@ class Season extends AbstractEntity implements ImageContainerInterface {
     private ?Podcast $podcast = null;
 
     #[ORM\ManyToOne(targetEntity: 'Publisher', inversedBy: 'seasons')]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Publisher $publisher = null;
 
     #[ORM\Column(type: 'json', options: ['default' => '[]'])]
@@ -100,7 +100,7 @@ class Season extends AbstractEntity implements ImageContainerInterface {
     }
 
     public function getSlug() : string {
-        return sprintf('S%02d', $this->number);
+        return "S{$this->number}";
     }
 
     public function getNumber() : ?int {
@@ -203,20 +203,6 @@ class Season extends AbstractEntity implements ImageContainerInterface {
      */
     public function getContributions() : Collection {
         return $this->contributions;
-    }
-
-    public function getContributionsGroupedByPerson() : array {
-        $contributions = [];
-
-        foreach ($this->contributions as $contribution) {
-            $person = $contribution->getPerson();
-            if ( ! array_key_exists($person->getId(), $contributions)) {
-                $contributions[$person->getId()] = [];
-            }
-            $contributions[$person->getId()][] = $contribution;
-        }
-
-        return $contributions;
     }
 
     public function addContribution(Contribution $contribution) : self {

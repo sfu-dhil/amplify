@@ -62,7 +62,12 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
             $entityManager->flush();
             $this->addFlash('success', 'Episode created successfully.');
 
+            if ($request->request->has('submitAndContinue')) {
+                return $this->redirectToRoute('episode_edit', ['podcast_id' => $podcast->getId(), 'id' => $episode->getId()]);
+            }
+
             return $this->redirectToRoute('podcast_show', ['id' => $podcast->getId()]);
+
         }
 
         return [
@@ -144,7 +149,12 @@ class EpisodeController extends AbstractController implements PaginatorAwareInte
             $entityManager->flush();
             $this->addFlash('success', 'Episode updated successfully.');
 
+            if ($request->request->has('submitAndContinue')) {
+                return $this->redirectToRoute('episode_edit', ['podcast_id' => $podcast->getId(), 'id' => $episode->getId()]);
+            }
+
             return $this->redirectToRoute('episode_show', ['podcast_id' => $podcast->getId(), 'id' => $episode->getId()]);
+
         }
 
         return [

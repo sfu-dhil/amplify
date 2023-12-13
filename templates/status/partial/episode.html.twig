@@ -1,0 +1,13 @@
+{% set statusItems = episode.status %}
+
+<ul class="list-group list-group-flush">
+{% embed 'status/partial/heading.html.twig' with {
+    'label': episode.slug ~ ' Metadata: ' ~ episode.title,
+    'count': statusItems|length
+} %}{% endembed %}
+</ul>
+<ul class="list-group list-group-flush list-group-numbered">
+{% embed 'status/partial/status_items.html.twig' with {
+    'items': statusItems
+} %}{% endembed %}
+</ul>

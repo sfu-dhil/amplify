@@ -66,7 +66,7 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface, Fixt
             } elseif (3 === $i % 4) {
                 $fixture->setEpisodeType('trailer');
             }
-            $fixture->setNumber($i);
+            $fixture->setNumber((float) $i);
             $fixture->setDate(new DateTimeImmutable("2020-{$i}-{$i}"));
             $fixture->setRunTime("00:{$i}5:00");
             $fixture->setTitle('Title ' . $i);

@@ -21,8 +21,7 @@ use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 class SeasonType extends AbstractType {
     public function __construct(
         public UrlGeneratorInterface $router,
-    ) {
-    }
+    ) {}
 
     /**
      * Add form fields to $builder.
@@ -52,31 +51,36 @@ class SeasonType extends AbstractType {
             'label' => 'Publisher',
             'class' => Publisher::class,
             'remote_route' => 'publisher_typeahead',
+            'remote_params' => ['podcast_id' => $builder->getData()->getPodcast()->getId()],
             'allow_clear' => true,
             'attr' => [
-                'add_path' => 'publisher_new',
+                'add_route' => $this->router->generate('publisher_new', ['podcast_id' => $builder->getData()->getPodcast()->getId()]),
                 'add_label' => 'Add Publisher',
+                'add_modal' => true,
             ],
             'placeholder' => 'Search for an existing publisher by name',
         ]);
+
         $builder->add('contributions', CollectionType::class, [
             'label' => 'Contributors',
-            'required' => false,
+            'required' => true,
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
             'entry_type' => ContributionType::class,
             'entry_options' => [
                 'label' => false,
+                'podcast' => $builder->getData()->getPodcast(),
             ],
             'by_reference' => false,
             'attr' => [
                 'class' => 'collection collection-complex',
+                'data-collection-label' => 'Contributor',
             ],
         ]);
         $builder->add('images', CollectionType::class, [
             'label' => 'Images',
-            'required' => false,
+            'required' => true,
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => false,

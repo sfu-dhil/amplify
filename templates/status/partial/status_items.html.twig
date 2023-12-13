@@ -1,0 +1,10 @@
+{% for item in items %}
+    <li class="list-group-item text-truncate d-flex justify-content-between align-items-start">
+        <div class="ms-2 me-auto text-truncate">
+            {{ item.label }}
+        </div>
+        <a href="{{ path(item.route, item.route_params) }}" class="link-dark text-decoration-none stretched-link">
+            Edit <i class="bi bi-arrow-right"></i>
+        </a>
+    </li>
+{% endfor %}

@@ -42,42 +42,33 @@
         });
     }
 
-    function simpleCollection() {
-        if ( $('.collection-simple').length == 0 ) {
-            return
-        }
-        $('.collection-simple').collection({
-            init_with_n_elements: 1,
-            allow_up: false,
-            allow_down: false,
-            max: 400,
-            add_at_the_end: true,
-            add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i></a>',
-            remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
-        });
-    }
-
     function complexCollection() {
         if ( $('.collection-complex').length == 0 ) {
             return
         }
-        $('.collection-complex').collection({
-            init_with_n_elements: 1,
-            allow_up: false,
-            allow_down: false,
-            max: 400,
-            add_at_the_end: true,
-            add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i></a>',
-            remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
-            after_add: function(collection, element){
-                $(element).find('.select2entity').select2entity();
-                if (tinymce && $(element).find('.tinymce').length > 0 ) {
-                    $(element).find('.tinymce').each(function (index, textarea) {
-                        tinymce.execCommand("mceAddEditor", false, textarea.id);
+        $('.collection-complex').each( (index, collectionEl) => {
+            const label = $(collectionEl).data('collection-label');
+            $(collectionEl).collection({
+                init_with_n_elements: 0,
+                allow_up: false,
+                allow_down: false,
+                max: 400,
+                add_at_the_end: true,
+                add: `<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Add New ${label}</a>`,
+                remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
+                after_add: function(collection, element){
+                    $(element).find('.select2entity').select2entity();
+                    $(element).find('.select2-simple').select2({
+                        width: '100%',
                     });
-                }
-                return true;
-            },
+                    if (tinymce && $(element).find('.tinymce').length > 0 ) {
+                        $(element).find('.tinymce').each(function (index, textarea) {
+                            tinymce.execCommand("mceAddEditor", false, textarea.id);
+                        });
+                    }
+                    return true;
+                },
+            })
         });
     }
 
@@ -92,10 +83,13 @@
             max: 400,
             position_field_selector: '.position-id',
             add_at_the_end: true,
-            add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Image</a>',
+            add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Add New Image</a>',
             remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
             after_add: function(collection, element){
                 $(element).find('.select2entity').select2entity();
+                $(element).find('.select2-simple').select2({
+                    width: '100%',
+                });
                 if (tinymce && $(element).find('.tinymce').length > 0 ) {
                     $(element).find('.tinymce').each(function (index, textarea) {
                         tinymce.execCommand("mceAddEditor", false, textarea.id);
@@ -111,10 +105,13 @@
             max: 400,
             position_field_selector: '.position-id',
             add_at_the_end: true,
-            add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Audio</a>',
+            add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Add New Audio</a>',
             remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
             after_add: function(collection, element){
                 $(element).find('.select2entity').select2entity();
+                $(element).find('.select2-simple').select2({
+                    width: '100%',
+                });
                 if (tinymce && $(element).find('.tinymce').length > 0 ) {
                     $(element).find('.tinymce').each(function (index, textarea) {
                         tinymce.execCommand("mceAddEditor", false, textarea.id);
@@ -130,10 +127,13 @@
             max: 400,
             position_field_selector: '.position-id',
             add_at_the_end: true,
-            add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Transcript</a>',
+            add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Add New Transcript</a>',
             remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
             after_add: function(collection, element){
                 $(element).find('.select2entity').select2entity();
+                $(element).find('.select2-simple').select2({
+                    width: '100%',
+                });
                 if (tinymce && $(element).find('.tinymce').length > 0 ) {
                     $(element).find('.tinymce').each(function (index, textarea) {
                         tinymce.execCommand("mceAddEditor", false, textarea.id);
@@ -141,19 +141,6 @@
                 }
                 return true;
             },
-        });
-    }
-
-
-    function imageModals() {
-        $('#imgModal').on('show.bs.modal', function (event) {
-            var $button = $(event.relatedTarget);
-            // Button that triggered the modal
-            var $modal = $(this);
-
-            $modal.find('#modalTitle').text($button.data('title'));
-            $modal.find('figcaption').html($button.parent().parent().find('.caption').clone());
-            $modal.find("#modalImage").attr('src', $button.data('img'));
         });
     }
 
@@ -188,13 +175,61 @@
         alertList.forEach(function (alert) {
             new bootstrap.Alert(alert);
         }); // add alert dismissal
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
         if (typeof $().collection === 'function') {
-            simpleCollection();
             complexCollection();
             mediaCollection();
         }
-        imageModals();
         menuTabs();
+        $('.select2-simple').select2({
+            width: '100%',
+        });
+
+        const select2entityModal = document.getElementById('select2entity_modal')
+        if (select2entityModal) {
+            select2entityModal.addEventListener('show.bs.modal', event => {
+                console.log('event', event);
+                const button = event.relatedTarget
+                const contentRoute = button.getAttribute('data-modal-content-route');
+                $(select2entityModal).find('.modal-content').load(contentRoute, () => {
+                    // form submission
+                    $(select2entityModal).find('form').submit((formSubmitEvent) => {
+                        formSubmitEvent.preventDefault();
+                        console.log($(select2entityModal).find('form').attr("action"));
+                        console.log($(select2entityModal).find('form').serialize());
+                        $.post(
+                            $(select2entityModal).find('form').attr("action"),
+                            $(select2entityModal).find('form').serialize(),
+                            (data) => {
+                                if (data.success) {
+                                    $(select2entityModal).modal('hide');
+                                } else {
+                                    alert('There was a problem saving the form.');
+                                }
+                            },
+                        );
+                    });
+                    // initialize select2entity, select2 simple, and tinymce for modal content
+                    $(select2entityModal).find('.select2entity').select2entity();
+                    $(select2entityModal).find('.select2-simple').select2({
+                        width: '100%',
+                    });
+                    if (tinymce && $(select2entityModal).find('.tinymce').length > 0 ) {
+                        $(select2entityModal).find('.tinymce').each(function (index, textarea) {
+                            tinymce.execCommand('mceRemoveEditor', false, textarea.id);
+                            tinymce.execCommand("mceAddEditor", false, textarea.id);
+                        });
+                    }
+                });
+            });
+            select2entityModal.addEventListener('hidden.bs.modal', () => {
+                // remove current modal content on hide
+                $(select2entityModal).find('.modal-content').html('');
+            });
+        }
 
         let showMoreContentList = [].slice.call(document.querySelectorAll('.show-more-content'))
         showMoreContentList.map((showMoreContentEl) => {
@@ -230,6 +265,20 @@
             setTimeout(updateAnchorScroll, 3000)
             setTimeout(updateAnchorScroll, 4000)
         }
+
+        // fix collection required label
+        $('legend.required, label.required').each( (index, element) => {
+            if ($(element).next().hasClass('collection')) {
+                $(element).removeClass('required');
+            }
+        });
+
+        // fix select2 not focusing properly on open https://stackoverflow.com/a/67691578
+        $(document).on('select2:open', (e) => {
+            $(`.select2-search__field[aria-controls='select2-${e.target.id}-results']`).each((key, value) => {
+                value.focus();
+            });
+        })
     });
 
 })(jQuery, window);

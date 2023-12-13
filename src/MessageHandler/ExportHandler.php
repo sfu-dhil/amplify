@@ -22,8 +22,7 @@ class ExportHandler {
         private EntityManagerInterface $entityManager,
         private ExportRepository $exportRepository,
         private LoggerInterface $messengerLogger,
-    ) {
-    }
+    ) {}
 
     public function __invoke(ExportMessage $exportMessage) : void {
         $export = $this->exportRepository->find($exportMessage->getExportId());

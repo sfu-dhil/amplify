@@ -89,7 +89,7 @@ class ShareController extends AbstractController implements PaginatorAwareInterf
     public function typeahead(Request $request, UserRepository $userRepository, Podcast $podcast) : JsonResponse {
         $q = $request->query->get('q');
         if ( ! $q) {
-            return new JsonResponse([]);
+            $q = '%';
         }
         $data = [];
 

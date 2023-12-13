@@ -1,3 +1,4 @@
 tetranz_select2_entity:
+    minimum_input_length: 0
     theme: 'bootstrap-5'
     width: 100%

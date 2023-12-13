@@ -3,15 +3,21 @@
 {% block title %}Edit Publisher {{ publisher.name }}{% endblock %}
 
 {% block breadcrumbs %}
-    <li class="breadcrumb-item"><a href="{{ path('homepage') }}">Home</a></li>
-    <li class="breadcrumb-item"><a href="{{ path('publisher_index') }}">Publishers</a></li>
-    <li class="breadcrumb-item"><a href="{{ path('publisher_show', {'id': publisher.id }) }}">{{ publisher.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': publisher.podcast.id}) }}">{{ publisher.podcast.title }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('publisher_index', { 'podcast_id': publisher.podcast.id }) }}">Publishers</a></li>
+    <li class="breadcrumb-item">{{ publisher.name }}</li>
     <li class="breadcrumb-item active" aria-current="page">Edit</li>
 {% endblock %}
 
 {% block body %}
-    {% embed 'publisher/partial/form.html.twig' %}
-    {% endembed %}
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <div class="mb-3 text-center">
+        <input type="submit" value="Save" class="btn btn-primary" />
+        <a href="{{ path('publisher_index', { 'podcast_id': publisher.podcast.id }) }}" class="btn btn-warning"> Cancel </a>
+    </div>
+    {{ form_end(form) }}
 {% endblock %}
 
 {% block javascripts %}

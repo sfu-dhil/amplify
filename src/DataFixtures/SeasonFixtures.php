@@ -37,13 +37,15 @@ class SeasonFixtures extends Fixture implements DependentFixtureInterface, Fixtu
     public function load(ObjectManager $em) : void {
         $this->imageManager->setCopy(true);
         for ($i = 0; $i < 8; $i++) {
+            $podcast = $this->getReference($i < 4 ? 'podcast.1' : 'podcast.5');
+
             $fixture = new Season();
             $fixture->setNumber($i);
             $fixture->setTitle('Title ' . $i);
             $fixture->setSubTitle('SubTitle ' . $i);
             $fixture->setDescription("<p>This is paragraph {$i}</p>");
-            $fixture->setPodcast($this->getReference($i < 4 ? 'podcast.1' : 'podcast.5'));
-            $fixture->setPublisher($this->getReference('publisher.1'));
+            $fixture->setPodcast($podcast);
+            $fixture->setPublisher($podcast->getAllPublishers()[0]);
             $fixture->setCreated(new DateTimeImmutable('2023-05-25'));
             $fixture->setUpdated(new DateTimeImmutable('2023-05-25'));
             $em->persist($fixture);
@@ -72,7 +74,6 @@ class SeasonFixtures extends Fixture implements DependentFixtureInterface, Fixtu
     public function getDependencies() {
         return [
             PodcastFixtures::class,
-            PublisherFixtures::class,
         ];
     }
 }

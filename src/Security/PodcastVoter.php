@@ -16,8 +16,7 @@ class PodcastVoter extends Voter {
 
     public function __construct(
         private Security $security,
-    ) {
-    }
+    ) {}
 
     private function canAccess(Podcast $podcast, User $user) : bool {
         foreach ($podcast->getShares() as $share) {

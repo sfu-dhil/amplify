@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Podcast;
 use App\Entity\Publisher;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
@@ -22,29 +23,35 @@ class PublisherRepository extends ServiceEntityRepository {
         parent::__construct($registry, Publisher::class);
     }
 
-    public function indexQuery() : Query {
+    public function indexQuery(Podcast $podcast) : Query {
         return $this->createQueryBuilder('publisher')
+            ->andWhere('publisher.podcast = :p')
             ->orderBy('publisher.name', 'ASC')
+            ->setParameter('p', $podcast->getId())
             ->getQuery()
         ;
     }
 
-    public function typeaheadQuery(string $q) : Query {
+    public function typeaheadQuery(Podcast $podcast, string $q) : Query {
         return $this->createQueryBuilder('publisher')
+            ->andWhere('publisher.podcast = :p')
             ->andWhere('publisher.name LIKE :q')
             ->orderBy('publisher.name', 'ASC')
             ->setParameter('q', "%{$q}%")
+            ->setParameter('p', $podcast->getId())
             ->getQuery()
         ;
     }
 
-    public function searchQuery(string $q) : Query {
+    public function searchQuery(Podcast $podcast, string $q) : Query {
         return $this->createQueryBuilder('publisher')
             ->addSelect('MATCH (publisher.name, publisher.description) AGAINST(:q BOOLEAN) as HIDDEN score')
+            ->andWhere('publisher.podcast = :p')
             ->andHaving('score > 0')
             ->orderBy('score', 'DESC')
             ->addOrderBy('publisher.name', 'ASC')
             ->setParameter('q', $q)
+            ->setParameter('p', $podcast->getId())
             ->getQuery()
         ;
     }

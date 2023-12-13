@@ -18,8 +18,7 @@ class ExportCleanupHandler {
     public function __construct(
         private KernelInterface $kernel,
         private LoggerInterface $messengerLogger,
-    ) {
-    }
+    ) {}
 
     public function __invoke(ExportCleanupMessage $exportCleanupMessage) : void {
         try {

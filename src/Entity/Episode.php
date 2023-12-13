@@ -36,8 +36,8 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
     #[ORM\Column(type: 'string', length: 255, nullable: false, options: ['default' => 'full'])]
     private ?string $episodeType = null;
 
-    #[ORM\Column(type: 'integer')]
-    private ?int $number = null;
+    #[ORM\Column(type: 'float')]
+    private ?float $number = null;
 
     #[ORM\Column(type: 'date')]
     private ?DateTimeInterface $date = null;
@@ -197,11 +197,11 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this;
     }
 
-    public function getNumber() : ?int {
+    public function getNumber() : ?float {
         return $this->number;
     }
 
-    public function setNumber(int $number) : self {
+    public function setNumber(float $number) : self {
         $this->number = $number;
 
         return $this;
@@ -209,14 +209,15 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
 
     public function getSlug() : string {
         $seasonSlug = $this->season?->getId() ? $this->season->getSlug() : '';
+        $episodeNumber = (float) $this->number; // removes trailing zeros if not needed
         if ('bonus' === $this->getEpisodeType()) {
-            return $seasonSlug . sprintf('B%02d', $this->number);
+            return "{$seasonSlug}B{$episodeNumber}";
         }
         if ('trailer' === $this->getEpisodeType()) {
-            return $seasonSlug . sprintf('T%02d', $this->number);
+            return "{$seasonSlug}T{$episodeNumber}";
         }
 
-        return $seasonSlug . sprintf('E%02d', $this->number);
+        return "{$seasonSlug}E{$episodeNumber}";
     }
 
     public function getDate() : ?DateTimeInterface {
@@ -361,20 +362,6 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
 
     public function getContributions() : Collection {
         return $this->contributions;
-    }
-
-    public function getContributionsGroupedByPerson() : array {
-        $contributions = [];
-
-        foreach ($this->contributions as $contribution) {
-            $person = $contribution->getPerson();
-            if ( ! array_key_exists($person->getId(), $contributions)) {
-                $contributions[$person->getId()] = [];
-            }
-            $contributions[$person->getId()][] = $contribution;
-        }
-
-        return $contributions;
     }
 
     public function addContribution(Contribution $contribution) : self {

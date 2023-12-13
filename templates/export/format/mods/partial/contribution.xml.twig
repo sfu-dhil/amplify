@@ -2,14 +2,12 @@
     <namePart>{{ person.sortableName }}</namePart>
     <displayForm>{{ person.fullName }}</displayForm>
     {% if person.institution %}
-    <affiliation>{{ person.institution}}</affiliation>
+    <affiliation>{{ person.institution }}</affiliation>
     {% endif %}
     {% for role in roles %}
     <role>
         <roleTerm type="text" authority="marcrelator">{{ role.label }}</roleTerm>
-        {% if role.relatorTerm %}
-        <roleTerm type='code' authority='marcrelator'>{{ role.relatorTerm }}</roleTerm>
-        {% endif %}
+        <roleTerm type="code" authority="marcrelator">{{ role.value }}</roleTerm>
     </role>
     {% endfor %}
     {% if person.bio %}

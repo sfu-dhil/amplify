@@ -68,9 +68,7 @@ class IslandoraExport extends ExportService {
         foreach ($contributions as $contribution) {
             $person = $contribution['person'];
             foreach ($contribution['roles'] as $role) {
-                if ($role->getRelatorTerm()) {
-                    $linked_agents[] = "relators:{$role->getRelatorTerm()}:person:{$person->getSortableName()}";
-                }
+                $linked_agents[] = "relators:{$role->value}:person:{$person->getSortableName()}";
             }
         }
 

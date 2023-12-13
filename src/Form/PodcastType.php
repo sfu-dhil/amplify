@@ -24,8 +24,7 @@ use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 class PodcastType extends AbstractType {
     public function __construct(
         public UrlGeneratorInterface $router,
-    ) {
-    }
+    ) {}
 
     /**
      * Add form fields to $builder.
@@ -62,6 +61,10 @@ class PodcastType extends AbstractType {
             'expanded' => false,
             'multiple' => false,
             'preferred_choices' => ['en', 'fr'],
+            'attr' => [
+                'class' => 'select2-simple',
+                'data-theme' => 'bootstrap-5',
+            ],
         ]);
         $builder->add('description', TextareaType::class, [
             'label' => 'Description',
@@ -91,26 +94,30 @@ class PodcastType extends AbstractType {
             'label' => 'Publisher',
             'class' => Publisher::class,
             'remote_route' => 'publisher_typeahead',
+            'remote_params' => ['podcast_id' => $builder->getData()->getId()],
             'allow_clear' => true,
             'attr' => [
-                'add_path' => 'publisher_new',
+                'add_route' => $this->router->generate('publisher_new', ['podcast_id' => $builder->getData()->getId()]),
                 'add_label' => 'Add Publisher',
+                'add_modal' => true,
             ],
             'placeholder' => 'Search for an existing publisher by name',
         ]);
         $builder->add('contributions', CollectionType::class, [
             'label' => 'Contributors',
-            'required' => false,
+            'required' => true,
             'allow_add' => true,
             'allow_delete' => true,
             'delete_empty' => true,
             'entry_type' => ContributionType::class,
             'entry_options' => [
                 'label' => false,
+                'podcast' => $builder->getData(),
             ],
             'by_reference' => false,
             'attr' => [
                 'class' => 'collection collection-complex',
+                'data-collection-label' => 'Contributor',
             ],
         ]);
         $builder->add('categories', CollectionType::class, [
@@ -132,6 +139,7 @@ class PodcastType extends AbstractType {
             'by_reference' => false,
             'attr' => [
                 'class' => 'collection collection-complex',
+                'data-collection-label' => 'Apple Podcast Category',
             ],
         ]);
         $builder->add('keywords', CollectionType::class, [
@@ -146,6 +154,7 @@ class PodcastType extends AbstractType {
             ],
             'attr' => [
                 'class' => 'collection collection-complex',
+                'data-collection-label' => 'Keyword',
             ],
         ]);
         $builder->add('images', CollectionType::class, [

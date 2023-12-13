@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4babda9a6168c0858866285cdb923262",
+    "content-hash": "81536aaf9ce599032b88438d403febaa",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -3890,11 +3890,11 @@
         },
         {
             "name": "sfu-dhil/nines",
-            "version": "v6.3.11",
+            "version": "v6.3.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sfu-dhil/nines-bundles.git",
-                "reference": "a171e8f08309ad1371d8f0557d8eada37a15e7b3"
+                "reference": "fe294a3d31e777cb9d40f5fcd1aaff0306bfdc86"
             },
             "require": {
                 "doctrine/cache": "^2.2",
@@ -3963,7 +3963,7 @@
                 }
             ],
             "description": "Some useful bundles.",
-            "time": "2023-10-23T23:35:24+00:00"
+            "time": "2023-12-16T00:10:39+00:00"
         },
         {
             "name": "simplepie/simplepie",

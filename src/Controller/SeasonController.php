@@ -34,7 +34,7 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
     public function typeahead(Request $request, SeasonRepository $seasonRepository, Podcast $podcast) : JsonResponse {
         $q = $request->query->get('q');
         if ( ! $q) {
-            return new JsonResponse([]);
+            $q = '%';
         }
 
         $data = [];
@@ -74,7 +74,12 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
             $entityManager->flush();
             $this->addFlash('success', 'Season created successfully.');
 
+            if ($request->request->has('submitAndContinue')) {
+                return $this->redirectToRoute('season_edit', ['podcast_id' => $podcast->getId(), 'id' => $season->getId()]);
+            }
+
             return $this->redirectToRoute('podcast_show', ['id' => $podcast->getId()]);
+
         }
 
         return [
@@ -132,7 +137,12 @@ class SeasonController extends AbstractController implements PaginatorAwareInter
             $entityManager->flush();
             $this->addFlash('success', 'Season updated successfully.');
 
+            if ($request->request->has('submitAndContinue')) {
+                return $this->redirectToRoute('season_edit', ['podcast_id' => $podcast->getId(), 'id' => $season->getId()]);
+            }
+
             return $this->redirectToRoute('season_show', ['podcast_id' => $podcast->getId(), 'id' => $season->getId()]);
+
         }
 
         return [

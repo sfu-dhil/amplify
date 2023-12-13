@@ -1,0 +1,18 @@
+{% set statusItems = season.status|filter(v => not v.child is defined) %}
+
+<ul class="list-group list-group-flush">
+{% embed 'status/partial/heading.html.twig' with {
+    'label': season.slug ~ ' Metadata: ' ~ season.title,
+    'count': statusItems|length
+} %}{% endembed %}
+</ul>
+<ul class="list-group list-group-flush list-group-numbered">
+{% embed 'status/partial/status_items.html.twig' with {
+    'items': statusItems
+} %}{% endembed %}
+</ul>
+{% for episode in season.episodes %}
+    {% embed 'status/partial/episode.html.twig' with {
+        'episode': episode
+    } %}{% endembed %}
+{% endfor %}

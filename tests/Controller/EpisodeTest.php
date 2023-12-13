@@ -28,7 +28,7 @@ class EpisodeTest extends ControllerTestCase {
             $this->login($loginCredentials);
             $crawler = $this->client->request('GET', '/podcasts/2/episodes/1');
             $this->assertResponseIsSuccessful();
-            $this->assertSame(1, $crawler->filter('.page-actions')->selectLink('Edit')->count());
+            $this->assertEquals(1, $crawler->filter('.page-actions')->selectLink('Edit Episode')->count());
         }
     }
 
@@ -48,8 +48,8 @@ class EpisodeTest extends ControllerTestCase {
             $formCrawler = $this->client->request('GET', '/podcasts/2/episodes/1/edit');
             $this->assertResponseIsSuccessful();
 
-            $form = $formCrawler->selectButton('Update')->form([
-                'episode[number]' => 10,
+            $form = $formCrawler->selectButton('Save')->form([
+                'episode[number]' => 10.5,
                 'episode[date]' => '2020-01-01',
                 'episode[runTime]' => '00:09:20',
                 'episode[title]' => 'Updated Title',
@@ -122,6 +122,6 @@ class EpisodeTest extends ControllerTestCase {
 
         $this->em->clear();
         $postCount = count($repo->findAll());
-        $this->assertSame($preCount - 1, $postCount);
+        $this->assertEquals($preCount - 1, $postCount);
     }
 }

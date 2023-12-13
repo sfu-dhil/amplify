@@ -28,7 +28,7 @@ class SeasonTest extends ControllerTestCase {
             $this->login($loginCredentials);
             $crawler = $this->client->request('GET', '/podcasts/2/seasons/1');
             $this->assertResponseIsSuccessful();
-            $this->assertSame(1, $crawler->filter('.page-actions')->selectLink('Edit')->count());
+            $this->assertEquals(1, $crawler->filter('.page-actions')->selectLink('Edit Season')->count());
         }
     }
 
@@ -48,7 +48,7 @@ class SeasonTest extends ControllerTestCase {
             $this->client->request('GET', '/podcasts/2/seasons/typeahead?q=' . self::SEARCH_QUERY);
             $response = $this->client->getResponse();
             $this->assertResponseIsSuccessful();
-            $this->assertSame('application/json', $response->headers->get('content-type'));
+            $this->assertEquals('application/json', $response->headers->get('content-type'));
             $json = json_decode($response->getContent());
             $this->assertCount(4, $json);
         }
@@ -70,13 +70,13 @@ class SeasonTest extends ControllerTestCase {
             $formCrawler = $this->client->request('GET', '/podcasts/2/seasons/1/edit');
             $this->assertResponseIsSuccessful();
 
-            $form = $formCrawler->selectButton('Update')->form([
+            $form = $formCrawler->selectButton('Save')->form([
                 'season[number]' => 10,
                 'season[title]' => 'Updated Title',
                 'season[subTitle]' => 'Updated subTitle',
                 'season[description]' => '<p>Updated Text</p>',
             ]);
-            $this->overrideField($form, 'season[publisher]', '2');
+            $this->overrideField($form, 'season[publisher]', '6');
 
             $this->client->submit($form);
             $this->assertResponseRedirects('/podcasts/2/seasons/1', Response::HTTP_FOUND);
@@ -108,7 +108,7 @@ class SeasonTest extends ControllerTestCase {
                 'season[subTitle]' => 'Updated subTitle',
                 'season[description]' => '<p>Updated Text</p>',
             ]);
-            $this->overrideField($form, 'season[publisher]', '2');
+            $this->overrideField($form, 'season[publisher]', '6');
 
             $this->client->submit($form);
             $this->assertResponseRedirects('/podcasts/2', Response::HTTP_FOUND);
@@ -134,6 +134,6 @@ class SeasonTest extends ControllerTestCase {
 
         $this->em->clear();
         $postCount = count($repo->findAll());
-        $this->assertSame($preCount - 1, $postCount);
+        $this->assertEquals($preCount - 1, $postCount);
     }
 }

@@ -20,11 +20,8 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Response;
 use Nines\MediaBundle\Entity\Audio;
-use Nines\MediaBundle\Entity\AudioContainerInterface;
 use Nines\MediaBundle\Entity\Image;
-use Nines\MediaBundle\Entity\ImageContainerInterface;
 use Nines\MediaBundle\Entity\Pdf;
-use Nines\MediaBundle\Entity\PdfContainerInterface;
 use Nines\MediaBundle\Service\AudioManager;
 use Nines\MediaBundle\Service\ImageManager;
 use Nines\MediaBundle\Service\PdfManager;
@@ -354,13 +351,13 @@ class ImportPodcastCommand extends Command {
             $season = $this->seasons[$seasonNumber];
             $episode->setSeason($season);
 
-            $episodeNumber = $episode->getNumber() ? $episode->getNumber() : (int) $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'episode');
+            $episodeNumber = $episode->getNumber() ? (float) $episode->getNumber() : $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'episode');
             if ($episodeNumber) {
-                $this->seasonEpisodeCounter[$seasonNumber][$episodeType] = $episodeNumber;
+                $this->seasonEpisodeCounter[$seasonNumber][$episodeType] = (int) $episodeNumber;
             } else {
                 $episodeNumber = ++$this->seasonEpisodeCounter[$seasonNumber][$episodeType];
             }
-            $episode->setNumber($episodeNumber);
+            $episode->setNumber((float) $episodeNumber);
 
             $this->output->writeln("- Season {$episode->getSeason()->getNumber()} Episode {$episode->getNumber()}");
 
@@ -674,7 +671,7 @@ class ImportPodcastCommand extends Command {
             $this->seasons = [];
             $this->seasonEpisodeCounter = [];
             foreach ($this->podcast->getSeasons() as $season) {
-                if ($season->getNumber() > 0) {
+                if (null !== $season->getNumber()) {
                     $this->seasons[$season->getNumber()] = $season;
                 }
             }

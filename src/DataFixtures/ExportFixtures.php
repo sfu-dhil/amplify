@@ -15,8 +15,7 @@ use Symfony\Component\Filesystem\Filesystem;
 class ExportFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface {
     public function __construct(
         private Filesystem $filesystem,
-    ) {
-    }
+    ) {}
 
     public static function getGroups() : array {
         return ['dev', 'test'];

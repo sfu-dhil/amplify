@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
+use App\Config\ContributorRole;
 use App\Entity\Contribution;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -18,11 +19,12 @@ class ContributionFixtures extends Fixture implements DependentFixtureInterface,
 
     public function load(ObjectManager $em) : void {
         for ($i = 0; $i < 8; $i++) {
-            $fixture = new Contribution();
+            $podcast = $this->getReference($i < 4 ? 'podcast.1' : 'podcast.5');
 
-            $fixture->setPerson($this->getReference('person.1'));
-            $fixture->setContributorrole($this->getReference('contributorrole.1'));
-            $fixture->setPodcast($this->getReference($i < 4 ? 'podcast.1' : 'podcast.5'));
+            $fixture = new Contribution();
+            $fixture->setPerson($podcast->getAllPeople()[$i % 4]);
+            $fixture->setRoles([ContributorRole::hst]);
+            $fixture->setPodcast($podcast);
             $fixture->setSeason($this->getReference($i < 4 ? 'season.1' : 'season.5'));
             $fixture->setEpisode($this->getReference($i < 4 ? 'episode.1' : 'episode.5'));
             $fixture->setCreated(new DateTimeImmutable('2023-05-25'));
@@ -36,8 +38,6 @@ class ContributionFixtures extends Fixture implements DependentFixtureInterface,
 
     public function getDependencies() {
         return [
-            PersonFixtures::class,
-            ContributorRoleFixtures::class,
             PodcastFixtures::class,
             SeasonFixtures::class,
             EpisodeFixtures::class,

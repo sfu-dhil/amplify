@@ -18,7 +18,6 @@ twig:
         matomo_url: '%dhil.matomo_url%'
         matomo_siteid: '%dhil.matomo_siteid%'
         matomo_domain: '%dhil.matomo_domain%'
-        linker: '@Nines\UtilBundle\Services\EntityLinker'
         git_repo: '%env(default::string:GIT_REPO)%'
         git_commit: '%env(default::string:GIT_COMMIT)%'
         git_commit_short: '%env(default::string:GIT_COMMIT_SHORT)%'

@@ -33,8 +33,7 @@ class ExportService {
         protected int $totalEpisodes = 0,
         protected int $totalSteps = 1,
         protected int $stepsCompleted = 0,
-    ) {
-    }
+    ) {}
 
     protected function getContributorPersonAndRoles(array $allContributions) : array {
         $contributions = [];
@@ -46,7 +45,7 @@ class ExportService {
                     'roles' => [],
                 ];
             }
-            $contributions[$person->getId()]['roles'][] = $contribution->getContributorRole();
+            $contributions[$person->getId()]['roles'] = array_merge($contribution->getRoles(), $contributions[$person->getId()]['roles']);
         }
 
         return $contributions;

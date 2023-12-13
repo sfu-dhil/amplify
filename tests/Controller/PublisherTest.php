@@ -15,44 +15,39 @@ class PublisherTest extends ControllerTestCase {
 
     public function testIndex() : void {
         // Anon
-        $crawler = $this->client->request('GET', '/publishers');
+        $crawler = $this->client->request('GET', '/podcasts/2/publishers');
         $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
 
-        // User without podcast access, User with podcast access, Admin
-        foreach ([UserFixtures::USER, UserExtraFixtures::USER_WITH_ACCESS, UserFixtures::ADMIN] as $loginCredentials) {
-            $this->login($loginCredentials);
-            $crawler = $this->client->request('GET', '/publishers');
-            $this->assertResponseIsSuccessful();
-            $this->assertSame(1, $crawler->filter('.page-actions')->selectLink('New')->count());
-        }
-    }
+        // User without podcast access,
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('GET', '/podcasts/2/publishers');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
 
-    public function testShow() : void {
-        // Anon
-        $crawler = $this->client->request('GET', '/publishers/1');
-        $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
-
-        // User without podcast access, User with podcast access, Admin
-        foreach ([UserFixtures::USER, UserExtraFixtures::USER_WITH_ACCESS, UserFixtures::ADMIN] as $loginCredentials) {
+        // User with podcast access, Admin
+        foreach ([UserExtraFixtures::USER_WITH_ACCESS, UserFixtures::ADMIN] as $loginCredentials) {
             $this->login($loginCredentials);
-            $crawler = $this->client->request('GET', '/publishers/1');
+            $crawler = $this->client->request('GET', '/podcasts/2/publishers');
             $this->assertResponseIsSuccessful();
-            $this->assertSame(1, $crawler->filter('.page-actions')->selectLink('Edit')->count());
         }
     }
 
     public function testTypeahead() : void {
         // Anon
-        $this->client->request('GET', '/publishers/typeahead?q=' . self::SEARCH_QUERY);
+        $this->client->request('GET', '/podcasts/2/publishers/typeahead?q=' . self::SEARCH_QUERY);
         $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
 
+        // User without podcast access,
+        $this->login(UserFixtures::USER);
+        $this->client->request('GET', '/podcasts/2/publishers/typeahead?q=' . self::SEARCH_QUERY);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+
         // User without podcast access, User with podcast access, Admin
-        foreach ([UserFixtures::USER, UserExtraFixtures::USER_WITH_ACCESS, UserFixtures::ADMIN] as $loginCredentials) {
+        foreach ([UserExtraFixtures::USER_WITH_ACCESS, UserFixtures::ADMIN] as $loginCredentials) {
             $this->login($loginCredentials);
-            $this->client->request('GET', '/publishers/typeahead?q=' . self::SEARCH_QUERY);
+            $this->client->request('GET', '/podcasts/2/publishers/typeahead?q=' . self::SEARCH_QUERY);
             $response = $this->client->getResponse();
             $this->assertResponseIsSuccessful();
-            $this->assertSame('application/json', $response->headers->get('content-type'));
+            $this->assertEquals('application/json', $response->headers->get('content-type'));
             $json = json_decode($response->getContent());
             $this->assertCount(4, $json);
         }
@@ -60,13 +55,18 @@ class PublisherTest extends ControllerTestCase {
 
     public function testSearch() : void {
         // Anon
-        $crawler = $this->client->request('GET', '/publishers');
+        $crawler = $this->client->request('GET', '/podcasts/2/publishers');
         $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
 
+        // User without podcast access,
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('GET', '/podcasts/2/publishers');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+
         // User without podcast access, User with podcast access, Admin
-        foreach ([UserFixtures::USER, UserExtraFixtures::USER_WITH_ACCESS, UserFixtures::ADMIN] as $loginCredentials) {
+        foreach ([UserExtraFixtures::USER_WITH_ACCESS, UserFixtures::ADMIN] as $loginCredentials) {
             $this->login($loginCredentials);
-            $crawler = $this->client->request('GET', '/publishers');
+            $crawler = $this->client->request('GET', '/podcasts/2/publishers');
             $this->assertResponseIsSuccessful();
 
             $form = $crawler->selectButton('btn-search')->form([
@@ -74,22 +74,27 @@ class PublisherTest extends ControllerTestCase {
             ]);
 
             $responseCrawler = $this->client->submit($form);
-            $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+            $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         }
     }
 
     public function testEdit() : void {
         // Anon
-        $crawler = $this->client->request('GET', '/publishers/1/edit');
+        $crawler = $this->client->request('GET', '/podcasts/2/publishers/5/edit');
         $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
 
+        // User without podcast access,
+        $this->login(UserFixtures::USER);
+        $formCrawler = $this->client->request('GET', '/podcasts/2/publishers/5/edit');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+
         // User without podcast access, User with podcast access, Admin
-        foreach ([UserFixtures::USER, UserExtraFixtures::USER_WITH_ACCESS, UserFixtures::ADMIN] as $loginCredentials) {
+        foreach ([UserExtraFixtures::USER_WITH_ACCESS, UserFixtures::ADMIN] as $loginCredentials) {
             $this->login($loginCredentials);
-            $formCrawler = $this->client->request('GET', '/publishers/1/edit');
+            $formCrawler = $this->client->request('GET', '/podcasts/2/publishers/5/edit');
             $this->assertResponseIsSuccessful();
 
-            $form = $formCrawler->selectButton('Update')->form([
+            $form = $formCrawler->selectButton('Save')->form([
                 'publisher[name]' => 'Updated Name',
                 'publisher[location]' => 'Updated Location',
                 'publisher[website]' => 'http://example.com',
@@ -98,25 +103,32 @@ class PublisherTest extends ControllerTestCase {
             ]);
 
             $this->client->submit($form);
-            $this->assertResponseRedirects('/publishers/1', Response::HTTP_FOUND);
+            $this->assertResponseRedirects('/podcasts/2/publishers', Response::HTTP_FOUND);
             $responseCrawler = $this->client->followRedirect();
             $this->assertResponseIsSuccessful();
         }
     }
 
     public function testNew() : void {
+        $repo = self::getContainer()->get(PublisherRepository::class);
+        $newId = count($repo->findAll()) + 1;
+
         // Anon
-        $crawler = $this->client->request('GET', '/publishers/new');
+        $crawler = $this->client->request('GET', '/podcasts/2/publishers/new');
         $this->assertResponseRedirects('http://localhost/login', Response::HTTP_FOUND);
 
+        // User without podcast access,
+        $this->login(UserFixtures::USER);
+        $crawler = $this->client->request('GET', '/podcasts/2/publishers/new');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+
         // User without podcast access, User with podcast access, Admin
-        $newId = 5;
-        foreach ([UserFixtures::USER, UserExtraFixtures::USER_WITH_ACCESS, UserFixtures::ADMIN] as $loginCredentials) {
+        foreach ([UserExtraFixtures::USER_WITH_ACCESS, UserFixtures::ADMIN] as $loginCredentials) {
             $this->login($loginCredentials);
-            $formCrawler = $this->client->request('GET', '/publishers/new');
+            $formCrawler = $this->client->request('GET', '/podcasts/2/publishers/new');
             $this->assertResponseIsSuccessful();
 
-            $form = $formCrawler->selectButton('Create')->form([
+            $form = $formCrawler->selectButton('Save')->form([
                 'publisher[name]' => "Updated Name{$newId}",
                 'publisher[location]' => 'Updated Location',
                 'publisher[website]' => 'http://example.com',
@@ -125,9 +137,13 @@ class PublisherTest extends ControllerTestCase {
             ]);
 
             $this->client->submit($form);
-            $this->assertResponseRedirects("/publishers/{$newId}", Response::HTTP_FOUND);
-            $responseCrawler = $this->client->followRedirect();
+            $response = $this->client->getResponse();
             $this->assertResponseIsSuccessful();
+            $this->assertEquals('application/json', $response->headers->get('content-type'));
+            $json = (array) json_decode($response->getContent());
+            $this->assertEquals($json, [
+                'success' => true,
+            ]);
             $newId++;
         }
     }
@@ -136,18 +152,18 @@ class PublisherTest extends ControllerTestCase {
         $repo = self::getContainer()->get(PublisherRepository::class);
         $preCount = count($repo->findAll());
 
-        $this->login(UserFixtures::USER);
-        $crawler = $this->client->request('GET', '/publishers/1');
+        $this->login(UserExtraFixtures::USER_WITH_ACCESS);
+        $crawler = $this->client->request('GET', '/podcasts/2/publishers');
         $this->assertResponseIsSuccessful();
-        $form = $crawler->selectButton('Delete')->form();
-        $this->client->submit($form);
 
-        $this->assertResponseRedirects('/publishers', Response::HTTP_FOUND);
+        $form = $crawler->filter('form[action="/podcasts/2/publishers/8"]')->form();
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/podcasts/2/publishers', Response::HTTP_FOUND);
         $responseCrawler = $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
 
         $this->em->clear();
         $postCount = count($repo->findAll());
-        $this->assertSame($preCount - 1, $postCount);
+        $this->assertEquals($preCount - 1, $postCount);
     }
 }

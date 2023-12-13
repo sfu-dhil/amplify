@@ -26,8 +26,7 @@ class Builder implements ContainerAwareInterface {
         private TokenStorageInterface $tokenStorage,
         private PodcastRepository $podcastRepository,
         private ParameterBagInterface $parameterBagInterface,
-    ) {
-    }
+    ) {}
 
     private function hasRole(string $role) : bool {
         if ( ! $this->tokenStorage->getToken()) {
@@ -106,56 +105,6 @@ class Builder implements ContainerAwareInterface {
             ]);
 
             $menu->addChild('divider2', [
-                'label' => '<hr>',
-                'extras' => [
-                    'safe_label' => true,
-                ],
-            ]);
-
-            $contributorsMenu = $menu->addChild('Contributors', [
-                'uri' => '#',
-                'label' => 'Contributors',
-                'attributes' => [
-                    'class' => 'mb-1',
-                ],
-                'linkAttributes' => [
-                    'class' => 'btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed',
-                    'data-bs-toggle' => 'collapse',
-                    'data-bs-target' => '#contributors-collapse',
-                    'aria-expanded' => 'true',
-                ],
-                'childrenAttributes' => [
-                    'class' => 'collapse show btn-toggle-nav list-unstyled fw-normal pb-1 small',
-                    'id' => 'contributors-collapse',
-                ],
-            ]);
-
-            $contributorsMenu->addChild('People', [
-                'route' => 'person_index',
-                'linkAttributes' => [
-                    'class' => 'link-dark d-inline-flex text-decoration-none rounded',
-                ],
-            ]);
-            $contributorsMenu->addChild('Contributor Roles', [
-                'route' => 'contributor_role_index',
-                'linkAttributes' => [
-                    'class' => 'link-dark d-inline-flex text-decoration-none rounded',
-                ],
-            ]);
-            $contributorsMenu->addChild('Publishers', [
-                'route' => 'publisher_index',
-                'linkAttributes' => [
-                    'class' => 'link-dark d-inline-flex text-decoration-none rounded',
-                ],
-            ]);
-            $contributorsMenu->addChild('Institutions', [
-                'route' => 'institution_index',
-                'linkAttributes' => [
-                    'class' => 'link-dark d-inline-flex text-decoration-none rounded',
-                ],
-            ]);
-
-            $menu->addChild('divider3', [
                 'label' => '<hr>',
                 'extras' => [
                     'safe_label' => true,

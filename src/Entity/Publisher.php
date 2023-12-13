@@ -28,6 +28,10 @@ class Publisher extends AbstractEntity {
     #[ORM\Column(type: 'text')]
     private ?string $contact = null;
 
+    #[ORM\ManyToOne(targetEntity: 'Podcast', inversedBy: 'allPublishers')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ?Podcast $podcast = null;
+
     /**
      * @var Collection<int,Podcast>
      */
@@ -96,6 +100,16 @@ class Publisher extends AbstractEntity {
 
     public function setContact(string $contact) : self {
         $this->contact = $contact;
+
+        return $this;
+    }
+
+    public function getPodcast() : ?Podcast {
+        return $this->podcast;
+    }
+
+    public function setPodcast(?Podcast $podcast) : self {
+        $this->podcast = $podcast;
 
         return $this;
     }

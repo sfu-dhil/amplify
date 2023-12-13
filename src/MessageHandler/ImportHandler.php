@@ -22,8 +22,7 @@ class ImportHandler {
         private EntityManagerInterface $entityManager,
         private ImportRepository $importRepository,
         private LoggerInterface $messengerLogger,
-    ) {
-    }
+    ) {}
 
     public function __invoke(ImportMessage $importMessage) : void {
         $import = $this->importRepository->find($importMessage->getImportId());

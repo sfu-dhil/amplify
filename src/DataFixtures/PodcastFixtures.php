@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
+use App\Entity\Person;
 use App\Entity\Podcast;
+
+use App\Entity\Publisher;
 use App\Entity\Share;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -46,9 +49,41 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface, Fixt
             $fixture->addKeyword('Keyword ' . $i);
             $fixture->setCreated(new DateTimeImmutable('2023-05-25'));
             $fixture->setUpdated(new DateTimeImmutable('2023-05-25'));
-            $fixture->setPublisher($this->getReference('publisher.1'));
             $em->persist($fixture);
             $em->flush();
+
+            for ($j = 0; $j < 4; $j++) {
+                $person = new Person();
+                $person->setPodcast($fixture);
+                $person->setFullname('Fullname ' . $i . ' - ' . $j);
+                $person->setSortableName('SortableName ' . $i . ' - ' . $j);
+                $person->setLocation('Location ' . $i . ' - ' . $j);
+                $person->setBio("<p>This is paragraph {$i} - {$j}</p>");
+                $person->setCreated(new DateTimeImmutable('2023-05-25'));
+                $person->setUpdated(new DateTimeImmutable('2023-05-25'));
+                $person->setInstitution('Institution ' . $i . ' - ' . $j);
+                $em->persist($person);
+                $em->flush();
+            }
+
+            for ($j = 0; $j < 4; $j++) {
+                $publisher = new Publisher();
+                $publisher->setPodcast($fixture);
+                $publisher->setName('Name ' . $i . ' - ' . $j);
+                $publisher->setLocation('Location ' . $i . ' - ' . $j);
+                $publisher->setWebsite('Website ' . $i . ' - ' . $j);
+                $publisher->setDescription("<p>This is paragraph {$i} - {$j}</p>");
+                $publisher->setContact("<p>This is paragraph {$i} - {$j}</p>");
+                $publisher->setCreated(new DateTimeImmutable('2023-05-25'));
+                $publisher->setUpdated(new DateTimeImmutable('2023-05-25'));
+                $em->persist($publisher);
+                $em->flush();
+
+                if ($j == 0) {
+                    $fixture->setPublisher($publisher);
+                    $em->flush();
+                }
+            }
 
             $imageFile = self::IMAGE_FILES[$i % 4];
             $upload = new UploadedFile(dirname(__FILE__, 3) . '/tests/data/image/' . $imageFile, $imageFile, 'image/jpeg', null, true);
@@ -78,7 +113,6 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface, Fixt
 
     public function getDependencies() {
         return [
-            PublisherFixtures::class,
             UserFixtures::class,
             UserExtraFixtures::class,
         ];

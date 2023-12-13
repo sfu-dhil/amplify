@@ -8,17 +8,11 @@ use App\Repository\PersonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Nines\MediaBundle\Entity\LinkableInterface;
-use Nines\MediaBundle\Entity\LinkableTrait;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 #[ORM\Entity(repositoryClass: PersonRepository::class)]
 #[ORM\Index(name: 'person_ft', columns: ['fullname', 'bio'], flags: ['fulltext'])]
-class Person extends AbstractEntity implements LinkableInterface {
-    use LinkableTrait {
-        LinkableTrait::__construct as linkable_constructor;
-    }
-
+class Person extends AbstractEntity {
     #[ORM\Column(type: 'string')]
     private ?string $fullname = null;
 
@@ -31,8 +25,12 @@ class Person extends AbstractEntity implements LinkableInterface {
     #[ORM\Column(type: 'text')]
     private ?string $bio = null;
 
-    #[ORM\ManyToOne(targetEntity: 'App\Entity\Institution', inversedBy: 'people')]
-    private ?Institution $institution = null;
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $institution = null;
+
+    #[ORM\ManyToOne(targetEntity: 'Podcast', inversedBy: 'allPeople')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ?Podcast $podcast = null;
 
     /**
      * @var Collection<int,Contribution>
@@ -42,7 +40,6 @@ class Person extends AbstractEntity implements LinkableInterface {
 
     public function __construct() {
         parent::__construct();
-        $this->linkable_constructor();
         $this->contributions = new ArrayCollection();
     }
 
@@ -101,6 +98,26 @@ class Person extends AbstractEntity implements LinkableInterface {
         return $this;
     }
 
+    public function getInstitution() : ?string {
+        return $this->institution;
+    }
+
+    public function setInstitution(?string $institution) : self {
+        $this->institution = $institution;
+
+        return $this;
+    }
+
+    public function getPodcast() : ?Podcast {
+        return $this->podcast;
+    }
+
+    public function setPodcast(?Podcast $podcast) : self {
+        $this->podcast = $podcast;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int,Contribution>
      */
@@ -125,16 +142,6 @@ class Person extends AbstractEntity implements LinkableInterface {
                 $contribution->setPerson(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getInstitution() : ?Institution {
-        return $this->institution;
-    }
-
-    public function setInstitution(?Institution $institution) : self {
-        $this->institution = $institution;
 
         return $this;
     }

@@ -55,6 +55,7 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     private ?string $rss = null;
 
     #[ORM\ManyToOne(targetEntity: 'Publisher', inversedBy: 'podcasts')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     #[ORM\OrderBy(['name' => 'ASC', 'id' => 'ASC'])]
     private ?Publisher $publisher = null;
 
@@ -78,7 +79,7 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
      * @var Collection<int,Contribution>
      */
     #[ORM\OneToMany(targetEntity: 'Contribution', mappedBy: 'podcast', cascade: ['remove'])]
-    #[ORM\OrderBy(['person' => 'ASC', 'contributorRole' => 'ASC'])]
+    #[ORM\OrderBy(['person' => 'ASC'])]
     private $contributions;
 
     /**
@@ -108,6 +109,20 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
     #[ORM\OneToMany(targetEntity: 'Import', mappedBy: 'podcast', orphanRemoval: true)]
     #[ORM\OrderBy(['created' => 'DESC', 'id' => 'DESC'])]
     private $imports;
+
+    /**
+     * @var Collection<int,Person>
+     */
+    #[ORM\OneToMany(targetEntity: 'Person', mappedBy: 'podcast', cascade: ['remove'])]
+    #[ORM\OrderBy(['sortableName' => 'ASC', 'id' => 'ASC'])]
+    private $allPeople;
+
+    /**
+     * @var Collection<int,Person>
+     */
+    #[ORM\OneToMany(targetEntity: 'Publisher', mappedBy: 'podcast', cascade: ['remove'])]
+    #[ORM\OrderBy(['name' => 'ASC', 'id' => 'ASC'])]
+    private $allPublishers;
 
     protected static $ITUNES_CATEGORIES = [
         'Arts',
@@ -231,6 +246,8 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         $this->episodes = new ArrayCollection();
         $this->exports = new ArrayCollection();
         $this->imports = new ArrayCollection();
+        $this->allPeople = new ArrayCollection();
+        $this->allPublishers = new ArrayCollection();
     }
 
     public function __toString() : string {
@@ -423,20 +440,6 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
      */
     public function getContributions() : Collection {
         return $this->contributions;
-    }
-
-    public function getContributionsGroupedByPerson() : array {
-        $contributions = [];
-
-        foreach ($this->contributions as $contribution) {
-            $person = $contribution->getPerson();
-            if ( ! array_key_exists($person->getId(), $contributions)) {
-                $contributions[$person->getId()] = [];
-            }
-            $contributions[$person->getId()][] = $contribution;
-        }
-
-        return $contributions;
     }
 
     public function addContribution(Contribution $contribution) : self {
@@ -730,6 +733,62 @@ class Podcast extends AbstractEntity implements ImageContainerInterface {
         $expression = $expressionBuilder->in('status', Import::getActiveStatuses());
 
         return $this->imports->matching(new Criteria($expression));
+    }
+
+    /**
+     * @return Collection<int,Person>
+     */
+    public function getAllPeople() : Collection {
+        return $this->allPeople;
+    }
+
+    public function addAllPerson(Person $person) : self {
+        if ( ! $this->allPeople->contains($person)) {
+            $this->allPeople[] = $person;
+            $person->setPodcast($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAllPerson(Person $person) : self {
+        if ($this->allPeople->contains($person)) {
+            $this->allPeople->removeElement($person);
+            // set the owning side to null (unless already changed)
+            if ($person->getPodcast() === $this) {
+                $person->setPodcast(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int,Publisher>
+     */
+    public function getAllPublishers() : Collection {
+        return $this->allPublishers;
+    }
+
+    public function addAllPublisher(Publisher $publisher) : self {
+        if ( ! $this->allPublishers->contains($publisher)) {
+            $this->allPublishers[] = $publisher;
+            $publisher->setPodcast($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAllPublisher(Publisher $publisher) : self {
+        if ($this->allPublishers->contains($publisher)) {
+            $this->allPublishers->removeElement($publisher);
+            // set the owning side to null (unless already changed)
+            if ($publisher->getPodcast() === $this) {
+                $publisher->setPodcast(null);
+            }
+        }
+
+        return $this;
     }
 
     public function hasActiveImport() : ?bool {

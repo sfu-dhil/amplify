@@ -4,27 +4,30 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Config\ContributorRole;
 use App\Repository\ContributionRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Nines\UtilBundle\Entity\AbstractEntity;
 
 #[ORM\Entity(repositoryClass: ContributionRepository::class)]
 class Contribution extends AbstractEntity {
+    #[ORM\Column(type: 'json', options: ['default' => '[]'])]
+    private ?array $roles = [];
+
     #[ORM\ManyToOne(targetEntity: 'Person', inversedBy: 'contributions')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Person $person = null;
 
-    #[ORM\ManyToOne(targetEntity: 'ContributorRole', inversedBy: 'contributions')]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private ?ContributorRole $contributorRole = null;
-
     #[ORM\ManyToOne(targetEntity: 'Podcast', inversedBy: 'contributions')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?Podcast $podcast = null;
 
     #[ORM\ManyToOne(targetEntity: 'Season', inversedBy: 'contributions')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?Season $season = null;
 
     #[ORM\ManyToOne(targetEntity: 'Episode', inversedBy: 'contributions')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?Episode $episode = null;
 
     public function __construct() {
@@ -32,7 +35,7 @@ class Contribution extends AbstractEntity {
     }
 
     public function __toString() : string {
-        return implode(',', [$this->person, $this->contributorRole, $this->podcast, $this->season, $this->episode]);
+        return implode(',', array_merge([$this->person, $this->podcast, $this->season, $this->episode], $this->getRoleLabels()));
     }
 
     public function getPerson() : ?Person {
@@ -45,12 +48,38 @@ class Contribution extends AbstractEntity {
         return $this;
     }
 
-    public function getContributorRole() : ?ContributorRole {
-        return $this->contributorRole;
+    public function getRoles() : array {
+        $roles = [];
+        foreach ($this->roles as $role) {
+            $roles[] = ContributorRole::from($role);
+        }
+
+        return $roles;
     }
 
-    public function setContributorRole(?ContributorRole $contributorRole) : self {
-        $this->contributorRole = $contributorRole;
+    public function getRoleLabels() : array {
+        $roles = [];
+        foreach ($this->roles as $role) {
+            $roles[] = ContributorRole::from($role)->label();
+        }
+
+        return $roles;
+    }
+
+    public function getRoleValues() : array {
+        $roles = [];
+        foreach ($this->roles as $role) {
+            $roles[] = ContributorRole::from($role)->value;
+        }
+
+        return $roles;
+    }
+
+    public function setRoles(array $roles) : self {
+        $this->roles = [];
+        foreach ($roles as $contributorRole) {
+            $this->roles[] = $contributorRole->value;
+        }
 
         return $this;
     }

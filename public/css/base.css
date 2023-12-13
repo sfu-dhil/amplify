@@ -195,6 +195,21 @@ div.collection-complex > div:not(:last-child) {
     color: #fff !important;
     background-color: RGBA(2,125,130,var(--bs-bg-opacity,1)) !important;
 }
+.bg-primary {
+    --bs-primary-rgb: 2,125,130;
+}
+.text-primary {
+    --bs-primary-rgb: 2,125,130;
+}
+.link-primary {
+    color: #027D82 !important;
+}
+.alert-success {
+    --bs-alert-color: #027D82;
+    --bs-alert-bg: rgba(2,125,130 , 0.125);
+    --bs-alert-border-color: rgba(2,125,130 , 0.25);
+  }
+
 
 /* amplify pink #DD1B70 or 221,27,122 */
 .btn-danger {
@@ -217,10 +232,13 @@ div.collection-complex > div:not(:last-child) {
     color: #fff !important;
     background-color: RGBA(221,27,122,var(--bs-bg-opacity,1)) !important;
 }
+.bg-danger {
+    --bs-primary-rgb: 221,27,122;
+}
 .alert-danger {
-    --bs-alert-color: #842029;
-    --bs-alert-bg: #f8d7da;
-    --bs-alert-border-color: #f5c2c7;
+    --bs-alert-color: #DD1B70;
+    --bs-alert-bg: rgba(0, 0, 0, 0.125);
+    --bs-alert-border-color: rgba(0, 0, 0, 0.25);
 }
 .btn-warning {
     --bs-btn-color: #fff;
@@ -237,4 +255,26 @@ div.collection-complex > div:not(:last-child) {
     --bs-btn-disabled-color: #fff;
     --bs-btn-disabled-bg: #DD1B70;
     --bs-btn-disabled-border-color: #DD1B70;
+}
+
+select.select2-hidden-accessible {
+    position: relative !important;
+    display: block !important;
+    width: 0px !important;
+    height: 0px !important;
+    border: none !important;
+    top: calc(1.5em + .75rem + 2px) !important;
+}
+
+textarea.tinymce {
+    position: relative !important;
+    display: block !important;
+    width: 0px !important;
+    height: 0px !important;
+    min-height: 0px !important;
+    padding: 0px !important;
+    border: none !important;
+    resize: none !important;
+    outline: none !important;
+    box-shadow: none !important;
 }

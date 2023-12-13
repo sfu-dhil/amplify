@@ -231,7 +231,7 @@ class ImportPodcastCommandTest extends CommandTestCase {
             'episodes' => [
                 [
                     'guid' => 'https://podcast.com/?p=1',
-                    'number' => 1,
+                    'number' => 1.0,
                     'date' => '2022-10-12T14:43:07-07:00',
                     'runTime' => '01:10:10',
                     'title' => 'episode 1 title stub',
@@ -260,7 +260,7 @@ class ImportPodcastCommandTest extends CommandTestCase {
                 ],
                 [
                     'guid' => 'https://podcast.com/?p=2',
-                    'number' => 2,
+                    'number' => 2.0,
                     'date' => '2022-10-13T14:43:07-07:00',
                     'runTime' => '01:10:09',
                     'title' => 'episode 2 title stub',
@@ -298,7 +298,7 @@ class ImportPodcastCommandTest extends CommandTestCase {
         ];
 
         // init state
-        $this->assertSame($this->podcastStub($podcast), [
+        $this->assertEquals($this->podcastStub($podcast), [
             'title' => 'Title 3',
             'subTitle' => 'SubTitle 3',
             'explicit' => false,
@@ -332,7 +332,7 @@ class ImportPodcastCommandTest extends CommandTestCase {
             'podcastId' => 4,
         ]);
         $podcast = $podcastRepository->find(4);
-        $this->assertSame($this->podcastStub($podcast), $expectedPodcast);
+        $this->assertEquals($this->podcastStub($podcast), $expectedPodcast);
 
         // running the import again will not add duplicate resources
         $mock->reset();
@@ -351,7 +351,7 @@ class ImportPodcastCommandTest extends CommandTestCase {
             'podcastId' => 4,
         ]);
         $podcast = $podcastRepository->find(4);
-        $this->assertSame($this->podcastStub($podcast), $expectedPodcast);
+        $this->assertEquals($this->podcastStub($podcast), $expectedPodcast);
     }
 
     protected function setUp() : void {

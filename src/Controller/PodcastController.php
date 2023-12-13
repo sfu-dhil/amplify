@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Podcast;
-use App\Entity\Share;
 use App\Form\PodcastType;
 use App\Repository\PodcastRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,45 +37,6 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
         return [
             'podcasts' => $this->paginator->paginate($query, $request->query->getInt('page', 1), $this->getParameter('page_size'), ['wrap-queries' => true]),
             'q' => $q,
-        ];
-    }
-
-    #[Route(path: '/new', name: 'podcast_new', methods: ['GET', 'POST'])]
-    #[Template]
-    public function new(EntityManagerInterface $entityManager, Request $request) : array|RedirectResponse {
-        $podcast = new Podcast();
-        $form = $this->createForm(PodcastType::class, $podcast);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            foreach ($podcast->getContributions() as $contribution) {
-                $contribution->setPodcast($podcast);
-                $entityManager->persist($contribution);
-            }
-            // add one time owner permissions on user who created podcast
-            $share = new Share();
-            $share->setPodcast($podcast);
-            $share->setUser($this->getUser());
-            $podcast->addShare($share);
-            $entityManager->persist($share);
-
-            $entityManager->persist($podcast);
-            $entityManager->flush();
-
-            foreach ($podcast->getImages() as $image) {
-                $image->setEntity($podcast);
-                $entityManager->persist($image);
-            }
-            $podcast->updateStatus();
-            $entityManager->flush();
-            $this->addFlash('success', 'Podcast created successfully.');
-
-            return $this->redirectToRoute('podcast_show', ['id' => $podcast->getId()]);
-        }
-
-        return [
-            'podcast' => $podcast,
-            'form' => $form->createView(),
         ];
     }
 
@@ -123,7 +83,12 @@ class PodcastController extends AbstractController implements PaginatorAwareInte
             $entityManager->flush();
             $this->addFlash('success', 'Podcast updated successfully.');
 
+            if ($request->request->has('submitAndContinue')) {
+                return $this->redirectToRoute('podcast_edit', ['id' => $podcast->getId()]);
+            }
+
             return $this->redirectToRoute('podcast_show', ['id' => $podcast->getId()]);
+
         }
 
         return [

@@ -7,8 +7,7 @@ namespace App\Message;
 class ExportMessage {
     public function __construct(
         private int $exportId,
-    ) {
-    }
+    ) {}
 
     public function getExportId() : int {
         return $this->exportId;

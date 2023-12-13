@@ -3,7 +3,6 @@
 {% block title %}Season {{ season.title }}{% endblock %}
 
 {% block breadcrumbs %}
-    <li class="breadcrumb-item"><a href="{{ path('homepage') }}">Home</a></li>
     <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
     <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': season.podcast.id}) }}">{{ season.podcast.title }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">{{ season.title }}</li>
@@ -11,17 +10,18 @@
 
 {% block action_buttons %}
     <a href="{{ path('season_edit', {'podcast_id': season.podcast.id, 'id': season.id }) }}" class="btn btn-primary">
-        <i class="bi bi-pencil-square"></i> Edit
+        <i class="bi bi-pencil-square"></i> Edit Season
     </a>
     <form class="d-inline-block" method="post" action="{{ path('season_delete', {'podcast_id': season.podcast.id, 'id': season.id }) }}" onsubmit="return confirm('Are you sure you want to delete this season?');">
         <input type="hidden" name="_method" value="DELETE">
         <input type="hidden" name="_token" value="{{ csrf_token("delete_season" ~ season.id) }}">
-        <button class="btn btn-danger w-100"><i class="bi bi-trash"></i> Delete</button>
+        <button class="btn btn-danger w-100"><i class="bi bi-trash"></i> Delete Season</button>
     </form>
 {% endblock %}
 
 
 {% block body %}
+    <h1 class="h3">Season {{ season.number }}</h1>
     <div class="card">
         <div class="card-body clearfix">
             <div class="col-auto float-md-end mb-3 ms-md-3" style="max-width: 300px">
@@ -34,7 +34,7 @@
                     {% endembed %}
                 {% endfor %}
             </div>
-            <h1 class="card-title text-truncate">{{ season.title }}</h1>
+            <h2 class="card-title text-truncate">{{ season.title }}</h2>
             {% if season.subTitle %}<h5 class="card-subtitle text-truncate">{{ season.subTitle }}</h5>{% endif %}
             {% if season.number %}<h5 class="card-subtitle mt-2">Season {{ season.number }}</h5>{% endif %}
             <div class="card-text my-3">{{ season.description|default('')|sanitize_html }}</div>
@@ -44,26 +44,24 @@
         <div class="col text-truncate">
             <h6><i class="bi bi-journals"></i> Publisher</h6>
             {% if season.publisher %}
-                <a href='{{ path("publisher_show", {"id": season.publisher.id}) }}'>{{ season.publisher }}</a>
+                <a href='{{ path("publisher_edit", {"podcast_id": season.podcast.id, "id": season.publisher.id}) }}'>{{ season.publisher }}</a>
             {% endif %}
         </div>
         <div class="col text-truncate">
             <h6><i class="bi bi-people-fill"></i> Contributors</h6>
-            {% for contributions in season.getContributionsGroupedByPerson %}
-                {% set person = (contributions|first).person %}
+            {% for contribution in season.contributions %}
                 <div>
-                    <a href='{{ path("person_show", {"id":person.id }) }}'>{{ person.fullName }}</a> -
-                    {% for contribution in contributions %}
-                        <a href='{{ path("contributor_role_show", {"id":contribution.contributorRole.id }) }}'>{{ contribution.contributorRole.label }}</a>{{ not loop.last ? ',' : '' }}
+                    <a href='{{ path("person_edit", {"podcast_id": season.podcast.id, "id":contribution.person.id }) }}'>{{ contribution.person.fullName }}</a> -
+                    {% for role in contribution.roles %}
+                        <span class="badge text-bg-primary">{{ role.label|default('N/A') }}</span>
                     {% endfor %}
                 </div>
             {% endfor %}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-list-check"></i> Season Exportable Status</h6>
-            {% embed 'status/partial/badge.html.twig' with {
-                'edit_link': path('season_edit', {'podcast_id': season.podcast.id, 'id': season.id }),
-                'status': season.status,
+            <h6><i class="bi bi-list-check"></i> Season Export Status</h6>
+            {% embed 'status/partial/report.html.twig' with {
+                'entity': season,
             } %}
             {% endembed %}
         </div>

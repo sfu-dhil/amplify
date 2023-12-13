@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\ContributorRole;
+use App\Config\ContributorRole;
 use App\Entity\Episode;
 use App\Entity\Person;
 use Exception;
@@ -15,20 +15,7 @@ class BepressExport extends ExportService {
     private function getAuthors(Episode $episode) : array {
         $contributions = $this->getEpisodeContributorPersonAndRoles($episode);
 
-        $priorityRoleFilter = function (ContributorRole $contributorRole) : bool {
-            foreach (['author', 'host'] as $roleName) {
-                if (str_contains(mb_strtolower($contributorRole->getLabel()), $roleName)) {
-                    return true;
-                }
-            }
-            foreach (['aud', 'aut', 'hst'] as $relatorTerm) {
-                if (str_contains(mb_strtolower($contributorRole->getRelatorTerm()), $relatorTerm)) {
-                    return true;
-                }
-            }
-
-            return false;
-        };
+        $priorityRoleFilter = fn (ContributorRole $contributorRole) : bool => in_array($contributorRole, [ContributorRole::aud, ContributorRole::aut, ContributorRole::hst], true);
 
         usort($contributions, function (array $left, array $right) use ($priorityRoleFilter) : int {
             $leftMatches = count(array_filter($left['roles'], $priorityRoleFilter)) > 0;
@@ -190,19 +177,19 @@ class BepressExport extends ExportService {
                     'author1_fname' => $this->getFirstName($author1),
                     // author1_lname `required`
                     'author1_lname' => $this->getLastName($author1),
-                    'author1_institution' => $author1?->getInstitution()?->getName(),
+                    'author1_institution' => $author1?->getInstitution(),
 
                     'author2_fname' => $this->getFirstName($author2),
                     'author2_lname' => $this->getLastName($author2),
-                    'author2_institution' => $author2?->getInstitution()?->getName(),
+                    'author2_institution' => $author2?->getInstitution(),
 
                     'author3_fname' => $this->getFirstName($author3),
                     'author3_lname' => $this->getLastName($author3),
-                    'author3_institution' => $author3?->getInstitution()?->getName(),
+                    'author3_institution' => $author3?->getInstitution(),
 
                     'author4_fname' => $this->getFirstName($author4),
                     'author4_lname' => $this->getLastName($author4),
-                    'author4_institution' => $author4?->getInstitution()?->getName(),
+                    'author4_institution' => $author4?->getInstitution(),
 
                     'comments' => $episode->getTranscript(),
                     'document_type' => 'audio',
