@@ -7,14 +7,17 @@ namespace App\Service;
 use App\Config\ContributorRole;
 use App\Entity\Episode;
 use App\Entity\Person;
+use App\Entity\Podcast;
+use App\Entity\Season;
 use Exception;
 use League\Csv\Writer;
+use Nines\MediaBundle\Entity\Audio;
+use Nines\MediaBundle\Entity\Image;
+use Nines\MediaBundle\Entity\Pdf;
 use ZipArchive;
 
 class BepressExport extends ExportService {
-    private function getAuthors(Episode $episode) : array {
-        $contributions = $this->getEpisodeContributorPersonAndRoles($episode);
-
+    private function getAuthors(array $contributions) : array {
         $priorityRoleFilter = fn (ContributorRole $contributorRole) : bool => in_array($contributorRole, [ContributorRole::aud, ContributorRole::aut, ContributorRole::hst], true);
 
         usort($contributions, function (array $left, array $right) use ($priorityRoleFilter) : int {
@@ -32,6 +35,24 @@ class BepressExport extends ExportService {
         });
 
         return array_map(fn (array $item) => $item['person'], $contributions);
+    }
+
+    private function getPodcastAuthors(Podcast $podcast) : array {
+        $contributions = $this->getPodcastContributorPersonAndRoles($podcast);
+
+        return $this->getAuthors($contributions);
+    }
+
+    private function getSeasonAuthors(Season $season) : array {
+        $contributions = $this->getSeasonContributorPersonAndRoles($season);
+
+        return $this->getAuthors($contributions);
+    }
+
+    private function getEpisodeAuthors(Episode $episode) : array {
+        $contributions = $this->getEpisodeContributorPersonAndRoles($episode);
+
+        return $this->getAuthors($contributions);
     }
 
     private function sanitizeFilename(string $string) : string {
@@ -121,100 +142,432 @@ class BepressExport extends ExportService {
         return count($names) > 0 ? $names[count($names) - 1] : null;
     }
 
-    protected function generate() : void {
-        $this->totalSteps = ($this->totalEpisodes * 3) + 10;
-
-        // simplifying to 1 row per episode in one csv for now
-        $sanitizedTitle = $this->sanitizeFilename($this->podcast->getTitle());
-
-        $zipBatchUpload = new ZipArchive();
-        if ( ! $zipBatchUpload->open("{$this->exportTmpRootDir}/{$sanitizedTitle}_files.zip", ZipArchive::CREATE)) {
-            throw new Exception('There was a problem creating the zip file');
-        }
-
-        $csv = Writer::createFromPath("{$this->exportTmpRootDir}/{$sanitizedTitle}.csv", 'w+');
+    private function createCSVFile(string $dir, string $filename) : Writer {
+        $csv = Writer::createFromPath("{$dir}/{$filename}.csv", 'w+');
         // $csv->setEscape('');
         $csv->setEnclosure('"');
         $csv->setDelimiter(',');
         $header = array_keys($this->getCsvMap());
         $csv->insertOne($header);
 
-        $zippedTotalEpisodes = 0;
-        $currentEpisode = 0;
-        $this->updateMessage('Starting bepress export.');
-        foreach ($this->podcast->getSeasons() as $season) {
-            foreach ($season->getEpisodes() as $episode) {
-                $currentEpisode++;
-                $audio = $episode->getAudio('audio/wav') ?? $episode->getAudio('audio/mpeg') ?? $episode->getAudios()[0] ?? null;
-                if (null === $audio || ! $this->filesystem->exists($audio->getFile()->getRealPath())) {
-                    $this->updateMessage("Skipping metadata for {$episode->getSlug()} missing audio ({$currentEpisode}/{$this->totalEpisodes})");
-                    $this->updateProgress($this->stepsCompleted += 2);
+        return $csv;
+    }
 
-                    continue;
-                }
-                $authors = $this->getAuthors($episode);
-                if (0 === count($authors)) {
-                    $this->updateMessage("Skipping metadata for {$episode->getSlug()} missing author/contributors ({$currentEpisode}/{$this->totalEpisodes})");
-                    $this->updateProgress($this->stepsCompleted += 2);
-
-                    continue;
-                }
-                $zippedTotalEpisodes++;
-                $this->updateMessage("Generating metadata for {$episode->getSlug()} ({$currentEpisode}/{$this->totalEpisodes})");
-
-                $author1 = $authors[0] ?? null;
-                $author2 = $authors[1] ?? null;
-                $author3 = $authors[2] ?? null;
-                $author4 = $authors[3] ?? null;
-
-                $recordData = $this->addRecordDefaults([
-                    // title `required`
-                    'title' => "{$this->podcast->getTitle()} {$episode->getSlug()}: {$episode->getTitle()}",
-                    'keywords' => count($episode->getKeywords()) > 0 ? implode(',', $episode->getKeywords()) : '',
-                    'abstract' => $episode->getDescription(),
-
-                    // author1_fname `required`
-                    'author1_fname' => $this->getFirstName($author1),
-                    // author1_lname `required`
-                    'author1_lname' => $this->getLastName($author1),
-                    'author1_institution' => $author1?->getInstitution(),
-
-                    'author2_fname' => $this->getFirstName($author2),
-                    'author2_lname' => $this->getLastName($author2),
-                    'author2_institution' => $author2?->getInstitution(),
-
-                    'author3_fname' => $this->getFirstName($author3),
-                    'author3_lname' => $this->getLastName($author3),
-                    'author3_institution' => $author3?->getInstitution(),
-
-                    'author4_fname' => $this->getFirstName($author4),
-                    'author4_lname' => $this->getLastName($author4),
-                    'author4_institution' => $author4?->getInstitution(),
-
-                    'comments' => $episode->getTranscript(),
-                    'document_type' => 'audio',
-                    // publication_date `required` (format `YYYY-MM-DD`)
-                    'publication_date' => $episode->getDate()?->format('Y-m-d'),
-                    'rights' => $this->podcast->getCopyright(),
-                    'subject_area' => count($this->podcast->getCategories()) > 0 ? implode(', ', $this->podcast->getCategories()) : '',
-                ]);
-                $csv->insertOne($recordData);
-                $zipBatchUpload->addFile($audio->getFile()->getRealPath(), "{$episode->getSlug()}.{$audio->getExtension()}");
-
-                $this->updateProgress(++$this->stepsCompleted);
-            }
+    private function createZipFile(string $dir, string $filename) : ZipArchive {
+        $zipFile = new ZipArchive();
+        if ( ! $zipFile->open("{$dir}/{$filename}.zip", ZipArchive::CREATE)) {
+            throw new Exception('There was a problem creating the zip file');
         }
-        $zipBatchUpload->registerProgressCallback(0.01, function ($r) use ($zippedTotalEpisodes) : void {
-            // we don't know how many files there are beforehand so we approximate the increase by
-            // file completion fraction multiplied by the total episodes (why we do *2 episodes steps previously)
+
+        return $zipFile;
+    }
+
+    private function generateImageRecord(Image $image, array $authors) : array {
+        $author1 = $authors[0] ?? null;
+        $author2 = $authors[1] ?? null;
+        $author3 = $authors[2] ?? null;
+        $author4 = $authors[3] ?? null;
+
+        return $this->addRecordDefaults([
+            // title `required`
+            'title' => $image->getOriginalName(),
+            'abstract' => $image->getDescription(),
+
+            // author1_fname `required`
+            'author1_fname' => $this->getFirstName($author1) ?? 'N/A',
+            // author1_lname `required`
+            'author1_lname' => $this->getLastName($author1) ?? 'N/A',
+            'author1_institution' => $author1?->getInstitution(),
+
+            'author2_fname' => $this->getFirstName($author2),
+            'author2_lname' => $this->getLastName($author2),
+            'author2_institution' => $author2?->getInstitution(),
+
+            'author3_fname' => $this->getFirstName($author3),
+            'author3_lname' => $this->getLastName($author3),
+            'author3_institution' => $author3?->getInstitution(),
+
+            'author4_fname' => $this->getFirstName($author4),
+            'author4_lname' => $this->getLastName($author4),
+            'author4_institution' => $author4?->getInstitution(),
+
+            'document_type' => 'image',
+            // publication_date `required` (format `YYYY-MM-DD`)
+            'publication_date' => $image->getUpdated()->format('Y-m-d'),
+            'rights' => $this->podcast->getCopyright(),
+            'subject_area' => count($this->podcast->getCategories()) > 0 ? implode(', ', $this->podcast->getCategories()) : '',
+        ]);
+    }
+
+    private function generateAudioRecord(Audio $audio, array $authors) : array {
+        $author1 = $authors[0] ?? null;
+        $author2 = $authors[1] ?? null;
+        $author3 = $authors[2] ?? null;
+        $author4 = $authors[3] ?? null;
+
+        return $this->addRecordDefaults([
+            // title `required`
+            'title' => $audio->getOriginalName(),
+            'abstract' => $audio->getDescription(),
+
+            // author1_fname `required`
+            'author1_fname' => $this->getFirstName($author1) ?? 'N/A',
+            // author1_lname `required`
+            'author1_lname' => $this->getLastName($author1) ?? 'N/A',
+            'author1_institution' => $author1?->getInstitution(),
+
+            'author2_fname' => $this->getFirstName($author2),
+            'author2_lname' => $this->getLastName($author2),
+            'author2_institution' => $author2?->getInstitution(),
+
+            'author3_fname' => $this->getFirstName($author3),
+            'author3_lname' => $this->getLastName($author3),
+            'author3_institution' => $author3?->getInstitution(),
+
+            'author4_fname' => $this->getFirstName($author4),
+            'author4_lname' => $this->getLastName($author4),
+            'author4_institution' => $author4?->getInstitution(),
+
+            'document_type' => 'audio',
+            // publication_date `required` (format `YYYY-MM-DD`)
+            'publication_date' => $audio->getUpdated()->format('Y-m-d'),
+            'rights' => $this->podcast->getCopyright(),
+            'subject_area' => count($this->podcast->getCategories()) > 0 ? implode(', ', $this->podcast->getCategories()) : '',
+        ]);
+    }
+
+    private function generatePdfRecord(Pdf $pdf, array $authors) : array {
+        $author1 = $authors[0] ?? null;
+        $author2 = $authors[1] ?? null;
+        $author3 = $authors[2] ?? null;
+        $author4 = $authors[3] ?? null;
+
+        return $this->addRecordDefaults([
+            // title `required`
+            'title' => $pdf->getOriginalName(),
+            'abstract' => $pdf->getDescription(),
+
+            // author1_fname `required`
+            'author1_fname' => $this->getFirstName($author1) ?? 'N/A',
+            // author1_lname `required`
+            'author1_lname' => $this->getLastName($author1) ?? 'N/A',
+            'author1_institution' => $author1?->getInstitution(),
+
+            'author2_fname' => $this->getFirstName($author2),
+            'author2_lname' => $this->getLastName($author2),
+            'author2_institution' => $author2?->getInstitution(),
+
+            'author3_fname' => $this->getFirstName($author3),
+            'author3_lname' => $this->getLastName($author3),
+            'author3_institution' => $author3?->getInstitution(),
+
+            'author4_fname' => $this->getFirstName($author4),
+            'author4_lname' => $this->getLastName($author4),
+            'author4_institution' => $author4?->getInstitution(),
+
+            'document_type' => 'pdf',
+            // publication_date `required` (format `YYYY-MM-DD`)
+            'publication_date' => $pdf->getUpdated()->format('Y-m-d'),
+            'rights' => $this->podcast->getCopyright(),
+            'subject_area' => count($this->podcast->getCategories()) > 0 ? implode(', ', $this->podcast->getCategories()) : '',
+        ]);
+    }
+
+    private function generatePodcastRecord(Podcast $podcast) : array {
+        $authors = $this->getPodcastAuthors($podcast);
+
+        $author1 = $authors[0] ?? null;
+        $author2 = $authors[1] ?? null;
+        $author3 = $authors[2] ?? null;
+        $author4 = $authors[3] ?? null;
+
+        $explicit = $podcast->getExplicit() ? 'Yes' : 'No';
+
+        return $this->addRecordDefaults([
+            // title `required`
+            'title' => $podcast->getSubTitle() ? "{$podcast->getTitle()}: {$podcast->getSubTitle()}" : $podcast->getTitle(),
+            'keywords' => count($podcast->getKeywords()) > 0 ? implode(',', $podcast->getKeywords()) : '',
+            'abstract' => $podcast->getDescription(),
+
+            // author1_fname `required`
+            'author1_fname' => $this->getFirstName($author1) ?? 'N/A',
+            // author1_lname `required`
+            'author1_lname' => $this->getLastName($author1) ?? 'N/A',
+            'author1_institution' => $author1?->getInstitution(),
+
+            'author2_fname' => $this->getFirstName($author2),
+            'author2_lname' => $this->getLastName($author2),
+            'author2_institution' => $author2?->getInstitution(),
+
+            'author3_fname' => $this->getFirstName($author3),
+            'author3_lname' => $this->getLastName($author3),
+            'author3_institution' => $author3?->getInstitution(),
+
+            'author4_fname' => $this->getFirstName($author4),
+            'author4_lname' => $this->getLastName($author4),
+            'author4_institution' => $author4?->getInstitution(),
+
+            'comments' => "Explicit: {$explicit}\n\n {$podcast->getLicense()}",
+            'document_type' => 'series', // 'document_type' => 'podcast'
+            // publication_date `required` (format `YYYY-MM-DD`)
+            'publication_date' => $podcast->getUpdated()->format('Y-m-d'),
+            'rights' => $podcast->getCopyright(),
+            'subject_area' => count($podcast->getCategories()) > 0 ? implode(', ', $podcast->getCategories()) : '',
+        ]);
+    }
+
+    private function generateSeasonRecord(Season $season) : array {
+        $authors = $this->getSeasonAuthors($season);
+
+        $author1 = $authors[0] ?? null;
+        $author2 = $authors[1] ?? null;
+        $author3 = $authors[2] ?? null;
+        $author4 = $authors[3] ?? null;
+
+        $explicit = $this->podcast->getExplicit() ? 'Yes' : 'No';
+
+        return $this->addRecordDefaults([
+            // title `required`
+            'title' => $season->getSubTitle() ? "{$season->getTitle()}: {$season->getSubTitle()}" : $season->getTitle(),
+            'abstract' => $season->getDescription(),
+
+            // author1_fname `required`
+            'author1_fname' => $this->getFirstName($author1) ?? 'N/A',
+            // author1_lname `required`
+            'author1_lname' => $this->getLastName($author1) ?? 'N/A',
+            'author1_institution' => $author1?->getInstitution(),
+
+            'author2_fname' => $this->getFirstName($author2),
+            'author2_lname' => $this->getLastName($author2),
+            'author2_institution' => $author2?->getInstitution(),
+
+            'author3_fname' => $this->getFirstName($author3),
+            'author3_lname' => $this->getLastName($author3),
+            'author3_institution' => $author3?->getInstitution(),
+
+            'author4_fname' => $this->getFirstName($author4),
+            'author4_lname' => $this->getLastName($author4),
+            'author4_institution' => $author4?->getInstitution(),
+
+            'comments' => "{$season->getSlug()}\nExplicit: {$explicit}",
+            'document_type' => 'series', // 'document_type' => 'podcast_season'
+            // publication_date `required` (format `YYYY-MM-DD`)
+            'publication_date' => $season->getUpdated()->format('Y-m-d'),
+            'rights' => $this->podcast->getCopyright(),
+            'subject_area' => count($this->podcast->getCategories()) > 0 ? implode(', ', $this->podcast->getCategories()) : '',
+        ]);
+    }
+
+    private function generateEpisodeRecord(Episode $episode) : array {
+        $authors = $this->getEpisodeAuthors($episode);
+
+        $author1 = $authors[0] ?? null;
+        $author2 = $authors[1] ?? null;
+        $author3 = $authors[2] ?? null;
+        $author4 = $authors[3] ?? null;
+
+        $explicit = $episode->getExplicit() ? 'Yes' : 'No';
+
+        return $this->addRecordDefaults([
+            // title `required`
+            'title' => $episode->getSubTitle() ? "{$episode->getTitle()}: {$episode->getSubTitle()}" : $episode->getTitle(),
+            'keywords' => count($episode->getKeywords()) > 0 ? implode(',', $episode->getKeywords()) : '',
+            'abstract' => "{$episode->getDescription()}\n\n{$episode->getTranscript()}",
+
+            // author1_fname `required`
+            'author1_fname' => $this->getFirstName($author1) ?? 'N/A',
+            // author1_lname `required`
+            'author1_lname' => $this->getLastName($author1) ?? 'N/A',
+            'author1_institution' => $author1?->getInstitution(),
+
+            'author2_fname' => $this->getFirstName($author2),
+            'author2_lname' => $this->getLastName($author2),
+            'author2_institution' => $author2?->getInstitution(),
+
+            'author3_fname' => $this->getFirstName($author3),
+            'author3_lname' => $this->getLastName($author3),
+            'author3_institution' => $author3?->getInstitution(),
+
+            'author4_fname' => $this->getFirstName($author4),
+            'author4_lname' => $this->getLastName($author4),
+            'author4_institution' => $author4?->getInstitution(),
+
+            'comments' => "{$episode->getSlug()}\nType: {$episode->getEpisodeType()}\nRuntime: {$episode->getRunTime()}\nExplicit: {$explicit}\n\n{$episode->getBibliography()}",
+            'document_type' => 'series', // 'document_type' => 'podcast_episode'
+            // publication_date `required` (format `YYYY-MM-DD`)
+            'publication_date' => $episode->getDate()?->format('Y-m-d'),
+            'rights' => $this->podcast->getCopyright(),
+            'subject_area' => count($this->podcast->getCategories()) > 0 ? implode(', ', $this->podcast->getCategories()) : '',
+        ]);
+    }
+
+    private function generatePodcastMetadataCSV() : void {
+        $this->updateMessage('Generating podcast metadata');
+        $csv = $this->createCSVFile($this->exportTmpRootDir, 'podcast_metadata');
+        $csv->insertOne($this->generatePodcastRecord($this->podcast));
+        $this->updateProgress(++$this->stepsCompleted); // podcast steps 1/4
+    }
+
+    private function generatePodcastFilesCSV() : void {
+        $this->updateMessage('Generating podcast files metadata');
+        $imageExistsFilter = fn (Image $image) : bool => $image && $image?->getFile();
+        $images = array_filter($this->podcast->getImages(), $imageExistsFilter);
+        if (0 === count($images)) {
+            $this->stepsCompleted += 3; // if no images, skip to step 4/4
+
+            return;
+        }
+
+        $csv = $this->createCSVFile($this->exportTmpRootDir, 'podcast_files_metadata');
+        $zip = $this->createZipFile($this->exportTmpRootDir, 'podcast_files');
+        $authors = $this->getPodcastAuthors($this->podcast);
+
+        foreach ($images as $image) {
+            $zip->addFile($image->getFile()->getRealPath(), "podcast_files/image_{$image->getId()}.{$image->getExtension()}");
+            $csv->insertOne($this->generateImageRecord($image, $authors));
+        }
+        $this->updateProgress(++$this->stepsCompleted);  // podcast steps 2/4
+
+        // zipping counts as 2 steps since it takes longer
+        $zip->registerProgressCallback(0.01, function ($r) : void {
             $percent = (int) ($r * 100);
-            $this->updateMessage("Packaging files ({$percent}%)");
-            $tempCurrentStep = $this->stepsCompleted + ($r * $zippedTotalEpisodes);
+            $this->updateMessage("Packaging podcast files ({$percent}%)");
+            $tempCurrentStep = $this->stepsCompleted + ($r * 2);
             $this->updateProgress((int) $tempCurrentStep);
         });
-        if ( ! $zipBatchUpload->close()) {
+        if ( ! $zip->close()) {
             throw new Exception('There was a problem saving the zip file');
         }
-        $this->updateProgress($this->stepsCompleted += $zippedTotalEpisodes);
+        $this->updateProgress($this->stepsCompleted += 2); // podcast steps 4/4
+    }
+
+    private function generateSeasonsMetadataCSV() : void {
+        $this->updateMessage('Generating seasons metadata');
+        $csv = $this->createCSVFile($this->exportTmpRootDir, 'podcast_seasons_metadata');
+
+        foreach ($this->podcast->getSeasons() as $season) {
+            $csv->insertOne($this->generateSeasonRecord($season));
+            $this->updateProgress(++$this->stepsCompleted); // season steps 1/4
+        }
+    }
+
+    private function generateSeasonFilesCSV(Season $season) : void {
+        $this->updateMessage("Generating {$season->getSlug()} files metadata");
+        $imageExistsFilter = fn (Image $image) : bool => $image && $image?->getFile();
+        $images = array_filter($season->getImages(), $imageExistsFilter);
+        if (0 === count($images)) {
+            $this->stepsCompleted += 3; // if no images, skip to step 4/4
+
+            return;
+        }
+
+        $csv = $this->createCSVFile($this->exportTmpRootDir, "{$season->getSlug()}_files_metadata");
+        $zip = $this->createZipFile($this->exportTmpRootDir, "{$season->getSlug()}_files");
+        $authors = $this->getSeasonAuthors($season);
+
+        foreach ($images as $image) {
+            $zip->addFile($image->getFile()->getRealPath(), "{$season->getSlug()}_files/image_{$image->getId()}.{$image->getExtension()}");
+            $csv->insertOne($this->generateImageRecord($image, $authors));
+        }
+        $this->updateProgress(++$this->stepsCompleted);  // season steps 2/4
+
+        // zipping counts as 2 steps since it takes longer
+        $zip->registerProgressCallback(0.01, function ($r) use ($season) : void {
+            $percent = (int) ($r * 100);
+            $this->updateMessage("Packaging {$season->getSlug()} files ({$percent}%)");
+            $tempCurrentStep = $this->stepsCompleted + ($r * 2);
+            $this->updateProgress((int) $tempCurrentStep);
+        });
+        if ( ! $zip->close()) {
+            throw new Exception('There was a problem saving the zip file');
+        }
+        $this->updateProgress($this->stepsCompleted += 2); // season steps 4/4
+    }
+
+    private function generateEpisodesMetadataCSV(Season $season) : void {
+        $this->updateMessage("Generating {$season->getSlug()} episodes metadata");
+        $csv = $this->createCSVFile($this->exportTmpRootDir, "{$season->getSlug()}_episodes_metadata");
+
+        foreach ($season->getEpisodes() as $episode) {
+            $csv->insertOne($this->generateEpisodeRecord($episode));
+            $this->updateProgress(++$this->stepsCompleted); // episode steps 1/4
+        }
+    }
+
+    private function generateEpisodeFilesCSV(Episode $episode) : void {
+        $this->updateMessage("Generating {$episode->getSlug()} files metadata");
+        $imageExistsFilter = fn (Image $image) : bool => $image && $image?->getFile();
+        $audioExistsFilter = fn (Audio $audio) : bool => $audio && $audio?->getFile();
+        $pdfExistsFilter = fn (Pdf $pdf) : bool => $pdf && $pdf?->getFile();
+
+        $images = array_filter($episode->getImages(), $imageExistsFilter);
+        $audios = array_filter($episode->getAudios(), $audioExistsFilter);
+        $pdfs = array_filter($episode->getPdfs(), $pdfExistsFilter);
+        if (0 === count($images) && 0 === count($audios) && 0 === count($pdfs)) {
+            $this->stepsCompleted += 3; // if no images/audios/pdfs, skip to step 4/4
+
+            return;
+        }
+
+        $csv = $this->createCSVFile($this->exportTmpRootDir, "{$episode->getSlug()}_files_metadata");
+        $zip = $this->createZipFile($this->exportTmpRootDir, "{$episode->getSlug()}_files");
+        $authors = $this->getEpisodeAuthors($episode);
+
+        foreach ($images as $image) {
+            $zip->addFile($image->getFile()->getRealPath(), "{$episode->getSlug()}_files/image_{$image->getId()}.{$image->getExtension()}");
+            $csv->insertOne($this->generateImageRecord($image, $authors));
+        }
+        foreach ($audios as $audio) {
+            $zip->addFile($audio->getFile()->getRealPath(), "{$episode->getSlug()}_files/audio_{$audio->getId()}.{$audio->getExtension()}");
+            $csv->insertOne($this->generateAudioRecord($audio, $authors));
+        }
+        foreach ($pdfs as $pdf) {
+            $zip->addFile($pdf->getFile()->getRealPath(), "{$episode->getSlug()}_files/pdf_{$pdf->getId()}.{$pdf->getExtension()}");
+            $csv->insertOne($this->generatePdfRecord($pdf, $authors));
+        }
+        $this->updateProgress(++$this->stepsCompleted);  // episode steps 2/4
+
+        // zipping counts as 2 steps since it takes longer
+        $zip->registerProgressCallback(0.01, function ($r) use ($episode) : void {
+            $percent = (int) ($r * 100);
+            $this->updateMessage("Packaging {$episode->getSlug()} files ({$percent}%)");
+            $tempCurrentStep = $this->stepsCompleted + ($r * 2);
+            $this->updateProgress((int) $tempCurrentStep);
+        });
+        if ( ! $zip->close()) {
+            throw new Exception('There was a problem saving the zip file');
+        }
+        $this->updateProgress($this->stepsCompleted += 2); // episode steps 4/4
+    }
+
+    protected function generate() : void {
+        /*
+         * Note this uses:
+         * 4 steps for the podcast
+         * 4 steps per season
+         * 4 steps per episode
+         * The extra $this->totalEpisodes + 10 steps are used by the main export script for overall zip and cleanup
+         */
+        $this->totalSteps = 4 + (count($this->podcast->getSeasons()) * 4) + ($this->totalEpisodes * 4) + $this->totalEpisodes + 10;
+        $this->updateMessage('Starting BePress export.');
+
+        // podcast level metadata
+        $this->generatePodcastMetadataCSV(); // 1 step for podcast
+        // podcast level files (one set of zip and csv for all the podcast images)
+        $this->generatePodcastFilesCSV(); // 3 more steps for podcast
+
+        // seasons level metadata
+        $this->generateSeasonsMetadataCSV(); // 1 step for each season
+        foreach ($this->podcast->getSeasons() as $season) {
+            // seasons level files (one set of zip and csv per season for all the images)
+            $this->generateSeasonFilesCSV($season); // 3 more steps for each season
+
+            // episode level metadata
+            $this->generateEpisodesMetadataCSV($season); // 1 step for episode in the season
+            foreach ($season->getEpisodes() as $episode) {
+                // episode level files (one set of zip and csv per episode for all the images, pdfs, and audio files)
+                $this->generateEpisodeFilesCSV($episode); // 3 more steps for each episode
+            }
+        }
     }
 }
