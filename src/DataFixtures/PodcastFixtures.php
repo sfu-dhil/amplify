@@ -79,7 +79,7 @@ class PodcastFixtures extends Fixture implements DependentFixtureInterface, Fixt
                 $em->persist($publisher);
                 $em->flush();
 
-                if ($j == 0) {
+                if (0 === $j) {
                     $fixture->setPublisher($publisher);
                     $em->flush();
                 }

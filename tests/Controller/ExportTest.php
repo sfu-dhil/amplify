@@ -31,7 +31,7 @@ class ExportTest extends ControllerTestCase {
             $this->login($loginCredentials);
             $crawler = $this->client->request('GET', '/podcasts/2/exports');
             $this->assertResponseIsSuccessful();
-            $this->assertEquals(1, $crawler->filter('.page-actions')->selectLink('New')->count());
+            $this->assertSame(1, $crawler->filter('.page-actions')->selectLink('New')->count());
         }
     }
 
@@ -69,12 +69,12 @@ class ExportTest extends ControllerTestCase {
 
         $this->em->clear();
         $postCount = count($repo->findAll());
-        $this->assertEquals($preCount + 2, $postCount);
+        $this->assertSame($preCount + 2, $postCount);
 
         $this->messenger('async')->queue()->assertCount(2);
         $this->messenger('async')->queue()->assertContains(ExportMessage::class, 2);
-        $this->assertEquals($this->messenger('async')->queue()->messages(ExportMessage::class)[0]->getExportId(), 9);
-        $this->assertEquals($this->messenger('async')->queue()->messages(ExportMessage::class)[1]->getExportId(), 10);
+        $this->assertSame($this->messenger('async')->queue()->messages(ExportMessage::class)[0]->getExportId(), 9);
+        $this->assertSame($this->messenger('async')->queue()->messages(ExportMessage::class)[1]->getExportId(), 10);
     }
 
     public function testShow() : void {
@@ -133,7 +133,7 @@ class ExportTest extends ControllerTestCase {
 
         $this->em->clear();
         $postCount = count($repo->findAll());
-        $this->assertEquals($preCount - 1, $postCount);
+        $this->assertSame($preCount - 1, $postCount);
         $this->assertFalse($fileSystem->exists($filePath));
     }
 }

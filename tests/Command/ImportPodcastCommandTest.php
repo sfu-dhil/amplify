@@ -298,7 +298,7 @@ class ImportPodcastCommandTest extends CommandTestCase {
         ];
 
         // init state
-        $this->assertEquals($this->podcastStub($podcast), [
+        $this->assertSame($this->podcastStub($podcast), [
             'title' => 'Title 3',
             'subTitle' => 'SubTitle 3',
             'explicit' => false,
@@ -332,7 +332,7 @@ class ImportPodcastCommandTest extends CommandTestCase {
             'podcastId' => 4,
         ]);
         $podcast = $podcastRepository->find(4);
-        $this->assertEquals($this->podcastStub($podcast), $expectedPodcast);
+        $this->assertSame($this->podcastStub($podcast), $expectedPodcast);
 
         // running the import again will not add duplicate resources
         $mock->reset();
@@ -351,7 +351,7 @@ class ImportPodcastCommandTest extends CommandTestCase {
             'podcastId' => 4,
         ]);
         $podcast = $podcastRepository->find(4);
-        $this->assertEquals($this->podcastStub($podcast), $expectedPodcast);
+        $this->assertSame($this->podcastStub($podcast), $expectedPodcast);
     }
 
     protected function setUp() : void {

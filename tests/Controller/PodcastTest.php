@@ -23,7 +23,7 @@ class PodcastTest extends ControllerTestCase {
             $this->login($loginCredentials);
             $crawler = $this->client->request('GET', '/podcasts');
             $this->assertResponseIsSuccessful();
-            $this->assertEquals(1, $crawler->filter('.page-actions')->selectLink('Import New Podcast from RSS Feed')->count());
+            $this->assertSame(1, $crawler->filter('.page-actions')->selectLink('Import New Podcast from RSS Feed')->count());
         }
     }
 
@@ -43,7 +43,7 @@ class PodcastTest extends ControllerTestCase {
             ]);
 
             $responseCrawler = $this->client->submit($form);
-            $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+            $this->assertSame(200, $this->client->getResponse()->getStatusCode());
         }
     }
 
@@ -62,17 +62,17 @@ class PodcastTest extends ControllerTestCase {
             $this->login($loginCredentials);
             $crawler = $this->client->request('GET', '/podcasts/2');
             $this->assertResponseIsSuccessful();
-            $this->assertEquals(1, $crawler->filter('.page-actions')->selectLink('Edit Podcast')->count());
-            $this->assertEquals(2, $crawler->selectLink('Edit Podcast')->count());
-            $this->assertEquals(1, $crawler->selectLink('New Episode')->count());
-            $this->assertEquals(1, $crawler->selectLink('New Season')->count());
-            $this->assertEquals(4, $crawler->filter('div[role="tablist"] span[role="tab"]')->count());
+            $this->assertSame(1, $crawler->filter('.page-actions')->selectLink('Edit Podcast')->count());
+            $this->assertSame(2, $crawler->selectLink('Edit Podcast')->count());
+            $this->assertSame(1, $crawler->selectLink('New Episode')->count());
+            $this->assertSame(1, $crawler->selectLink('New Season')->count());
+            $this->assertSame(4, $crawler->filter('div[role="tablist"] span[role="tab"]')->count());
             foreach (range(1, 4) as $seasonId) {
                 $expectedEpisodes = 2 === $seasonId ? 4 : 0;
-                $this->assertEquals(1, $crawler->filter("#nav-season-{$seasonId}-tab")->count());
-                $this->assertEquals(1, $crawler->filter("#nav-season-{$seasonId} .season-actions")->selectLink('Edit Season')->count());
-                $this->assertEquals($expectedEpisodes, $crawler->filter("#nav-season-{$seasonId} table tbody tr")->count());
-                $this->assertEquals($expectedEpisodes, $crawler->filter("#nav-season-{$seasonId} table tbody tr")->selectLink('Edit Episode')->count());
+                $this->assertSame(1, $crawler->filter("#nav-season-{$seasonId}-tab")->count());
+                $this->assertSame(1, $crawler->filter("#nav-season-{$seasonId} .season-actions")->selectLink('Edit Season')->count());
+                $this->assertSame($expectedEpisodes, $crawler->filter("#nav-season-{$seasonId} table tbody tr")->count());
+                $this->assertSame($expectedEpisodes, $crawler->filter("#nav-season-{$seasonId} table tbody tr")->selectLink('Edit Episode')->count());
             }
         }
     }
@@ -129,6 +129,6 @@ class PodcastTest extends ControllerTestCase {
 
         $this->em->clear();
         $postCount = count($repo->findAll());
-        $this->assertEquals($preCount - 1, $postCount);
+        $this->assertSame($preCount - 1, $postCount);
     }
 }

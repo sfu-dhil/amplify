@@ -43,13 +43,13 @@ class ImportTest extends ControllerTestCase {
         }
         $this->em->clear();
         $postCount = count($repo->findAll());
-        $this->assertEquals($preCount + 3, $postCount);
+        $this->assertSame($preCount + 3, $postCount);
 
         $this->messenger('async')->queue()->assertCount(3);
         $this->messenger('async')->queue()->assertContains(ImportMessage::class, 3);
-        $this->assertEquals($this->messenger('async')->queue()->messages(ImportMessage::class)[0]->getImportId(), 9);
-        $this->assertEquals($this->messenger('async')->queue()->messages(ImportMessage::class)[1]->getImportId(), 10);
-        $this->assertEquals($this->messenger('async')->queue()->messages(ImportMessage::class)[2]->getImportId(), 11);
+        $this->assertSame($this->messenger('async')->queue()->messages(ImportMessage::class)[0]->getImportId(), 9);
+        $this->assertSame($this->messenger('async')->queue()->messages(ImportMessage::class)[1]->getImportId(), 10);
+        $this->assertSame($this->messenger('async')->queue()->messages(ImportMessage::class)[2]->getImportId(), 11);
     }
 
     public function testPodcastNew() : void {
@@ -79,12 +79,12 @@ class ImportTest extends ControllerTestCase {
 
         $this->em->clear();
         $postCount = count($repo->findAll());
-        $this->assertEquals($preCount + 2, $postCount);
+        $this->assertSame($preCount + 2, $postCount);
 
         $this->messenger('async')->queue()->assertCount(2);
         $this->messenger('async')->queue()->assertContains(ImportMessage::class, 2);
-        $this->assertEquals($this->messenger('async')->queue()->messages(ImportMessage::class)[0]->getImportId(), 12);
-        $this->assertEquals($this->messenger('async')->queue()->messages(ImportMessage::class)[1]->getImportId(), 13);
+        $this->assertSame($this->messenger('async')->queue()->messages(ImportMessage::class)[0]->getImportId(), 12);
+        $this->assertSame($this->messenger('async')->queue()->messages(ImportMessage::class)[1]->getImportId(), 13);
     }
 
     public function testShow() : void {

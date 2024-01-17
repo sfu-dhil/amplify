@@ -28,7 +28,7 @@ class ShareTest extends ControllerTestCase {
             $this->login($loginCredentials);
             $crawler = $this->client->request('GET', '/podcasts/2/shares');
             $this->assertResponseIsSuccessful();
-            $this->assertEquals(1, $crawler->filter('form')->selectButton('Share')->count());
+            $this->assertSame(1, $crawler->filter('form')->selectButton('Share')->count());
         }
     }
 
@@ -48,7 +48,7 @@ class ShareTest extends ControllerTestCase {
             $this->client->request('GET', '/podcasts/2/shares/typeahead?q=' . self::SEARCH_QUERY);
             $response = $this->client->getResponse();
             $this->assertResponseIsSuccessful();
-            $this->assertEquals('application/json', $response->headers->get('content-type'));
+            $this->assertSame('application/json', $response->headers->get('content-type'));
             $json = json_decode($response->getContent());
             $this->assertCount(4, $json);
         }
@@ -96,6 +96,6 @@ class ShareTest extends ControllerTestCase {
 
         $this->em->clear();
         $postCount = count($repo->findAll());
-        $this->assertEquals($preCount - 1, $postCount);
+        $this->assertSame($preCount - 1, $postCount);
     }
 }

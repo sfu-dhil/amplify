@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Repository;
 
-use App\Repository\PodcastRepository;
 use App\Repository\PersonRepository;
+use App\Repository\PodcastRepository;
 use Nines\UtilBundle\TestCase\ServiceTestCase;
 
 class PersonRepositoryTest extends ServiceTestCase {

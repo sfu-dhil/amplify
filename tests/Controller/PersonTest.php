@@ -47,7 +47,7 @@ class PersonTest extends ControllerTestCase {
             $this->client->request('GET', '/podcasts/2/people/typeahead?q=' . self::SEARCH_QUERY);
             $response = $this->client->getResponse();
             $this->assertResponseIsSuccessful();
-            $this->assertEquals('application/json', $response->headers->get('content-type'));
+            $this->assertSame('application/json', $response->headers->get('content-type'));
             $json = json_decode($response->getContent());
             $this->assertCount(4, $json);
         }
@@ -74,7 +74,7 @@ class PersonTest extends ControllerTestCase {
             ]);
 
             $responseCrawler = $this->client->submit($form);
-            $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+            $this->assertSame(200, $this->client->getResponse()->getStatusCode());
         }
     }
 
@@ -139,9 +139,9 @@ class PersonTest extends ControllerTestCase {
             $this->client->submit($form);
             $response = $this->client->getResponse();
             $this->assertResponseIsSuccessful();
-            $this->assertEquals('application/json', $response->headers->get('content-type'));
+            $this->assertSame('application/json', $response->headers->get('content-type'));
             $json = (array) json_decode($response->getContent());
-            $this->assertEquals($json, [
+            $this->assertSame($json, [
                 'success' => true,
             ]);
             $newId++;
@@ -164,6 +164,6 @@ class PersonTest extends ControllerTestCase {
 
         $this->em->clear();
         $postCount = count($repo->findAll());
-        $this->assertEquals($preCount - 1, $postCount);
+        $this->assertSame($preCount - 1, $postCount);
     }
 }

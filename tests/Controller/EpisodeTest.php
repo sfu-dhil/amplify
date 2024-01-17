@@ -28,7 +28,7 @@ class EpisodeTest extends ControllerTestCase {
             $this->login($loginCredentials);
             $crawler = $this->client->request('GET', '/podcasts/2/episodes/1');
             $this->assertResponseIsSuccessful();
-            $this->assertEquals(1, $crawler->filter('.page-actions')->selectLink('Edit Episode')->count());
+            $this->assertSame(1, $crawler->filter('.page-actions')->selectLink('Edit Episode')->count());
         }
     }
 
@@ -122,6 +122,6 @@ class EpisodeTest extends ControllerTestCase {
 
         $this->em->clear();
         $postCount = count($repo->findAll());
-        $this->assertEquals($preCount - 1, $postCount);
+        $this->assertSame($preCount - 1, $postCount);
     }
 }
