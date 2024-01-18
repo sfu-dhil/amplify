@@ -28,7 +28,7 @@
 <text text-anchor="start" x="279.0834" y="-1203.9" font-family="Arial" font-size="14.00" fill="#666666">[int(11)]</text>
 <polygon fill="none" stroke="#000000" points="200.5,-1162.5 200.5,-1192.5 404.5,-1192.5 404.5,-1162.5 200.5,-1162.5"/>
 <text text-anchor="start" x="207.5" y="-1173.9" font-family="Arial" font-size="14.00" fill="#000000">number </text>
-<text text-anchor="start" x="258.8422" y="-1173.9" font-family="Arial" font-size="14.00" fill="#666666">[int(11)]</text>
+<text text-anchor="start" x="258.8422" y="-1173.9" font-family="Arial" font-size="14.00" fill="#666666">[double]</text>
 <polygon fill="none" stroke="#000000" points="200.5,-1132.5 200.5,-1162.5 404.5,-1162.5 404.5,-1132.5 200.5,-1132.5"/>
 <text text-anchor="start" x="207.5" y="-1143.9" font-family="Arial" font-size="14.00" fill="#000000">date </text>
 <text text-anchor="start" x="238.629" y="-1143.9" font-family="Arial" font-size="14.00" fill="#666666">[date]</text>
@@ -202,29 +202,29 @@
 <text text-anchor="start" x="192.5" y="-1633.9" font-family="Arial" font-size="14.00" fill="#000000">person_id    </text>
 <text text-anchor="start" x="288.1676" y="-1633.9" font-family="Arial" font-size="14.00" fill="#666666">[int(11)]</text>
 <polygon fill="none" stroke="#000000" points="185.5,-1592.5 185.5,-1622.5 419.5,-1622.5 419.5,-1592.5 185.5,-1592.5"/>
-<text text-anchor="start" x="192.5" y="-1603.9" font-family="Arial" font-size="14.00" fill="#000000">contributor_role_id    </text>
-<text text-anchor="start" x="342.6136" y="-1603.9" font-family="Arial" font-size="14.00" fill="#666666">[int(11)]</text>
+<text text-anchor="start" x="192.5" y="-1603.9" font-family="Arial" font-size="14.00" fill="#000000">podcast_id    </text>
+<text text-anchor="start" x="294.3976" y="-1603.9" font-family="Arial" font-size="14.00" fill="#666666">[int(11)]</text>
 <polygon fill="none" stroke="#000000" points="185.5,-1562.5 185.5,-1592.5 419.5,-1592.5 419.5,-1562.5 185.5,-1562.5"/>
-<text text-anchor="start" x="192.5" y="-1573.9" font-family="Arial" font-size="14.00" fill="#000000">podcast_id    </text>
-<text text-anchor="start" x="294.3976" y="-1573.9" font-family="Arial" font-size="14.00" fill="#666666">[int(11)]</text>
+<text text-anchor="start" x="192.5" y="-1573.9" font-family="Arial" font-size="14.00" fill="#000000">season_id    </text>
+<text text-anchor="start" x="290.507" y="-1573.9" font-family="Arial" font-size="14.00" fill="#666666">[int(11)]</text>
 <polygon fill="none" stroke="#000000" points="185.5,-1532.5 185.5,-1562.5 419.5,-1562.5 419.5,-1532.5 185.5,-1532.5"/>
-<text text-anchor="start" x="192.5" y="-1543.9" font-family="Arial" font-size="14.00" fill="#000000">season_id    </text>
-<text text-anchor="start" x="290.507" y="-1543.9" font-family="Arial" font-size="14.00" fill="#666666">[int(11)]</text>
+<text text-anchor="start" x="192.5" y="-1543.9" font-family="Arial" font-size="14.00" fill="#000000">episode_id    </text>
+<text text-anchor="start" x="294.3962" y="-1543.9" font-family="Arial" font-size="14.00" fill="#666666">[int(11)]</text>
 <polygon fill="none" stroke="#000000" points="185.5,-1502.5 185.5,-1532.5 419.5,-1532.5 419.5,-1502.5 185.5,-1502.5"/>
-<text text-anchor="start" x="192.5" y="-1513.9" font-family="Arial" font-size="14.00" fill="#000000">episode_id    </text>
-<text text-anchor="start" x="294.3962" y="-1513.9" font-family="Arial" font-size="14.00" fill="#666666">[int(11)]</text>
+<text text-anchor="start" x="192.5" y="-1513.9" font-family="Arial" font-size="14.00" fill="#000000">created    </text>
+<text text-anchor="start" x="273.3864" y="-1513.9" font-family="Arial" font-size="14.00" fill="#666666">[datetime]</text>
 <polygon fill="none" stroke="#000000" points="185.5,-1472.5 185.5,-1502.5 419.5,-1502.5 419.5,-1472.5 185.5,-1472.5"/>
-<text text-anchor="start" x="192.5" y="-1483.9" font-family="Arial" font-size="14.00" fill="#000000">created    </text>
-<text text-anchor="start" x="273.3864" y="-1483.9" font-family="Arial" font-size="14.00" fill="#666666">[datetime]</text>
+<text text-anchor="start" x="192.5" y="-1483.9" font-family="Arial" font-size="14.00" fill="#000000">updated    </text>
+<text text-anchor="start" x="277.291" y="-1483.9" font-family="Arial" font-size="14.00" fill="#666666">[datetime]</text>
 <polygon fill="none" stroke="#000000" points="185.5,-1442.5 185.5,-1472.5 419.5,-1472.5 419.5,-1442.5 185.5,-1442.5"/>
-<text text-anchor="start" x="192.5" y="-1453.9" font-family="Arial" font-size="14.00" fill="#000000">updated    </text>
-<text text-anchor="start" x="277.291" y="-1453.9" font-family="Arial" font-size="14.00" fill="#666666">[datetime]</text>
+<text text-anchor="start" x="192.5" y="-1453.9" font-family="Arial" font-size="14.00" fill="#000000">roles    </text>
+<text text-anchor="start" x="257.0372" y="-1453.9" font-family="Arial" font-size="14.00" fill="#666666">[longtext]</text>
 </g>
 <!-- contribution&#45;&gt;episode -->
 <g id="edge1" class="edge">
 <title>contribution:episode_id&#45;&gt;episode:id</title>
-<path fill="none" stroke="#000000" d="M429.5663,-1516.7828C529.7794,-1502.1191 512.3325,-1267.5 404.5,-1267.5"/>
-<polygon fill="#000000" stroke="#000000" points="429.4747,-1516.7893 419.1802,-1513.0114 424.4874,-1517.1446 419.5,-1517.5 419.5,-1517.5 419.5,-1517.5 424.4874,-1517.1446 419.8198,-1521.9886 429.4747,-1516.7893 429.4747,-1516.7893"/>
+<path fill="none" stroke="#000000" d="M429.7528,-1546.839C543.1854,-1531.8652 525.5935,-1267.5 404.5,-1267.5"/>
+<polygon fill="#000000" stroke="#000000" points="429.4793,-1546.8565 419.2104,-1543.0093 424.4896,-1547.1783 419.5,-1547.5 419.5,-1547.5 419.5,-1547.5 424.4896,-1547.1783 419.7896,-1551.9907 429.4793,-1546.8565 429.4793,-1546.8565"/>
 </g>
 </g>
 </svg>

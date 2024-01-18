@@ -59,7 +59,7 @@ class EpisodeType extends AbstractType {
             'required' => true,
         ]);
         $builder->add('subTitle', TextType::class, [
-            'label' => 'Alternative Title',
+            'label' => 'Subtitle',
             'required' => false,
         ]);
         $builder->add('explicit', ChoiceType::class, [
@@ -173,7 +173,7 @@ class EpisodeType extends AbstractType {
             ],
         ]);
         $builder->add('transcript', TextareaType::class, [
-            'label' => 'Transcript (Text)',
+            'label' => 'Transcript (Plain Text)',
             'required' => false,
             'attr' => [
                 'class' => 'tinymce',

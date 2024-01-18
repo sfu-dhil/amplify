@@ -21,7 +21,7 @@ parent: Schema
 
 |Name|Type|Default|Nullable|Extra Definition|Children|Parents|Comment|
 |----|----|-------|--------|----------------|--------|-------|-------|
-|id|int(11)||false|auto_increment|[contribution](contribution.md) [episode](episode.md) [season](season.md)|||
+|id|int(11)||false|auto_increment|[contribution](contribution.md) [episode](episode.md) [person](person.md) [publisher](publisher.md) [season](season.md)|||
 |publisher_id|int(11)|NULL|true|||[publisher](publisher.md)||
 |title|varchar(255)||false|||||
 |sub_title|varchar(255)|NULL|true|||||
@@ -45,6 +45,12 @@ parent: Schema
 | ---- | ---- | ---------- |
 | FK_D7E805BD40C86FCE | FOREIGN KEY | FOREIGN KEY (publisher_id) REFERENCES publisher (id) |
 | PRIMARY | PRIMARY KEY | PRIMARY KEY (id) |
+| categories | CHECK | CHECK (json_valid(`categories`)) |
+| keywords | CHECK | CHECK (json_valid(`keywords`)) |
+| keywords | CHECK | CHECK (json_valid(`keywords`)) |
+| status | CHECK | CHECK (json_valid(`status`)) |
+| status | CHECK | CHECK (json_valid(`status`)) |
+| status | CHECK | CHECK (json_valid(`status`)) |
 
 ## Indexes
 

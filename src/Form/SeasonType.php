@@ -36,7 +36,7 @@ class SeasonType extends AbstractType {
             'required' => true,
         ]);
         $builder->add('subTitle', TextType::class, [
-            'label' => 'Alternative Title',
+            'label' => 'Subtitle',
             'required' => false,
         ]);
         $builder->add('description', TextareaType::class, [

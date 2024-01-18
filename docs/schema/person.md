@@ -28,20 +28,21 @@ parent: Schema
 |bio|longtext||false|||||
 |created|datetime||false||||(DC2Type:datetime_immutable)|
 |updated|datetime||false||||(DC2Type:datetime_immutable)|
-|institution_id|int(11)|NULL|true|||[institution](institution.md)||
+|institution|varchar(255)|NULL|true|||||
+|podcast_id|int(11)||false|||[podcast](podcast.md)||
 
 ## Constraints
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
-| FK_34DCD17610405986 | FOREIGN KEY | FOREIGN KEY (institution_id) REFERENCES institution (id) |
+| FK_34DCD176786136AB | FOREIGN KEY | FOREIGN KEY (podcast_id) REFERENCES podcast (id) |
 | PRIMARY | PRIMARY KEY | PRIMARY KEY (id) |
 
 ## Indexes
 
 | Name | Definition |
 | ---- | ---------- |
-| IDX_34DCD17610405986 | KEY IDX_34DCD17610405986 (institution_id) USING BTREE |
+| IDX_34DCD176786136AB | KEY IDX_34DCD176786136AB (podcast_id) USING BTREE |
 | person_ft | KEY person_ft (fullname, bio) USING FULLTEXT |
 | PRIMARY | PRIMARY KEY (id) USING BTREE |
 

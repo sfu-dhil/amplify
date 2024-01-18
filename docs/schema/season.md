@@ -39,6 +39,9 @@ parent: Schema
 | FK_F0E45BA940C86FCE | FOREIGN KEY | FOREIGN KEY (publisher_id) REFERENCES publisher (id) |
 | FK_F0E45BA9786136AB | FOREIGN KEY | FOREIGN KEY (podcast_id) REFERENCES podcast (id) |
 | PRIMARY | PRIMARY KEY | PRIMARY KEY (id) |
+| status | CHECK | CHECK (json_valid(`status`)) |
+| status | CHECK | CHECK (json_valid(`status`)) |
+| status | CHECK | CHECK (json_valid(`status`)) |
 
 ## Indexes
 

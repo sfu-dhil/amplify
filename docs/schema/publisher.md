@@ -29,17 +29,20 @@ parent: Schema
 |contact|longtext||false|||||
 |created|datetime||false||||(DC2Type:datetime_immutable)|
 |updated|datetime||false||||(DC2Type:datetime_immutable)|
+|podcast_id|int(11)||false|||[podcast](podcast.md)||
 
 ## Constraints
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
+| FK_9CE8D546786136AB | FOREIGN KEY | FOREIGN KEY (podcast_id) REFERENCES podcast (id) |
 | PRIMARY | PRIMARY KEY | PRIMARY KEY (id) |
 
 ## Indexes
 
 | Name | Definition |
 | ---- | ---------- |
+| IDX_9CE8D546786136AB | KEY IDX_9CE8D546786136AB (podcast_id) USING BTREE |
 | publisher_ft | KEY publisher_ft (name, description) USING FULLTEXT |
 | PRIMARY | PRIMARY KEY (id) USING BTREE |
 

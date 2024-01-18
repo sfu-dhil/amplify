@@ -24,7 +24,7 @@ parent: Schema
 |id|int(11)||false|auto_increment|[contribution](contribution.md)|||
 |season_id|int(11)|NULL|true|||[season](season.md)||
 |podcast_id|int(11)||false|||[podcast](podcast.md)||
-|number|int(11)||false|||||
+|number|double||false|||||
 |date|date||false|||||
 |run_time|varchar(9)||false|||||
 |title|varchar(255)||false|||||
@@ -48,6 +48,11 @@ parent: Schema
 | FK_DDAA1CDA4EC001D1 | FOREIGN KEY | FOREIGN KEY (season_id) REFERENCES season (id) |
 | FK_DDAA1CDA786136AB | FOREIGN KEY | FOREIGN KEY (podcast_id) REFERENCES podcast (id) |
 | PRIMARY | PRIMARY KEY | PRIMARY KEY (id) |
+| keywords | CHECK | CHECK (json_valid(`keywords`)) |
+| keywords | CHECK | CHECK (json_valid(`keywords`)) |
+| status | CHECK | CHECK (json_valid(`status`)) |
+| status | CHECK | CHECK (json_valid(`status`)) |
+| status | CHECK | CHECK (json_valid(`status`)) |
 
 ## Indexes
 

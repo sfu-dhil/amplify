@@ -22,12 +22,10 @@ has_toc: false
 | Name | Columns | Comment | Type |
 | ---- | ------- | ------- | ---- |
 | [contribution](contribution.md) | 8 |  | BASE TABLE |
-| [contributor_role](contributor_role.md) | 7 |  | BASE TABLE |
 | [episode](episode.md) | 19 |  | BASE TABLE |
-| [institution](institution.md) | 5 |  | BASE TABLE |
-| [person](person.md) | 8 |  | BASE TABLE |
+| [person](person.md) | 9 |  | BASE TABLE |
 | [podcast](podcast.md) | 17 |  | BASE TABLE |
-| [publisher](publisher.md) | 8 |  | BASE TABLE |
+| [publisher](publisher.md) | 9 |  | BASE TABLE |
 | [season](season.md) | 10 |  | BASE TABLE |
 
 ## Relations
