@@ -78,6 +78,10 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
 
             return new JsonResponse([
                 'success' => $form->isValid(),
+                'data' => [
+                    'id' => $publisher->getId(),
+                    'text' => (string) $publisher,
+                ],
             ]);
         }
 

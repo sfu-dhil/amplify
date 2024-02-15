@@ -191,20 +191,23 @@
         const select2entityModal = document.getElementById('select2entity_modal')
         if (select2entityModal) {
             select2entityModal.addEventListener('show.bs.modal', event => {
-                console.log('event', event);
                 const button = event.relatedTarget
                 const contentRoute = button.getAttribute('data-modal-content-route');
+                const resultTarget = button.getAttribute('data-modal-result-target');
                 $(select2entityModal).find('.modal-content').load(contentRoute, () => {
                     // form submission
                     $(select2entityModal).find('form').submit((formSubmitEvent) => {
                         formSubmitEvent.preventDefault();
-                        console.log($(select2entityModal).find('form').attr("action"));
-                        console.log($(select2entityModal).find('form').serialize());
                         $.post(
                             $(select2entityModal).find('form').attr("action"),
                             $(select2entityModal).find('form').serialize(),
-                            (data) => {
-                                if (data.success) {
+                            (result) => {
+                                if (result.success) {
+                                    if (resultTarget && result.data) {
+                                        const { id, text } = result.data;
+                                        const newOption = new Option(text, id, true, true);
+                                        $(resultTarget).append(newOption).val(id).trigger('change');
+                                    }
                                     $(select2entityModal).modal('hide');
                                 } else {
                                     alert('There was a problem saving the form.');

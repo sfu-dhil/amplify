@@ -78,6 +78,10 @@ class PersonController extends AbstractController implements PaginatorAwareInter
 
             return new JsonResponse([
                 'success' => $form->isValid(),
+                'data' => [
+                    'id' => $person->getId(),
+                    'text' => (string) $person,
+                ],
             ]);
         }
 
