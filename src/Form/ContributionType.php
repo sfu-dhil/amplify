@@ -35,7 +35,7 @@ class ContributionType extends AbstractType {
             'allow_clear' => true,
             'attr' => [
                 'add_route' => $this->router->generate('person_new', ['podcast_id' => $options['podcast']->getId()]),
-                'add_label' => 'Add Person',
+                'add_label' => 'Add New Person',
                 'add_modal' => true,
             ],
             'placeholder' => 'Search for an existing person by name',

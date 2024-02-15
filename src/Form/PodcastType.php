@@ -98,7 +98,7 @@ class PodcastType extends AbstractType {
             'allow_clear' => true,
             'attr' => [
                 'add_route' => $this->router->generate('publisher_new', ['podcast_id' => $builder->getData()->getId()]),
-                'add_label' => 'Add Publisher',
+                'add_label' => 'Add New Publisher',
                 'add_modal' => true,
             ],
             'placeholder' => 'Search for an existing publisher by name',
