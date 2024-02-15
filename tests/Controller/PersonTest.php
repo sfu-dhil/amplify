@@ -140,9 +140,13 @@ class PersonTest extends ControllerTestCase {
             $response = $this->client->getResponse();
             $this->assertResponseIsSuccessful();
             $this->assertSame('application/json', $response->headers->get('content-type'));
-            $json = (array) json_decode($response->getContent());
+            $json = (array) json_decode($response->getContent(), true);
             $this->assertSame($json, [
                 'success' => true,
+                'data' => [
+                    'id' => $newId,
+                    'text' => "Updated Fullname {$newId}",
+                ],
             ]);
             $newId++;
         }

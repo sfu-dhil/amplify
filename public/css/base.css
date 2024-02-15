@@ -273,7 +273,7 @@ textarea.tinymce {
     height: 0px !important;
     min-height: 0px !important;
     padding: 0px !important;
-    border: none !important;
+    border: 1px solid rgba(var(--bs-white-rgb),var(--bs-bg-opacity)) !important;
     resize: none !important;
     outline: none !important;
     box-shadow: none !important;
