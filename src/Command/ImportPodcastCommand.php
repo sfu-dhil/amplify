@@ -352,7 +352,7 @@ class ImportPodcastCommand extends Command {
             $episode->setSeason($season);
 
             $episodeNumber = $episode->getNumber() ? (float) $episode->getNumber() : $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'episode');
-            if ($episodeNumber) {
+            if (! is_null($episodeNumber)) {
                 $this->seasonEpisodeCounter[$seasonNumber][$episodeType] = (int) $episodeNumber;
             } else {
                 $episodeNumber = ++$this->seasonEpisodeCounter[$seasonNumber][$episodeType];
@@ -438,6 +438,13 @@ class ImportPodcastCommand extends Command {
             $this->em->persist($episode);
             $this->em->flush();
 
+            $imageTags = $item->get_item_tags(SimplePie::NAMESPACE_ITUNES, 'image') ?? [];
+            foreach($imageTags as $imageTag) {
+                if ($imageTag && array_key_exists('attribs', $imageTag) && array_key_exists('', $imageTag['attribs']) && array_key_exists('href', $imageTag['attribs'][''])) {
+                    $this->addEpisodeMediaFetchRequest($episode, $imageTag['attribs']['']['href']);
+                }
+            }
+
             foreach ($item->get_enclosures() as $enclosure) {
                 if ($enclosure && $enclosure->get_link()) {
                     $this->addEpisodeMediaFetchRequest($episode, $enclosure->get_link());
@@ -479,7 +486,7 @@ class ImportPodcastCommand extends Command {
         $successRequests = [];
         $completed = 0;
         $pool = new Pool($this->client, $requests(), [
-            'concurrency' => 20,
+            'concurrency' => 15,
             'fulfilled' => function (Response $response, $index) use ($urls, &$successRequests, &$completed, &$stepsCompletedCount) : void {
                 $url = $urls[$index];
                 $successRequests[$url] = $this->mediaRequests[$url];
