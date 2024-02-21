@@ -4,17 +4,19 @@
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
-    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': export.podcast.id}) }}">{{ export.podcast.title }}</a></li>
-    <li class="breadcrumb-item"><a href="{{ path('export_index', {'podcast_id': export.podcast.id}) }}">Exports</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {id: export.podcast.id}) }}">{{ export.podcast.title }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('export_index', {podcast_id: export.podcast.id}) }}">Exports</a></li>
     <li class="breadcrumb-item active" aria-current="page">New</li>
 {% endblock %}
 
 {% block body %}
-    {{ form_start(form) }}
+    {{ form_start(form, {
+        aria_label: 'Export Podcast',
+    }) }}
     {{ form_widget(form) }}
     <div class="mb-3 text-center">
         <input type="submit" value="Export" class="btn btn-primary" />
-        <a href="{{ path('podcast_show', {'id': export.podcast.id}) }}" class="btn btn-warning"> Cancel </a>
+        <a href="{{ path('podcast_show', {id: export.podcast.id}) }}" class="btn btn-warning"> Cancel </a>
     </div>
     {{ form_end(form) }}
 {% endblock %}

@@ -4,11 +4,12 @@
 </div>
 <div class="modal-body">
     {{ form_start(form, {
-        'action': path('publisher_new', {'podcast_id': podcast.id})
+        aria_label: 'Create Publisher',
+        action: path('publisher_new', {podcast_id: podcast.id})
     }) }}
     {{ form_widget(form) }}
     <div class="mb-3 text-center">
-        <input type="submit" value="Save" class="btn btn-primary" />
+        <input type="submit" value="Create Publisher" class="btn btn-primary" />
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
     </div>
     {{ form_end(form) }}

@@ -1,77 +1,66 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Episode {{ episode.title }}{% endblock %}
+{% block title %}{{ episode.slug }}: {{ episode.title }}{% endblock %}
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
-    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': episode.podcast.id}) }}">{{ episode.podcast.title }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {id: episode.podcast.id}) }}">{{ episode.podcast.title }}</a></li>
     {% if episode.season %}
-        <li class="breadcrumb-item"><a href="{{ path('season_show', {'podcast_id': episode.podcast.id, 'id': episode.season.id}) }}">{{ episode.season.title }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('season_show', {podcast_id: episode.podcast.id, id: episode.season.id}) }}">{{ episode.season.title }}</a></li>
     {% endif %}
     <li class="breadcrumb-item active" aria-current="page">{{ episode.title }}</li>
 {% endblock %}
 
 {% block action_buttons %}
-    <a href="{{ path('episode_edit', {'podcast_id': episode.podcast.id, 'id': episode.id }) }}" class="btn btn-primary">
-        <i class="bi bi-pencil-square"></i> Edit Episode
+    <a href="{{ path('episode_edit', {podcast_id: episode.podcast.id, id: episode.id }) }}" class="btn btn-primary">
+        <i class="bi bi-pencil-square" aria-hidden="true"></i> Edit Episode
     </a>
-    <form class="d-inline-block" method="post" action="{{ path('episode_delete', {'podcast_id': episode.podcast.id, 'id': episode.id }) }}" onsubmit="return confirm('Are you sure you want to delete this episode?');">
+    <form class="d-inline-block" method="post" action="{{ path('episode_delete', {podcast_id: episode.podcast.id, id: episode.id }) }}" onsubmit="return confirm('Are you sure you want to delete this episode?');">
         <input type="hidden" name="_method" value="DELETE">
         <input type="hidden" name="_token" value="{{ csrf_token("delete_episode" ~ episode.id) }}">
-        <button class="btn btn-danger w-100"><i class="bi bi-trash"></i> Delete Episode</button>
+        <button class="btn btn-danger w-100"><i class="bi bi-trash" aria-hidden="true"></i> Delete Episode</button>
     </form>
 {% endblock %}
 
 {% block body %}
-    <h1 class="h3">
-        Season {{ episode.season.number }}
-        {% if episode.episodeType == 'bonus' %}
-            Bonus Episode
-        {% elseif episode.episodeType == 'trailer' %}
-            Trailer
-        {% else %}
-            Episode
-        {% endif %}
-        {{ episode.number }}
-    </h1>
     <div class="card">
         <div class="card-body clearfix">
             <div class="col-auto float-md-end mb-3 ms-md-3" style="max-width: 300px">
                 {% for image in episode.images %}
                     {% embed '@NinesMedia/image/partial/list-item.html.twig' with {
-                        'image': image,
-                        'showActions': false,
+                        image: image,
+                        show_actions: false,
                     } %}
                     {% endembed %}
                 {% endfor %}
             </div>
-            <h2 class="card-title text-truncate">{{ episode.title }}</h2>
-            {% if episode.subTitle %}<h5 class="card-subtitle text-truncate">{{ episode.subTitle }}</h5>{% endif %}
-            <h6 class="card-subtitle mt-2">{{ episode.slug }}</h6>
+            <h1 class="card-title text-truncate h2">{{ episode.slug }}: {{ episode.title }}</h1>
+            {% if episode.subTitle %}<div class="card-subtitle text-truncate h5">{{ episode.subTitle }}</div>{% endif %}
             <div class="card-text my-3">{{ episode.description|default('')|sanitize_html }}</div>
         </div>
     </div>
+
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 my-3 g-4">
         <div class="col text-truncate">
-            <h6><i class="bi bi-exclamation-octagon"></i> Explicit</h6>
+            <h2 class="h6"><i class="bi bi-exclamation-octagon" aria-hidden="true"></i> Explicit</h2>
             {{ episode.explicit ? 'Yes' : 'No' }}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-calendar-event"></i> Release Date</h6>
+            <h2 class="h6"><i class="bi bi-calendar-event" aria-hidden="true"></i> Release Date</h2>
             {{ episode.date|date('Y-m-d') }}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-stopwatch"></i> Run Time</h6>
+            <h2 class="h6"><i class="bi bi-stopwatch" aria-hidden="true"></i> Run Time</h2>
             {{ episode.runTime }}
         </div>
         <div class="col">
-            <h6><i class="bi bi-tags"></i> Keywords</h6>
+            <h2 class="h6"><i class="bi bi-tags" aria-hidden="true"></i> Keywords</h2>
             {% for keyword in episode.keywords %}
                 <span class="badge text-bg-primary">{{ keyword }}</span>
             {% endfor %}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-people-fill"></i> Contributors</h6>
+            <h2 class="h6"><i class="bi bi-people-fill" aria-hidden="true"></i> Contributors</h2>
             {% for contribution in episode.contributions %}
                 <div>
                     <a href='{{ path("person_edit", {"podcast_id": episode.podcast.id, "id":contribution.person.id }) }}'>{{ contribution.person.fullName }}</a> -
@@ -82,45 +71,48 @@
             {% endfor %}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-calendar-event"></i> Created</h6>
+            <h2 class="h6"><i class="bi bi-calendar-event" aria-hidden="true"></i> Created</h2>
             {{ episode.created|date('Y-m-d') }}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-calendar-event"></i> Last Updated</h6>
+            <h2 class="h6"><i class="bi bi-calendar-event" aria-hidden="true"></i> Last Updated</h2>
             {{ episode.updated|date('Y-m-d') }}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-list-check"></i> Episode Export Status</h6>
+            <h2 class="h6"><i class="bi bi-list-check" aria-hidden="true"></i> Episode Export Status</h2>
             {% embed 'status/partial/report.html.twig' with {
-                'entity': episode,
+                entity: episode,
             } %}
             {% endembed %}
         </div>
     </div>
     <hr />
     <div class="my-3">
-        <h6><i class="bi bi-bookshelf"></i> Bibliography</h6>
+        <h2 class="h6"><i class="bi bi-bookshelf" aria-hidden="true"></i> Bibliography</h2>
         <div class="show-more-content">{{ episode.bibliography|default('')|sanitize_html }}</div>
     </div>
     <hr />
     <div class="my-3">
-        <h6><i class="bi bi-list-task"></i> Permissions</h6>
+        <h2 class="h6"><i class="bi bi-list-task" aria-hidden="true"></i> Permissions</h2>
         <div class="show-more-content">{{ episode.permissions|default('')|sanitize_html }}</div>
     </div>
     <hr />
     <div class="my-3">
-        <h6><i class="bi bi-pen"></i> Transcript</h6>
-        <div class="show-more-content">{{ episode.transcript|default('')|sanitize_html }}</div>
+        <h2 class="h6"><i class="bi bi-pen" aria-hidden="true"></i> Transcript</h2>
+        <div id="audio_transcript_text" class="show-more-content">{{ episode.transcript|default('')|sanitize_html }}</div>
     </div>
+    <hr />
 
     {% if episode.audios|length > 0 %}
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title text-truncate">Episode Audio</h5>
+                <h2 class="card-title text-truncate h5">Episode Audio</h2>
                 {% for audio in episode.audios %}
                     {% embed '@NinesMedia/audio/partial/list-item.html.twig' with {
-                        'audio': audio,
-                        'showActions': false,
+                        audio: audio,
+                        show_actions: false,
+                        download_after_caption: true,
+                        aria_describedby: 'audio_transcript_text',
                     } %}
                     {% endembed %}
                 {% endfor %}
@@ -131,11 +123,12 @@
     {% if episode.pdfs|length > 0 %}
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title text-truncate">Episode Transcript PDFs</h5>
+                <h2 class="card-title text-truncate h5">Episode Transcript PDFs</h2>
                 {% for pdf in episode.pdfs %}
                     {% embed '@NinesMedia/pdf/partial/list-item.html.twig' with {
-                        'pdf': pdf,
-                        'showActions': false,
+                        pdf: pdf,
+                        show_actions: false,
+                        download_after_caption: true,
                     } %}
                     {% endembed %}
                 {% endfor %}

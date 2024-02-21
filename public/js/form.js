@@ -46,101 +46,31 @@
         if ( $('.collection-complex').length == 0 ) {
             return
         }
-        $('.collection-complex').each( (index, collectionEl) => {
+        $('.collection-complex').each( (_, collectionEl) => {
             const label = $(collectionEl).data('collection-label');
+            const prompt = label ? `Add New ${label}` : `Add New Item`;
             $(collectionEl).collection({
                 init_with_n_elements: 0,
                 allow_up: false,
                 allow_down: false,
                 max: 400,
+                position_field_selector: '.position-id',
                 add_at_the_end: true,
-                add: `<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Add New ${label}</a>`,
-                remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
-                after_add: function(collection, element){
+                add: `<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle" aria-hidden="true"></i> ${prompt}</a>`,
+                remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle" aria-hidden="true"></i> <span class="visually-hidden">Remove</span></a>',
+                after_add: function(_, element){
                     $(element).find('.select2entity').select2entity();
                     $(element).find('.select2-simple').select2({
                         width: '100%',
                     });
                     if (tinymce && $(element).find('.tinymce').length > 0 ) {
-                        $(element).find('.tinymce').each(function (index, textarea) {
-                            tinymce.execCommand("mceAddEditor", false, textarea.id);
+                        $(element).find('.tinymce').each(function (_, textarea) {
+                            tinymce.execCommand("mceAddEditor", false, {id: textarea.id, options: getTinyMceConfig()});
                         });
                     }
                     return true;
                 },
             })
-        });
-    }
-
-    function mediaCollection() {
-        if ( $('.collection-media').length == 0 ) {
-            return
-        }
-        $('.collection-media.collection-media-image').collection({
-            init_with_n_elements: 0,
-            allow_up: false,
-            allow_down: false,
-            max: 400,
-            position_field_selector: '.position-id',
-            add_at_the_end: true,
-            add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Add New Image</a>',
-            remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
-            after_add: function(collection, element){
-                $(element).find('.select2entity').select2entity();
-                $(element).find('.select2-simple').select2({
-                    width: '100%',
-                });
-                if (tinymce && $(element).find('.tinymce').length > 0 ) {
-                    $(element).find('.tinymce').each(function (index, textarea) {
-                        tinymce.execCommand("mceAddEditor", false, textarea.id);
-                    });
-                }
-                return true;
-            },
-        });
-        $('.collection-media.collection-media-audio').collection({
-            init_with_n_elements: 0,
-            allow_up: false,
-            allow_down: false,
-            max: 400,
-            position_field_selector: '.position-id',
-            add_at_the_end: true,
-            add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Add New Audio</a>',
-            remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
-            after_add: function(collection, element){
-                $(element).find('.select2entity').select2entity();
-                $(element).find('.select2-simple').select2({
-                    width: '100%',
-                });
-                if (tinymce && $(element).find('.tinymce').length > 0 ) {
-                    $(element).find('.tinymce').each(function (index, textarea) {
-                        tinymce.execCommand("mceAddEditor", false, textarea.id);
-                    });
-                }
-                return true;
-            },
-        });
-        $('.collection-media.collection-media-pdf').collection({
-            init_with_n_elements: 0,
-            allow_up: false,
-            allow_down: false,
-            max: 400,
-            position_field_selector: '.position-id',
-            add_at_the_end: true,
-            add: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Add New Transcript</a>',
-            remove: '<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-dash-circle"></i></a>',
-            after_add: function(collection, element){
-                $(element).find('.select2entity').select2entity();
-                $(element).find('.select2-simple').select2({
-                    width: '100%',
-                });
-                if (tinymce && $(element).find('.tinymce').length > 0 ) {
-                    $(element).find('.tinymce').each(function (index, textarea) {
-                        tinymce.execCommand("mceAddEditor", false, textarea.id);
-                    });
-                }
-                return true;
-            },
         });
     }
 
@@ -181,7 +111,6 @@
         });
         if (typeof $().collection === 'function') {
             complexCollection();
-            mediaCollection();
         }
         menuTabs();
         $('.select2-simple').select2({
@@ -210,7 +139,7 @@
                                     }
                                     $(select2entityModal).modal('hide');
                                 } else {
-                                    alert('There was a problem saving the form.');
+                                    alert(`There was a problem saving the form: \n${result.errors.join('\n')}`);
                                 }
                             },
                         );
@@ -223,7 +152,7 @@
                     if (tinymce && $(select2entityModal).find('.tinymce').length > 0 ) {
                         $(select2entityModal).find('.tinymce').each(function (index, textarea) {
                             tinymce.execCommand('mceRemoveEditor', false, textarea.id);
-                            tinymce.execCommand("mceAddEditor", false, textarea.id);
+                            tinymce.execCommand("mceAddEditor", false, {id: textarea.id, options: getTinyMceConfig()});
                         });
                     }
                 });

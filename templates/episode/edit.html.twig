@@ -1,14 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Episode {{ episode.title }}{% endblock %}
+{% block title %}Edit Episode{% endblock %}
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
-    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': episode.podcast.id}) }}">{{ episode.podcast.title }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {id: episode.podcast.id}) }}">{{ episode.podcast.title }}</a></li>
     {% if episode.season %}
-        <li class="breadcrumb-item"><a href="{{ path('season_show', {'podcast_id': episode.podcast.id, 'id': episode.season.id}) }}">{{ episode.season.title }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('season_show', {podcast_id: episode.podcast.id, id: episode.season.id}) }}">{{ episode.season.title }}</a></li>
     {% endif %}
-    <li class="breadcrumb-item"><a href="{{ path('episode_show', {'podcast_id': episode.podcast.id, 'id': episode.id}) }}">{{ episode.title }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('episode_show', {podcast_id: episode.podcast.id, id: episode.id}) }}">{{ episode.title }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">Edit</li>
 {% endblock %}
 
@@ -21,3 +21,16 @@
     {% include '@NinesEditor/editor/widget.html.twig' %}
 {% endblock %}
 
+{% block toc %}
+    {% embed 'toc/partial/toc.html.twig' with {
+        form: form,
+    } %}{% endembed %}
+{% endblock %}
+
+{% block toc_actions %}
+    {% embed 'toc/partial/toc_actions.html.twig' with {
+        form: form,
+        is_new: episode.id is null,
+        cancel_path: episode.id is null ? path('podcast_show', { id: episode.podcast.id }) : path('episode_show', { podcast_id: episode.podcast.id, id: episode.id }),
+    } %}{% endembed %}
+{% endblock %}

@@ -2,7 +2,8 @@
 {% set progressBarClass = import.isActive ? 'progress-bar-striped progress-bar-animated' : (import.isSuccess ? 'bg-success' : 'bg-danger') %}
 <figure>
     <div class="progress">
-        <div class="progress-bar {{ progressBarClass }}" role="progressbar" aria-label="Animated striped example" aria-valuenow="{{ import.progress ?? 0 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ import.progress ?? 0 }}%">
+        <div class="progress-bar {{ progressBarClass }}" style="width: {{ import.progress ?? 0 }}%"
+             role="progressbar" aria-label="RSS Import Progress" aria-valuenow="{{ import.progress ?? 0 }}" aria-valuemin="0" aria-valuemax="100">
             {{ import.progress ?? 0 }}%
         </div>
     </div>
@@ -28,7 +29,7 @@
     <p class="card-text">The import job may take several minutes to complete.</p>
 {% endif %}
 {% if import.isActive %}
-    <div class="d-grid ">
+    <div class="d-grid" aria-busy="true">
         <div class="noise mx-auto">
             <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
             <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
@@ -41,5 +42,5 @@
         </div>
     </div>
 {% elseif import.podcast %}
-    <a class="btn btn-primary btn-lg" href="{{ path('podcast_show', {'id': import.podcast.id}) }}">View Podcast</a>
+    <a class="btn btn-primary btn-lg" href="{{ path('podcast_show', {id: import.podcast.id}) }}">View Podcast</a>
 {% endif %}

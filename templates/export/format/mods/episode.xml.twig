@@ -4,19 +4,19 @@
         xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
         version="3.5">
     {% embed 'export/format/mods/partial/identifier_episode.xml.twig' with {
-        'episode': episode,
+        episode: episode,
     } %}{% endembed %}
 
     {% for contribution in contributions %}
     {% embed 'export/format/mods/partial/contribution.xml.twig' with {
-        'person': contribution.person,
-        'roles': contribution.roles,
+        person: contribution.person,
+        roles: contribution.roles,
     } %}{% endembed %}
     {% endfor %}
 
     {% if episode.podcast.languageCode %}
     {% embed 'export/format/mods/partial/language.xml.twig' with {
-        'languageCode': episode.podcast.languageCode,
+        languageCode: episode.podcast.languageCode,
     } %}{% endembed %}
     {% endif %}
 
@@ -42,10 +42,10 @@
     <genre authority="lcsh" valueURI="https://id.loc.gov/authorities/genreForms/gf2011026450">Podcasts</genre>
     <genre authority="marcgt">nonmusical sound</genre>
     {% embed 'export/format/mods/partial/subjects_episode.xml.twig' with {
-        'episode': episode,
+        episode: episode,
     } %}{% endembed %}
     {% embed 'export/format/mods/partial/subjects_podcast.xml.twig' with {
-        'podcast': episode.podcast,
+        podcast: episode.podcast,
     } %}{% endembed %}
 
     {% if episode.podcast.copyright %}
@@ -72,12 +72,12 @@
 
     <relatedItem type="series">
         {% embed 'export/format/mods/partial/identifier_season.xml.twig' with {
-            'season': episode.season,
+            season: episode.season,
         } %}{% endembed %}
     </relatedItem>
     <relatedItem type="series">
         {% embed 'export/format/mods/partial/identifier_podcast.xml.twig' with {
-            'podcast': episode.podcast,
+            podcast: episode.podcast,
         } %}{% endembed %}
     </relatedItem>
 </mods>

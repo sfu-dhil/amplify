@@ -1,18 +1,21 @@
 {% set statusItems = season.status|filter(v => not v.child is defined) %}
 
-<ul class="list-group list-group-flush">
+<ul class="list-group list-group-flush" aria-hidden="true">
 {% embed 'status/partial/heading.html.twig' with {
-    'label': season.slug ~ ' Metadata: ' ~ season.title,
-    'count': statusItems|length
+    label: season.slug ~ ' Metadata: ' ~ season.title,
+    count: statusItems|length
 } %}{% endembed %}
 </ul>
-<ul class="list-group list-group-flush list-group-numbered">
+<ul class="list-group list-group-flush list-group-numbered"
+    aria-hidden="{{ statusItems|length > 0 ? 'false' : 'true' }}"
+    aria-label="Missing {{ statusItems|length }} Metadata for Season {{ season.number }}">
 {% embed 'status/partial/status_items.html.twig' with {
-    'items': statusItems
+    items: statusItems
 } %}{% endembed %}
 </ul>
+
 {% for episode in season.episodes %}
     {% embed 'status/partial/episode.html.twig' with {
-        'episode': episode
+        episode: episode
     } %}{% endembed %}
 {% endfor %}

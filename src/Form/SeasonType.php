@@ -69,7 +69,7 @@ class SeasonType extends AbstractType {
             'delete_empty' => true,
             'entry_type' => ContributionType::class,
             'entry_options' => [
-                'label' => false,
+                'label' => 'Contributor',
                 'podcast' => $builder->getData()->getPodcast(),
             ],
             'by_reference' => false,
@@ -86,12 +86,13 @@ class SeasonType extends AbstractType {
             'delete_empty' => false,
             'entry_type' => AmplifyImageType::class,
             'entry_options' => [
-                'label' => false,
+                'label' => 'Image',
             ],
             'prototype' => true,
             'by_reference' => false,
             'attr' => [
-                'class' => 'collection collection-media collection-media-image',
+                'class' => 'collection collection-complex',
+                'data-collection-label' => 'Image',
             ],
         ]);
     }

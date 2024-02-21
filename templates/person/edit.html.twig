@@ -4,18 +4,20 @@
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
-    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': person.podcast.id}) }}">{{ person.podcast.title }}</a></li>
-    <li class="breadcrumb-item"><a href="{{ path('person_index', {'podcast_id': person.podcast.id }) }}">People</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {id: person.podcast.id}) }}">{{ person.podcast.title }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('person_index', {podcast_id: person.podcast.id }) }}">People</a></li>
     <li class="breadcrumb-item">{{ person.fullname }}</li>
     <li class="breadcrumb-item active" aria-current="page">Edit</li>
 {% endblock %}
 
 {% block body %}
-    {{ form_start(form) }}
+    {{ form_start(form, {
+        aria_label: 'Update Person',
+    }) }}
     {{ form_widget(form) }}
     <div class="mb-3 text-center">
         <input type="submit" value="Save" class="btn btn-primary" />
-        <a href="{{ path('person_index', { 'podcast_id': person.podcast.id }) }}" class="btn btn-warning"> Cancel </a>
+        <a href="{{ path('person_index', { podcast_id: person.podcast.id }) }}" class="btn btn-warning"> Cancel </a>
     </div>
     {{ form_end(form) }}
 {% endblock %}

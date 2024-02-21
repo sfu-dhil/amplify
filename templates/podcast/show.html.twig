@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Podcast {{ podcast.title }}{% endblock %}
+{% block title %}{{ podcast.title }}{% endblock %}
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
@@ -8,19 +8,19 @@
 {% endblock %}
 
 {% block action_buttons %}
-    <a href="{{ path('export_new', {'podcast_id': podcast.id }) }}" class="btn btn-primary">
-        <i class="bi bi-cloud-arrow-up-fill"></i> Export Podcast
+    <a href="{{ path('export_new', {podcast_id: podcast.id }) }}" class="btn btn-primary">
+        <i class="bi bi-cloud-arrow-up-fill" aria-hidden="true"></i> Export Podcast
     </a>
-    <a href="{{ path('podcast_import_new', {'podcast_id': podcast.id }) }}" class="btn btn-primary">
-        <i class="bi bi-cloud-arrow-down-fill"></i> Reimport Metadata from RSS Feed
+    <a href="{{ path('podcast_import_new', {podcast_id: podcast.id }) }}" class="btn btn-primary">
+        <i class="bi bi-cloud-arrow-down-fill" aria-hidden="true"></i> Reimport Metadata from RSS Feed
     </a>
-    <a href="{{ path('podcast_edit', {'id': podcast.id }) }}" class="btn btn-primary">
-        <i class="bi bi-pencil-square"></i> Edit Podcast
+    <a href="{{ path('podcast_edit', {id: podcast.id }) }}" class="btn btn-primary">
+        <i class="bi bi-pencil-square" aria-hidden="true"></i> Edit Podcast
     </a>
-    <form class="d-inline-block" method="post" action="{{ path('podcast_delete', {'id': podcast.id }) }}" onsubmit="return confirm('Are you sure you want to delete this podcast?');">
+    <form class="d-inline-block" method="post" action="{{ path('podcast_delete', {id: podcast.id }) }}" onsubmit="return confirm('Are you sure you want to delete this podcast?');">
         <input type="hidden" name="_method" value="DELETE">
         <input type="hidden" name="_token" value="{{ csrf_token("delete_podcast" ~ podcast.id) }}">
-        <button class="btn btn-danger w-100"><i class="bi bi-trash"></i> Delete Podcast</button>
+        <button class="btn btn-danger w-100"><i class="bi bi-trash" aria-hidden="true"></i> Delete Podcast</button>
     </form>
 {% endblock %}
 
@@ -30,70 +30,72 @@
             <div class="col-auto float-md-end mb-3 ms-md-3" style="max-width: 300px">
                 {% for image in podcast.images %}
                     {% embed '@NinesMedia/image/partial/list-item.html.twig' with {
-                        'image': image,
-                        'showActions': false,
+                        image: image,
+                        show_actions: false,
                     } %}
                     {% endembed %}
                 {% endfor %}
             </div>
-            <h2 class="card-title text-truncate">{{ podcast.title }}</h2>
-            {% if podcast.subTitle %}<h5 class="card-subtitle text-truncate">{{ podcast.subTitle }}</h5>{% endif %}
-            <div class="card-text my-3">{{ podcast.description|default('')|sanitize_html }}</div>
+            <h1 class="card-title text-truncate h2">{{ podcast.title }}</h1>
+            {% if podcast.subTitle %}<div class="card-subtitle text-truncate h5">{{ podcast.subTitle }}</div>{% endif %}
+            <div class="card-text my-3">
+                {{ podcast.description|default('')|sanitize_html }}
+            </div>
         </div>
     </div>
-    <div class="d-grid gap-2 d-md-block m-2 text-end">
-        <a href="{{ path('share_index', {'podcast_id': podcast.id }) }}" class="btn btn-primary">
-            <i class="bi bi-people-fill"></i> Share Access
+    <div class="d-grid gap-2 d-lg-block m-2 text-end">
+        <a href="{{ path('share_index', {podcast_id: podcast.id }) }}" class="btn btn-primary">
+            <i class="bi bi-people-fill" aria-hidden="true"></i> Share Access
         </a>
-        <a href="{{ path('person_index', {'podcast_id': podcast.id }) }}" class="btn btn-primary">
-            <i class="bi bi-eye"></i> All Podcast Contributors
+        <a href="{{ path('person_index', {podcast_id: podcast.id }) }}" class="btn btn-primary">
+            <i class="bi bi-eye" aria-hidden="true"></i> All Podcast Contributors
         </a>
-        <a href="{{ path('publisher_index', {'podcast_id': podcast.id }) }}" class="btn btn-primary">
-            <i class="bi bi-eye"></i> All Podcast Publishers
+        <a href="{{ path('publisher_index', {podcast_id: podcast.id }) }}" class="btn btn-primary">
+            <i class="bi bi-eye" aria-hidden="true"></i> All Podcast Publishers
         </a>
     </div>
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 my-3 g-4">
         <div class="col text-truncate">
-            <h6><i class="bi bi-exclamation-octagon"></i> Explicit</h6>
+            <h2 class="h6"><i class="bi bi-exclamation-octagon" aria-hidden="true"></i> Explicit</h2>
             {{ podcast.explicit ? 'Yes' : 'No' }}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-file-text"></i> Primary Language</h6>
+            <h2 class="h6"><i class="bi bi-file-text" aria-hidden="true"></i> Primary Language</h2>
             {{ podcast.languageCode|language_name }}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-broadcast-pin"></i> Podcast Website</h6>
+            <h2 class="h6"><i class="bi bi-broadcast-pin" aria-hidden="true"></i> Podcast Website</h2>
             {% if podcast.website %}
                 <a href='{{ podcast.website }}'>{{ podcast.website }}</a>
             {% endif %}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-rss"></i> Rss</h6>
+            <h2 class="h6"><i class="bi bi-rss" aria-hidden="true"></i> Rss</h2>
             {% if podcast.rss %}
                 <a href='{{ podcast.rss }}'>{{ podcast.rss }}</a>
             {% endif %}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-journals"></i> Publisher</h6>
+            <h2 class="h6"><i class="bi bi-journals" aria-hidden="true"></i> Publisher</h2>
             {% if podcast.publisher %}
                 <a href='{{ path("publisher_edit", {"podcast_id": podcast.id, "id": podcast.publisher.id}) }}'>{{ podcast.publisher }}</a>
             {% endif %}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-tags"></i> Apple Podcast Categories</h6>
+            <h2 class="h6"><i class="bi bi-tags" aria-hidden="true"></i> Apple Podcast Categories</h2>
             {% for category in podcast.categories %}
                 <span class="badge text-bg-primary">{{ category }}</span>
             {% endfor %}
         </div>
         <div class="col">
-            <h6><i class="bi bi-tags"></i> Keywords</h6>
+            <h2 class="h6"><i class="bi bi-tags" aria-hidden="true"></i> Keywords</h2>
             {% for keyword in podcast.keywords %}
                 <span class="badge text-bg-primary">{{ keyword }}</span>
             {% endfor %}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-people-fill"></i> Contributors</h6>
+            <h2 class="h6"><i class="bi bi-people-fill" aria-hidden="true"></i> Contributors</h2>
             {% for contribution in podcast.contributions %}
                 <div>
                     <a href='{{ path("person_edit", {"podcast_id": podcast.id, "id":contribution.person.id }) }}'>{{ contribution.person.fullName }}</a> -
@@ -104,44 +106,44 @@
             {% endfor %}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-list-check"></i> Podcast Export Status</h6>
+            <h2 class="h6"><i class="bi bi-list-check" aria-hidden="true"></i> Podcast Export Status</h2>
             {% embed 'status/partial/report.html.twig' with {
-                'entity': podcast,
+                entity: podcast,
             } %}
             {% endembed %}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-calendar-event"></i> Created</h6>
+            <h2 class="h6"><i class="bi bi-calendar-event" aria-hidden="true"></i> Created</h2>
             {{ podcast.created|date('Y-m-d') }}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-calendar-event"></i> Last Updated</h6>
+            <h2 class="h6"><i class="bi bi-calendar-event" aria-hidden="true"></i> Last Updated</h2>
             {{ podcast.updated|date('Y-m-d') }}
         </div>
     </div>
     <hr />
     <div class="text-truncate">
-        <h6><i class="bi bi-list-task"></i> License</h6>
+        <h2 class="h6"><i class="bi bi-list-task" aria-hidden="true"></i> License</h2>
         <div class="show-more-content">{{ podcast.license|default('')|sanitize_html }}</div>
     </div>
     <hr />
     <div class="text-truncate">
-        <h6><i class="bi bi-c-circle"></i> Copyright</h6>
+        <h2 class="h6"><i class="bi bi-c-circle" aria-hidden="true"></i> Copyright</h2>
         <div class="show-more-content">{{ podcast.copyright|default('')|sanitize_html }}</div>
     </div>
     <div class="row my-3">
         <div class="col-lg h3">
         </div>
         <div class="col-lg-auto">
-            <div class="d-grid gap-2 d-md-block m-2">
-                <a href="{{ path('podcast_edit', {'id': podcast.id }) }}" class="btn btn-primary">
-                    <i class="bi bi-pencil-square"></i> Edit Podcast
+            <div class="d-grid gap-2 d-lg-block m-2">
+                <a href="{{ path('podcast_edit', {id: podcast.id }) }}" class="btn btn-primary">
+                    <i class="bi bi-pencil-square" aria-hidden="true"></i> Edit Podcast
                 </a>
-                <a href="{{ path('season_new', {'podcast_id': podcast.id }) }}" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i> New Season
+                <a href="{{ path('season_new', {podcast_id: podcast.id }) }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle" aria-hidden="true"></i> New Season
                 </a>
-                <a href="{{ path('episode_new', {'podcast_id': podcast.id }) }}" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i> New Episode
+                <a href="{{ path('episode_new', {podcast_id: podcast.id }) }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle" aria-hidden="true"></i> New Episode
                 </a>
             </div>
         </div>
@@ -152,7 +154,10 @@
             {% set target_id = 'nav-season-' ~ season.id %}
             {% set id = target_id ~ '-tab' %}
             {% set selected = loop.first %}
-            <span class="nav-link {{ selected ? 'active' : '' }}" id="{{ id }}" data-bs-toggle="tab" data-bs-target="#{{ target_id }}" type="button" role="tab" aria-controls="{{ target_id }}" aria-selected="{{ selected }}">
+            <span class="nav-link {{ selected ? 'active' : '' }}"
+                  id="{{ id }}" type="button"
+                  data-bs-toggle="tab" data-bs-target="#{{ target_id }}"
+                  role="tab" aria-controls="{{ target_id }}" aria-selected="{{ selected }}">
                 Season {{ season.number }}
             </span>
         {% endfor %}
@@ -160,7 +165,10 @@
             {% set target_id = 'nav-season-orphaned' %}
             {% set id = target_id ~ '-tab' %}
             {% set selected = podcast.seasons|length == 0 %}
-            <span class="nav-link {{ selected ? 'active' : '' }}" id="{{ id }}" data-bs-toggle="tab" data-bs-target="#{{ target_id }}" type="button" role="tab" aria-controls="{{ target_id }}" aria-selected="{{ selected }}">
+            <span class="nav-link {{ selected ? 'active' : '' }}"
+                  id="{{ id }}" type="button"
+                  data-bs-toggle="tab" data-bs-target="#{{ target_id }}"
+                  role="tab" aria-controls="{{ target_id }}" aria-selected="{{ selected }}">
                 Seasonless Episodes
             </span>
         {% endif %}
@@ -172,27 +180,28 @@
             {% set selected = loop.first %}
             <div class="tab-pane fade {{ selected ? 'show active' : '' }}" id="{{ id }}" role="tabpanel" aria-labelledby="{{ selector_id }}" tabindex="{{ loop.index }}">
                 <div class="row my-3 mx-1">
-                    <div class="col-lg h3 text-truncate">
+                    <h2 class="col-lg h3 text-truncate">
                         {{ season.title }}
-                    </div>
+                    </h2>
                     <div class="col-lg-auto">
-                        <div class="d-grid gap-2 d-md-block m-2 season-actions">
-                            <a href="{{ path('season_show', {'podcast_id': podcast.id, 'id': season.id }) }}" class="btn btn-primary">
-                                <i class="bi bi-eye"></i> View Season
+                        <div class="d-grid gap-2 d-lg-block m-2 season-actions">
+                            <a href="{{ path('season_show', {podcast_id: podcast.id, id: season.id }) }}" class="btn btn-primary">
+                                <i class="bi bi-eye" aria-hidden="true"></i> View Season
                             </a>
-                            <a href="{{ path('season_edit', {'podcast_id': podcast.id, 'id': season.id }) }}" class="btn btn-primary">
-                                <i class="bi bi-pencil-square"></i> Edit Season
+                            <a href="{{ path('season_edit', {podcast_id: podcast.id, id: season.id }) }}" class="btn btn-primary">
+                                <i class="bi bi-pencil-square" aria-hidden="true"></i> Edit Season
                             </a>
-                            <form class="d-inline-block" method="post" action="{{ path('season_delete', {'podcast_id': podcast.id, 'id': season.id }) }}" onsubmit="return confirm('Are you sure you want to delete this season?');">
+                            <form class="d-inline-block" method="post" action="{{ path('season_delete', {podcast_id: podcast.id, id: season.id }) }}" onsubmit="return confirm('Are you sure you want to delete this season?');">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <input type="hidden" name="_token" value="{{ csrf_token("delete_season" ~ season.id) }}">
-                                <button class="btn btn-danger w-100"><i class="bi bi-trash"></i> Delete Season</button>
+                                <button class="btn btn-danger w-100"><i class="bi bi-trash" aria-hidden="true"></i> Delete Season</button>
                             </form>
                         </div>
                     </div>
                 </div>
+                <h3 class="h5 mx-1">Season {{ season.number }} Episodes</h3>
                 {% embed 'episode/partial/table.html.twig' with {
-                    'episodes': season.episodes,
+                    episodes: season.episodes,
                 } %}
                 {% endembed %}
             </div>
@@ -203,12 +212,13 @@
             {% set selected = podcast.seasons|length == 0 %}
             <div class="tab-pane fade {{ selected ? 'show active' : '' }}" id="{{ id }}" role="tabpanel" aria-labelledby="{{ selector_id }}" tabindex="{{ podcast.seasons|length + 1 }}">
                 <div class="row my-3 mx-1">
-                    <div class="col-lg h3">
+                    <h2 class="col-lg h3 text-truncate">
                         Seasonless Episodes
-                    </div>
+                    </h2>
                 </div>
+                <h3 class="h5 mx-1">Seasonless Episodes</h3>
                 {% embed 'episode/partial/table.html.twig' with {
-                    'episodes': podcast.orphanedEpisodes,
+                    episodes: podcast.orphanedEpisodes,
                 } %}
                 {% endembed %}
             </div>

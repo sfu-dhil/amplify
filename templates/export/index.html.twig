@@ -4,27 +4,27 @@
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
-    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': podcast.id}) }}">{{ podcast.title }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {id: podcast.id}) }}">{{ podcast.title }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">Exports</li>
 {% endblock %}
 
 {% block action_buttons %}
-    <a href="{{ path('export_new', {'podcast_id': podcast.id}) }}" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> New
+    <a href="{{ path('export_new', {podcast_id: podcast.id}) }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle" aria-hidden="true"></i> New
     </a>
 {% endblock %}
 
 {% block body %}
-    <form class="my-3" method="get">
+    <form class="my-3" method="get" role="search">
         <div class="input-group">
             <input type="search" class="form-control" placeholder="Search..." aria-label="Search" name="q" id="q" value="{{ q }}" />
             <button class="btn btn-primary" type="submit" id='btn-search'>
-                <i class="bi bi-search"></i> Search
+                <i class="bi bi-search" aria-hidden="true"></i> Search
             </button>
         </div>
     </form>
     <div class="table-responsive text-nowrap">
-        <table class="table table-striped table-sm align-middle">
+        <table class="table table-striped table-sm align-middle" title="List of all exports of the podcast">
             <thead>
                 <tr>
                     <th>Status</th>
@@ -52,15 +52,15 @@
                         <td>
                             <div class="hstack gap-2 m-2">
                                 {% if export.isSuccess %}
-                                    <a href="{{ path('export_download', {'podcast_id': export.podcast.id, 'id': export.id }) }}" class="btn btn-primary" target="_blank">
-                                        <i class="bi bi-cloud-arrow-down-fill"></i> Download
+                                    <a href="{{ path('export_download', {podcast_id: export.podcast.id, id: export.id }) }}" class="btn btn-primary" target="_blank">
+                                        <i class="bi bi-cloud-arrow-down-fill" aria-hidden="true"></i> Download
                                     </a>
                                 {% endif %}
                                 {% if export.isFinished  %}
-                                    <form method="post" action="{{ path('export_delete', {'podcast_id': export.podcast.id, 'id': export.id }) }}" onsubmit="return confirm('Are you sure you want to delete this export?');">
+                                    <form method="post" action="{{ path('export_delete', {podcast_id: export.podcast.id, id: export.id }) }}" onsubmit="return confirm('Are you sure you want to delete this export?');">
                                         <input type="hidden" name="_method" value="DELETE">
                                         <input type="hidden" name="_token" value="{{ csrf_token("delete_export" ~ export.id) }}">
-                                        <button class="btn btn-danger"><i class="bi bi-trash"></i> Delete</button>
+                                        <button class="btn btn-danger"><i class="bi bi-trash" aria-hidden="true"></i> Delete</button>
                                     </form>
                                 {% endif %}
                             </div>

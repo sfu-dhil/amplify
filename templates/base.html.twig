@@ -29,53 +29,85 @@
         {% block styles %}
         {% endblock %}
     </head>
-    <body>
-        <div class="container-fluid">
-            <div class="row page">
-                <div class="col-md-auto page-sidebar p-3 m-0 d-flex flex-column flex-shrink-0">
-                    <a href="{{ path('homepage') }}" class="d-flex d-md-block link-dark text-decoration-none text-center h4 mb-0">
-                        <i class="bi bi-soundwave">&nbsp;</i>
-                        AMP @ SFU
-                    </a>
-                    {% if git_repo and (git_tag or git_commit) %}
-                        <a href="{{ git_repo ~ '/tree/' ~ (git_tag ? git_tag : git_commit) }}" class="d-flex d-md-block text-center small p-0 m-0 link-secondary text-decoration-none ignore-external" target="_blank">
-                            <i class="bi bi-github">&nbsp;</i>{{ git_tag ? git_tag : 'commit ' ~ git_commit_short }}
-                        </a>
-                    {% endif %}
-                    {{ knp_menu_render('main_sidebar', { 'allow_safe_labels': true }) }}
-                    {{ knp_menu_render('nines_user_sidebar', { 'allow_safe_labels': true }) }}
+    <body class="bg-light">
+        <div class="container-fluid p-0">
+            <div class="row g-0 min-vh-100">
+                <div class="col-md-auto px-3 m-0 page-sidebar bg-white">
+                    <div class="d-flex flex-column flex-shrink-0 py-3 sticky-md-top">
+                        <h1 role="banner">
+                            <a href="{{ path('homepage') }}" class="d-flex d-md-block link-dark text-decoration-none text-center h4 mb-0"
+                               aria-label="amp at SFU">
+                                <i class="bi bi-soundwave" aria-hidden="true">&nbsp;</i>
+                                AMP @ SFU
+                            </a>
+                        </h1>
+                        {% if git_repo and (git_tag or git_commit) %}
+                            <a href="{{ git_repo ~ '/tree/' ~ (git_tag ? git_tag : git_commit) }}" class="d-flex d-md-block text-center small p-0 m-0 link-secondary text-decoration-none ignore-external"
+                            target="_blank" aria-hidden="true">
+                                <i class="bi bi-github" aria-hidden="true">&nbsp;</i>{{ git_tag ? git_tag : 'commit ' ~ git_commit_short }}
+                            </a>
+                        {% endif %}
+                        <div class="flex-grow-1 d-flex flex-column flex-shrink-0" role="navigation" aria-label="Sidebar Navigation">
+                            {{ knp_menu_render('main_sidebar', { allow_safe_labels: true }) }}
+                            {{ knp_menu_render('nines_user_sidebar', { allow_safe_labels: true }) }}
+                        </div>
+                    </div>
                 </div>
-                <div class="col page-content p-4 bg-light">
+                <div class="col overflow-hidden m-0 p-4">
                     <div class="row mb-3 align-items-center page-actions">
                         <div class="col-lg">
-                            <nav aria-label="breadcrumb">
-                                <ol class="breadcrumb m-0">
+                            <nav role="navigation" aria-label="Breadcrumb">
+                                <ol class="breadcrumb m-0" aria-label="List of Navigation Breadcrumbs">
                                     {% block breadcrumbs %}
                                     {% endblock %}
                                 </ol>
                             </nav>
                         </div>
                         <div class="col-lg-auto">
-                            <div class="d-grid gap-2 d-lg-block m-2">
-                                <button type="button" class="btn mx-0 px-0 invisible spacer">&nbsp;</button>
+                            <div class="d-grid gap-2 d-lg-block m-2" role="navigation" aria-label="Page Action buttons">
                                 {% block action_buttons %}
                                 {% endblock %}
                             </div>
                         </div>
                     </div>
-
                     {% for type, messages in app.session.flashbag.all() %}
                         {% for message in messages %}
-                            <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                {{ message }}
+                            <div role="complementary">
+                                <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    {% if type == 'success' %}
+                                        <i class="bi bi-check-circle text-primary" aria-hidden="true"></i>
+                                    {% elseif type == 'danger' %}
+                                        <i class="bi bi-exclamation-circle text-danger" aria-hidden="true"></i>
+                                    {% endif %}
+                                    {{ message }}
+                                </div>
                             </div>
                         {% endfor %}
                     {% endfor %}
 
-                    {% block body %}
-                    {% endblock %}
+                    <div role="main" data-bs-spy="scroll" data-bs-target="#table-of-contents-sidebar" data-bs-smooth-scroll="true" aria-label="Content">
+                        {% block body %}
+                        {% endblock %}
+                    </div>
                 </div>
+                {% if block('toc') is defined %}
+                    <div class="col-auto d-none d-lg-block m-0 px-3 pt-5">
+                        <div class="d-flex flex-column flex-shrink-0 py-3 pt-5 sticky-top">
+                            <h2 class="h6" aria-hidden="true">Table of Contents</h2>
+                            <hr class="my-2">
+                            <nav id="table-of-contents-sidebar" class="nav flex-column" aria-label="Table of Contents">
+                                {{ block('toc') }}
+                            </nav>
+                            {% if block('toc_actions') is defined %}
+                                <hr class="my-2">
+                                <div class="d-grid gap-2 d-block my-2" role="form" aria-label="Form Sidebar Actions">
+                                    {{ block('toc_actions') }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
         {% block javascripts %}

@@ -1,54 +1,51 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Season {{ season.title }}{% endblock %}
+{% block title %}{{ season.slug }}: {{ season.title }}{% endblock %}
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
-    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': season.podcast.id}) }}">{{ season.podcast.title }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {id: season.podcast.id}) }}">{{ season.podcast.title }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">{{ season.title }}</li>
 {% endblock %}
 
 {% block action_buttons %}
-    <a href="{{ path('season_edit', {'podcast_id': season.podcast.id, 'id': season.id }) }}" class="btn btn-primary">
-        <i class="bi bi-pencil-square"></i> Edit Season
+    <a href="{{ path('season_edit', {podcast_id: season.podcast.id, id: season.id }) }}" class="btn btn-primary">
+        <i class="bi bi-pencil-square" aria-hidden="true"></i> Edit Season
     </a>
-    <form class="d-inline-block" method="post" action="{{ path('season_delete', {'podcast_id': season.podcast.id, 'id': season.id }) }}" onsubmit="return confirm('Are you sure you want to delete this season?');">
+    <form class="d-inline-block" method="post" action="{{ path('season_delete', {podcast_id: season.podcast.id, id: season.id }) }}" onsubmit="return confirm('Are you sure you want to delete this season?');">
         <input type="hidden" name="_method" value="DELETE">
         <input type="hidden" name="_token" value="{{ csrf_token("delete_season" ~ season.id) }}">
-        <button class="btn btn-danger w-100"><i class="bi bi-trash"></i> Delete Season</button>
+        <button class="btn btn-danger w-100"><i class="bi bi-trash" aria-hidden="true"></i> Delete Season</button>
     </form>
 {% endblock %}
 
 
 {% block body %}
-    <h1 class="h3">Season {{ season.number }}</h1>
     <div class="card">
         <div class="card-body clearfix">
             <div class="col-auto float-md-end mb-3 ms-md-3" style="max-width: 300px">
-
                 {% for image in season.images %}
                     {% embed '@NinesMedia/image/partial/list-item.html.twig' with {
-                        'image': image,
-                        'showActions': false,
+                        image: image,
+                        show_actions: false,
                     } %}
                     {% endembed %}
                 {% endfor %}
             </div>
-            <h2 class="card-title text-truncate">{{ season.title }}</h2>
-            {% if season.subTitle %}<h5 class="card-subtitle text-truncate">{{ season.subTitle }}</h5>{% endif %}
-            {% if season.number %}<h5 class="card-subtitle mt-2">Season {{ season.number }}</h5>{% endif %}
+            <h1 class="card-title text-truncate h2">{{ season.slug }}: {{ season.title }}</h1>
+            {% if season.subTitle %}<div class="card-subtitle text-truncate h5">{{ season.subTitle }}</div>{% endif %}
             <div class="card-text my-3">{{ season.description|default('')|sanitize_html }}</div>
         </div>
     </div>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 my-3 g-4">
         <div class="col text-truncate">
-            <h6><i class="bi bi-journals"></i> Publisher</h6>
+            <h2 class="h6"><i class="bi bi-journals" aria-hidden="true"></i> Publisher</h2>
             {% if season.publisher %}
                 <a href='{{ path("publisher_edit", {"podcast_id": season.podcast.id, "id": season.publisher.id}) }}'>{{ season.publisher }}</a>
             {% endif %}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-people-fill"></i> Contributors</h6>
+            <h2 class="h6"><i class="bi bi-people-fill" aria-hidden="true"></i> Contributors</h2>
             {% for contribution in season.contributions %}
                 <div>
                     <a href='{{ path("person_edit", {"podcast_id": season.podcast.id, "id":contribution.person.id }) }}'>{{ contribution.person.fullName }}</a> -
@@ -59,24 +56,25 @@
             {% endfor %}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-list-check"></i> Season Export Status</h6>
+            <h2 class="h6"><i class="bi bi-list-check" aria-hidden="true"></i> Season Export Status</h2>
             {% embed 'status/partial/report.html.twig' with {
-                'entity': season,
+                entity: season,
             } %}
             {% endembed %}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-calendar-event"></i> Created</h6>
+            <h2 class="h6"><i class="bi bi-calendar-event" aria-hidden="true"></i> Created</h2>
             {{ season.created|date('Y-m-d') }}
         </div>
         <div class="col text-truncate">
-            <h6><i class="bi bi-calendar-event"></i> Last Updated</h6>
+            <h2 class="h6"><i class="bi bi-calendar-event" aria-hidden="true"></i> Last Updated</h2>
             {{ season.updated|date('Y-m-d') }}
         </div>
     </div>
 
+    <h2 class="h5">Season {{ season.number }} Episodes</h2>
     {% embed 'episode/partial/table.html.twig' with {
-        'episodes': season.episodes,
+        episodes: season.episodes,
     } %}
     {% endembed %}
     </div>

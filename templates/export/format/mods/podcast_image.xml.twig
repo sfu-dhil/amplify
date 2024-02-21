@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
         version="3.5">
-    <identifier type="uri">{{ path('nines_media_image_show', {'id': image.id}) }}</identifier>
+    <identifier type="uri">{{ path('nines_media_image_show', {id: image.id}) }}</identifier>
     <identifier type="urn">urn:amplify:podcast:{{ podcast.id }}:image:{{ image.id }}</identifier>
 
     <titleInfo>
@@ -15,14 +15,14 @@
 
     {% for contribution in contributions %}
     {% embed 'export/format/mods/partial/contribution.xml.twig' with {
-        'person': contribution.person,
-        'roles': contribution.roles,
+        person: contribution.person,
+        roles: contribution.roles,
     } %}{% endembed %}
     {% endfor %}
 
     {% if podcast.languageCode %}
     {% embed 'export/format/mods/partial/language.xml.twig' with {
-        'languageCode': podcast.languageCode,
+        languageCode: podcast.languageCode,
     } %}{% endembed %}
     {% endif %}
 
@@ -44,7 +44,7 @@
     <genre authority="lcsh" valueURI="https://id.loc.gov/authorities/genreForms/gf2011026450">Podcasts</genre>
     <genre authority="marcgt">nonmusical sound</genre>
     {% embed 'export/format/mods/partial/subjects_podcast.xml.twig' with {
-        'podcast': podcast,
+        podcast: podcast,
     } %}{% endembed %}
 
     {% if podcast.copyright %}
@@ -61,7 +61,7 @@
 
     <relatedItem type="host">
         {% embed 'export/format/mods/partial/identifier_podcast.xml.twig' with {
-            'podcast': podcast,
+            podcast: podcast,
         } %}{% endembed %}
     </relatedItem>
 </mods>

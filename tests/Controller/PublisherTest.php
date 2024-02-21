@@ -128,7 +128,7 @@ class PublisherTest extends ControllerTestCase {
             $formCrawler = $this->client->request('GET', '/podcasts/2/publishers/new');
             $this->assertResponseIsSuccessful();
 
-            $form = $formCrawler->selectButton('Save')->form([
+            $form = $formCrawler->selectButton('Create Publisher')->form([
                 'publisher[name]' => "Updated Name{$newId}",
                 'publisher[location]' => 'Updated Location',
                 'publisher[website]' => 'http://example.com',

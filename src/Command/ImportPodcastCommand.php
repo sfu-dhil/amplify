@@ -352,7 +352,7 @@ class ImportPodcastCommand extends Command {
             $episode->setSeason($season);
 
             $episodeNumber = $episode->getNumber() ? (float) $episode->getNumber() : $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'episode');
-            if (! is_null($episodeNumber)) {
+            if (null !== $episodeNumber) {
                 $this->seasonEpisodeCounter[$seasonNumber][$episodeType] = (int) $episodeNumber;
             } else {
                 $episodeNumber = ++$this->seasonEpisodeCounter[$seasonNumber][$episodeType];
@@ -439,7 +439,7 @@ class ImportPodcastCommand extends Command {
             $this->em->flush();
 
             $imageTags = $item->get_item_tags(SimplePie::NAMESPACE_ITUNES, 'image') ?? [];
-            foreach($imageTags as $imageTag) {
+            foreach ($imageTags as $imageTag) {
                 if ($imageTag && array_key_exists('attribs', $imageTag) && array_key_exists('', $imageTag['attribs']) && array_key_exists('href', $imageTag['attribs'][''])) {
                     $this->addEpisodeMediaFetchRequest($episode, $imageTag['attribs']['']['href']);
                 }

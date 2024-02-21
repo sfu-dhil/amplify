@@ -4,8 +4,8 @@
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
-    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': season.podcast.id}) }}">{{ season.podcast.title }}</a></li>
-    <li class="breadcrumb-item"><a href="{{ path('season_show', {'podcast_id': season.podcast.id, 'id': season.id}) }}">{{ season.title }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {id: season.podcast.id}) }}">{{ season.podcast.title }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('season_show', {podcast_id: season.podcast.id, id: season.id}) }}">{{ season.title }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">Edit</li>
 {% endblock %}
 
@@ -16,4 +16,18 @@
 
 {% block javascripts %}
     {% include '@NinesEditor/editor/widget.html.twig' %}
+{% endblock %}
+
+{% block toc %}
+    {% embed 'toc/partial/toc.html.twig' with {
+        form: form,
+    } %}{% endembed %}
+{% endblock %}
+
+{% block toc_actions %}
+    {% embed 'toc/partial/toc_actions.html.twig' with {
+        form: form,
+        is_new: season.id is null,
+        cancel_path: season.id is null ? path('podcast_show', { id: season.podcast.id }) : path('season_show', { podcast_id: season.podcast.id, id: season.id })
+    } %}{% endembed %}
 {% endblock %}

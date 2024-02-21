@@ -28,6 +28,7 @@ use Symfony\Component\Routing\Requirement\Requirement;
 #[IsGranted('access', 'podcast')]
 class PublisherController extends AbstractController implements PaginatorAwareInterface {
     use PaginatorTrait;
+    use FormErrorsTrait;
 
     #[Route(path: '', name: 'publisher_index', methods: ['GET'])]
     #[Template]
@@ -74,15 +75,21 @@ class PublisherController extends AbstractController implements PaginatorAwareIn
             if ($form->isValid()) {
                 $entityManager->persist($publisher);
                 $entityManager->flush();
+
+                return new JsonResponse([
+                    'success' => true,
+                    'data' => [
+                        'id' => $publisher->getId(),
+                        'text' => (string) $publisher,
+                    ],
+                ]);
             }
 
             return new JsonResponse([
-                'success' => $form->isValid(),
-                'data' => [
-                    'id' => $publisher->getId(),
-                    'text' => (string) $publisher,
-                ],
+                'success' => false,
+                'errors' => $this->getErrorsFromForm($form),
             ]);
+
         }
 
         return [

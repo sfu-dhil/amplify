@@ -14,6 +14,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
@@ -111,7 +113,7 @@ class PodcastType extends AbstractType {
             'delete_empty' => true,
             'entry_type' => ContributionType::class,
             'entry_options' => [
-                'label' => false,
+                'label' => 'Contributor',
                 'podcast' => $builder->getData(),
             ],
             'by_reference' => false,
@@ -120,42 +122,41 @@ class PodcastType extends AbstractType {
                 'data-collection-label' => 'Contributor',
             ],
         ]);
-        $builder->add('categories', CollectionType::class, [
+        $builder->add('categories', ChoiceType::class, [
             'label' => 'Apple Podcast Categories',
             'required' => true,
-            'allow_add' => true,
-            'allow_delete' => true,
-            'delete_empty' => true,
-            'entry_type' => ChoiceType::class,
-            'entry_options' => [
-                'label' => false,
-                'choices' => array_reduce($builder->getData()->getAllItunesCategories(), function ($result, $item) {
-                    $result[$item] = $item;
+            'multiple' => true,
+            'choices' => array_reduce($builder->getData()->getAllItunesCategories(), function ($result, $item) {
+                $result[$item] = $item;
 
-                    return $result;
-                }),
-            ],
-            'prototype' => true,
-            'by_reference' => false,
+                return $result;
+            }),
             'attr' => [
-                'class' => 'collection collection-complex',
-                'data-collection-label' => 'Apple Podcast Category',
+                'class' => 'select2-simple',
+                'data-theme' => 'bootstrap-5',
             ],
+            'placeholder' => 'Select all categories that apply to the podcast',
         ]);
-        $builder->add('keywords', CollectionType::class, [
+        $builder->add('keywords', ChoiceType::class, [
             'label' => 'Keywords',
             'required' => false,
-            'allow_add' => true,
-            'allow_delete' => true,
-            'delete_empty' => true,
-            'entry_type' => TextType::class,
-            'entry_options' => [
-                'label' => false,
-            ],
+            'multiple' => true,
+            'choices' => array_reduce($builder->getData()->getKeywords(), function ($result, $item) {
+                $result[$item] = $item;
+
+                return $result;
+            }),
             'attr' => [
-                'class' => 'collection collection-complex',
-                'data-collection-label' => 'Keyword',
+                'class' => 'select2-simple',
+                'data-theme' => 'bootstrap-5',
+                'data-tags' => 'true',
             ],
+            'placeholder' => 'Select all keywords that apply to the podcast',
+            'help' => 'Please press
+                <kbd><i class="bi bi-arrow-return-left" aria-hidden="true"></i> Enter</kbd> or
+                <kbd><i class="bi bi-arrow-left-right" aria-hidden="true"></i> Tab</kbd>
+                after entering a keyword to store it.',
+            'help_html' => true,
         ]);
         $builder->add('images', CollectionType::class, [
             'label' => 'Images',
@@ -165,14 +166,27 @@ class PodcastType extends AbstractType {
             'delete_empty' => true,
             'entry_type' => AmplifyImageType::class,
             'entry_options' => [
-                'label' => false,
+                'label' => 'Image',
             ],
             'prototype' => true,
             'by_reference' => false,
             'attr' => [
-                'class' => 'collection collection-media collection-media-image',
+                'class' => 'collection collection-complex',
+                'data-collection-label' => 'Image',
             ],
         ]);
+
+        // get dynamic keyword choices working
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) : void {
+            $form = $event->getForm();
+            $options = $form->get('keywords')->getConfig()->getOptions();
+            $options['choices'] = array_reduce($event->getData()['keywords'] ?? [], function ($result, $item) {
+                $result[$item] = $item;
+
+                return $result;
+            });
+            $form->add('keywords', ChoiceType::class, $options);
+        });
     }
 
     /**

@@ -1,50 +1,59 @@
+{% set ariaLabelIdentifier = 'Temp' %}
 {% set statusCount = 0 %}
 {% set id = 'temp_' %}
 {% if constant('class', entity) is same as('App\\Entity\\Podcast') %}
-    {% set statusCount = podcast.status|length %}
-    {% set id = 'podcast_' ~ podcast.id %}
+    {% set ariaLabelIdentifier = 'Podcast' %}
+    {% set statusCount = entity.status|length %}
+    {% set id = 'podcast_' ~ entity.id %}
 {% elseif constant('class', entity) is same as('App\\Entity\\Season') %}
-    {% set statusCount = season.status|length %}
-    {% set id = 'season_' ~ season.id %}
+    {% set ariaLabelIdentifier = entity.longSlug %}
+    {% set statusCount = entity.status|length %}
+    {% set id = 'season_' ~ entity.id %}
 {% elseif constant('class', entity) is same as('App\\Entity\\Episode') %}
-    {% set statusCount = episode.status|length %}
-    {% set id = 'episode_' ~ episode.id %}
+    {% set ariaLabelIdentifier = entity.longSlug %}
+    {% set statusCount = entity.status|length %}
+    {% set id = 'episode_' ~ entity.id %}
 {% endif %}
 
 {% if statusCount == 0 %}
-    <span class="badge bg-primary fs-6"><i class="bi bi-check-lg"></i> Ready for Export</span>
+    <span class="badge bg-primary fs-6">
+        <i class="bi bi-check-lg" aria-hidden="true"></i>
+        <span class="visually-hidden">{{ ariaLabelIdentifier }}</span> Ready for Export
+    </span>
 {% else %}
     <button type="button" class="btn btn-danger position-relative" data-bs-toggle="modal" data-bs-target="#export_status_model_{{ id }}">
-        <i class="bi bi-flag-fill"></i> View Missing Metadata
+        <i class="bi bi-flag-fill" aria-hidden="true"></i>
+        View Missing Metadata <span class="visually-hidden">for {{ ariaLabelIdentifier }}</span>
         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
+            <span class="visually-hidden">missing</span>
             {{ statusCount }}
-            <span class="visually-hidden">missing metadata</span>
+            <span class="visually-hidden">metadata items</span>
         </span>
     </button>
-{% endif %}
-
-<div id="export_status_model_{{ id }}" class="modal modal-lg modal-dialog-scrollable" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Missing Metadata</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-0">
-                {% if constant('class', entity) is same as('App\\Entity\\Podcast') %}
-                    {% embed 'status/partial/podcast.html.twig' with {
-                        'podcast': podcast
-                    } %}{% endembed %}
-                {% elseif constant('class', entity) is same as('App\\Entity\\Season') %}
-                    {% embed 'status/partial/season.html.twig' with {
-                        'season': season
-                    } %}{% endembed %}
-                {% elseif constant('class', entity) is same as('App\\Entity\\Episode') %}
-                    {% embed 'status/partial/episode.html.twig' with {
-                        'episode': episode
-                    } %}{% endembed %}
-                {% endif %}
+    <div id="export_status_model_{{ id }}" class="modal modal-lg modal-dialog-scrollable" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Missing Metadata</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    {% if constant('class', entity) is same as('App\\Entity\\Podcast') %}
+                        {% embed 'status/partial/podcast.html.twig' with {
+                            podcast: podcast
+                        } %}{% endembed %}
+                    {% elseif constant('class', entity) is same as('App\\Entity\\Season') %}
+                        {% embed 'status/partial/season.html.twig' with {
+                            season: season
+                        } %}{% endembed %}
+                    {% elseif constant('class', entity) is same as('App\\Entity\\Episode') %}
+                        {% embed 'status/partial/episode.html.twig' with {
+                            episode: episode
+                        } %}{% endembed %}
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
-</div>
+{% endif %}
+

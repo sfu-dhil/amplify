@@ -1,23 +1,18 @@
-body {
+html, body {
     min-height: 100vh;
     min-height: -webkit-fill-available;
 }
-html {
-    height: -webkit-fill-available;
-}
 
-.page {
-    min-height: 100vh;
+.page-content .sticky-top {
+    overflow-x: initial;
 }
 
 @media (min-width: 768px) {
     .page-sidebar {
         max-width: 300px;
     }
-
-    .page-content {
-        max-height: 100vh;
-        overflow-y: auto;
+    .page-sidebar > div {
+        height: 100vh;
     }
 }
 
@@ -54,12 +49,19 @@ html {
     margin-left: 1.25rem;
 }
 .page-sidebar .btn-toggle-nav a:hover,
-.page-sidebar .btn-toggle-nav a:focus {
+.page-sidebar .btn-toggle-nav a:focus,
+#table-of-contents-sidebar a:hover,
+#table-of-contents-sidebar a.active {
     background-color: #d2f4ea;
 }
 
+.page-actions .col-lg-auto > div a,
+.page-actions .col-lg-auto > div form {
+    margin-bottom: 2px;
+}
+
 /* Custom app styles */
-label.required::after, legend.required::after {
+label.required::after {
     content: ' *';
     color: red;
     font-weight: bold;
@@ -81,8 +83,8 @@ a[href ^= 'mailto:']::after {
 }
 
 
-a[href ^= 'http://']:not('.ignore-external')::after,
-a[href ^= 'https://']:not('.ignore-external')::after {
+a[href ^= 'http://']:not(.ignore-external)::after,
+a[href ^= 'https://']:not(.ignore-external)::after {
     content: "\F1C5";
     display: inline-block;
     font-family: bootstrap-icons !important;
@@ -116,7 +118,6 @@ div.collection span[class*="-collection-actions"] {
     width: inherit !important;
 }
 
-div.collection-media > div:not(:last-child),
 div.collection-complex > div:not(:last-child) {
     padding-top: 15px;
     border: 1px solid rgba(128, 128, 128, 0.31);
@@ -175,6 +176,17 @@ div.collection-complex > div:not(:last-child) {
 
 /* bootstrap overrides */
 /* amplify teal #027D82 or 2,125,130 */
+:root {
+    --bs-link-color: #027D82;
+    --bs-link-hover-color: #027D82;
+}
+.breadcrumb {
+    --bs-breadcrumb-item-active-color: #000000;
+}
+caption, .figure-caption, .form-text {
+    /* fix accessibility color contrast */
+    color: rgba(0, 0, 0, 0.65);
+}
 .btn-primary {
     --bs-btn-color: #fff;
     --bs-btn-bg: #027D82;
@@ -205,10 +217,10 @@ div.collection-complex > div:not(:last-child) {
     color: #027D82 !important;
 }
 .alert-success {
-    --bs-alert-color: #027D82;
+    --bs-alert-color: #000000;
     --bs-alert-bg: rgba(2,125,130 , 0.125);
     --bs-alert-border-color: rgba(2,125,130 , 0.25);
-  }
+}
 
 
 /* amplify pink #DD1B70 or 221,27,122 */
@@ -232,13 +244,20 @@ div.collection-complex > div:not(:last-child) {
     color: #fff !important;
     background-color: RGBA(221,27,122,var(--bs-bg-opacity,1)) !important;
 }
+.list-group-item-danger {
+    color: #fff;
+    background-color: RGBA(221,27,122,var(--bs-bg-opacity,1)) !important;
+}
 .bg-danger {
     --bs-primary-rgb: 221,27,122;
 }
+.text-danger {
+    --bs-primary-rgb: 221,27,122;
+}
 .alert-danger {
-    --bs-alert-color: #DD1B70;
-    --bs-alert-bg: rgba(0, 0, 0, 0.125);
-    --bs-alert-border-color: rgba(0, 0, 0, 0.25);
+    --bs-alert-color: #000000;
+    --bs-alert-bg: rgba(225,83,97, 0.125);
+    --bs-alert-border-color: rgba(225,83,97, 0.25);
 }
 .btn-warning {
     --bs-btn-color: #fff;
@@ -277,4 +296,8 @@ textarea.tinymce {
     resize: none !important;
     outline: none !important;
     box-shadow: none !important;
+}
+
+.tox .tox-sidebar {
+    display: none !important;
 }

@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}RSS Import {{ import.id }} Status{% endblock %}
+{% block title %}Importing Podcast{% endblock %}
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
     {% if import.podcast %}
-        <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': import.podcast.id}) }}">{{ import.podcast.title }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('podcast_show', {id: import.podcast.id}) }}">{{ import.podcast.title }}</a></li>
     {% endif %}
     <li class="breadcrumb-item">Import</li>
     <li class="breadcrumb-item active" aria-current="page">Job {{ import.id }}</li>
@@ -13,8 +13,8 @@
 
 {% block body %}
     <div class="w-100 m-auto card text-center" style="max-width: 600px">
-        <h5 class="card-title">Importing Podcast</h5>
-        <h6 class="card-title text-truncate">{{ import.rss }}</h5>
+        <h1 class="card-title h4">Importing Podcast</h1>
+        <div class="card-title text-truncate h6">RSS Feed: {{ import.rss }}</div>
         <div id="details_container" class="card-body">
             {% embed 'import/partial/details.html.twig' %}
             {% endembed %}
@@ -32,7 +32,7 @@
             const setRefreshTimeout = () => {
                 setTimeout(
                     () => {
-                        $.get("{{ path('import_show_details_json', {'id': import.id }) }}", (data) => {
+                        $.get("{{ path('import_show_details_json', {id: import.id }) }}", (data) => {
                             $("#details_container").html(data.content)
                             if (data.isActive) {
                                 setRefreshTimeout()

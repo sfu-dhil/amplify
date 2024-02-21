@@ -1,17 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Sharing to {{ podcast.title }}{% endblock %}
+{% block title %}Sharing access to {{ podcast.title }}{% endblock %}
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
-    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': podcast.id}) }}">{{ podcast.title }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {id: podcast.id}) }}">{{ podcast.title }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">Share Access</li>
 {% endblock %}
 
 {% block body %}
-    <h4>Users with access</h4>
+    <h1 class="h2">Sharing access to {{ podcast.title }}</h1>
+    <h2 class="h4">Users with access</h2>
     <div class="table-responsive text-nowrap">
-        <table class="table table-striped table-sm align-middle">
+        <table class="table table-striped table-sm align-middle" title="List of all users with access to the podcast">
             <thead>
                 <tr>
                     <th>Fullname</th>
@@ -29,10 +30,10 @@
                         <td>
                             <div class="hstack gap-2 m-2">
                                 {% if is_granted('ROLE_ADMIN') or share.user != app.user %}
-                                    <form method="post" action="{{ path('share_delete', {'podcast_id': share.podcast.id, 'id': share.id }) }}" onsubmit="return confirm('Are you sure you want to remove access for this user?');">
+                                    <form method="post" action="{{ path('share_delete', {podcast_id: share.podcast.id, id: share.id }) }}" onsubmit="return confirm('Are you sure you want to remove access for this user?');">
                                         <input type="hidden" name="_method" value="DELETE">
                                         <input type="hidden" name="_token" value="{{ csrf_token("delete_share" ~ share.id) }}">
-                                        <button class="btn btn-danger"><i class="bi bi-person-dash-fill"></i> Remove access</button>
+                                        <button class="btn btn-danger"><i class="bi bi-person-dash-fill" aria-hidden="true"></i> Remove access</button>
                                     </form>
                                 {% endif %}
                             </div>
@@ -46,8 +47,10 @@
         </table>
     </div>
 
-    <h4>Share with users</h4>
-    {{ form_start(form) }}
+    <h2 class="h4">Share with new users</h2>
+    {{ form_start(form, {
+        aria_label: 'Share Podcast',
+    }) }}
     <div class="mb-3 row">
         <div class="col-sm-9">
             {{ form_widget(form.user) }}

@@ -1,11 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Podcast {{ podcast.title }}{% endblock %}
+{% block title %}Edit Podcast{% endblock %}
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
-    <li class="breadcrumb-item"><a href="{{ path('podcast_index') }}">Podcasts</a></li>
-    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {'id': podcast.id}) }}">{{ podcast.title }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('podcast_show', {id: podcast.id}) }}">{{ podcast.title }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">Edit</li>
 {% endblock %}
 
@@ -16,4 +15,18 @@
 
 {% block javascripts %}
     {% include '@NinesEditor/editor/widget.html.twig' %}
+{% endblock %}
+
+{% block toc %}
+    {% embed 'toc/partial/toc.html.twig' with {
+        form: form,
+    } %}{% endembed %}
+{% endblock %}
+
+{% block toc_actions %}
+    {% embed 'toc/partial/toc_actions.html.twig' with {
+        form: form,
+        is_new: podcast.id is null,
+        cancel_path: podcast.id is null ? path('podcast_index') : path('podcast_show', { id: podcast.id })
+    } %}{% endembed %}
 {% endblock %}

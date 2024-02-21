@@ -128,7 +128,7 @@ class PersonTest extends ControllerTestCase {
             $formCrawler = $this->client->request('GET', '/podcasts/2/people/new');
             $this->assertResponseIsSuccessful();
 
-            $form = $formCrawler->selectButton('Save')->form([
+            $form = $formCrawler->selectButton('Create Person')->form([
                 'person[fullname]' => "Updated Fullname {$newId}",
                 'person[sortableName]' => 'Updated SortableName',
                 'person[location]' => 'Updated Location',

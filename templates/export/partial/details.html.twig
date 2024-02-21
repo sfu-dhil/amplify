@@ -26,9 +26,7 @@
 </figure>
 {% if export.isActive %}
     <p class="card-text">The export job may take several minutes to complete.</p>
-{% endif %}
-{% if export.isActive %}
-    <div class="d-grid ">
+    <div class="d-grid" aria-hidden="true">
         <div class="noise mx-auto">
             <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
             <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
@@ -41,5 +39,7 @@
         </div>
     </div>
 {% elseif export.path %}
-    <a class="btn btn-primary btn-lg" href="{{ path('export_download', {'podcast_id': export.podcast.id, 'id': export.id}) }}" target="_blank"><i class="bi bi-cloud-arrow-down-fill"></i> Download Export</a>
+    <a class="btn btn-primary btn-lg" href="{{ path('export_download', {podcast_id: export.podcast.id, id: export.id}) }}" target="_blank">
+        <i class="bi bi-cloud-arrow-down-fill" aria-hidden="true"></i> Download Export
+    </a>
 {% endif %}

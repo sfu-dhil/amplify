@@ -220,6 +220,19 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return "{$seasonSlug}E{$episodeNumber}";
     }
 
+    public function getLongSlug() : string {
+        $seasonSlug = $this->season?->getId() ? $this->season->getLongSlug() : '';
+        $episodeNumber = (float) $this->number; // removes trailing zeros if not needed
+        if ('bonus' === $this->getEpisodeType()) {
+            return "{$seasonSlug} Bonus Episode {$episodeNumber}";
+        }
+        if ('trailer' === $this->getEpisodeType()) {
+            return "{$seasonSlug} Tailer {$episodeNumber}";
+        }
+
+        return "{$seasonSlug} Episode {$episodeNumber}";
+    }
+
     public function getDate() : ?DateTimeInterface {
         return $this->date;
     }

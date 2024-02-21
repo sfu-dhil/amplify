@@ -1,29 +1,22 @@
 {% form_theme form with [
-    '@NinesUtil/form/bootstrap_5_table_of_contents.html.twig',
+    '@NinesUtil/form/bootstrap_5_layout.html.twig',
     '@TetranzSelect2Entity/Form/fields.html.twig',
     'jquery.collection.html.twig',
 ] %}
-{{ form_start(form) }}
+<h1 class="h4">{{ (episode.id is null ? 'Create' : 'Edit') ~ ' Episode' }}</h1>
+{{ form_start(form, {
+    aria_label: (episode.id is null ? 'Create' : 'Edit') ~ ' Episode',
+}) }}
 {{ form_widget(form) }}
 <div class="mb-3 text-center">
     {% if episode.id is null %}
         <input type="submit" value="Create" class="btn btn-primary" />
         <input name="submitAndContinue" type="submit" value="Save and Continue" class="btn btn-primary" />
-        <a href="{{ path('podcast_show', { 'id': episode.podcast.id }) }}" class="btn btn-warning"> Cancel </a>
+        <a href="{{ path('podcast_show', { id: episode.podcast.id }) }}" class="btn btn-warning"> Cancel </a>
     {% else %}
         <input type="submit" value="Save" class="btn btn-primary" />
         <input name="submitAndContinue" type="submit" value="Save and Continue" class="btn btn-primary" />
-        <a href="{{ path('episode_show', { 'podcast_id': episode.podcast.id, 'id': episode.id }) }}" class="btn btn-warning"> Cancel </a>
+        <a href="{{ path('episode_show', { podcast_id: episode.podcast.id, id: episode.id }) }}" class="btn btn-warning"> Cancel </a>
     {% endif %}
 </div>
-{{ form_end(form, {
-    table_of_contents_submit: {
-        label: episode.id is null ? 'Create' : 'Save',
-    },
-    table_of_contents_submit_and_continue: {
-        label: 'Save & Continue',
-    },
-    table_of_contents_cancel: {
-        path: episode.id is null ? path('podcast_show', { 'id': episode.podcast.id }) : path('episode_show', { 'podcast_id': episode.podcast.id, 'id': episode.id }),
-    },
-}) }}
+{{ form_end(form) }}

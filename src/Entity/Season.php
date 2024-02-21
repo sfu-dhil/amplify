@@ -103,6 +103,10 @@ class Season extends AbstractEntity implements ImageContainerInterface {
         return "S{$this->number}";
     }
 
+    public function getLongSlug() : string {
+        return "Season {$this->number}";
+    }
+
     public function getNumber() : ?int {
         return $this->number;
     }
