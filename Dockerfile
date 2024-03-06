@@ -1,4 +1,4 @@
-FROM ruby:3.2.2 AS amplify-docs
+FROM ruby:3.3 AS amplify-docs
 WORKDIR /app
 
 # build ruby deps
@@ -10,7 +10,7 @@ COPY docs /app
 
 RUN jekyll build
 
-FROM node:20.4 AS amplify-prod-assets
+FROM node:21.6-slim AS amplify-prod-assets
 WORKDIR /app
 
 RUN apt-get update \

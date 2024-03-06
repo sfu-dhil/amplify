@@ -15,3 +15,9 @@ Documentation for the Amplify Podcast Network preservation tool
 From the docs folder (with amplify running)
 
     docker run --rm -v $PWD:/work -w /work --network host ghcr.io/k1low/tbls doc --rm-dist
+
+## Update deps
+
+From the docs folder
+
+    docker run --rm -v $PWD:/work -w /work ruby:3.3 bundle update
