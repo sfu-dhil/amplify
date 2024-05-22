@@ -1,4 +1,4 @@
-name: Amplify Unit Tests & Tagged Deploy
+name: Unit Tests & Tagged Deploy
 
 # based on: https://docs.docker.com/build/ci/github-actions/multi-platform/#distribute-build-across-multiple-runners
 

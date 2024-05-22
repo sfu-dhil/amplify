@@ -297,7 +297,7 @@ class Episode extends AbstractEntity implements ImageContainerInterface, AudioCo
         return $this->transcript;
     }
 
-    public function setTranscript(string $transcript) : self {
+    public function setTranscript(?string $transcript) : self {
         $this->transcript = $transcript;
 
         return $this;
