@@ -5,6 +5,7 @@
                 <th scope="col">Episode</th>
                 <th scope="col">Title</th>
                 <th scope="col">Episode Export Status</th>
+                <th scope="col">Release Date</th>
                 <th scope="col">Last Updated</th>
                 <th scope="col">Action</th>
             </tr>
@@ -19,6 +20,7 @@
                             entity: episode,
                         } %}{% endembed %}
                     </td>
+                    <td>{{ episode.date|date('Y-m-d') }}</td>
                     <td>{{ episode.updated|date('Y-m-d') }}</td>
                     <td>
                         <div class="hstack gap-2 m-2">
