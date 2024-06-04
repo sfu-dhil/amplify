@@ -183,51 +183,65 @@ class ImportPodcastCommand extends Command {
     private function processPodcast() : void {
         $this->updateMessage('Processing Podcast metadata');
 
-        $guid = $this->getFeedTagValue(self::NS_PODCAST, 'guid');
-        if ($guid && ! $this->podcast->getGuid()) {
-            $this->podcast->setGuid($guid);
+        if (null === $this->podcast->getGuid() || '' === $this->podcast->getGuid()) {
+            $guid = $this->getFeedTagValue(self::NS_PODCAST, 'guid');
+            if ($guid) {
+                $this->podcast->setGuid($guid);
+            }
         }
 
-        $title = $this->feed->get_title();
-        if ($title && ! $this->podcast->getTitle()) {
-            $this->podcast->setTitle(mb_strimwidth(html_entity_decode($title), 0, 252, '...'));
+        if (null === $this->podcast->getTitle() || '' === $this->podcast->getTitle()) {
+            $title = $this->feed->get_title();
+            if ($title) {
+                $this->podcast->setTitle(mb_strimwidth(html_entity_decode($title), 0, 252, '...'));
+            }
         }
 
-        $subtitle = $this->getFeedTagValue(SimplePie::NAMESPACE_ITUNES, 'subtitle');
-        if ($subtitle && ! $this->podcast->getSubTitle()) {
-            $this->podcast->setSubTitle(mb_strimwidth(html_entity_decode($subtitle), 0, 252, '...'));
+        if (null === $this->podcast->getSubTitle() || '' === $this->podcast->getSubTitle()) {
+            $subtitle = $this->getFeedTagValue(SimplePie::NAMESPACE_ITUNES, 'subtitle');
+            if ($subtitle) {
+                $this->podcast->setSubTitle(mb_strimwidth(html_entity_decode($subtitle), 0, 252, '...'));
+            }
         }
 
-        $explicit = $this->getFeedTagValue(SimplePie::NAMESPACE_ITUNES, 'explicit') ?? $this->getFeedTagValue(self::NS_GOOGLE_PLAY, 'explicit');
         if (null === $this->podcast->getExplicit()) {
+            $explicit = $this->getFeedTagValue(SimplePie::NAMESPACE_ITUNES, 'explicit') ?? $this->getFeedTagValue(self::NS_GOOGLE_PLAY, 'explicit');
             $this->podcast->setExplicit('yes' === $explicit);
         }
 
-        $description = $this->feed->get_description();
-        if ($description && ! $this->podcast->getDescription()) {
-            $this->podcast->setDescription($description);
+        if (null === $this->podcast->getDescription() || '' === $this->podcast->getDescription()) {
+            $description = $this->feed->get_description();
+            if ($description) {
+                $this->podcast->setDescription($description);
+            }
         }
 
-        $copyright = $this->feed->get_copyright();
-        if ($copyright && ! $this->podcast->getCopyright()) {
-            $this->podcast->setCopyright($copyright);
+        if (null === $this->podcast->getCopyright() || '' === $this->podcast->getCopyright()) {
+            $copyright = $this->feed->get_copyright();
+            if ($copyright) {
+                $this->podcast->setCopyright($copyright);
+            }
         }
 
-        $website = $this->feed->get_link();
-        if ($website && ! $this->podcast->getWebsite()) {
-            $this->podcast->setWebsite($website);
+        if (null === $this->podcast->getWebsite() || '' === $this->podcast->getWebsite()) {
+            $website = $this->feed->get_link();
+            if ($website) {
+                $this->podcast->setWebsite($website);
+            }
         }
 
-        if ( ! $this->podcast->getRss()) {
+        if (null === $this->podcast->getRss() || '' === $this->podcast->getRss()) {
             $this->podcast->setRss($this->rssUrl);
         }
 
         // skip `license`
         // doesn't seem to be part of RSS feeds
 
-        $languageCode = $this->feed->get_language();
-        if ($languageCode && Languages::exists($languageCode) && ! $this->podcast->getLanguageCode()) {
-            $this->podcast->setLanguageCode(mb_substr($languageCode, 0, 2));
+        if (null === $this->podcast->getLanguageCode() || '' === $this->podcast->getLanguageCode()) {
+            $languageCode = $this->feed->get_language();
+            if ($languageCode && Languages::exists($languageCode)) {
+                $this->podcast->setLanguageCode(mb_substr($languageCode, 0, 2));
+            }
         }
 
         // skip `publisher`
@@ -341,57 +355,72 @@ class ImportPodcastCommand extends Command {
                 $this->podcast->addEpisode($episode);
                 $this->episodes[$guid] = $episode;
             }
+
             $episodeType = trim(mb_strtolower($this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'episodeType') ?? ''));
             if ( ! in_array($episodeType, ['full', 'bonus', 'trailer'], true)) {
                 $episodeType = 'full';
             }
-            $episode->setEpisodeType($episodeType);
+            if (null === $episode->getEpisodeType()) {
+                $episode->setEpisodeType($episodeType);
+            }
 
             $seasonNumber = (int) ($this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'season') ?? 1);
             $season = $this->seasons[$seasonNumber];
-            $episode->setSeason($season);
+            if (null === $episode->getSeason()) {
+                $episode->setSeason($season);
+            }
 
-            $episodeNumber = $episode->getNumber() ? (float) $episode->getNumber() : $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'episode');
+            $episodeNumber = $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'episode');
             if (null !== $episodeNumber) {
                 $this->seasonEpisodeCounter[$seasonNumber][$episodeType] = (int) $episodeNumber;
             } else {
                 $episodeNumber = ++$this->seasonEpisodeCounter[$seasonNumber][$episodeType];
             }
-            $episode->setNumber((float) $episodeNumber);
+            if (null === $episode->getNumber()) {
+                $episode->setNumber((float) $episodeNumber);
+            }
 
             $this->output->writeln("- Season {$episode->getSeason()->getNumber()} Episode {$episode->getNumber()}");
 
-            $explicit = $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'explicit') ?? $this->getItemTagValue($item, self::NS_GOOGLE_PLAY, 'explicit');
             if (null === $episode->getExplicit()) {
+                $explicit = $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'explicit') ?? $this->getItemTagValue($item, self::NS_GOOGLE_PLAY, 'explicit');
                 $episode->setExplicit('yes' === $explicit);
             }
 
-            $publishedDate = $item->get_date('Y-m-d H:i:s');
-            if ($publishedDate && ! $episode->getDate()) {
-                $publishedDate = new DateTimeImmutable($publishedDate);
-                $episode->setDate($publishedDate);
-            } else if ( ! $episode->getDate()) {
-                $publishedDate = new DateTimeImmutable('now');
-                $episode->setDate($publishedDate);
-            }
-
-            $duration = $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'duration');
-            if ($duration && ! $episode->getRunTime()) {
-                if (preg_match('/^\\d{2}:\\d{2}:\\d{2}$/i', $duration)) {
-                    $episode->setRunTime($duration);
-                } elseif (preg_match('/^\\d+$/i', $duration)) {
-                    $episode->setRunTime(gmdate('H:i:s', (int) $duration));
+            if (null === $episode->getDate() || '' === $episode->getDate()) {
+                $publishedDate = $item->get_date('Y-m-d H:i:s');
+                if ($publishedDate) {
+                    $publishedDate = new DateTimeImmutable($publishedDate);
+                    $episode->setDate($publishedDate);
+                } else {
+                    $publishedDate = new DateTimeImmutable('now');
+                    $episode->setDate($publishedDate);
                 }
             }
 
-            $title = $item->get_title();
-            if ($title && ! $episode->getTitle()) {
-                $episode->setTitle(mb_strimwidth(html_entity_decode($title), 0, 252, '...'));
+            if (null === $episode->getRunTime() || '' === $episode->getRunTime()) {
+                $duration = $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'duration');
+                if ($duration) {
+                    if (preg_match('/^\\d{2}:\\d{2}:\\d{2}$/i', $duration)) {
+                        $episode->setRunTime($duration);
+                    } elseif (preg_match('/^\\d+$/i', $duration)) {
+                        $episode->setRunTime(gmdate('H:i:s', (int) $duration));
+                    }
+                }
             }
 
-            $subtitle = $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'subtitle');
-            if ($subtitle && ! $episode->getSubTitle()) {
-                $episode->setSubTitle(mb_strimwidth(html_entity_decode($subtitle), 0, 252, '...'));
+            if (null === $episode->getTitle() || '' === $episode->getTitle()) {
+                $title = $item->get_title();
+                if ($title) {
+                    $episode->setTitle(mb_strimwidth(html_entity_decode($title), 0, 252, '...'));
+                }
+            }
+
+            if (null === $episode->getSubTitle() || '' === $episode->getSubTitle()) {
+                $subtitle = $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'subtitle');
+                if ($subtitle) {
+                    $episode->setSubTitle(mb_strimwidth(html_entity_decode($subtitle), 0, 252, '...'));
+                }
             }
 
             // skip `bibliography`
@@ -419,9 +448,11 @@ class ImportPodcastCommand extends Command {
                 }
             }
 
-            $description = $item->get_content();
-            if ($description && ! $episode->getDescription()) {
-                $episode->setDescription($this->importContentSanitizer->sanitize($description));
+            if (null === $episode->getDescription() || '' === $episode->getDescription()) {
+                $description = $item->get_content();
+                if ($description) {
+                    $episode->setDescription($this->importContentSanitizer->sanitize($description));
+                }
             }
 
             $keywordsString = $this->getItemTagValue($item, SimplePie::NAMESPACE_ITUNES, 'keywords');
