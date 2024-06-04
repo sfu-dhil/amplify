@@ -201,6 +201,10 @@ Automatically fix some standards errors
 
     docker exec -it amplify_app ./bin/console app:touch:status
 
+## Check for missing media files (bad imports)
+
+    docker exec -it amplify_app ./bin/console app:media:missing
+
 ## Manual Imports
 
     docker exec -it amplify_app ./bin/console app:import:podcast <url> <podcastId> <importId>
