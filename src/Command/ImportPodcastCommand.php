@@ -574,25 +574,6 @@ class ImportPodcastCommand extends Command {
                         $this->em->persist($image);
                         $this->em->flush();
                     }
-                } elseif (str_starts_with($mimetype, 'audio/') && $entity instanceof Episode) {
-                    $audio = $entity->getAudioByChecksum($checksum);
-                    if (null === $audio) {
-                        $audio = new Audio();
-                        $audio->setFile($upload);
-                        $audio->setEntity($entity);
-                        $audio->setDescription('');
-                        $audio->setSourceUrl($url);
-                        $audio->prePersist();
-
-                        $this->em->persist($audio);
-                        $entity->addAudio($audio);
-                        $entity->updateStatus();
-                        $this->em->flush();
-                    } elseif (null === $audio->getSourceUrl()) {
-                        $audio->setSourceUrl($url);
-                        $this->em->persist($audio);
-                        $this->em->flush();
-                    }
                 } elseif ('application/pdf' === $mimetype && $entity instanceof Episode) {
                     $pdf = $entity->getPdfByChecksum($checksum);
                     if (null === $pdf) {
@@ -612,6 +593,28 @@ class ImportPodcastCommand extends Command {
                         $this->em->persist($pdf);
                         $this->em->flush();
                     }
+                // some audio files are application/octet-stream for whatever reason
+                } elseif ((str_starts_with($mimetype, 'audio/') || 'application/octet-stream' === $mimetype) && $entity instanceof Episode) {
+                    $audio = $entity->getAudioByChecksum($checksum);
+                    if (null === $audio) {
+                        $audio = new Audio();
+                        $audio->setFile($upload);
+                        $audio->setEntity($entity);
+                        $audio->setDescription('');
+                        $audio->setSourceUrl($url);
+                        $audio->prePersist();
+
+                        $this->em->persist($audio);
+                        $entity->addAudio($audio);
+                        $entity->updateStatus();
+                        $this->em->flush();
+                    } elseif (null === $audio->getSourceUrl()) {
+                        $audio->setSourceUrl($url);
+                        $this->em->persist($audio);
+                        $this->em->flush();
+                    }
+                } else {
+                    $this->output->writeln("Invalid Mimetype for mimetype: {$mimetype} filename: {$filename}");
                 }
             }
             $this->output->writeln("Finished server side processing of {$url}");
