@@ -19,6 +19,9 @@ parameters:
     page_size: 25
     export_root_dir: '%kernel.project_dir%/data/%kernel.environment%/exports'
     project_root_dir: '%kernel.project_dir%'
+    nines_media_audio_dir: '%kernel.project_dir%/data/%kernel.environment%/audio'
+    nines_media_image_dir: '%kernel.project_dir%/data/%kernel.environment%/image'
+    nines_media_pdf_dir: '%kernel.project_dir%/data/%kernel.environment%/pdf'
 
     amplify.thumb.height: 400
     amplify.thumb.width: 600

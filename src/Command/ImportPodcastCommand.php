@@ -593,7 +593,7 @@ class ImportPodcastCommand extends Command {
                         $this->em->persist($pdf);
                         $this->em->flush();
                     }
-                // some audio files are application/octet-stream for whatever reason
+                    // some audio files are application/octet-stream for whatever reason
                 } elseif ((str_starts_with($mimetype, 'audio/') || 'application/octet-stream' === $mimetype) && $entity instanceof Episode) {
                     $audio = $entity->getAudioByChecksum($checksum);
                     if (null === $audio) {
