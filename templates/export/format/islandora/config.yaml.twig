@@ -1,29 +1,37 @@
+{%- autoescape false -%}
 task: create
 host: <CHANGE THIS TO THE URL FOR YOUR ISLANDORA INSTALLATION. EX: `https://islandora.traefik.me`>
 username: <CHANGE THIS TO YOUR USERNAME. EX: `admin`>
-input_dir: amplify_podcast_{{ podcast.id }}_input_files
+# Allow unsecure connections (helpful for test environments. Shouldn't need for production)
+# secure_ssl_only: false
+input_dir: amp_podcast_{{ podcast.id }}_input_files
 allow_missing_files: true
 allow_adding_terms: true
-field_text_format_ids:
-- field_abstract: full_html
-- field_description: full_html
-- field_description_long: full_html
-- field_note: full_html
-- field_table_of_contents: full_html
+content_type: islandora_object
+text_format_id: full_html
 csv_field_templates:
-- field_member_of: ""
 - published: 1
 - langcode: {{ podcast.languageCode|default('en') }}
 - field_genre: Podcasts
-- field_rights: "{{ podcast.copyright|default('')|striptags }}"
-- field_subject_general: "{{ podcast.categories|join('|') }}"
-- field_mode_of_issuance: serial
+- field_rights: "{{ podcast.license|default('')|striptags|replace({'&nbsp;': ' '})|raw|trim }}"
+# comment out `field_sfu_rights_ref` if you are importing to somewhere other than SFU's Summit
+- field_sfu_rights_ref: "{{ podcast.copyright|default('')|striptags|replace({'&nbsp;': ' '})|raw|trim }}"
+- field_subject: "{{ podcast.categories|join('|') }}"
 csv_value_templates:
 - field_subject: subject:$csv_value
-- field_subject_general: subject:$csv_value
 media_types_override:
+- image: ['png', 'gif', 'jpg', 'jpeg', 'webp']
 - audio: ['mp3', 'wav', 'aac', 'm4a']
-additional_files:
-- thumbnail: http://pcdm.org/use#ThumbnailImage
-ignore_csv_columns:
-- field_related_websites
+- document: ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'txt']
+- extracted_text: []
+# Uncomment to ignore SFU specific fields if you are importing to somewhere other than SFU's Summit
+# ignore_csv_columns:
+# - field_external_links
+# - field_alternative_title
+# - field_tags
+# - field_sfu_permissions
+# - field_sfu_rights_ref
+# - field_sfu_bibcite_title
+# - field_sfu_bibcite_etdf_date
+# - field_sfu_bibcite_publishe
+{%- endautoescape -%}
