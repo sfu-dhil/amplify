@@ -51,6 +51,23 @@ class ExportService {
         return $contributions;
     }
 
+    protected function safeFileNameFilter(string $str) : string {
+        $str = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $str);
+        // Remove any runs of whitespace
+        $str = mb_ereg_replace("([\s]{2,})", ' ', $str);
+        // Remove any runs of periods
+        return mb_ereg_replace("([\.]{2,})", '', $str);
+    }
+
+    protected function stripTags(?string $str) : ?string {
+        if ($str) {
+            // add newlines for some tag/tag ends
+            $tags = ['</p>','<br />','<br>','<hr />','<hr>','</h1>','</h2>','</h3>','</h4>','</h5>','</h6>'];
+            return trim(html_entity_decode(strip_tags(str_replace($tags, "\n", $str))));
+        }
+        return null;
+    }
+
     protected function getPodcastContributorPersonAndRoles(Podcast $podcast) : array {
         $allContributions = $podcast->getContributions()->toArray();
 

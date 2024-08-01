@@ -13,17 +13,29 @@ use Nines\MediaBundle\Entity\Image;
 use Nines\MediaBundle\Entity\Pdf;
 
 class IslandoraExport extends ExportService {
-    private function getFirstThumbnail(array $images) : ?string {
-        $thumbnail = null;
-        foreach ($images as $image) {
-            if (null !== $image?->getFile()) {
-                $thumbnail = "image_{$image->getId()}_tn.png";
 
-                break;
+    private function getFirstAudio(Episode $episode) : ?Audio {
+        foreach ($episode->getAudios() as $audio) {
+            if (null !== $audio?->getFile()) {
+                return $audio;
             }
         }
+        return null;
+    }
 
-        return $thumbnail;
+    private function getSafeFileName(string $fullFilename, string $extension, array &$filenames, bool $updateArray = true) : string {
+        $filename = $this->safeFileNameFilter(pathinfo($fullFilename, PATHINFO_FILENAME));
+        if (array_key_exists("{$filename}.{$extension}", $filenames)) {
+            $count = $filenames["{$filename}.{$extension}"] + 1;
+            if ($updateArray) {
+                $filenames["{$filename}.{$extension}"] = $count;
+            }
+            $filename = "{$filename} ({$count})";
+        } else if ($updateArray) {
+            $filenames["{$filename}.{$extension}"] = 1;
+        }
+
+        return "{$filename}.{$extension}";
     }
 
     private function getPodcastWebsites(Podcast $podcast) : string {
@@ -58,6 +70,9 @@ class IslandoraExport extends ExportService {
         $result = [];
         foreach ($this->getCsvMap() as $column => $default) {
             $result[$column] = array_key_exists($column, $record) ? html_entity_decode($this->exportContentSanitizer->sanitize($record[$column] ?? '')) : $default;
+            if (in_array($column, ['field_description', 'field_sfu_permissions'])) {
+                $result[$column] = $this->stripTags($result[$column]);
+            }
         }
 
         return $result;
@@ -75,229 +90,279 @@ class IslandoraExport extends ExportService {
         return implode('|', $linked_agents);
     }
 
-    private function generatePodcastRecord(Podcast $podcast, ?string $thumbnail) : array {
+    private function getPodcastPublisherText(Podcast $podcast) : ?string {
+        if ($podcast->getPublisher()) {
+            return $podcast->getPublisher()->getName();
+        }
+        return null;
+    }
+
+    private function getSeasonPublisherText(Season $season) : ?string {
+        if ($season->getPublisher()) {
+            return $season->getPublisher()->getName();
+        } else if ($season->getPodcast()->getPublisher()) {
+            return $season->getPodcast()->getPublisher()->getName();
+        }
+        return null;
+    }
+
+    private function generatePodcastRecord(Podcast $podcast) : array {
+        $extent = ['1 podcast'];
+        if (count($podcast->getSeasons()) > 0) {
+            $extent []= count($podcast->getSeasons()) . ' season(s)';
+        }
+        if (count($podcast->getEpisodes()) > 0) {
+            $extent []= count($podcast->getEpisodes()) . ' episode(s)';
+        }
+        if (count($podcast->getImages()) > 0) {
+            $extent []= count($podcast->getImages()) . ' podcast image file(s)';
+        }
+
         return $this->addRecordDefaults([
-            'id' => "amplify:podcast:{$podcast->getId()}",
+            'id' => "amp:podcast:{$podcast->getId()}",
             'field_model' => 'Collection',
             'field_resource_type' => 'Collection',
-            'thumbnail' => $thumbnail,
             'title' => $podcast->getTitle(),
             'field_alternative_title' => $podcast->getSubTitle(),
-            'field_display_title' => $podcast->getTitle(),
             'field_identifier' => $podcast->getGuid(),
 
-            'field_abstract' => $podcast->getDescription(),
-            'field_description' => mb_strimwidth($podcast->getDescription() ?? '', 0, 252, '...'),
-            'field_description_long' => $podcast->getDescription(),
-            'field_related_websites' => $this->getPodcastWebsites($podcast),
+            'field_description' => $podcast->getDescription(),
+            'field_external_links' => $this->getPodcastWebsites($podcast),
             'field_physical_form' => 'Electronic|Sound recordings',
-            'field_extent' => implode('|', [
-                '1 podcast',
-                count($podcast->getSeasons()) . ' season(s)',
-                count($podcast->getEpisodes()) . ' episode(s)',
-                count($podcast->getImages()) . ' image file(s)',
-            ]),
-            'field_date_captured' => $podcast->getUpdated()->format('Y-m-d'),
-            'field_subject' => implode('|', array_filter($podcast->getKeywords())),
+            'field_extent' => implode('|', $extent),
+            'field_tags' => implode('|', array_filter($podcast->getKeywords())),
             'field_table_of_contents' => $this->twig->render('export/format/islandora/podcast_toc.html.twig', [
                 'podcast' => $podcast,
             ]),
             'field_linked_agent' => $this->getLinkedAgents($this->getPodcastContributorPersonAndRoles($podcast)),
+            'field_sfu_bibcite_title' => $podcast->getTitle(),
+            'field_sfu_bibcite_publishe' => $this->getPodcastPublisherText($podcast),
         ]);
     }
 
-    private function generateSeasonRecord(Season $season, int $weight, ?string $thumbnail) : array {
+    private function generateSeasonRecord(Season $season, int $weight) : array {
+        $extent = ['1 podcast season'];
+        if (count($season->getEpisodes()) > 0) {
+            $extent []= count($season->getEpisodes()) . ' episode(s)';
+        }
+        if (count($season->getImages()) > 0) {
+            $extent []= count($season->getImages()) . ' season image file(s)';
+        }
+
         return $this->addRecordDefaults([
-            'id' => "amplify:season:{$season->getId()}",
-            'parent_id' => "amplify:podcast:{$season->getPodcast()->getId()}",
+            'id' => "amp:season:{$season->getId()}",
+            'parent_id' => "amp:podcast:{$season->getPodcast()->getId()}",
             'field_weight' => "{$weight}",
             'field_model' => 'Collection',
             'field_resource_type' => 'Collection',
-            'thumbnail' => $thumbnail,
             'title' => $season->getTitle(),
             'field_alternative_title' => $season->getSubTitle(),
-            'field_display_title' => $season->getTitle(),
 
-            'field_abstract' => $season->getDescription(),
-            'field_description' => mb_strimwidth($season->getDescription() ?? '', 0, 252, '...'),
-            'field_description_long' => $season->getDescription(),
-            'field_related_websites' => $this->getSeasonWebsites($season),
+            'field_description' => $season->getDescription(),
+            'field_external_links' => $this->getSeasonWebsites($season),
             'field_physical_form' => 'Electronic|Sound recordings',
-            'field_extent' => implode('|', [
-                '1 podcast season',
-                count($season->getEpisodes()) . ' episode(s)',
-                count($season->getImages()) . ' image file(s)',
-            ]),
-            'field_date_captured' => $season->getUpdated()->format('Y-m-d'),
-            'field_subject' => implode('|', array_filter($season->getPodcast()->getKeywords())),
+            'field_extent' => implode('|', $extent),
+            'field_tags' => implode('|', array_filter($season->getPodcast()->getKeywords())),
             'field_table_of_contents' => $this->twig->render('export/format/islandora/season_toc.html.twig', [
                 'season' => $season,
             ]),
             'field_linked_agent' => $this->getLinkedAgents($this->getSeasonContributorPersonAndRoles($season)),
+            'field_sfu_bibcite_title' => $season->getTitle(),
+            'field_sfu_bibcite_publishe' => $this->getSeasonPublisherText($season),
         ]);
     }
 
-    private function generateEpisodeRecord(Episode $episode, int $weight, ?string $thumbnail) : array {
+    private function generateEpisodeRecord(Episode $episode, int $weight, ?Audio $audio, ?string $relativeFile) : array {
+        $extent = ['1 podcast episode'];
+        if (count($episode->getAudios()) > 0) {
+            $extent []= count($episode->getAudios()) . ' audio file(s)';
+        }
+        if (count($episode->getImages()) > 0) {
+            $extent []= count($episode->getImages()) . ' image file(s)';
+        }
+        if (count($episode->getPdfs()) > 0 || $episode->getTranscript()) {
+            $extent []= count($episode->getPdfs()) + ($episode->getTranscript() ? 1 : 0) . ' transcript file(s)';
+        }
+        if ($audio) {
+            $extent []= "filesize {$audio->getFileSize()} Bytes";
+        }
+        $extent []= "runtime {$episode->getRunTime()}";
+
         return $this->addRecordDefaults([
-            'id' => "amplify:episode:{$episode->getId()}",
-            'parent_id' => "amplify:season:{$episode->getSeason()->getId()}",
+            'id' => "amp:episode:{$episode->getId()}",
+            'parent_id' => "amp:season:{$episode->getSeason()->getId()}",
+            'file' => $relativeFile,
             'field_weight' => "{$weight}",
-            'field_model' => 'Collection',
-            'field_resource_type' => 'Collection',
-            'thumbnail' => $thumbnail,
+            'field_model' => 'Compound Object',
+            'field_resource_type' => 'Audio',
             'title' => $episode->getTitle(),
             'field_alternative_title' => $episode->getSubTitle(),
-            'field_display_title' => $episode->getTitle(),
             'field_identifier' => $episode->getGuid(),
 
-            'field_abstract' => $episode->getDescription(),
-            'field_description' => mb_strimwidth($episode->getDescription() ?? '', 0, 252, '...'),
-            'field_description_long' => $episode->getDescription(),
+            'field_description' => $episode->getDescription(),
             'field_note' => implode('|', array_filter([
-                $episode->getPermissions() ?? '',
                 $episode->getBibliography() ?? '',
             ])),
             'field_physical_form' => 'Electronic|Sound recordings',
-            'field_extent' => implode('|', [
-                '1 podcast episode',
-                count($episode->getAudios()) . ' audio file(s)',
-                count($episode->getImages()) . ' image file(s)',
-                count($episode->getPdfs()) . ' pdf file(s)',
-                "runtime {$episode->getRunTime()}",
-            ]),
+            'field_extent' => implode('|', $extent),
             'field_edtf_date_issued' => $episode->getDate()->format('Y-m-d'),
-            'field_date_captured' => $episode->getUpdated()->format('Y-m-d'),
-            'field_subject' => implode('|', array_filter($episode->getKeywords())),
+            'field_tags' => implode('|', array_filter($episode->getKeywords())),
             'field_linked_agent' => $this->getLinkedAgents($this->getEpisodeContributorPersonAndRoles($episode)),
+            'field_sfu_permissions' => $episode->getPermissions(),
+            'field_sfu_bibcite_title' => $episode->getTitle(),
+            'field_sfu_bibcite_etdf_date' => $episode->getDate()->format('Y-m-d'),
+            'field_sfu_bibcite_publishe' => $this->getSeasonPublisherText($episode->getSeason()),
         ]);
     }
 
     private function generateEpisodeAudioRecord(string $relativeFile, Episode $episode, Audio $audio, int $weight) : array {
+        $filename = basename($relativeFile);
+
         return $this->addRecordDefaults([
-            'id' => "amplify:audio:{$audio->getId()}",
-            'parent_id' => "amplify:episode:{$episode->getId()}",
+            'id' => "amp:audio:{$audio->getId()}",
+            'parent_id' => "amp:episode:{$episode->getId()}",
             'file' => $relativeFile,
             'field_weight' => "{$weight}",
             'field_model' => 'Audio',
-            'field_resource_type' => 'Sound',
-            'title' => $audio->getOriginalName(),
-            'field_display_title' => $audio->getOriginalName(),
+            'field_resource_type' => 'Audio',
+            'title' => "Supplementary audio file ({$filename})",
             'field_identifier' => $audio->getSourceUrl(),
 
-            'field_related_websites' => $audio->getSourceUrl(),
+            'field_external_links' => $audio->getSourceUrl(),
             'field_physical_form' => 'Electronic|Sound recordings',
             'field_extent' => implode('|', [
                 '1 audio file',
-                "filesize {$audio->getFileSize()}",
+                "filesize {$audio->getFileSize()} Bytes",
                 "runtime {$episode->getRunTime()}",
             ]),
             'field_edtf_date_issued' => $episode->getDate()->format('Y-m-d'),
-            'field_date_captured' => $audio->getUpdated()->format('Y-m-d'),
-            'field_subject' => implode('|', array_filter($episode->getKeywords())),
-            'field_linked_agent' => $this->getLinkedAgents($this->getEpisodeContributorPersonAndRoles($episode)),
+            'field_tags' => implode('|', array_filter($episode->getKeywords())),
         ]);
     }
 
-    private function generateGenericImageRecord(string $relativeFile, string $parentId, Image $image, int $weight, ?string $thumbnail) : array {
+    private function generateGenericImageRecord(string $relativeFile, string $parentId, Image $image, int $weight) : array {
+        $filename = basename($relativeFile);
+
         return $this->addRecordDefaults([
-            'id' => "amplify:image:{$image->getId()}",
+            'id' => "amp:image:{$image->getId()}",
             'parent_id' => $parentId,
             'file' => $relativeFile,
             'field_weight' => "{$weight}",
             'field_model' => 'Image',
             'field_resource_type' => 'Still Image',
-            'thumbnail' => $thumbnail,
-            'title' => $image->getOriginalName(),
-            'field_display_title' => $image->getOriginalName(),
+            'title' => "Supplementary image file ({$filename})",
             'field_identifier' => $image->getSourceUrl(),
 
-            'field_abstract' => $image->getDescription(),
-            'field_description' => mb_strimwidth($image->getDescription() ?? '', 0, 252, '...'),
-            'field_description_long' => $image->getDescription(),
-            'field_related_websites' => $image->getSourceUrl(),
+            'field_description' => $image->getDescription(),
+            'field_external_links' => $image->getSourceUrl(),
             'field_physical_form' => 'Electronic|Pictures',
             'field_extent' => implode('|', [
                 '1 image',
-                "filesize {$image->getFileSize()}",
+                "filesize {$image->getFileSize()} Bytes",
                 "dimensions {$image->getImageWidth()}px x {$image->getImageHeight()}px",
             ]),
-            'field_date_captured' => $image->getUpdated()->format('Y-m-d'),
         ]);
     }
 
-    private function generateEpisodeImageRecord(string $relativeFile, Episode $episode, Image $image, int $weight, ?string $thumbnail) : array {
-        $record = $this->generateGenericImageRecord($relativeFile, "amplify:episode:{$episode->getId()}", $image, $weight, $thumbnail);
-        $record['field_subject'] = implode('|', array_filter($episode->getKeywords()));
+    private function generateEpisodeImageRecord(string $relativeFile, Episode $episode, Image $image, int $weight) : array {
+        $record = $this->generateGenericImageRecord($relativeFile, "amp:episode:{$episode->getId()}", $image, $weight);
+        $record['field_tags'] = implode('|', array_filter($episode->getKeywords()));
         $record['field_edtf_date_issued'] = $episode->getDate()->format('Y-m-d');
-        $record['field_linked_agent'] = $this->getLinkedAgents($this->getEpisodeContributorPersonAndRoles($episode));
 
         return $record;
     }
 
-    private function generateEpisodeTranscriptRecord(string $relativeFile, Episode $episode, Pdf $pdf, int $weight, ?string $thumbnail) : array {
+    private function generateEpisodeTranscriptRecord(string $relativeFile, Episode $episode, Pdf $pdf, int $weight) : array {
+        $filename = basename($relativeFile);
+
         return $this->addRecordDefaults([
-            'id' => "amplify:transcript:{$pdf->getId()}",
-            'parent_id' => "amplify:episode:{$episode->getId()}",
+            'id' => "amp:transcript:{$pdf->getId()}",
+            'parent_id' => "amp:episode:{$episode->getId()}",
             'file' => $relativeFile,
             'field_weight' => "{$weight}",
-            'field_model' => 'Digital Document',
+            'field_model' => 'Binary',
             'field_resource_type' => 'Text',
-            'thumbnail' => $thumbnail,
-            'title' => $pdf->getOriginalName(),
-            'field_display_title' => $pdf->getOriginalName(),
+            'title' => "Supplementary transcript file ({$filename})",
             'field_identifier' => $pdf->getSourceUrl(),
 
-            'field_related_websites' => $pdf->getSourceUrl(),
+            'field_external_links' => $pdf->getSourceUrl(),
             'field_physical_form' => 'Electronic|Text corpora',
             'field_extent' => implode('|', [
-                '1 pdf file',
-                "filesize {$pdf->getFileSize()}",
+                '1 transcript file',
+                "filesize {$pdf->getFileSize()} Bytes",
             ]),
             'field_edtf_date_issued' => $episode->getDate()->format('Y-m-d'),
-            'field_date_captured' => $pdf->getUpdated()->format('Y-m-d'),
-            'field_subject' => implode('|', array_filter($episode->getKeywords())),
+            'field_tags' => implode('|', array_filter($episode->getKeywords())),
+        ]);
+    }
+
+    private function generateEpisodeTranscriptTxtRecord(string $relativeFile, Episode $episode, int $weight) : array {
+        $filename = basename($relativeFile);
+
+        return $this->addRecordDefaults([
+            'id' => "amp:transcript:txt:{$episode->getId()}",
+            'parent_id' => "amp:episode:{$episode->getId()}",
+            'file' => $relativeFile,
+            'field_weight' => "{$weight}",
+            'field_model' => 'Binary',
+            'field_resource_type' => 'Text',
+            'title' => "Supplementary transcript file ({$filename})",
+
+            'field_physical_form' => 'Electronic|Text corpora',
+            'field_extent' => implode('|', [
+                '1 transcript file'
+            ]),
+            'field_edtf_date_issued' => $episode->getDate()->format('Y-m-d'),
+            'field_tags' => implode('|', array_filter($episode->getKeywords())),
         ]);
     }
 
     private function getCsvMap() : array {
         // column heading => default value
         return [
-            'id' => '', // internal to workbench, doesn't matter but needs to be unique and consistent (ex: `amplify:podcast:1`)
-            'parent_id' => '', // points to internal workbench id of parent item (ex: `amplify:podcast:1`)
+            'id' => '', // internal to workbench, doesn't matter but needs to be unique and consistent (ex: `amp:podcast:1`)
+            'field_member_of' => '', // required when using parent_id (even if blank). inserted into each csv row to allow manual edits on the Podcast
+            'parent_id' => '', // points to internal workbench id of parent item (ex: `amp:podcast:1`)
             'file' => '', // required relative path
             'field_weight' => '',
             'field_model' => '',
             'field_resource_type' => '',
-            'thumbnail' => '',
             'title' => '',
             'field_alternative_title' => '',
-            'field_display_title' => '',
             'field_identifier' => '',
 
-            'field_abstract' => '',
             'field_description' => '',
-            'field_description_long' => '',
             'field_note' => '',
-            // 'field_display_hints' => '',
-            'field_related_websites' => '',
+            'field_external_links' => '',
             'field_physical_form' => '',
             'field_extent' => '',
             'field_edtf_date_issued' => '',
-            'field_date_captured' => '',
             'field_table_of_contents' => '',
-            'field_subject' => '',
+            'field_tags' => '',
             'field_linked_agent' => '',
+            'field_sfu_permissions' => '',
+            'field_sfu_bibcite_title' => '',
+            'field_sfu_bibcite_etdf_date' => '',
+            'field_sfu_bibcite_publishe' => '',
         ];
     }
-
     protected function generate() : void {
         $this->updateMessage('Starting islandora export.');
 
-        $this->filesystem->dumpFile("{$this->exportTmpRootDir}/amplify_podcast_{$this->podcast->getId()}_config.yaml", $this->twig->render('export/format/islandora/config.yaml.twig', [
+        $this->filesystem->dumpFile("{$this->exportTmpRootDir}/amp_podcast_{$this->podcast->getId()}_config.yaml", $this->twig->render('export/format/islandora/config.yaml.twig', [
             'podcast' => $this->podcast,
         ]));
-        $inputDir = "{$this->exportTmpRootDir}/amplify_podcast_{$this->podcast->getId()}_input_files";
+        $inputDir = "{$this->exportTmpRootDir}/amp_podcast_{$this->podcast->getId()}_input_files";
         $this->filesystem->mkdir($inputDir, 0o777);
+
+        $this->filesystem->mkdir("{$inputDir}/audio", 0o777);
+        $audioFilenames = [];
+
+        $this->filesystem->mkdir("{$inputDir}/image", 0o777);
+        $imageFilenames = [];
+
+        $this->filesystem->mkdir("{$inputDir}/transcript", 0o777);
+        $transcriptFilenames = [];
 
         $csv = Writer::createFromPath("{$inputDir}/metadata.csv", 'w+');
         // $csv->setEscape('');
@@ -307,37 +372,31 @@ class IslandoraExport extends ExportService {
         $csv->insertOne($header);
 
         $podcastWeight = 0;
-        $podcastThumbnail = $this->getFirstThumbnail($this->podcast->getImages());
-        $csv->insertOne($this->generatePodcastRecord($this->podcast, $podcastThumbnail));
+        $csv->insertOne($this->generatePodcastRecord($this->podcast));
 
         foreach ($this->podcast->getImages() as $image) {
             if ( ! $image?->getFile()) {
                 continue;
             }
-            $relativeFile = "image_{$image->getId()}.{$image->getExtension()}";
+            $relativeFile = "image/" . $this->getSafeFileName($image->getOriginalName(), $image->getExtension(), $imageFilenames);
             $this->filesystem->copy($image->getFile()->getRealPath(), "{$inputDir}/{$relativeFile}");
-            $relativeThumbFile = "image_{$image->getId()}_tn.png";
-            $this->filesystem->copy($image->getThumbFile()->getRealPath(), "{$inputDir}/{$relativeThumbFile}");
 
-            $csv->insertOne($this->generateGenericImageRecord($relativeFile, "amplify:podcast:{$this->podcast->getId()}", $image, ++$podcastWeight, $relativeThumbFile));
+            $csv->insertOne($this->generateGenericImageRecord($relativeFile, "amp:podcast:{$this->podcast->getId()}", $image, ++$podcastWeight));
         }
 
         $currentEpisode = 0;
         foreach ($this->podcast->getSeasons() as $season) {
             $seasonWeight = 0;
-            $seasonThumbnail = $this->getFirstThumbnail($season->getImages());
-            $csv->insertOne($this->generateSeasonRecord($season, ++$podcastWeight, $seasonThumbnail));
+            $csv->insertOne($this->generateSeasonRecord($season, ++$podcastWeight));
 
             foreach ($season->getImages() as $image) {
                 if ( ! $image?->getFile()) {
                     continue;
                 }
-                $relativeFile = "image_{$image->getId()}.{$image->getExtension()}";
+                $relativeFile = "image/" . $this->getSafeFileName($image->getOriginalName(), $image->getExtension(), $imageFilenames);
                 $this->filesystem->copy($image->getFile()->getRealPath(), "{$inputDir}/{$relativeFile}");
-                $relativeThumbFile = "image_{$image->getId()}_tn.png";
-                $this->filesystem->copy($image->getThumbFile()->getRealPath(), "{$inputDir}/{$relativeThumbFile}");
 
-                $csv->insertOne($this->generateGenericImageRecord($relativeFile, "amplify:season:{$season->getId()}", $image, ++$seasonWeight, $relativeThumbFile));
+                $csv->insertOne($this->generateGenericImageRecord($relativeFile, "amp:season:{$season->getId()}", $image, ++$seasonWeight));
             }
 
             foreach ($season->getEpisodes() as $episode) {
@@ -345,14 +404,15 @@ class IslandoraExport extends ExportService {
                 $this->updateMessage("Generating metadata for {$episode->getSlug()} ({$currentEpisode}/{$this->totalEpisodes})");
 
                 $episodeWeight = 0;
-                $episodeThumbnail = $this->getFirstThumbnail($episode->getImages());
-                $csv->insertOne($this->generateEpisodeRecord($episode, ++$seasonWeight, $episodeThumbnail));
+                $episodeAudio = $this->getFirstAudio($episode);
+                $relativeFile = $episodeAudio ? "audio/" . $this->getSafeFileName($episodeAudio->getOriginalName(), $episodeAudio->getExtension(), $audioFilenames, false) : null;
+                $csv->insertOne($this->generateEpisodeRecord($episode, ++$seasonWeight, $episodeAudio, $relativeFile));
 
                 foreach ($episode->getAudios() as $audio) {
                     if ( ! $audio?->getFile()) {
                         continue;
                     }
-                    $relativeFile = "audio_{$audio->getId()}.{$audio->getExtension()}";
+                    $relativeFile = "audio/" . $this->getSafeFileName($audio->getOriginalName(), $audio->getExtension(), $audioFilenames);
                     $this->filesystem->copy($audio->getFile()->getRealPath(), "{$inputDir}/{$relativeFile}");
 
                     $csv->insertOne($this->generateEpisodeAudioRecord($relativeFile, $episode, $audio, ++$episodeWeight));
@@ -362,24 +422,27 @@ class IslandoraExport extends ExportService {
                     if ( ! $image?->getFile()) {
                         continue;
                     }
-                    $relativeFile = "image_{$image->getId()}.{$image->getExtension()}";
+                    $relativeFile = "image/" . $this->getSafeFileName($image->getOriginalName(), $image->getExtension(), $imageFilenames);
                     $this->filesystem->copy($image->getFile()->getRealPath(), "{$inputDir}/{$relativeFile}");
-                    $relativeThumbFile = "image_{$image->getId()}_tn.png";
-                    $this->filesystem->copy($image->getThumbFile()->getRealPath(), "{$inputDir}/{$relativeThumbFile}");
 
-                    $csv->insertOne($this->generateEpisodeImageRecord($relativeFile, $episode, $image, ++$episodeWeight, $relativeThumbFile));
+                    $csv->insertOne($this->generateEpisodeImageRecord($relativeFile, $episode, $image, ++$episodeWeight));
                 }
 
                 foreach ($episode->getPdfs() as $pdf) {
                     if ( ! $pdf?->getFile()) {
                         continue;
                     }
-                    $relativeFile = "transcript_{$pdf->getId()}.pdf";
+                    $relativeFile = "transcript/" . $this->getSafeFileName($pdf->getOriginalName(), $pdf->getExtension(), $transcriptFilenames);
                     $this->filesystem->copy($pdf->getFile()->getRealPath(), "{$inputDir}/{$relativeFile}");
-                    $relativeThumbFile = "transcript_{$pdf->getId()}_tn.png";
-                    $this->filesystem->copy($pdf->getThumbFile()->getRealPath(), "{$inputDir}/{$relativeThumbFile}");
 
-                    $csv->insertOne($this->generateEpisodeTranscriptRecord($relativeFile, $episode, $pdf, ++$episodeWeight, $relativeThumbFile));
+                    $csv->insertOne($this->generateEpisodeTranscriptRecord($relativeFile, $episode, $pdf, ++$episodeWeight));
+                }
+
+                if ($episode->getTranscript()) {
+                    $relativeFile = "transcript/" . $this->getSafeFileName("{$episode->getTitle()}.txt", 'txt', $transcriptFilenames);
+                    $this->filesystem->dumpFile("{$inputDir}/{$relativeFile}", $this->stripTags($episode->getTranscript()));
+
+                    $csv->insertOne($this->generateEpisodeTranscriptTxtRecord($relativeFile, $episode, ++$episodeWeight));
                 }
 
                 $this->updateProgress(++$this->stepsCompleted);
