@@ -374,6 +374,9 @@ class IslandoraExport extends ExportService {
         $this->filesystem->dumpFile("{$this->exportTmpRootDir}/amp_podcast_{$this->podcast->getId()}_config.yaml", $this->twig->render('export/format/islandora/config.yaml.twig', [
             'podcast' => $this->podcast,
         ]));
+        // $this->filesystem->dumpFile("{$this->exportTmpRootDir}/amp_podcast_{$this->podcast->getId()}_config.yaml", $this->twig->render('export/format/islandora/config_test.yaml.twig', [
+        //     'podcast' => $this->podcast,
+        // ]));
         $inputDir = "{$this->exportTmpRootDir}/amp_podcast_{$this->podcast->getId()}_input_files";
         $this->filesystem->mkdir($inputDir, 0o777);
 
