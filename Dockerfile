@@ -3,8 +3,7 @@ WORKDIR /app
 
 # build ruby deps
 COPY docs/Gemfile docs/Gemfile.lock /app/
-RUN bundle update --bundler \
-    && bundle install
+RUN bundle install
 
 COPY docs /app
 

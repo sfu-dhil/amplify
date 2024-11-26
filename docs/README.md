@@ -1,6 +1,6 @@
-# Amplify Docs
+# AMP Docs
 
-Documentation for the Amplify Podcast Network preservation tool
+Documentation for the Amp Podcast Network preservation tool
 
 
 > The SSHRC-funded Amplify Podcast Network encourages collaboration and experimentation via the medium of scholarly podcasting, with a focus on podcasts committed to anti-racism, feminist social justice, and community-building. We’re committed to supporting the creation of new scholarly podcasts, while also building the infrastructure that will support them, from new peer review processes to digital preservation tools to open access guides to making your own podcast. <br/><br/>Amplify represents scholarship that contributes to collective, public knowledge, born of research across the many disciplines and interdisciplines that constitute humanities and social sciences research. Our podcasts explicitly or implicitly engage with the question of what constitutes scholarship by pushing at boundaries, whether they are formal, methodological, theoretical, or otherwise.
@@ -12,7 +12,7 @@ Documentation for the Amplify Podcast Network preservation tool
 
 ## Run tbls
 
-From the docs folder (with amplify running)
+From the docs folder (with AMP running)
 
     docker run --rm -v $PWD:/work -w /work --network host ghcr.io/k1low/tbls doc --rm-dist
 
