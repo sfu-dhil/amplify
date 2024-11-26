@@ -1,9 +1,9 @@
-title: Amplify
-description: Documentation for the Amplify project
+title: AMP
+description: Documentation for the AMP project
 theme: just-the-docs
-url: https://amplify.lib.sfu.ca/docs
-favicon_ico: "https://i0.wp.com/amplifypodcastnetwork.ca/wp-content/uploads/2022/03/cropped-amplify-final-social-options-2-sm.png?fit=32%2C32&ssl=1"
-color_scheme: amplify
+url: https://amp.lib.sfu.ca/docs
+favicon_ico: "/assets/images/favicon.ico"
+color_scheme: amp
 baseurl: /docs
 exclude:
 - tbls_templates

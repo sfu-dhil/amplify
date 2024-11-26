@@ -23,7 +23,7 @@ class ExportType extends AbstractType {
             'expanded' => false,
             'multiple' => false,
             'choices' => [
-                'Islandora' => 'islandora',
+                'Islandora (SFU Summit)' => 'islandora',
                 'MODS' => 'mods',
                 'Bepress' => 'bepress',
             ],

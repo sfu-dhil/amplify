@@ -15,7 +15,7 @@ has_toc: false
 {:toc}
 </details>
 
-# amplify
+# AMP
 
 ## Tables
 
