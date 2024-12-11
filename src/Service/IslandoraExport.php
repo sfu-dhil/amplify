@@ -24,6 +24,15 @@ class IslandoraExport extends ExportService {
         return null;
     }
 
+    private function getFormattedKeywords(array $keywords) : array {
+        return array_map('ucfirst', array_map('strtolower', $keywords));
+    }
+
+    protected function safeFileNameFilter(string $str) : string {
+        // Remove any whitespaces (replace with underscores)
+        return mb_ereg_replace('\s+', '_', parent::safeFileNameFilter($str));
+    }
+
     private function getSafeFileName(string $fullFilename, string $extension, array &$filenames, bool $updateArray = true) : string {
         $filename = $this->safeFileNameFilter(pathinfo($fullFilename, PATHINFO_FILENAME));
         if (array_key_exists("{$filename}.{$extension}", $filenames)) {
@@ -142,7 +151,7 @@ class IslandoraExport extends ExportService {
         return $this->addRecordDefaults([
             'id' => "amp:podcast:{$podcast->getId()}",
             'field_model' => 'Collection',
-            'field_resource_type' => 'Collection',
+            'field_resource_type' => 'Audio',
             'title' => $podcast->getTitle(),
             'field_alternative_title' => $podcast->getSubTitle(),
             'field_identifier' => $podcast->getGuid(),
@@ -151,7 +160,7 @@ class IslandoraExport extends ExportService {
             'field_external_links' => $this->getPodcastWebsites($podcast),
             'field_physical_form' => 'Electronic|Sound recordings',
             'field_extent' => implode('|', $extent),
-            'field_tags' => implode('|', array_filter($podcast->getKeywords())),
+            'field_tags' => implode('|', $this->getFormattedKeywords(array_filter($podcast->getKeywords()))),
             'field_table_of_contents' => $this->twig->render('export/format/islandora/podcast_toc.html.twig', [
                 'podcast' => $podcast,
             ]),
@@ -175,7 +184,7 @@ class IslandoraExport extends ExportService {
             'parent_id' => "amp:podcast:{$season->getPodcast()->getId()}",
             'field_weight' => "{$weight}",
             'field_model' => 'Collection',
-            'field_resource_type' => 'Collection',
+            'field_resource_type' => 'Audio',
             'title' => $season->getTitle(),
             'field_alternative_title' => $season->getSubTitle(),
 
@@ -183,7 +192,7 @@ class IslandoraExport extends ExportService {
             'field_external_links' => $this->getSeasonWebsites($season),
             'field_physical_form' => 'Electronic|Sound recordings',
             'field_extent' => implode('|', $extent),
-            'field_tags' => implode('|', array_filter($season->getPodcast()->getKeywords())),
+            'field_tags' => implode('|', $this->getFormattedKeywords(array_filter($season->getPodcast()->getKeywords()))),
             'field_table_of_contents' => $this->twig->render('export/format/islandora/season_toc.html.twig', [
                 'season' => $season,
             ]),
@@ -214,7 +223,7 @@ class IslandoraExport extends ExportService {
             'parent_id' => "amp:season:{$episode->getSeason()->getId()}",
             'file' => $relativeFile,
             'field_weight' => "{$weight}",
-            'field_model' => 'Compound Object',
+            'field_model' => 'Digital Document',
             'field_resource_type' => 'Audio',
             'title' => $episode->getTitle(),
             'field_alternative_title' => $episode->getSubTitle(),
@@ -227,7 +236,7 @@ class IslandoraExport extends ExportService {
             'field_physical_form' => 'Electronic|Sound recordings',
             'field_extent' => implode('|', $extent),
             'field_edtf_date_issued' => $episode->getDate()->format('Y-m-d'),
-            'field_tags' => implode('|', array_filter($episode->getKeywords())),
+            'field_tags' => implode('|', $this->getFormattedKeywords(array_filter($episode->getKeywords()))),
             'field_linked_agent' => $this->getLinkedAgents($this->getEpisodeContributorPersonAndRoles($episode)),
             'field_sfu_permissions' => $episode->getPermissions(),
             'field_sfu_bibcite_title' => $episode->getTitle(),
@@ -257,7 +266,7 @@ class IslandoraExport extends ExportService {
                 "runtime {$episode->getRunTime()}",
             ]),
             'field_edtf_date_issued' => $episode->getDate()->format('Y-m-d'),
-            'field_tags' => implode('|', array_filter($episode->getKeywords())),
+            'field_tags' => implode('|', $this->getFormattedKeywords(array_filter($episode->getKeywords()))),
         ]);
     }
 
@@ -287,7 +296,7 @@ class IslandoraExport extends ExportService {
 
     private function generateEpisodeImageRecord(string $relativeFile, Episode $episode, Image $image, int $weight) : array {
         $record = $this->generateGenericImageRecord($relativeFile, "amp:episode:{$episode->getId()}", $image, $weight);
-        $record['field_tags'] = implode('|', array_filter($episode->getKeywords()));
+        $record['field_tags'] = implode('|', $this->getFormattedKeywords(array_filter($episode->getKeywords())));
         $record['field_edtf_date_issued'] = $episode->getDate()->format('Y-m-d');
 
         return $record;
@@ -313,7 +322,7 @@ class IslandoraExport extends ExportService {
                 "filesize {$pdf->getFileSize()} Bytes",
             ]),
             'field_edtf_date_issued' => $episode->getDate()->format('Y-m-d'),
-            'field_tags' => implode('|', array_filter($episode->getKeywords())),
+            'field_tags' => implode('|', $this->getFormattedKeywords(array_filter($episode->getKeywords()))),
         ]);
     }
 

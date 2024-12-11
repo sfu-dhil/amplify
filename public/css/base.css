@@ -1,6 +1,7 @@
 html, body {
     min-height: 100vh;
     min-height: -webkit-fill-available;
+    margin: 0 !important;
 }
 
 .page-content .sticky-top {
