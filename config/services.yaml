@@ -27,7 +27,9 @@ parameters:
     amplify.thumb.width: 600
 
     islandora_roles: ['aut', 'ctb', 'cre', 'ill', 'ive', 'ivr', 'pht']
-    islandora_default_role: 'ctb'
+    islandora_role_map:
+        hst: ivr
+    islandora_default_role: ctb
 
 services:
     # default configuration for services in *this* file

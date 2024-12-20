@@ -88,29 +88,38 @@ class IslandoraExport extends ExportService {
         return $result;
     }
 
-    private function fixIslandoraRoles(array $roles) : array {
+    private function processedIslandoraRoles(array $roles) : array {
         $islandoraRoles = $this->parameterBagInterface->get('islandora_roles');
-        $defaultRole = ContributorRole::tryFrom($this->parameterBagInterface->get('islandora_default_role'));
+        $islandoraRoleMap = $this->parameterBagInterface->get('islandora_role_map');
+        $defaultRole = ContributorRole::tryFrom($this->parameterBagInterface->get('islandora_default_role') ?? 'ctb');
 
-        if (is_array($islandoraRoles) && count($islandoraRoles) > 0 && $defaultRole) {
-            $fixedRoles = [];
-            foreach ($roles as $role) {
+        $processedRoles = [];
+        foreach ($roles as $role) {
+            if (is_array($islandoraRoles) && count($islandoraRoles) > 0 && $defaultRole) {
                 $roleToAdd = in_array($role->value, $islandoraRoles, true) ? $role : $defaultRole;
-                $fixedRoles[$roleToAdd->value] = $roleToAdd;
+                $processedRoles[$role->value] = $roleToAdd->value;
+            } else {
+                $processedRoles[$role->value] = $role->value;
             }
-
-            return array_values($fixedRoles);
+        }
+        if (is_array($islandoraRoleMap) && count($islandoraRoleMap) > 0) {
+            foreach ($islandoraRoleMap as $originalRole => $newRole) {
+                $newRole = ContributorRole::tryFrom($newRole);
+                if (array_key_exists($originalRole, $processedRoles)) {
+                    $processedRoles[$originalRole] = $newRole->value;
+                }
+            }
         }
 
-        return $roles;
+        return array_unique(array_values($processedRoles));
     }
 
     private function getLinkedAgents(array $contributions) : string {
         $linked_agents = [];
         foreach ($contributions as $contribution) {
             $person = $contribution['person'];
-            foreach ($this->fixIslandoraRoles($contribution['roles']) as $role) {
-                $linked_agents[] = "relators:{$role->value}:person:{$person->getSortableName()}";
+            foreach ($this->processedIslandoraRoles($contribution['roles']) as $role) {
+                $linked_agents[] = "relators:{$role}:person:{$person->getSortableName()}";
             }
         }
 
@@ -246,8 +255,6 @@ class IslandoraExport extends ExportService {
     }
 
     private function generateEpisodeAudioRecord(string $relativeFile, Episode $episode, Audio $audio, int $weight) : array {
-        $filename = basename($relativeFile);
-
         return $this->addRecordDefaults([
             'id' => "amp:audio:{$audio->getId()}",
             'parent_id' => "amp:episode:{$episode->getId()}",
@@ -255,7 +262,7 @@ class IslandoraExport extends ExportService {
             'field_weight' => "{$weight}",
             'field_model' => 'Audio',
             'field_resource_type' => 'Audio',
-            'title' => "Supplementary audio file ({$filename})",
+            'title' => "Alternative audio file for {$episode->getTitle()}",
             'field_identifier' => $audio->getSourceUrl(),
 
             'field_external_links' => $audio->getSourceUrl(),
@@ -271,8 +278,6 @@ class IslandoraExport extends ExportService {
     }
 
     private function generateGenericImageRecord(string $relativeFile, string $parentId, Image $image, int $weight) : array {
-        $filename = basename($relativeFile);
-
         return $this->addRecordDefaults([
             'id' => "amp:image:{$image->getId()}",
             'parent_id' => $parentId,
@@ -280,7 +285,7 @@ class IslandoraExport extends ExportService {
             'field_weight' => "{$weight}",
             'field_model' => 'Image',
             'field_resource_type' => 'Still Image',
-            'title' => "Supplementary image file ({$filename})",
+            'title' => pathinfo($image->getOriginalName(), PATHINFO_FILENAME),
             'field_identifier' => $image->getSourceUrl(),
 
             'field_description' => $image->getDescription(),
@@ -303,8 +308,6 @@ class IslandoraExport extends ExportService {
     }
 
     private function generateEpisodeTranscriptRecord(string $relativeFile, Episode $episode, Pdf $pdf, int $weight) : array {
-        $filename = basename($relativeFile);
-
         return $this->addRecordDefaults([
             'id' => "amp:transcript:{$pdf->getId()}",
             'parent_id' => "amp:episode:{$episode->getId()}",
@@ -312,7 +315,7 @@ class IslandoraExport extends ExportService {
             'field_weight' => "{$weight}",
             'field_model' => 'Binary',
             'field_resource_type' => 'Text',
-            'title' => "Supplementary transcript file ({$filename})",
+            'title' => "Transcript file for {$episode->getTitle()}",
             'field_identifier' => $pdf->getSourceUrl(),
 
             'field_external_links' => $pdf->getSourceUrl(),
@@ -327,8 +330,6 @@ class IslandoraExport extends ExportService {
     }
 
     private function generateEpisodeTranscriptTxtRecord(string $relativeFile, Episode $episode, int $weight) : array {
-        $filename = basename($relativeFile);
-
         return $this->addRecordDefaults([
             'id' => "amp:transcript:txt:{$episode->getId()}",
             'parent_id' => "amp:episode:{$episode->getId()}",
@@ -336,7 +337,7 @@ class IslandoraExport extends ExportService {
             'field_weight' => "{$weight}",
             'field_model' => 'Binary',
             'field_resource_type' => 'Text',
-            'title' => "Supplementary transcript file ({$filename})",
+            'title' => "Text transcript file for {$episode->getTitle()}",
 
             'field_physical_form' => 'Electronic|Text corpora',
             'field_extent' => implode('|', [
@@ -449,7 +450,10 @@ class IslandoraExport extends ExportService {
                     $relativeFile = 'audio/' . $this->getSafeFileName($audio->getOriginalName(), $audio->getExtension(), $audioFilenames);
                     $this->filesystem->copy($audio->getFile()->getRealPath(), "{$inputDir}/{$relativeFile}");
 
-                    $csv->insertOne($this->generateEpisodeAudioRecord($relativeFile, $episode, $audio, ++$episodeWeight));
+                    // only add additional entries for additional audio files (since the first one is directly attached to the episode record)
+                    if ($audio?->getId() != $episodeAudio?->getId()) {
+                        $csv->insertOne($this->generateEpisodeAudioRecord($relativeFile, $episode, $audio, ++$episodeWeight));
+                    }
                 }
 
                 foreach ($episode->getImages() as $image) {
