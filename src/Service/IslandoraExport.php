@@ -40,7 +40,7 @@ class IslandoraExport extends ExportService {
             if ($updateArray) {
                 $filenames["{$filename}.{$extension}"] = $count;
             }
-            $filename = "{$filename} ({$count})";
+            $filename = "{$filename}_{$count}";
         } else if ($updateArray) {
             $filenames["{$filename}.{$extension}"] = 1;
         }
@@ -234,7 +234,7 @@ class IslandoraExport extends ExportService {
             'field_weight' => "{$weight}",
             'field_model' => 'Digital Document',
             'field_resource_type' => 'Audio',
-            'title' => $episode->getTitle(),
+            'title' => "{$episode->getSlug()}: {$episode->getTitle()}",
             'field_alternative_title' => $episode->getSubTitle(),
             'field_identifier' => $episode->getGuid(),
 
