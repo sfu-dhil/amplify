@@ -24,7 +24,6 @@ framework:
             'App\Message\ImportMessage': async
             'App\Message\ExportMessage': async
             'App\Message\ExportCleanupMessage': async
-            'App\Message\ImportMediaFixMessage': async
 
         serializer:
             default_serializer: messenger.transport.symfony_serializer
