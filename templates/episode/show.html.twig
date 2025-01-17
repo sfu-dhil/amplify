@@ -63,7 +63,7 @@
             <h2 class="h6"><i class="bi bi-people-fill" aria-hidden="true"></i> Contributors</h2>
             {% for contribution in episode.contributions %}
                 <div>
-                    <a href='{{ path("person_edit", {"podcast_id": episode.podcast.id, "id":contribution.person.id }) }}'>{{ contribution.person.fullName }}</a> -
+                    <a href='{{ path("person_edit", {"podcast_id": episode.podcast.id, "id":contribution.person.id }) }}'>{{ contribution.person.sortableName }}</a> -
                     {% for role in contribution.roles %}
                         <span class="badge text-bg-primary">{{ role.label|default('N/A') }}</span>
                     {% endfor %}
