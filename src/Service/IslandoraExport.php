@@ -223,7 +223,7 @@ class IslandoraExport extends ExportService {
             $extent[] = count($episode->getPdfs()) + ($episode->getTranscript() ? 1 : 0) . ' transcript file(s)';
         }
         if ($audio) {
-            $extent[] = "filesize {$audio->getFileSize()} Bytes";
+            $extent[] = "filesize {$audio?->getFileSize()} Bytes";
         }
         $extent[] = "runtime {$episode->getRunTime()}";
 
@@ -238,6 +238,7 @@ class IslandoraExport extends ExportService {
             'field_alternative_title' => $episode->getSubTitle(),
             'field_identifier' => $episode->getGuid(),
 
+            'field_external_links' => $audio?->getSourceUrl(),
             'field_description' => $episode->getDescription(),
             'field_note' => implode('|', array_filter([
                 $episode->getBibliography() ?? '',
@@ -251,6 +252,7 @@ class IslandoraExport extends ExportService {
             'field_sfu_bibcite_title' => $episode->getTitle(),
             'field_sfu_bibcite_etdf_date' => $episode->getDate()->format('Y-m-d'),
             'field_sfu_bibcite_publishe' => $this->getSeasonPublisherText($episode->getSeason()),
+            'media_use_tid' => 'http://pcdm.org/use#OriginalFile|http://pcdm.org/use#ServiceFile',
         ]);
     }
 
@@ -274,6 +276,7 @@ class IslandoraExport extends ExportService {
             ]),
             'field_edtf_date_issued' => $episode->getDate()->format('Y-m-d'),
             'field_tags' => implode('|', $this->getFormattedKeywords(array_filter($episode->getKeywords()))),
+            'media_use_tid' => 'http://pcdm.org/use#OriginalFile|http://pcdm.org/use#ServiceFile',
         ]);
     }
 
@@ -296,6 +299,7 @@ class IslandoraExport extends ExportService {
                 "filesize {$image->getFileSize()} Bytes",
                 "dimensions {$image->getImageWidth()}px x {$image->getImageHeight()}px",
             ]),
+            'media_use_tid' => 'http://pcdm.org/use#OriginalFile|http://pcdm.org/use#ServiceFile',
         ]);
     }
 
@@ -326,6 +330,8 @@ class IslandoraExport extends ExportService {
             ]),
             'field_edtf_date_issued' => $episode->getDate()->format('Y-m-d'),
             'field_tags' => implode('|', $this->getFormattedKeywords(array_filter($episode->getKeywords()))),
+            'media_use_tid' => 'http://pcdm.org/use#OriginalFile|http://pcdm.org/use#ServiceFile',
+            'field_display_hints' => 'PDFjs',
         ]);
     }
 
@@ -345,6 +351,7 @@ class IslandoraExport extends ExportService {
             ]),
             'field_edtf_date_issued' => $episode->getDate()->format('Y-m-d'),
             'field_tags' => implode('|', array_filter($episode->getKeywords())),
+            'media_use_tid' => 'http://pcdm.org/use#OriginalFile|http://pcdm.org/use#ServiceFile',
         ]);
     }
 
@@ -375,6 +382,9 @@ class IslandoraExport extends ExportService {
             'field_sfu_bibcite_title' => '',
             'field_sfu_bibcite_etdf_date' => '',
             'field_sfu_bibcite_publishe' => '',
+
+            'media_use_tid' => '',
+            'field_display_hints' => '',
         ];
     }
 

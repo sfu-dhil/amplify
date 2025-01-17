@@ -13,7 +13,7 @@ csv_field_templates:
 - langcode: {{ podcast.languageCode|default('en') }}
 - field_genre: Podcasts
 - field_rights: "{{ podcast.license|default('')|striptags|replace({'&nbsp;': ' '})|raw|trim }}"
-- field_sfu_rights_ref: "{{ podcast.copyright|default('')|striptags|replace({'&nbsp;': ' '})|raw|trim }}"
+- field_sfu_rights_ref: "{{ podcast.copyright|default('Copyright is held by the author(s) and participants')|striptags|replace({'&nbsp;': ' '})|raw|trim }}"
 - field_subject: "{{ podcast.categories|join('|') }}"
 csv_value_templates:
 - field_subject: subject:$csv_value
