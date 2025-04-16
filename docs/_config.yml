@@ -20,6 +20,9 @@ callouts:
     title: Note
     color: purple
     opacity: 0.2
+aux_links:
+  "AMP Source Code on Github":
+    - https://github.com/sfu-dhil/amplify
 nav_external_links: []
 # temp: see https://github.com/just-the-docs/just-the-docs/issues/1541
 sass:

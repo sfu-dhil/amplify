@@ -1,7 +1,7 @@
 # Amplify Podcast Network
 
-[Amplify][amplify] is a PHP application written using the
-[Symfony Framework][symfony]. It is a digital tool for collecting podcast
+[Amplify](https://amp.dhil.lib.sfu.ca) is a PHP application written using the
+[Symfony Framework](https://symfony.com/). It is a digital tool for collecting podcast
 episodes and describing the metadata for them.
 
 ## Requirements

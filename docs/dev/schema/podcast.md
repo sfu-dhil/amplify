@@ -1,7 +1,8 @@
 ---
 layout: default
-title: season
+title: podcast
 parent: Schema
+grand_parent: Development Documentation
 ---
 
 <details markdown="block">
@@ -13,7 +14,7 @@ parent: Schema
 {:toc}
 </details>
 
-# `season`
+# `podcast`
 
 ## Description
 
@@ -21,24 +22,33 @@ parent: Schema
 
 |Name|Type|Default|Nullable|Extra Definition|Children|Parents|Comment|
 |----|----|-------|--------|----------------|--------|-------|-------|
-|id|int(11)||false|auto_increment|[contribution](contribution.md) [episode](episode.md)|||
-|podcast_id|int(11)||false|||[podcast](podcast.md)||
+|id|int(11)||false|auto_increment|[contribution](contribution.md) [episode](episode.md) [person](person.md) [publisher](publisher.md) [season](season.md)|||
 |publisher_id|int(11)|NULL|true|||[publisher](publisher.md)||
-|number|int(11)|NULL|true|||||
 |title|varchar(255)||false|||||
 |sub_title|varchar(255)|NULL|true|||||
+|explicit|tinyint(1)||false|||||
 |description|longtext||false|||||
+|copyright|longtext||false|||||
+|website|longtext||false|||||
+|rss|varchar(255)||false|||||
 |created|datetime||false||||(DC2Type:datetime_immutable)|
 |updated|datetime||false||||(DC2Type:datetime_immutable)|
+|license|longtext|NULL|true|||||
+|guid|varchar(255)|NULL|true|||||
+|language_code|varchar(255)|NULL|true|||||
+|categories|longtext|'[]'|false||||(DC2Type:json)|
+|keywords|longtext|'[]'|false||||(DC2Type:json)|
 |status|longtext|'[]'|false||||(DC2Type:json)|
 
 ## Constraints
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
-| FK_F0E45BA940C86FCE | FOREIGN KEY | FOREIGN KEY (publisher_id) REFERENCES publisher (id) |
-| FK_F0E45BA9786136AB | FOREIGN KEY | FOREIGN KEY (podcast_id) REFERENCES podcast (id) |
+| FK_D7E805BD40C86FCE | FOREIGN KEY | FOREIGN KEY (publisher_id) REFERENCES publisher (id) |
 | PRIMARY | PRIMARY KEY | PRIMARY KEY (id) |
+| categories | CHECK | CHECK (json_valid(`categories`)) |
+| keywords | CHECK | CHECK (json_valid(`keywords`)) |
+| keywords | CHECK | CHECK (json_valid(`keywords`)) |
 | status | CHECK | CHECK (json_valid(`status`)) |
 | status | CHECK | CHECK (json_valid(`status`)) |
 | status | CHECK | CHECK (json_valid(`status`)) |
@@ -47,13 +57,13 @@ parent: Schema
 
 | Name | Definition |
 | ---- | ---------- |
-| IDX_F0E45BA940C86FCE | KEY IDX_F0E45BA940C86FCE (publisher_id) USING BTREE |
-| IDX_F0E45BA9786136AB | KEY IDX_F0E45BA9786136AB (podcast_id) USING BTREE |
+| IDX_D7E805BD40C86FCE | KEY IDX_D7E805BD40C86FCE (publisher_id) USING BTREE |
+| podcast_ft | KEY podcast_ft (title, sub_title, description) USING FULLTEXT |
 | PRIMARY | PRIMARY KEY (id) USING BTREE |
 
 ## Relations
 
-![er](season.svg)
+![er](podcast.svg)
 
 ---
 

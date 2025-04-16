@@ -1,5 +1,5 @@
 dsn: mariadb://amplify:password@localhost:13306/amplify
-docPath: schema
+docPath: dev/schema
 exclude:
 - migration_versions
 - messenger_messages

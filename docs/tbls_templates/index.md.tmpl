@@ -2,7 +2,8 @@
 layout: default
 title: Schema
 has_children: true
-nav_order: 5
+nav_order: 10
+parent: Development Documentation
 has_toc: false
 ---
 
