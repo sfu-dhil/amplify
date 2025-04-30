@@ -17,8 +17,6 @@ services:
       MARIADB_PASSWORD: password
     healthcheck:
       test: mysql amplify -u amplify -ppassword -e 'SELECT 1;' || exit 1
-      interval: 2s
-      retries: 120
 
   app: &app
     container_name: amplify_app
@@ -45,8 +43,6 @@ services:
       - /var/www/html/vendor
     healthcheck:
       test: curl --fail http://localhost/health.php || exit 1
-      interval: 2s
-      retries: 120
     depends_on:
       db:
         condition: service_healthy
