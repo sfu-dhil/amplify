@@ -41,8 +41,6 @@ services:
       - /var/www/html/public/node_modules
       - /var/www/html/public/bundles
       - /var/www/html/vendor
-    healthcheck:
-      test: curl --fail http://localhost/health.php || exit 1
     depends_on:
       db:
         condition: service_healthy
