@@ -24,8 +24,4 @@ class DefaultController extends AbstractController implements PaginatorAwareInte
     public function indexAction(Request $request) : RedirectResponse {
         return $this->redirectToRoute('podcast_index');
     }
-
-    #[Route(path: '/privacy', name: 'privacy')]
-    #[Template]
-    public function privacyAction(Request $request) : void {}
 }

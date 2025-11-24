@@ -135,12 +135,13 @@ class Builder implements ContainerAwareInterface {
         ]);
 
         $menu->addChild('Privacy', [
-            'route' => 'privacy',
+            'uri' => 'https://docs.dhil.lib.sfu.ca/privacy.html',
             'attributes' => [
                 'class' => 'mb-1',
             ],
             'linkAttributes' => [
                 'class' => 'btn fw-bold d-inline-flex align-items-center rounded border-0',
+                'target' => '_blank',
             ],
         ]);
 
