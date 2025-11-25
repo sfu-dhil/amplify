@@ -22,10 +22,10 @@ has_toc: false
     | where: "parent", page.title
     | where: "grand_parent", page.parent %}
 
-{% include sorted_pages.html pages = child_pages %}
+{% include components/nav/sorted.html pages = child_pages %}
 
 <ul>
-{% for child in sorted_pages %}
+{% for child in nav_sorted %}
   <li>
     <a href="{{ child.url | relative_url }}">{{ child.title }}</a>{% if child.summary %} - {{ child.summary }}{% endif %}
   </li>
