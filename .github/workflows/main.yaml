@@ -1,50 +1,57 @@
 name: Unit Tests & Tagged Deploy
 
-# based on: https://docs.docker.com/build/ci/github-actions/multi-platform/#distribute-build-across-multiple-runners
+# based on:
+# - https://docs.github.com/en/actions/tutorials/publish-packages/publish-docker-images#publishing-images-to-docker-hub-and-github-packages
+# - https://docs.docker.com/build/ci/github-actions/multi-platform/#distribute-build-across-multiple-runners
 
 on:
   push:
-    branches:
-    - '*'
     tags:
     - 'v*'
 
 env:
-  REGISTRY_IMAGE: dhilsfu/amplify
-  DB_NAME: pipeline_db
-  DB_USER: pipeline_user
-  DB_PASSWORD: pipeline_password
+  GITLAB_PIPELINE_TRIGGER_URL: https://git.lib.sfu.ca/api/v4/projects/513/trigger/pipeline
 
+permissions:
+  packages: write
+  contents: read
+  attestations: write
+  id-token: write
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
-        platform:
-          # - linux/386
-          - linux/amd64
-          # - linux/arm/v5
-          - linux/arm/v7
-          - linux/arm64
-          # - linux/mips64le
-          # - linux/ppc64le
-          # - linux/s390x
+        include:
+        # - platform: linux/386
+        #   runner: ubuntu-latest
+        - platform: linux/amd64
+          runner: ubuntu-latest
+        # - platform: linux/arm/v5
+        #   runner: ubuntu-24.04-arm
+        - platform: linux/arm/v7
+          runner: ubuntu-24.04-arm
+        - platform: linux/arm64
+          runner: ubuntu-24.04-arm
+        # - platform: linux/mips64le
+        #   runner: ubuntu-latest
+        # - platform: linux/ppc64le
+        #   runner: ubuntu-latest
+        # - platform: linux/s390x
+        #   runner: ubuntu-latest
     steps:
     - name: Prepare
       run: |
         platform=${{ matrix.platform }}
         echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
 
-    - name: Checkout source code
-      uses: actions/checkout@v4
-
     - name: Docker meta
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY_IMAGE }}
+        images: ghcr.io/${{ github.repository }}
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
@@ -58,6 +65,16 @@ jobs:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+    - name: Log in to Github Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Checkout source code
+      uses: actions/checkout@v5
+
     - name: Build and push by digest
       id: build
       uses: docker/build-push-action@v6
@@ -65,9 +82,10 @@ jobs:
         context: .
         platforms: ${{ matrix.platform }}
         labels: ${{ steps.meta.outputs.labels }}
-        outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
-        cache-from: type=registry,ref=${{ env.REGISTRY_IMAGE }}:buildcache-${{ env.PLATFORM_PAIR }}
-        cache-to: type=registry,ref=${{ env.REGISTRY_IMAGE }}:buildcache-${{ env.PLATFORM_PAIR }},mode=max
+        tags: ghcr.io/${{ github.repository }}
+        outputs: type=image,push-by-digest=true,name-canonical=true,push=true
+        cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache-${{ env.PLATFORM_PAIR }}
+        cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache-${{ env.PLATFORM_PAIR }},mode=max
 
     - name: Shutdown Ubuntu MySQL (SUDO)
       run: sudo service mysql stop
@@ -75,31 +93,38 @@ jobs:
     - name: Set up MariaDB
       uses: getong/mariadb-action@v1.1
       with:
-        mysql database: ${{ env.DB_NAME }}_test
-        mysql user: ${{ env.DB_USER }}
-        mysql password: ${{ env.DB_PASSWORD }}
+        mysql database: pipeline_db_test
+        mysql user: pipeline_user
+        mysql password: pipeline_password
+
+    - name: Configure sysctl limits
+      run: |
+        sudo swapoff -a
+        sudo sysctl -w vm.swappiness=1
+        sudo sysctl -w fs.file-max=262144
+        sudo sysctl -w vm.max_map_count=262144
 
     - name: Run Unit Tests
       run: |
         touch .env.test.local
-        echo DATABASE_URL="mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_NAME }}?serverVersion=mariadb-10.11.0" >> .env.test.local
+        echo DATABASE_URL="mysql://pipeline_user:pipeline_password@127.0.0.1:3306/pipeline_db?serverVersion=mariadb-10.11.0" >> .env.test.local
         docker run --rm \
           -v "${GITHUB_WORKSPACE}/.env.test.local":/var/www/html/.env.test.local \
           --network host \
           --platform=${{ matrix.platform }} \
-          ${{ env.REGISTRY_IMAGE }}@${{ steps.build.outputs.digest }} make test
+          ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }} make test
 
     - name: Export digest
       run: |
-        mkdir -p /tmp/digests
+        mkdir -p ${{ runner.temp }}/digests
         digest="${{ steps.build.outputs.digest }}"
-        touch "/tmp/digests/${digest#sha256:}"
+        touch "${{ runner.temp }}/digests/${digest#sha256:}"
 
     - name: Upload digest
       uses: actions/upload-artifact@v4
       with:
         name: digests-${{ env.PLATFORM_PAIR }}
-        path: /tmp/digests/*
+        path: ${{ runner.temp }}/digests/*
         if-no-files-found: error
         retention-days: 1
 
@@ -112,7 +137,7 @@ jobs:
     - name: Download digests
       uses: actions/download-artifact@v4
       with:
-        path: /tmp/digests
+        path: ${{ runner.temp }}/digests
         pattern: digests-*
         merge-multiple: true
 
@@ -120,26 +145,27 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY_IMAGE }}
+        images: ghcr.io/${{ github.repository }}
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Login to Docker Hub
+    - name: Log in to Github Container Registry
       uses: docker/login-action@v3
       with:
-        username: ${{ secrets.DOCKER_HUB_USERNAME }}
-        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Create manifest list and push
-      working-directory: /tmp/digests
+      working-directory: ${{ runner.temp }}/digests
       run: |
         docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-          $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+          $(printf 'ghcr.io/${{ github.repository }}@sha256:%s ' *)
 
     - name: Inspect image
       run: |
-        docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+        docker buildx imagetools inspect ghcr.io/${{ github.repository }}:${{ steps.meta.outputs.version }}
 
     - name: Trigger Gitlab Deploy Job
       run: |
@@ -148,4 +174,4 @@ jobs:
           -F token=${{ secrets.GITLAB_CI_TOKEN }} \
           -F "ref=main" \
           -F "variables[APP_RELEASE_TAG]=${{github.ref_name}}" \
-          https://git.lib.sfu.ca/api/v4/projects/513/trigger/pipeline
+          ${{ env.GITLAB_PIPELINE_TRIGGER_URL }}

@@ -20,7 +20,7 @@ services:
 
   app: &app
     container_name: amplify_app
-    # image: dhil/amplify
+    # image: ghcr.io/sfu-dhil/amplify
     build:
       context: .
       target: amplify

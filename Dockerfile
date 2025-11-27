@@ -24,7 +24,7 @@ COPY public/package.json public/yarn.lock /app/
 RUN yarn --production \
     && yarn cache clean
 
-FROM dhilsfu/symfony-base:php-8.2-apache AS amplify
+FROM ghcr.io/sfu-dhil/symfony-base:php-8.2-apache AS amplify
 ENV GIT_REPO=https://github.com/sfu-dhil/amplify
 HEALTHCHECK CMD curl --fail http://localhost/health.php || exit 1
 

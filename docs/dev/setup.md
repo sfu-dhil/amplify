@@ -13,8 +13,6 @@ The AMP source code can be found on github [https://github.com/sfu-dhil/amplify]
 
 # Docker
 
-AMP docker containers are available on [DockerHub](https://hub.docker.com/r/dhilsfu/amplify).
-
 AMP requires two running containers, one for the main web application and a second for handling delayed jobs (Podcast RSS import and Podcast export).
 
 The `/var/www/html/data/prod` directory should be mounted outside the container for file persistence.
@@ -47,7 +45,7 @@ services:
       restart_policy:
         condition: on-failure
   app: &app
-    image: dhilsfu/amplify:vX.X.X
+    image: ghcr.io/sfu-dhil/amplify:vX.X.X
     ports:
       - "80:80"
     volumes:

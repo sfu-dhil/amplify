@@ -1,3 +1,6 @@
+[![Docker Image Latest Badge](https://ghcr-badge.egpl.dev/sfu-dhil/amplify/latest_tag?trim=major&label=latest)](https://github.com/sfu-dhil/amplify/pkgs/container/amplify)
+[![Docker Image Size badge](https://ghcr-badge.egpl.dev/sfu-dhil/amplify/size)](https://github.com/sfu-dhil/amplify/pkgs/container/amplify)
+
 # Amplify Podcast Network
 
 [Amplify](https://amp.dhil.lib.sfu.ca) is a PHP application written using the
@@ -132,7 +135,7 @@ After you update a dependency make sure to rebuild the images
 
 Note: If you are having problems starting/building the application due to php dependencies issues you can also run a standalone php container to help resolve them
 
-    docker run -it -v $(pwd):/var/www/html -w /var/www/html dhilsfu/symfony-base:php-8.2-apache bash
+    docker run -it -v $(pwd):/var/www/html -w /var/www/html ghcr.io/sfu-dhil/symfony-base/symfony-base:php-8.2-apache bash
 
     [check Dockerfile for the 'apt-get update' code piece of amplify]
 
